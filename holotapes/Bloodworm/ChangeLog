@@ -1,0 +1,30 @@
+2.0.0
+https://github.com/CodyTolene/pip-boy-3000a-holotapes/pull/3
+- Migrate from the old Pip-Boy 3000 Mk V to the new Pip-Boy 3000.
+- Rename Pip-Snake to Bloodworm.
+- Add two-player Versus mode.
+- Add sound effects: eat, die, and start.
+- Add grass.
+- Add high-score tracking for 1P and 2P.
+- Add speed ramping every 5 fruits eaten.
+- Mode selection between on game over.
+- Rename "Pip-Snake" to "Bloodworm" (thanks for the suggestion, @lore5032!).
+
+1.2.1
+https://github.com/CodyTolene/pip-boy-apps/pull/12
+- Update torch button (top right) to toggle screen brightness when pressed.
+- Update power button (bot right) to restart the device when pressed.
+
+1.2.0
+https://github.com/CodyTolene/pip-apps/pull/60
+- File minification and compression.
+
+1.1.0
+https://github.com/CodyTolene/pip-apps/pull/16
+- Add additional knob controls.
+- Simplify/Improve menu.
+- Add gear icon to menu.
+
+1.0.0
+https://github.com/CodyTolene/pip-apps/pull/2
+- Add new app.
