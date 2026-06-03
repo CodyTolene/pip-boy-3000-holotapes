@@ -1,5 +1,42 @@
 [
   {
+    "id": "access-terminal",
+    "name": "Access Terminal",
+    "author": "@CodyTolene",
+    "version": "1.0.0",
+    "description": "Crack locked RobCo terminals by guessing the correct password from a list of corrupted pre-war entries.",
+    "icon": "AccessTerminal/access-terminal.png",
+    "type": "game",
+    "readme": "AccessTerminal/README.md",
+    "storage": [
+      {
+        "name": "HOLO/ACCESS/APP.JS",
+        "url": "AccessTerminal/app.min.js"
+      },
+      {
+        "name": "HOLO/ACCESS/words_5.json",
+        "url": "AccessTerminal/words_5.json"
+      },
+      {
+        "name": "HOLO/ACCESS/words_6.json",
+        "url": "AccessTerminal/words_6.json"
+      },
+      {
+        "name": "HOLO/ACCESS/words_7.json",
+        "url": "AccessTerminal/words_7.json"
+      },
+      {
+        "name": "HOLO/ACCESS/words_8.json",
+        "url": "AccessTerminal/words_8.json"
+      },
+      {
+        "name": "HOLO/ACCESS/words_9.json",
+        "url": "AccessTerminal/words_9.json"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "bloodworm",
     "name": "Bloodworm",
     "author": "@CodyTolene",
