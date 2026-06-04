@@ -5,7 +5,8 @@
     "author": "@CodyTolene @pip-4111 @beaverboy-12",
     "version": "2.1.0",
     "description": "Crack locked RobCo terminals by guessing the correct password from a list of corrupted pre-war entries.",
-    "icon": "AccessTerminal/access-terminal.png",
+    "icon": "AccessTerminal/assets/access-terminal.png",
+    "previews": [],
     "type": "game",
     "readme": "AccessTerminal/README.md",
     "storage": [
@@ -15,23 +16,23 @@
       },
       {
         "name": "HOLO/ACCESS/words_5.json",
-        "url": "AccessTerminal/words_5.json"
+        "url": "AccessTerminal/assets/words_5.json"
       },
       {
         "name": "HOLO/ACCESS/words_6.json",
-        "url": "AccessTerminal/words_6.json"
+        "url": "AccessTerminal/assets/words_6.json"
       },
       {
         "name": "HOLO/ACCESS/words_7.json",
-        "url": "AccessTerminal/words_7.json"
+        "url": "AccessTerminal/assets/words_7.json"
       },
       {
         "name": "HOLO/ACCESS/words_8.json",
-        "url": "AccessTerminal/words_8.json"
+        "url": "AccessTerminal/assets/words_8.json"
       },
       {
         "name": "HOLO/ACCESS/words_9.json",
-        "url": "AccessTerminal/words_9.json"
+        "url": "AccessTerminal/assets/words_9.json"
       }
     ],
     "storageOptional": []
@@ -42,8 +43,8 @@
     "author": "@CodyTolene",
     "version": "2.0.0",
     "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
-    "icon": "Bloodworm/bloodworm.png",
-    "previews": ["Bloodworm/bloodworm.mp4"],
+    "icon": "Bloodworm/assets/bloodworm.png",
+    "previews": ["Bloodworm/assets/bloodworm.mp4"],
     "type": "game",
     "readme": "Bloodworm/README.md",
     "storage": [
@@ -53,7 +54,7 @@
       },
       {
         "name": "HOLO/BLOODWORM/bloodworm.json",
-        "url": "Bloodworm/bloodworm.json"
+        "url": "Bloodworm/assets/bloodworm.json"
       }
     ],
     "storageOptional": [
@@ -61,21 +62,39 @@
         "label": "Eat (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-eat.wav",
         "sizeKB": 10,
-        "url": "Bloodworm/optional/bloodworm-eat.wav"
+        "url": "Bloodworm/assets/optional/bloodworm-eat.wav"
       },
       {
         "label": "Die (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-die.wav",
         "sizeKB": 12,
-        "url": "Bloodworm/optional/bloodworm-die.wav"
+        "url": "Bloodworm/assets/optional/bloodworm-die.wav"
       },
       {
         "label": "Start (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-start.wav",
         "sizeKB": 19,
-        "url": "Bloodworm/optional/bloodworm-start.wav"
+        "url": "Bloodworm/assets/optional/bloodworm-start.wav"
       }
     ]
+  },
+  {
+    "id": "ipip",
+    "name": "iPip",
+    "author": "@CodyTolene",
+    "version": "1.0.0",
+    "description": "iPip Media Player app for the new Pip-Boy 3000.",
+    "icon": "iPip/assets/ipip.png",
+    "previews": [],
+    "type": "app",
+    "readme": "iPip/README.md",
+    "storage": [
+      {
+        "name": "HOLO/IPIP/APP.JS",
+        "url": "iPip/app.min.js"
+      }
+    ],
+    "storageOptional": []
   },
   {
     "id": "piptris",
@@ -83,8 +102,8 @@
     "author": "@CodyTolene",
     "version": "4.0.0",
     "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
-    "icon": "Piptris/piptris.png",
-    "previews": ["Piptris/piptris.mp4"],
+    "icon": "Piptris/assets/piptris.png",
+    "previews": ["Piptris/assets/piptris.mp4"],
     "type": "game",
     "readme": "Piptris/README.md",
     "storage": [
@@ -94,19 +113,19 @@
       },
       {
         "name": "HOLO/PIPTRIS/piptris.json",
-        "url": "Piptris/piptris.json"
+        "url": "Piptris/assets/piptris.json"
       },
       {
         "name": "HOLO/PIPTRIS/block.json",
-        "url": "Piptris/block.json"
+        "url": "Piptris/assets/block.json"
       },
       {
         "name": "HOLO/PIPTRIS/nuke.json",
-        "url": "Piptris/nuke.json"
+        "url": "Piptris/assets/nuke.json"
       },
       {
         "name": "HOLO/PIPTRIS/radioactive.json",
-        "url": "Piptris/radioactive.json"
+        "url": "Piptris/assets/radioactive.json"
       }
     ],
     "storageOptional": [
@@ -114,25 +133,25 @@
         "label": "Big Band Swing (Music)",
         "name": "HOLO/PIPTRIS/piptris-big-band-swing.wav",
         "sizeKB": 826,
-        "url": "Piptris/optional/piptris-big-band-swing.wav"
+        "url": "Piptris/assets/piptris-big-band-swing.wav"
       },
       {
         "label": "Electro Swing (Music)",
         "name": "HOLO/PIPTRIS/piptris-electro-swing.wav",
         "sizeKB": 1150,
-        "url": "Piptris/optional/piptris-electro-swing.wav"
+        "url": "Piptris/assets/piptris-electro-swing.wav"
       },
       {
         "label": "Symphony (Music)",
         "name": "HOLO/PIPTRIS/piptris-symphony.wav",
         "sizeKB": 1614,
-        "url": "Piptris/optional/piptris-symphony.wav"
+        "url": "Piptris/assets/piptris-symphony.wav"
       },
       {
         "label": "Whimsical (Music)",
         "name": "HOLO/PIPTRIS/piptris-whimsical.wav",
         "sizeKB": 1635,
-        "url": "Piptris/optional/piptris-whimsical.wav"
+        "url": "Piptris/assets/piptris-whimsical.wav"
       }
     ]
   }

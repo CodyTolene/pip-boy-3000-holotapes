@@ -1,0 +1,13 @@
+{
+  "id": "ipip",
+  "name": "iPip",
+  "author": "@CodyTolene",
+  "version": "1.0.0",
+  "description": "iPip Media Player app for the new Pip-Boy 3000.",
+  "icon": "assets/ipip.png",
+  "previews": [],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/IPIP/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}

@@ -4,32 +4,32 @@
   "author": "@CodyTolene",
   "version": "2.0.0",
   "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
-  "icon": "bloodworm.png",
-  "previews": ["bloodworm.mp4"],
+  "icon": "assets/bloodworm.png",
+  "previews": ["assets/bloodworm.mp4"],
   "type": "game",
   "readme": "README.md",
   "storage": [
     { "name": "HOLO/BLOODWORM/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/BLOODWORM/bloodworm.json", "url": "bloodworm.json" }
+    { "name": "HOLO/BLOODWORM/bloodworm.json", "url": "assets/bloodworm.json" }
   ],
   "storageOptional": [
     {
       "label": "Eat (Sound Effect)",
       "name": "HOLO/BLOODWORM/bloodworm-eat.wav",
       "sizeKB": 10,
-      "url": "optional/bloodworm-eat.wav"
+      "url": "assets/optional/bloodworm-eat.wav"
     },
     {
       "label": "Die (Sound Effect)",
       "name": "HOLO/BLOODWORM/bloodworm-die.wav",
       "sizeKB": 12,
-      "url": "optional/bloodworm-die.wav"
+      "url": "assets/optional/bloodworm-die.wav"
     },
     {
       "label": "Start (Sound Effect)",
       "name": "HOLO/BLOODWORM/bloodworm-start.wav",
       "sizeKB": 19,
-      "url": "optional/bloodworm-start.wav"
+      "url": "assets/optional/bloodworm-start.wav"
     }
   ]
 }
