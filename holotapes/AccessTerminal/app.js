@@ -2,7 +2,7 @@
   const APP_ID = 'AccessTerminal';
 
   const GAME_NAME = 'ACCESS TERMINAL';
-  const GAME_VERSION = '1.0.0';
+  const GAME_VERSION = '2.1.0';
 
   const WORDS_DIR = 'HOLO/ACCESS/';
 
@@ -27,16 +27,16 @@
   const CLICK_DEBOUNCE = 450;
   const GRID_FONT = '4x6';
   const GRID_FONT_SCALE = 2;
-  const GRID_X_LEFT = 8;
-  const GRID_X_RIGHT = 172;
-  const HEADER_X = 14;
+  const GRID_X_LEFT = 14;
+  const GRID_X_RIGHT = 178;
+  const HEADER_X = 16;
   const KNOB_DEBOUNCE = 45;
   const LINE_HEIGHT = 13;
   const LINE_LEN = 15;
   const LOCKOUT_SECONDS = 5;
   const LOG_BOTTOM = H - 12;
   const LOG_LINE_HEIGHT = 10;
-  const LOG_X = 350;
+  const LOG_X = 346;
   const LOG_Y = 62;
   const MAX_ATTEMPTS = 4;
   const ROWS_PER_COLUMN = 18;
@@ -120,10 +120,10 @@
 
   function drawAttemptCounter() {
     h.setColor(C_MED).setFont(GRID_FONT, GRID_FONT_SCALE).setFontAlign(-1, -1);
-    h.drawString('ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL', HEADER_X, 9);
-    h.drawString('ENTER PASSWORD NOW', HEADER_X, 23);
+    h.drawString('ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL', HEADER_X, 12);
+    h.drawString('ENTER PASSWORD NOW', HEADER_X, 26);
 
-    const y = 48;
+    const y = 50;
     const label = attemptsRemaining + ' ATTEMPT(S) LEFT';
     h.setColor(C_MED).setFont(GRID_FONT, GRID_FONT_SCALE).setFontAlign(-1, -1);
     h.drawString(label, HEADER_X, y);
@@ -806,7 +806,7 @@
     cursorCol = 0;
     cursorRow = 0;
     gameState = 'playing';
-    logEntries = ['> SELECT ACCESS KEY'];
+    logEntries = ['> SELECT KEY'];
     password = '';
     spans = [];
 
