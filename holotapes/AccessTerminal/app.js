@@ -247,7 +247,7 @@
     h.drawString(diff.length + '-LETTER KEYS', W / 2, 190);
 
     h.setColor(C_DIM).setFont('6x8', 1);
-    h.drawString('LEFT KNOB CHANGES LEVEL', W / 2, 236);
+    h.drawString('LEFT/RIGHT KNOB TO CHANGE LEVEL', W / 2, 236);
     h.drawString('CLICK TO BEGIN', W / 2, 252);
   }
 

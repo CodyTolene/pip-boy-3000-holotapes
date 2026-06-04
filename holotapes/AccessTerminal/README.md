@@ -6,6 +6,10 @@
 
 - [@CodyTolene](https://github.com/CodyTolene)
 
+- [@pip-4111](https://github.com/pip-4111)
+
+- [@beaverboy-12](https://github.com/beaverboy-12)
+
 ### Description
 
 Crack locked RobCo terminals by guessing the correct password from a list of

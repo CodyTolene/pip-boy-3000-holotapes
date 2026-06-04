@@ -1,3 +1,28 @@
-1.0.0
+2.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/5
+- Tune UI a bit more: Fix up text sizing, spacing, alignment, etc.
 
-- Release first version of the Fallout 3/NV inspired terminal hacking mini-game.
+2.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/4
+- Release first version of the Fallout 3/NV inspired terminal hacking mini-game for the new Pip-Boy 3000.
+
+1.2.0
+https://github.com/CodyTolene/pip-boy-apps/pull/41
+- Clear memory before the game starts to prevent loading issues.
+
+1.1.1
+https://github.com/CodyTolene/pip-boy-apps/pull/34
+- Restore the likeness message to match the true Fallout behavior.
+
+1.1.0
+https://github.com/CodyTolene/pip-boy-apps/pull/28
+- Added new intro animation created by @beaverboy-12.
+- Fixed controls, no more scrolling to the bottom to get to the second grid.
+- Snippets are actually detected now, and have a 50/50 chance to reset your remaining attempts or remove a dud password.
+- Minor visual tweaks to be more accurate to the Fallout games.
+- Pip-Boy theme color support.
+
+1.0.0
+https://github.com/pip-4111/Porta-Hack
+https://github.com/CodyTolene/pip-boy-apps/pull/1
+- Add new game.
