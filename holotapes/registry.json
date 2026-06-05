@@ -79,8 +79,8 @@
     ]
   },
   {
-    "id": "ipip",
-    "name": "iPip",
+    "id": "iPip",
+    "name": "iPip Media Player",
     "author": "@CodyTolene",
     "version": "1.0.0",
     "description": "iPip Media Player app for the new Pip-Boy 3000.",
