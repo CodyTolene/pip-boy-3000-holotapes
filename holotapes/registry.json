@@ -38,6 +38,24 @@
     "storageOptional": []
   },
   {
+    "id": "blackjack",
+    "name": "Blackjack",
+    "author": "@trekker87",
+    "version": "1.0.0",
+    "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
+    "icon": "Blackjack/assets/blackjack.png",
+    "previews": [],
+    "type": "game",
+    "readme": "Blackjack/README.md",
+    "storage": [
+      {
+        "name": "HOLO/BLACKJACK/APP.JS",
+        "url": "Blackjack/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "bloodworm",
     "name": "Bloodworm",
     "author": "@CodyTolene",
@@ -79,6 +97,24 @@
     ]
   },
   {
+    "id": "checkers",
+    "name": "Checkers",
+    "author": "@trekker87",
+    "version": "1.0.0",
+    "description": "A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI opponent. Standard rules apply including forced jumps, multi-jumps, and king promotion.",
+    "icon": "Checkers/assets/checkers.png",
+    "previews": [],
+    "type": "game",
+    "readme": "Checkers/README.md",
+    "storage": [
+      {
+        "name": "HOLO/CHECKERS/APP.JS",
+        "url": "Checkers/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "iPip",
     "name": "iPip Media Player",
     "author": "@CodyTolene",
@@ -92,6 +128,24 @@
       {
         "name": "HOLO/IPIP/APP.JS",
         "url": "iPip/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "nukesweeper",
+    "name": "Nuke Sweeper",
+    "author": "@trekker87",
+    "version": "1.0.0",
+    "description": "A Minesweeper-style game for the Pip-Boy 3000. Navigate a 9x9 grid using the scroll wheels, reveal squares, and avoid the 10 hidden mines. Your first reveal is always safe.",
+    "icon": "NukeSweeper/assets/nukesweeper.png",
+    "previews": [],
+    "type": "game",
+    "readme": "NukeSweeper/README.md",
+    "storage": [
+      {
+        "name": "HOLO/NUKE_SWEEPER/APP.JS",
+        "url": "NukeSweeper/app.min.js"
       }
     ],
     "storageOptional": []
@@ -154,5 +208,23 @@
         "url": "Piptris/assets/piptris-whimsical.wav"
       }
     ]
+  },
+  {
+    "id": "vaulttimer",
+    "name": "Vault-Tec Timer",
+    "author": "@trekker87",
+    "version": "1.0.0",
+    "description": "A countdown timer app for the Pip-Boy 3000. Set the number of minutes, choose your alert style, and press the knob to start. When the timer expires, the device will alert you with sound, flashing lights, or both — your choice.",
+    "icon": "VaultTecTimer/assets/vaulttectimer.png",
+    "previews": [],
+    "type": "app",
+    "readme": "VaultTecTimer/README.md",
+    "storage": [
+      {
+        "name": "HOLO/VAULT_TEC_TIMER/APP.JS",
+        "url": "VaultTecTimer/app.min.js"
+      }
+    ],
+    "storageOptional": []
   }
 ]
