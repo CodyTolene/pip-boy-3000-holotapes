@@ -1,0 +1,8 @@
+{
+  "id": "checkers",
+  "name": "Checkers",
+  "version": "1.0",
+  "files": "HOLO/CHECKERS/APP.JS",
+  "src": "HOLO/CHECKERS/APP.JS",
+  "icon": "APPINFO/HOLO.IMG"
+}
