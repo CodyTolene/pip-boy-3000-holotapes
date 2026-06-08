@@ -43,7 +43,7 @@
     "author": "@trekker87",
     "version": "1.0.0",
     "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
-    "icon": "",
+    "icon": "Blackjack/assets/blackjack.png",
     "previews": [],
     "type": "game",
     "readme": "Blackjack/README.md",
@@ -217,7 +217,7 @@
     "description": "A countdown timer app for the Pip-Boy 3000. Set the number of minutes, choose your alert style, and press the knob to start. When the timer expires, the device will alert you with sound, flashing lights, or both — your choice.",
     "icon": "VaultTecTimer/assets/vaulttectimer.png",
     "previews": [],
-    "type": "game",
+    "type": "app",
     "readme": "VaultTecTimer/README.md",
     "storage": [
       {
