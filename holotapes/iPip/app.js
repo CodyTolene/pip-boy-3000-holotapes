@@ -27,7 +27,7 @@
   const LIST_START_Y = 76;
   const WAVE_X = 244;
   const WAVE_Y = 44;
-  const WAVE_W = 220;
+  const WAVE_W = 210;
   const WAVE_H = 162;
   const INFO_Y = WAVE_Y + WAVE_H + 22;
 
@@ -296,10 +296,11 @@
   function drawWaveform() {
     if (!wavePoly) return;
     const ym = WAVE_Y + WAVE_H / 2;
-    h.setClipRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
-    h.clearRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
+    const waveBottom = WAVE_Y + WAVE_H - 10;
+    h.setClipRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
+    h.clearRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
     if (isAudioPlaying) {
-      Pip.getAudioWaveform(wavePoly, WAVE_Y, WAVE_Y + WAVE_H);
+      Pip.getAudioWaveform(wavePoly, WAVE_Y, waveBottom);
     } else {
       let t = getTime();
       for (let i = 1; i < 60; i += 2) {
@@ -314,9 +315,9 @@
     const x = WAVE_X;
     const y = WAVE_Y;
     const bw = WAVE_W + 10;
-    const bh = WAVE_H + 10;
+    const bh = WAVE_H + 15;
     let bx = x;
-    let by = y;
+    let by = y + 2;
 
     h.setColor(C_MED);
     h.fillRect(x + bw, y, x + bw + 2, y + bh);
@@ -462,7 +463,7 @@
   function initWaveform() {
     wavePoly = new Uint16Array(60);
     for (let i = 0; i < 60; i += 2) {
-      wavePoly[i] = WAVE_X + ((i >> 1) * WAVE_W) / 30;
+      wavePoly[i] = WAVE_X + 5 + ((i >> 1) * WAVE_W) / 30;
     }
   }
 
@@ -622,6 +623,14 @@
     if (volHudTimeout) clearTimeout(volHudTimeout);
     volHudTimeout = setTimeout(function () {
       volHudTimeout = null;
+      h.setColor(C_BLACK).fillRect(
+        WAVE_X,
+        WAVE_Y,
+        WAVE_X + WAVE_W - 1,
+        WAVE_Y + WAVE_H,
+      );
+      h.flip();
+      Pip.lastFlip = getTime();
       startWaveform();
     }, VOL_HUD_MS);
   }
