@@ -1,13 +1,12 @@
 (function () {
-
-  const APP_ID = "NUKESWEEPER";
+  const APP_ID = 'NUKESWEEPER';
   const COLS = 9;
   const ROWS = 9;
   const MINES = 10;
   const CELL = 32;
   const GRID_X = Math.floor((480 - COLS * CELL) / 2); // 96
   const GRID_Y = 16;
-  const STATES = { GAME: "game", WIN: "win", LOSE: "lose" };
+  const STATES = { GAME: 'game', WIN: 'win', LOSE: 'lose' };
 
   let grid, revealed;
   let curX, curY;
@@ -52,8 +51,16 @@
         let count = 0;
         for (let dr = -1; dr <= 1; dr++) {
           for (let dc = -1; dc <= 1; dc++) {
-            let nr = r + dr, nc = c + dc;
-            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === -1) count++;
+            let nr = r + dr,
+              nc = c + dc;
+            if (
+              nr >= 0 &&
+              nr < ROWS &&
+              nc >= 0 &&
+              nc < COLS &&
+              grid[nr][nc] === -1
+            )
+              count++;
           }
         }
         grid[r][c] = count;
@@ -67,7 +74,8 @@
     let queue = [[startR, startC]];
     while (queue.length > 0) {
       let next = queue.pop();
-      let r = next[0], c = next[1];
+      let r = next[0],
+        c = next[1];
       if (r < 0 || r >= ROWS || c < 0 || c >= COLS) continue;
       if (revealed[r][c]) continue;
       revealed[r][c] = true;
@@ -75,8 +83,15 @@
         for (let dr = -1; dr <= 1; dr++) {
           for (let dc = -1; dc <= 1; dc++) {
             if (dr !== 0 || dc !== 0) {
-              let nr = r + dr, nc = c + dc;
-              if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && !revealed[nr][nc]) {
+              let nr = r + dr,
+                nc = c + dc;
+              if (
+                nr >= 0 &&
+                nr < ROWS &&
+                nc >= 0 &&
+                nc < COLS &&
+                !revealed[nr][nc]
+              ) {
                 queue.push([nr, nc]);
               }
             }
@@ -132,23 +147,31 @@
 
   // --- Drawing ---
 
-  function cellX(c) { return GRID_X + c * CELL; }
-  function cellY(r) { return GRID_Y + r * CELL; }
+  function cellX(c) {
+    return GRID_X + c * CELL;
+  }
+  function cellY(r) {
+    return GRID_Y + r * CELL;
+  }
 
   function drawCell(r, c) {
     let x = cellX(c);
     let y = cellY(r);
-    let isCursor = (r === curY && c === curX);
+    let isCursor = r === curY && c === curX;
 
     if (revealed[r][c]) {
       h.setColor(2).drawRect(x, y, x + CELL - 1, y + CELL - 1);
       if (grid[r][c] > 0) {
-        h.setColor(3).setFontMonofonto18().setFontAlign(0, 0)
+        h.setColor(3)
+          .setFontMonofonto18()
+          .setFontAlign(0, 0)
           .drawString(grid[r][c], x + CELL / 2, y + CELL / 2);
       } else if (grid[r][c] === -1) {
-        let isHit = (r === curY && c === curX && gameState === STATES.LOSE);
-        h.setColor(isHit ? 1 : 2).setFontMonofonto18().setFontAlign(0, 0)
-          .drawString("*", x + CELL / 2, y + CELL / 2);
+        let isHit = r === curY && c === curX && gameState === STATES.LOSE;
+        h.setColor(isHit ? 1 : 2)
+          .setFontMonofonto18()
+          .setFontAlign(0, 0)
+          .drawString('*', x + CELL / 2, y + CELL / 2);
       }
     } else {
       if (isCursor) {
@@ -169,19 +192,27 @@
   }
 
   function drawStatus() {
-    h.setColor(3).setFontMonofonto16().setFontAlign(-1, 0)
-      .drawString("MINES: " + MINES, 10, 305);
-    h.setColor(2).setFontMonofonto16().setFontAlign(1, 0)
-      .drawString("PRESS KNOB TO DIG", 470, 305);
+    h.setColor(3)
+      .setFontMonofonto16()
+      .setFontAlign(-1, 0)
+      .drawString('MINES: ' + MINES, 10, 305);
+    h.setColor(2)
+      .setFontMonofonto16()
+      .setFontAlign(1, 0)
+      .drawString('PRESS KNOB TO DIG', 470, 305);
   }
 
   function drawOverlay() {
     if (gameState === STATES.WIN) {
-      h.setColor(3).setFontMonofonto23().setFontAlign(0, 0)
-        .drawString("** YOU WIN! **", 240, 305);
+      h.setColor(3)
+        .setFontMonofonto23()
+        .setFontAlign(0, 0)
+        .drawString('** YOU WIN! **', 240, 305);
     } else if (gameState === STATES.LOSE) {
-      h.setColor(1).setFontMonofonto23().setFontAlign(0, 0)
-        .drawString("** BOOM! **", 240, 305);
+      h.setColor(1)
+        .setFontMonofonto23()
+        .setFontAlign(0, 0)
+        .drawString('** BOOM! **', 240, 305);
     }
   }
 
@@ -202,14 +233,14 @@
   function onLeftWheel(d) {
     if (gameState !== STATES.GAME) return;
     curY = Math.max(0, Math.min(ROWS - 1, curY + d));
-    Pip.playSound("SCROLL");
+    Pip.playSound('SCROLL');
     drawAll();
   }
 
   function onRightWheel(d) {
     if (gameState !== STATES.GAME) return;
     curX = Math.max(0, Math.min(COLS - 1, curX + d));
-    Pip.playSound("SCROLL");
+    Pip.playSound('SCROLL');
     drawAll();
   }
 
@@ -220,12 +251,12 @@
     Pip.audioStop();
     initGrid();
 
-    Pip.onExclusive("knob1", onLeftWheel);
-    Pip.onExclusive("knob2", onRightWheel);
+    Pip.onExclusive('knob1', onLeftWheel);
+    Pip.onExclusive('knob2', onRightWheel);
 
     clickWatch = setWatch(onClick, ENC1_PRESS, {
       repeat: true,
-      edge: "rising",
+      edge: 'rising',
       debounce: 50,
     });
 
@@ -239,8 +270,8 @@
 
     if (redrawInterval) clearInterval(redrawInterval);
     if (clickWatch) clearWatch(clickWatch);
-    Pip.removeListener("knob1", onLeftWheel);
-    Pip.removeListener("knob2", onRightWheel);
+    Pip.removeListener('knob1', onLeftWheel);
+    Pip.removeListener('knob2', onRightWheel);
 
     Pip.audioStop();
     h.clear();
@@ -255,5 +286,4 @@
     fullscreen: true,
     remove: remove,
   };
-
-})
+});

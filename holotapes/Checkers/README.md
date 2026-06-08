@@ -1,16 +1,16 @@
 # Checkers
 
-A two-player Checkers game for the Pip-Boy 3000, with you playing against an
-AI opponent. Standard rules apply including forced jumps, multi-jumps, and
-king promotion.
+A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI
+opponent. Standard rules apply including forced jumps, multi-jumps, and king
+promotion.
 
 ## Controls
 
-| Input | Action |
-|---|---|
-| Left scroll wheel (knob1) up/down | Move cursor up/down |
-| Right scroll wheel (knob2) left/right | Move cursor left/right |
-| Left scroll wheel press | Select piece / Confirm move / Deselect / Restart |
+| Input                                 | Action                                           |
+| ------------------------------------- | ------------------------------------------------ |
+| Left scroll wheel (knob1) up/down     | Move cursor up/down                              |
+| Right scroll wheel (knob2) left/right | Move cursor left/right                           |
+| Left scroll wheel press               | Select piece / Confirm move / Deselect / Restart |
 
 ## Rules
 

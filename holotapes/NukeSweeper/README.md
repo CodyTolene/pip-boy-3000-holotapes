@@ -6,11 +6,11 @@ is always safe.
 
 ## Controls
 
-| Input | Action |
-|---|---|
-| Left scroll wheel (knob1) up/down | Move cursor up/down |
-| Right scroll wheel (knob2) left/right | Move cursor left/right |
-| Left scroll wheel press | Reveal selected square / Restart after game over |
+| Input                                 | Action                                           |
+| ------------------------------------- | ------------------------------------------------ |
+| Left scroll wheel (knob1) up/down     | Move cursor up/down                              |
+| Right scroll wheel (knob2) left/right | Move cursor left/right                           |
+| Left scroll wheel press               | Reveal selected square / Restart after game over |
 
 ## Rules
 

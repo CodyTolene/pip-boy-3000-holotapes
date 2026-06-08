@@ -6,11 +6,11 @@ device will alert you with sound, flashing lights, or both — your choice.
 
 ## Controls
 
-| Input | Action |
-|---|---|
-| Left scroll wheel (knob1) up/down | Cycle alert type (SOUND ONLY / LIGHTS ONLY / LIGHTS AND SOUND) |
-| Right scroll wheel (knob2) left/right | Adjust minutes (1–99) |
-| Left scroll wheel press | Start timer / Cancel timer / Reset after alert |
+| Input                                 | Action                                                         |
+| ------------------------------------- | -------------------------------------------------------------- |
+| Left scroll wheel (knob1) up/down     | Cycle alert type (SOUND ONLY / LIGHTS ONLY / LIGHTS AND SOUND) |
+| Right scroll wheel (knob2) left/right | Adjust minutes (1–99)                                          |
+| Left scroll wheel press               | Start timer / Cancel timer / Reset after alert                 |
 
 ## Screens
 

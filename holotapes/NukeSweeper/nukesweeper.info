@@ -1,8 +1,0 @@
-{
-  "id": "nukesweeper",
-  "name": "NukeSweeper",
-  "version": "1.0",
-  "files": "HOLO/NUKESWEEPER/APP.JS",
-  "src": "HOLO/NUKESWEEPER/APP.JS",
-  "icon": "APPINFO/HOLO.IMG"
-}

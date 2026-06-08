@@ -5,11 +5,11 @@ using a single shuffled deck, with variable betting and standard casino rules.
 
 ## Controls
 
-| Input | Action |
-|---|---|
-| Left scroll wheel (knob1) up/down | Adjust bet amount (10-chip increments) |
-| Right scroll wheel (knob2) left/right | Cycle between HIT and STAND |
-| Left scroll wheel press | Deal / Confirm action / Continue after result |
+| Input                                 | Action                                        |
+| ------------------------------------- | --------------------------------------------- |
+| Left scroll wheel (knob1) up/down     | Adjust bet amount (10-chip increments)        |
+| Right scroll wheel (knob2) left/right | Cycle between HIT and STAND                   |
+| Left scroll wheel press               | Deal / Confirm action / Continue after result |
 
 ## Rules
 
