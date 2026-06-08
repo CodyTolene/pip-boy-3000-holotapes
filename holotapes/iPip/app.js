@@ -376,6 +376,7 @@
       return;
     }
 
+    if (isAudioPlaying) suppressAudioStopped = true;
     isAudioPlaying = false;
     Pip.radioClipPlaying = false;
     try {
@@ -507,6 +508,18 @@
   }
 
   function navigateToSongs(stationName) {
+    if (isAudioPlaying) suppressAudioStopped = true;
+    isAudioPlaying = false;
+    Pip.radioClipPlaying = false;
+    try {
+      Pip.audioStop();
+    } catch (e) {}
+    playingPath = null;
+    playingName = null;
+    playingStation = null;
+    isRandom = false;
+    randomQueue = [];
+
     view = 'songs';
     currentStation = stationName;
     songPage = 0;
@@ -648,7 +661,7 @@
     const base = pathJoin(MUSIC_DIR, stationName);
     const full = pathJoin(base, songName);
 
-    suppressAudioStopped = true;
+    if (isAudioPlaying) suppressAudioStopped = true;
     isAudioPlaying = false;
     Pip.radioClipPlaying = false;
     try {
