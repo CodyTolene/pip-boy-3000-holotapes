@@ -7,7 +7,7 @@
 (function () {
   const APP_ID = 'iPip';
   const APP_NAME = 'iPip Media Player';
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.0.1';
 
   const PAGE_SIZE = 8;
   const VISIBLE_ROWS = 10;
@@ -73,6 +73,8 @@
   let clickWatch = null;
   let lastKnobTime = 0;
   let lastVolKnobTime = 0;
+  let lastSelectTime = 0;
+  const POST_SELECT_IGNORE_MS = 150;
 
   const VOL_MIN = 0;
   const VOL_MAX = 27;
@@ -388,6 +390,7 @@
 
   function handleSelect() {
     if (removed) return;
+    lastSelectTime = Date.now();
     const item = listItems[selectedIdx];
     if (!item) return;
 
@@ -548,6 +551,7 @@
   function onKnob1(dir) {
     const now = Date.now();
     if (now - lastKnobTime < KNOB_DEBOUNCE_MS) return;
+    if (now - lastSelectTime < POST_SELECT_IGNORE_MS) return;
     lastKnobTime = now;
 
     selectedIdx += dir > 0 ? 1 : -1;
@@ -760,6 +764,7 @@
     if (typeof ENC1_PRESS !== 'undefined') {
       clickWatch = setWatch(
         function (e) {
+          lastSelectTime = Date.now();
           if (e.state) handleSelect();
         },
         ENC1_PRESS,
