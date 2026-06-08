@@ -134,7 +134,6 @@
     drawFooter();
     drawTitleBar();
     drawWaveformBorder();
-    drawNowPlayingSection();
     drawNowPlaying(playingName, false);
     drawList();
     startWaveform();
@@ -236,14 +235,17 @@
   }
 
   function drawNowPlaying(name, isError) {
-    const clearY = INFO_Y + 12;
-    h.setColor(C_BLACK).fillRect(WAVE_X, clearY, W - 8, clearY + 55);
+    const clearY = INFO_Y;
+    h.setColor(C_BLACK).fillRect(WAVE_X, clearY, W - 1, clearY + 55);
 
     if (!name) return;
 
-    const maxPx = W - WAVE_X - 12;
     const color = isError ? C_DIM : C_BRIGHT;
-    const display = isError ? name : ellipsize(name, maxPx);
+    const display = isError
+      ? name
+      : name.length > 19
+        ? name.slice(0, 16) + '...'
+        : name;
 
     h.setColor(color)
       .setFont('6x8', 2)
@@ -268,13 +270,6 @@
 
     h.flip();
     Pip.lastFlip = getTime();
-  }
-
-  function drawNowPlayingSection() {
-    h.setColor(C_DIM)
-      .setFont('6x8')
-      .setFontAlign(-1, -1)
-      .drawString('NOW PLAYING', WAVE_X, INFO_Y);
   }
 
   function drawTitleBar() {
