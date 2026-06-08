@@ -2,7 +2,7 @@
   "id": "iPip",
   "name": "iPip Media Player",
   "author": "@CodyTolene",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "iPip is a WAV media player that turns each folder inside `MUSIC/` into a station playlist. Browse your stations and play tracks one at a time or in random order.",
   "icon": "assets/iPip.png",
   "previews": [],

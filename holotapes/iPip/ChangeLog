@@ -1,5 +1,9 @@
 1.0.1
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/6
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/9
+- Improve list "NEXT" and "PREV" page labels, and play a sound when clicked.
+
+1.0.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/8
 - Fix iPip song selector moving up after select.
 - Fix up random play
 - Fix up now playing section positioning.

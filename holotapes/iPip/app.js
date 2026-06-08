@@ -7,7 +7,7 @@
 (function () {
   const APP_ID = 'iPip';
   const APP_NAME = 'iPip Media Player';
-  const APP_VERSION = '1.0.1';
+  const APP_VERSION = '1.0.2';
 
   const PAGE_SIZE = 8;
   const VISIBLE_ROWS = 10;
@@ -104,11 +104,11 @@
       items.push({ type: 'song', name: song.name, tooLong: tooLong });
     }
     if (songPage > 0) {
-      items.push({ type: 'prev', label: '< PREV PAGE' });
+      items.push({ type: 'prev', label: 'PREV PAGE' });
     }
     const maxPage = Math.floor(Math.max(0, allSongs.length - 1) / PAGE_SIZE);
     if (songPage < maxPage) {
-      items.push({ type: 'next', label: 'NEXT PAGE >' });
+      items.push({ type: 'next', label: 'NEXT PAGE' });
     }
     return items;
   }
@@ -413,6 +413,7 @@
         scrollOffset = 0;
         rebuildList();
         drawList();
+        uiSound('TAB');
       }
       return;
     }
@@ -425,6 +426,7 @@
         scrollOffset = 0;
         rebuildList();
         drawList();
+        uiSound('TAB');
       }
       return;
     }
