@@ -1,0 +1,29 @@
+{
+  "id": "flappy",
+  "name": "Flappy Roach",
+  "author": "@JLDenson",
+  "version": "1.0.0",
+  "description": "A Fallout-themed take on the classic Flappy Bird. Guide a cockroach through the Wasteland, dodging every obstacle in its path.",
+  "icon": "assets/flappyroach.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/FLAPPY/APP.JS", "url": "app.min.js" },
+    {
+      "name": "HOLO/FLAPPY/BeetleFlying.wav",
+      "url": "assets/BeetleFlying.wav"
+    },
+    { "name": "HOLO/FLAPPY/GameOver.wav", "url": "assets/GameOver.wav" },
+    {
+      "name": "HOLO/FLAPPY/HitGround.wav",
+      "url": "assets/HitGround.wav"
+    },
+    {
+      "name": "HOLO/FLAPPY/SplatOnPipe.wav",
+      "url": "assets/SplatOnPipe.wav"
+    },
+    { "name": "HOLO/FLAPPY/StartGame.wav", "url": "assets/StartGame.wav" }
+  ],
+  "storageOptional": []
+}
