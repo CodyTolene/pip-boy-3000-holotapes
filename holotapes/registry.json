@@ -115,6 +115,44 @@
     "storageOptional": []
   },
   {
+    "id": "flappy",
+    "name": "Flappy Roach",
+    "author": "@JLDenson",
+    "version": "1.0.0",
+    "description": "A Fallout-themed take on the classic Flappy Bird. Guide a cockroach through the Wasteland, dodging every obstacle in its path.",
+    "icon": "FlappyRoach/assets/flappyroach.png",
+    "previews": [],
+    "type": "game",
+    "readme": "FlappyRoach/README.md",
+    "storage": [
+      {
+        "name": "HOLO/FLAPPY/APP.JS",
+        "url": "FlappyRoach/app.min.js"
+      },
+      {
+        "name": "HOLO/FLAPPY/BeetleFlying.wav",
+        "url": "FlappyRoach/assets/BeetleFlying.wav"
+      },
+      {
+        "name": "HOLO/FLAPPY/GameOver.wav",
+        "url": "FlappyRoach/assets/GameOver.wav"
+      },
+      {
+        "name": "HOLO/FLAPPY/HitGround.wav",
+        "url": "FlappyRoach/assets/HitGround.wav"
+      },
+      {
+        "name": "HOLO/FLAPPY/SplatOnPipe.wav",
+        "url": "FlappyRoach/assets/SplatOnPipe.wav"
+      },
+      {
+        "name": "HOLO/FLAPPY/StartGame.wav",
+        "url": "FlappyRoach/assets/StartGame.wav"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "iPip",
     "name": "iPip Media Player",
     "author": "@CodyTolene",
@@ -146,6 +184,52 @@
       {
         "name": "HOLO/NUKE_SWEEPER/APP.JS",
         "url": "NukeSweeper/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "piptactoe",
+    "name": "Pip-Tac-Toe",
+    "author": "@pip-4111 @JLDenson",
+    "version": "1.0.0",
+    "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
+    "icon": "Pip-Tac-Toe/assets/piptactoe.png",
+    "previews": [],
+    "type": "game",
+    "readme": "Pip-Tac-Toe/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPTACTOE/APP.JS",
+        "url": "Pip-Tac-Toe/app.min.js"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/Loser.wav",
+        "url": "Pip-Tac-Toe/assets/Loser.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/PlaceO.wav",
+        "url": "Pip-Tac-Toe/assets/PlaceO.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/PlaceX.wav",
+        "url": "Pip-Tac-Toe/assets/PlaceX.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/StartGame.wav",
+        "url": "Pip-Tac-Toe/assets/StartGame.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/StartPlay.wav",
+        "url": "Pip-Tac-Toe/assets/StartPlay.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/Tied.wav",
+        "url": "Pip-Tac-Toe/assets/Tied.wav"
+      },
+      {
+        "name": "HOLO/PIPTACTOE/Winner.wav",
+        "url": "Pip-Tac-Toe/assets/Winner.wav"
       }
     ],
     "storageOptional": []

@@ -1,0 +1,22 @@
+{
+  "id": "piptactoe",
+  "name": "Pip-Tac-Toe",
+  "author": "@pip-4111 @JLDenson",
+  "version": "1.0.0",
+  "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
+  "icon": "assets/piptactoe.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/PIPTACTOE/APP.JS", "url": "app.min.js" },
+    { "name": "HOLO/PIPTACTOE/Loser.wav", "url": "assets/Loser.wav" },
+    { "name": "HOLO/PIPTACTOE/PlaceO.wav", "url": "assets/PlaceO.wav" },
+    { "name": "HOLO/PIPTACTOE/PlaceX.wav", "url": "assets/PlaceX.wav" },
+    { "name": "HOLO/PIPTACTOE/StartGame.wav", "url": "assets/StartGame.wav" },
+    { "name": "HOLO/PIPTACTOE/StartPlay.wav", "url": "assets/StartPlay.wav" },
+    { "name": "HOLO/PIPTACTOE/Tied.wav", "url": "assets/Tied.wav" },
+    { "name": "HOLO/PIPTACTOE/Winner.wav", "url": "assets/Winner.wav" }
+  ],
+  "storageOptional": []
+}
