@@ -151,6 +151,24 @@
     "storageOptional": []
   },
   {
+    "id": "pipman",
+    "name": "PIPMAN",
+    "author": "@McBeefy34",
+    "version": "1.0.0",
+    "description": "A Pac-Man-inspired maze game where you navigate a pipman through a labyrinth, collecting dots and power pellets while avoiding ghosts.",
+    "icon": "PipMan/assets/missing-icon.png",
+    "previews": [],
+    "type": "game",
+    "readme": "PipMan/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPMAN/APP.JS",
+        "url": "PipMan/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "piptris",
     "name": "Piptris",
     "author": "@CodyTolene",
