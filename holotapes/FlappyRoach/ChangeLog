@@ -1,3 +1,10 @@
+1.0.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/tree/main/holotapes/FlappyRoach
+- Chained every call in Flappy Roach that I possibly could.
+- Removed the startGame function and just inlined that.
+- Cleared out the flushScreen function and all it does now is h.clearRect().
+- Optimized overall speed and performance with new parameters.
+
 1.0.0
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/11
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/10
 - Port Flappy Roach from the Pip-Boy 3000 Mk V to the new Pip-Boy 3000.
