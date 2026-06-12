@@ -1,14 +1,14 @@
 // ============================================================
-//  PIP MAN  —  Pip-Boy 3000 App]
+//  PIP MAN  —  Pip-Boy 3000 App
 //  Description:
-//  A Pac-Man-inspired maze game where you navigate a pipman through a labyrinth, collecting dots and power pellets while avoiding ghosts. Eat all the dots to clear the sector and advance to the next level, but beware of the roaming ghosts! Use power pellets strategically to turn the tables and eat the ghosts for extra points.
+//  PipMan is a Pac-Man inspired game built for the Pip-Boy 3000, blending retro gaming nostalgia with the iconic wasteland aesthetic. Navigate the maze, dodge ghouls, and collect caps — all from the wrist-mounted terminal of the Commonwealth.
 //  Controls:
 //    knob1 (scroll wheel) → UP (-1) / DOWN (+1)
 //    knob2 (thumb wheel)  → LEFT (-1) / RIGHT (+1)
 //    ENC1_PRESS           → start / pause / resume / confirm
 //  Scoring:
 //    10 points per dot, 50 points per power pellet
-//    200 points per ghost eaten, plus 500 points and level increase on clearing all dots
+//    200 points per ghoul eaten, plus 500 points and level increase on clearing all dots
 //
 //  Version 1.0.1
 //
@@ -51,9 +51,9 @@ var tI=null,dI=null,pW=null;
 var lk1=0,lk2=0;
 var gx=[0,0,0,0],gy=[0,0,0,0],gdx=[0,0,0,0],gdy=[0,0,0,0];
 var gsc=[0,0,0,0],gde=[0,0,0,0],grs=[0,0,0,0],gmt=[0,0,0,0];
-// dirty list: cells to repaint each draw (max ~12: player old+new, 4 ghosts old+new, 4 extra)
 var dirX=[],dirY=[];
 var o0,o1,o2,o3,on;
+var opx,opy,ogx=[0,0,0,0],ogy=[0,0,0,0];
 
 function tile(tx,ty){
   if(tx<0||tx>=COLS||ty<0||ty>=ROWS)return 1;
@@ -67,15 +67,11 @@ function mkMap(){
   for(var j=0;j<map.length;j++){var t=map[j];if(t===0||t===3)dots++;}
 }
 
-function markDirty(x,y){
-  dirX.push(x);dirY.push(y);
-}
+function markDirty(x,y){dirX.push(x);dirY.push(y);}
 
-// Draw a single tile cell at grid position (c,r) from current map state
 function drawCell(c,r){
   var t=map[r*COLS+c];
   var x=OX+c*TW,y=OY+r*TH;
-  // always clear cell first
   h.setColor(0).fillRect(x,y,x+TW-1,y+TH-1);
   if(t===1){
     h.setColor(2).fillRect(x,y,x+TW-1,y+TH-1);
@@ -101,7 +97,6 @@ function drawFullMaze(){
 function drawSprite(c,r){
   var x=OX+c*TW,y=OY+r*TH;
   var cx=x+(TW>>1),cy=y+(TH>>1);
-  // check if a ghost is here
   for(var i=0;i<4;i++){
     if(!gde[i]&&!grs[i]&&gx[i]===c&&gy[i]===r){
       if(gsc[i]){
@@ -114,7 +109,6 @@ function drawSprite(c,r){
       return;
     }
   }
-  // check if player is here
   if(px===c&&py===r){
     var fl=pdx<0?-1:1;
     h.setColor(1).fillRect(cx-3*S,cy-5*S,cx+3*S,cy-3*S);
@@ -122,15 +116,23 @@ function drawSprite(c,r){
     h.setColor(0).fillRect(cx+fl*S,cy-2*S,cx+fl*2*S,cy);
     return;
   }
-  // otherwise just show tile content
   drawCell(c,r);
 }
 
 function drawHUD(){
-  // clear HUD strip
   h.setColor(0).fillRect(0,0,W-1,8);
   h.setFont('6x8',1).setFontAlign(-1,-1).setColor(3).drawString(score,2,1);
   h.setFontAlign(1,-1).setColor(3).drawString(lives>2?'OOO':lives>1?'OO':lives>0?'O':'',W-2,1);
+}
+
+function drawBox(l1,l2){
+  var bw=130,bh=l2?38:20;
+  var bx=(W-bw)>>1,by=(H-bh)>>1;
+  h.setColor(0).fillRect(bx,by,bx+bw,by+bh);
+  h.setColor(3).drawRect(bx,by,bx+bw,by+bh);
+  h.setFont('6x8',1).setFontAlign(0,0);
+  h.setColor(2).drawString(l1,W/2,H/2-(l2?8:0));
+  if(l2)h.setColor(3).drawString(l2,W/2,H/2+10);
 }
 
 function spawnP(){px=10;py=9;pdx=1;pdy=0;pendx=1;pendy=0;}
@@ -142,7 +144,7 @@ function spawnG(){
 }
 
 function stepP(){
-  var opx=px,opy=py;
+  opx=px;opy=py;
   if(tile(px+pendx,py+pendy)!==1){pdx=pendx;pdy=pendy;}
   var nx=px+pdx,ny=py+pdy;
   if(tile(nx,ny)!==1){px=nx;py=ny;}
@@ -159,9 +161,10 @@ function stepP(){
 
 function stepG(){
   for(var i=0;i<4;i++){
+    ogx[i]=gx[i];ogy[i]=gy[i];
     if(grs[i]>0){grs[i]--;continue;}
     if(gde[i]){gde[i]=0;gsc[i]=0;gx[i]=GX[i];gy[i]=GY[i];gdx[i]=1;gdy[i]=0;}
-    var ev=gsc[i]?4:2;
+    var ev=gsc[i]?2:1;
     gmt[i]++;
     if(gmt[i]<ev)continue;
     gmt[i]=0;
@@ -189,19 +192,23 @@ function stepG(){
   }
 }
 
-function chkCol(){
-  for(var i=0;i<4;i++){
-    if(gde[i]||grs[i]>0||gx[i]!==px||gy[i]!==py)continue;
-    if(gsc[i]){gde[i]=1;gsc[i]=0;grs[i]=8;score+=200;}
-    else{
-      lives--;
-      if(lives<=0){if(score>hiScore)hiScore=score;gs=ST_OVER;}
-      else{gs=ST_DEAD;stimer=25;}
-    }
+function hit(i){
+  if(gsc[i]){gde[i]=1;gsc[i]=0;grs[i]=8;score+=200;}
+  else{
+    lives--;
+    if(lives<=0){if(score>hiScore)hiScore=score;gs=ST_OVER;}
+    else{gs=ST_DEAD;stimer=25;}
   }
 }
 
-// Logic tick: 100ms (10Hz) — handles movement, AI, collisions
+function chkCol(){
+  for(var i=0;i<4;i++){
+    if(gde[i]||grs[i]>0)continue;
+    if(gx[i]===px&&gy[i]===py){hit(i);continue;}
+    if(gx[i]===opx&&gy[i]===opy&&ogx[i]===px&&ogy[i]===py)hit(i);
+  }
+}
+
 function onTick(){
   if(gs===ST_DEAD||gs===ST_CLEAR){
     stimer--;
@@ -217,17 +224,6 @@ function onTick(){
   stepP();stepG();chkCol();
 }
 
-function drawBox(l1,l2){
-  var bw=130,bh=l2?38:20;
-  var bx=(W-bw)>>1,by=(H-bh)>>1;
-  h.setColor(0).fillRect(bx,by,bx+bw,by+bh);
-  h.setColor(3).drawRect(bx,by,bx+bw,by+bh);
-  h.setFont('6x8',1).setFontAlign(0,0);
-  h.setColor(2).drawString(l1,W/2,H/2-(l2?8:0));
-  if(l2)h.setColor(3).drawString(l2,W/2,H/2+10);
-}
-
-// Draw tick: 33ms (30Hz) — only repaints dirty cells
 function onDraw(){
   if(gs===ST_START){
     h.clear(1);
@@ -246,19 +242,17 @@ function onDraw(){
     h.clear(1);
     h.setFont('6x8',3).setFontAlign(0,0).setColor(3).drawString('GAME OVER',W/2,H/2-60);
     h.setFont('6x8',2).setColor(2).drawString('Click to RESTART',W/2,H/2-20);
-    h.setFont('6x8',1).setColor(3)
+    h.setFont('6x8',2).setColor(3)
       .drawString('Score: '+score,W/2,H/2+5)
-      .drawString('Level: '+level,W/2,H/2+20);
-    h.setColor(2).drawString('High Score: '+hiScore,W/2,H/2+40);
+      .drawString('Level: '+level,W/2,H/2+25);
+    h.setColor(2).drawString('High Score: '+hiScore,W/2,H/2+45);
     h.flip();Pip.lastFlip=getTime();return;
   }
   if(gs===ST_PAUSE){
     drawBox('-- PAUSED --','');
     h.flip();Pip.lastFlip=getTime();return;
   }
-  // paint only dirty cells
   for(var k=0;k<dirX.length;k++)drawSprite(dirX[k],dirY[k]);
-  // pellet cells always need refresh for blink (only 4 pellets max)
   for(var j=0;j<map.length;j++){
     if(map[j]===3){var pc=j%COLS,pr=(j/COLS)|0;drawCell(pc,pr);}
   }
@@ -276,34 +270,38 @@ function reset(){
   dirX=[];dirY=[];
 }
 
+function onK1(d){
+  if(!d)return;var n=Date.now();if(n-lk1<20)return;lk1=n;
+  if(gs===ST_PLAY){pendy=d<0?-1:1;pendx=0;}
+}
+function onK2(d){
+  if(!d)return;var n=Date.now();if(n-lk2<20)return;lk2=n;
+  if(gs===ST_PLAY){pendx=d<0?-1:1;pendy=0;}
+}
+function onBtn(e){
+  if(!e.state)return;
+  if(gs===ST_START||gs===ST_OVER)reset();
+  else if(gs===ST_PLAY){gs=ST_PAUSE;}
+  else if(gs===ST_PAUSE){gs=ST_PLAY;h.clear(1);drawFullMaze();drawHUD();dirX=[];dirY=[];}
+  else if(gs===ST_DEAD||gs===ST_CLEAR)stimer=0;
+}
+
 function start(){
   h.clear();Pip.audioStop();
   hiScore=0;
   try{var d=JSON.parse(fs.readFile('HOLO/PIPMAN/save.json'));hiScore=d.h||0;}catch(e){}
   gs=ST_START;mkMap();score=0;lives=3;level=1;ftimer=0;ptick=0;gtick=0;
   spawnP();spawnG();dirX=[];dirY=[];
-  Pip.onExclusive('knob1',function(d){
-    if(!d)return;var n=Date.now();if(n-lk1<20)return;lk1=n;
-    if(gs===ST_PLAY){pendy=d<0?-1:1;pendx=0;}
-  });
-  Pip.onExclusive('knob2',function(d){
-    if(!d)return;var n=Date.now();if(n-lk2<20)return;lk2=n;
-    if(gs===ST_PLAY){pendx=d<0?-1:1;pendy=0;}
-  });
-  pW=setWatch(function(e){
-    if(!e.state)return;
-    if(gs===ST_START||gs===ST_OVER)reset();
-    else if(gs===ST_PLAY){gs=ST_PAUSE;}
-    else if(gs===ST_PAUSE){gs=ST_PLAY;h.clear(1);drawFullMaze();drawHUD();dirX=[];dirY=[];}
-    else if(gs===ST_DEAD||gs===ST_CLEAR)stimer=0;
-  },ENC1_PRESS,{repeat:true,edge:'both',debounce:20});
+  Pip.onExclusive('knob1',onK1);
+  Pip.onExclusive('knob2',onK2);
+  pW=setWatch(onBtn,ENC1_PRESS,{repeat:true,edge:'both',debounce:20});
   onDraw();
   tI=setInterval(onTick,100);
   dI=setInterval(onDraw,33);
 }
 
 function remove(){
-  Pip.removeListener('knob1');Pip.removeListener('knob2');
+  Pip.removeListener('knob1',onK1);Pip.removeListener('knob2',onK2);
   clearInterval(tI);clearInterval(dI);clearWatch(pW);
   Pip.audioStop();h.clear();
   try{fs.writeFile('HOLO/PIPMAN/save.json',JSON.stringify({h:hiScore}));}catch(e){}
