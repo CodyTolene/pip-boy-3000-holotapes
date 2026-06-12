@@ -8,7 +8,7 @@
 
 ### Description
 
-A Fallout-themed take on the classic Flappy Bird. Guide a cockroach through the
+A Fallout-themed take on the classic Flappy Bird. Guide a Radroach through the
 Wasteland, dodging every obstacle in its path.
 
 ### Controls
