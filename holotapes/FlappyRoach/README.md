@@ -23,6 +23,8 @@ Wasteland, dodging every obstacle in its path.
 - STATS button: Open pause screen
 - Left knob scroll: Cycle through pause menu options
 - Left knob press / DATA button: Confirm selected option
+- Page Selector: Exit Game
+- Power Button: Soft Reboot
 
 ### License(s)
 
