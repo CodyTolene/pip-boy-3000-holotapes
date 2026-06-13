@@ -188,13 +188,13 @@ function pauseSelect() {
   } else if (choice.indexOf("QUIT") === 0) {
     // Save score, then reboot (reliable “exit”)
     try { saveHighScoreIfNeeded(score); } catch (e) {}
-    h.clearRect(0, PLAY_TOP, W - 1, PLAY_BOT - 1);
+    C.clearRect(0, PLAY_TOP, W - 1, PLAY_BOT - 1);
     E.reboot();
   }
 }
 
 function flushScreen() {
-  h.clearRect()
+  C.clearRect()
 }
 
 function newPipe() {
@@ -271,12 +271,11 @@ function update() {
   if (bird.y < 0 || bird.y + bird.size > H) endRun("FELL");
 
 // ---- Ceiling / Floor Collision (CLAMP HERE) ----
-  if (bird.y <= PLAY_TOP) {
-    bird.y = PLAY_TOP;
-    endRun("HIT");
-  } else if (bird.y + bird.size >= PLAY_BOT) {
-    bird.y = PLAY_BOT - bird.size;
-    endRun("HIT");
+let clippedY = E.clip(bird.y, PLAY_TOP, PLAY_BOT - bird.size);
+
+if (clippedY !== bird.y) {
+  bird.y = clippedY;
+  endRun("HIT");
 }
 
   // New collision loop
@@ -295,7 +294,7 @@ function update() {
   }
 }
 
-  // Spawn pipes
+  // Spawn pipesF
   let last = pipes[pipes.length - 1];
   if (!last) newPipe();
   else if (last.x <= W - PIPE_SPACING) newPipe();
@@ -313,7 +312,7 @@ function drawCentered(text, y) {
 }
 
 function draw() {
-  h.clearRect(0, PLAY_TOP, W - 1, PLAY_BOT - 1);
+  C.clearRect(0, PLAY_TOP, W - 1, PLAY_BOT - 1);
   if (inTitle) {
     drawTitleScreen();
     return;
@@ -338,10 +337,10 @@ function draw() {
 if (score !== lastDrawnScore) {
   lastDrawnScore = score;
 }
-  h.drawString(" Score: " + score, 2, PLAY_TOP + 2);
+  C.drawString(" Score: " + score, 2, PLAY_TOP + 2);
 // If Game Over
   if (gameOver) {
-  h.clear();   // full clear only for static screen
+  C.clear();   // full clear only for static screen
   // If we’re in the impact phase, draw splat instead of text
   if (!showGameOverUI && impactFX) {
   // Splat overlay - Increases by 0.3 times.
@@ -398,7 +397,13 @@ function bindGameControls() {
   enc1time = 0,
   enc1fast = 0;
 
-  pinMode(ENC1_B, "input");
+Pip.onExclusive("knob1", function(dir) {
+  if (dir > 0) {
+    // clockwise
+  } else {
+    // counter-clockwise
+  }
+});
 
   setWatch(function (e) {
     if (enc1b === e.data) return;
