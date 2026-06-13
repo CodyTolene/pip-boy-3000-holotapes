@@ -8,11 +8,10 @@
 
 ### Description
 
-A Pac-Man-inspired maze game where you navigate a pipman through a labyrinth,
-collecting dots and power pellets while avoiding ghosts. Eat all the dots to
-clear the sector and advance to the next level, but beware of the roaming
-ghosts! Use power pellets strategically to turn the tables and eat the ghosts
-for extra points.
+PipMan is a Pac-Man inspired arcade game built for the Pip-Boy 3000, blending
+retro gaming nostalgia with the iconic wasteland aesthetic. Navigate the vault,
+dodge ghouls, and collect every bottle cap all from the wrist-mounted terminal
+of the Commonwealth.
 
 ### Controls
 
@@ -22,6 +21,6 @@ for extra points.
 
 ### Scoring:
 
-- 10 points per dot, 50 points per power pellet
-- 200 points per ghost eaten, plus 500 points and level increase on clearing all
-  dots
+- 10 points per bottle cap, 50 points per RadAway Pouch
+- 200 points per ghoul eaten, plus 500 points and level increase on clearing all
+  bottle caps

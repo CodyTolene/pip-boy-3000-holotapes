@@ -1,3 +1,9 @@
+1.0.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/16
+- Updated pipman to run faster.
+- Fix bugs in the program.
+- Update the game description.
+
 1.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/14
 - Initial release
