@@ -148,7 +148,8 @@ return {
 ### 3.5 Graphics (`h`) Usage
 
 - Always chain methods on the global `h` object: `h.setColor(n).setFontMonofonto16().setFontAlign(x, y).drawString(text, x, y)`.
-- **`h.flip()` followed by `Pip.lastFlip = getTime()` is an optimization for dynamic/real-time apps** (games with animation, fast-moving objects) where you need the display to update immediately and prevent the OS auto-flip from overwriting your carefully drawn frame. By default `Pip.timers.flip` fires every 50ms and calls `Pip.blitScreen()`. Setting `Pip.lastFlip = getTime()` tells the timer the screen was just refreshed, so it skips its tick. For simpler apps (timers, text displays, menus) the default auto-flush is sufficient and explicit `flip()` is unnecessary.
+- **`h.flip()` followed by `Pip.lastFlip = getTime()` is an optimization for apps that use `Pip.onFrame`-style callbacks** (where the OS timer drives rendering). The flip sends the frame buffer to the display, and setting `Pip.lastFlip` tells the OS timer to skip its next auto-blit. For apps driven by `setInterval` (most games), the default OS auto-flush every 50ms is already synchronized and explicit `flip()` is unnecessary — adding manual flips causes tearing because they fire at arbitrary times relative to display scanout. Only use explicit `h.flip()` when you are driving rendering from `Pip.onFrame`, not `setInterval`.
+- For apps that DO need manual flips, set `Pip.lastFlip = getTime()` **before** drawing to suppress the OS auto-flip during the draw phase, then call `h.flip()` **after** all drawing is complete to send the finished frame.
 - **Minimize pixels written per frame.** Every pixel written adds latency. Use targeted clearing with `h.clearRect()` and dirty flags to only redraw changed regions.
 - Dirty flag pattern — set a flag when something changes, then redraw only flagged sections:
   ```js
@@ -162,10 +163,11 @@ return {
     Pip.lastFlip = getTime();
   }
   ```
-- Available color indices (4bpp, invertible on the device): `0` (black), `1` (amber/on), `2` (dim), `3` (bright). Negative values like `-1` act as transparent/no-op in some contexts (e.g. `h.setColor(-1)`).
+- Available color indices (4bpp): `0` (black), `1` (grey), `2` (grey), `3` (white). Negative values like `-1` act as transparent/no-op in some contexts (e.g. `h.setColor(-1)`).
+- **`h.setColor(n)` persists globally** — once set, all subsequent draw calls use that color until changed, even across unchained statements and function boundaries. Always explicitly set the color before any draw operation where the color matters.
 - Available fonts: `Fixedsys16`, `Monofonto14`, `Monofonto16`, `Monofonto18`, `Monofonto23`, `Monofonto28`, `Monofonto36`, `Monofonto96`, `Monofonto120`, plus custom fonts via `h.setFont(name)`. Both `h.setFont("Monofonto14")` and `h.setFontMonofonto14()` forms are valid.
 - `h.wrapString(text, maxWidth)` wraps text to a given width, returning an array of lines. Pre-wrap and cache the result rather than re-wrapping on every frame — text wrapping is expensive.
-- `h.setBgColor(index)` sets the background color for subsequent text drawing.
+- `h.setBgColor(index)` sets the background color for subsequent text drawing. Also controls the fill color used by `h.clearRect()`.
 - `h.setClipRect(x1, y1, x2, y2)` restricts all drawing to the given bounding box. Use it to prevent overdraw when rendering within a sub-region.
 - `Pip.blitOptions.y1` / `Pip.blitOptions.y2` can be set before `h.flip()` to perform a **partial screen update** — only the rows between `y1` and `y2` are sent to the display. This is a major optimization for scrollers and lists:
   ```js
@@ -354,7 +356,7 @@ function onKnob2(dir) {
 
 ### 3.15 Method Binding for Tight Loops
 
-In performance-critical loops, bind graphics methods to local variables to avoid repeated property lookups:
+In performance-critical loops with many iterations, bind graphics methods to local variables to avoid repeated property lookups. Only do this for loops with 50+ iterations — for small loops the variable block cost outweighs the lookup savings:
 
 ```js
 function drawTicks() {  "jit";
@@ -411,6 +413,8 @@ Store the pre-computed height alongside the wrapped lines. This avoids re-measur
 ### 3.18 Image Format & Conversion
 
 All images used by holotapes must be **bitmaps at a maximum of 4 bits per pixel (4bpp)**. Larger images or higher bit depths waste scarce storage and memory.
+
+**Prefer bitmaps over procedural drawing for sprites.** Drawing a sprite with many individual `fillRect`/`drawLine` calls (e.g. 10+ calls per frame for a small character) is wasteful — each call adds overhead. A single `h.drawImage(bitmap, x, y)` call replaces all of them. If the sprite has animated parts, draw a static base as a bitmap and overlay only the animated portions procedurally, or use a multi-frame bitmap with the `{frame: n}` option.
 
 - Convert images using the online [Espruino Image Converter](https://www.espruino.com/Image+Converter).
 - Alternatively, use the [imageconverter.js](https://github.com/espruino/EspruinoWebTools/blob/master/imageconverter.js) tool programmatically.
@@ -600,6 +604,7 @@ The following must **never** appear in generated code:
 | Bare `clearWatch()` at init            | Clears ALL hardware watches including OS/system watches. The OS restores them, but this is destructive and unnecessary — no app watches exist at init time. |
 | `let h_alias = h` or similar           | Always use the global `h` object directly (§3.5). Wrapping it in a local variable wastes a variable block and adds indirection for no benefit. |
 | `Pip.audioStop()` before `Pip.audioStart()` | `Pip.audioStart()` automatically stops any currently-playing audio. Calling `Pip.audioStop()` first is redundant. |
+| Single-call function wrappers            | `function playSound(n) { Pip.audioStart(n); }` wastes a function block. If a function body is just one call with the same arguments, inline the call at every call site. Only wrap if there is additional logic (debounce, error handling, state tracking). |
 | Try/catch that only calls `Pip.errorBox(e)` | Espruino's global uncaught-exception handler already displays an error box for all exceptions. Catching just to re-display the same error adds overhead with no benefit. Only catch if you need custom recovery logic. |
 | Global variables outside the IIFE    | Pollutes global namespace; conflicts with other holotapes.        |
 | Storing functions in arrays/objects  | Consumes excessive memory blocks on Espruino.                     |
