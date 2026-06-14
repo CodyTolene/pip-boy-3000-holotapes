@@ -12,6 +12,7 @@ This file governs how LLM-powered agents behave when generating holotape code or
 - [4. Registration & Metadata](#4-registration--metadata)
 - [5. Review & Audit Rules](#5-review--audit-rules)
 - [6. Anti-Patterns (Do Not Generate)](#6-anti-patterns-do-not-generate)
+- [7. Build & Minification Process](#7-build--minification-process)
 
 ---
 
@@ -595,6 +596,38 @@ The following must **never** appear in generated code:
 | Deep object/array nesting (>4 levels)| Wastes variable blocks and hurts performance.                     |
 | Strings longer than ~256 chars       | Each string consumes a variable block; keep strings short.        |
 | Images > 4bpp or unconverted         | Use Espruino Image Converter for 4bpp bitmaps; raw images waste memory. |
+
+---
+
+## 7. Build & Minification Process
+
+The `app.min.js` is produced from `app.js` using a two-pass pipeline:
+
+### 7.1 Minification
+
+Strip whitespace, comments, and shorten identifiers. One suggested tool is [Terser](https://github.com/terser/terser):
+
+```sh
+terser app.js -c negate_iife=false,side_effects=false -o app.min.js
+```
+
+- `negate_iife=false` — preserves the IIFE wrapper (required by rule R01).
+- `side_effects=false` — disables dead-code removal that could strip side-effectful calls (e.g. `setWatch`, `Pip.on`).
+
+Any minifier that preserves the IIFE structure and avoids stripping side-effectful calls is acceptable.
+
+### 7.2 Espruino CLI (Pretokenisation)
+
+Second pass: run the output through the Espruino CLI to pretokenise the source. Pretokenisation converts JavaScript tokens to numeric bytecode for faster parsing and 10–20% execution speed improvement on-device.
+
+```sh
+espruino app.min.js --config PRETOKENISE=2 --config SET_TIME_ON_WRITE=false -o app.min.js
+```
+
+- `--config PRETOKENISE=2` — strips whitespace and converts tokens to numeric values.
+- `--config SET_TIME_ON_WRITE=false` — prevents timestamp embedding for reproducible builds.
+
+**Note:** Pretokenised functions declared with the `"ram"` directive also benefit from automatic pretokenisation at runtime. The CLI pretokenisation step additionally covers code outside `"ram"` functions and strips toplevel whitespace.
 
 ---
 
