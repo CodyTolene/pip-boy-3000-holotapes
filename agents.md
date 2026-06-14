@@ -115,6 +115,8 @@ The `remove` function **must** clean up anything the app created that could leak
 
 It does **not** need to guard against double removal (no `removed` flag needed).
 
+**Critical:** The `remove` function must **never** call `load()` or `E.reboot()`. The app must exit cleanly so the Pip-Boy OS can restore the state that existed before the app was invoked. Rebooting the device on exit is poor practice and disrupts the user experience.
+
 The `remove` function can be declared as a named function or inlined in the return object:
 
 ```js
@@ -591,6 +593,7 @@ The following must **never** appear in generated code:
 | `Math.random()`                      | Use `Math.randInt(n)` instead — it's faster and deterministic.    |
 | `requestAnimationFrame`              | Not available on Espruino.                                        |
 | Deleting/reassigning OS globals      | Corrupts the Pip-Boy OS and prevents returning to the menu.       |
+| `load()` or `E.reboot()` in `remove()`| Rebooting on app exit is poor practice. Apps must clean up and return to the prior state cleanly — let the OS handle navigation. |
 | Global variables outside the IIFE    | Pollutes global namespace; conflicts with other holotapes.        |
 | Storing functions in arrays/objects  | Consumes excessive memory blocks on Espruino.                     |
 | Deep object/array nesting (>4 levels)| Wastes variable blocks and hurts performance.                     |
