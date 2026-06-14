@@ -140,7 +140,9 @@ return {
 
 - Use `const` for constants, `let` for mutable variables. **Never use `var`** — while `var` inside an IIFE doesn't leak globally, it still wastes variable blocks unnecessarily and `const`/`let` are clearer.
 - **Minimize the number of variables declared.** Every variable consumes a scarce Espruino block. If a value never changes (e.g. screen dimensions, grid sizes), hardcode the literal number instead of assigning it to a constant.
+- **Screen dimensions are constant.** Use `const W = h.getWidth(), H = h.getHeight()` — the display never changes size at runtime. Do NOT declare `W`/`H` as `let` and reassign them in a `resetGame()` function.
 - Do not declare an `APP_ID` constant — put the ID string directly in the return object.
+- Do NOT create a local alias for `h` (e.g. `let C = h`). Always reference the global `h` object directly. This saves a variable block and follows the chaining convention in §3.5.
 - Group related constants into a single object (`const C = { ... }`) rather than declaring many individual `const`s.
 
 ### 3.5 Graphics (`h`) Usage
@@ -191,7 +193,7 @@ return {
   - `1` — down / clockwise rotation.
   - `-1` — up / counter-clockwise rotation.
   - `0` — press event. The OS may also pass a second parameter: `true` for a long press, `undefined`/`false` for a normal press. Handle long presses by checking the second argument: `function onKnob1(dir, long) { if (dir === 0 && long) { ... } }`.
-- **`setWatch` on `ENC1_PRESS`** is a specialized pattern for cases where press detection needs to be extremely responsive (e.g., shooting in a game). For most apps the `dir === 0` event via `Pip.on`/`Pip.onExclusive` is sufficient. Choose based on responsiveness needs.
+- **`setWatch` on `ENC1_PRESS`** is a specialized pattern for cases where press detection needs to be extremely responsive (e.g., shooting in a game). For most apps the `dir === 0` event via `Pip.on`/`Pip.onExclusive` is sufficient. For buttons that lack a `Pip.on` event (e.g. `BTN_DATA`), `setWatch` with `edge: 'rising'` is appropriate — this is the exception, not the default.
 - Remove all listeners in `remove()` via `Pip.removeListener` and `clearWatch`.
 
 ```js
@@ -253,7 +255,7 @@ function drawTicks() {  "jit";
 - `Pip.playSound('SCROLL')` — navigation/scroll sound.
 - `Pip.playSound('SELECT')` — alternate select sound.
 - `Pip.playSound('HIGHLIGHT')` — value-change highlight sound.
-- `Pip.audioStart(path)` — start playing a WAV file from storage. Supports looping with `{repeat: true}`.
+- `Pip.audioStart(path)` — start playing a WAV file from storage. Supports looping with `{repeat: true}`. **Note:** `Pip.audioStart()` automatically stops any currently-playing audio — there is no need to call `Pip.audioStop()` before starting a new sound.
 - `Pip.audioStartVar(buffer, options)` — start playing an in-memory audio buffer. Options include `{encoding: "adpcm", sampleRate: 8000, blockAlign: 256, overlap: true}`.
 - `Pip.audioRead(path)` — load a WAV file into an in-memory buffer for rapid replay. Pass an optional object as the second parameter to receive `encoding` and `blockAlign` values for `Pip.audioStartVar`.
 - `Pip.audioBuiltin(name)` — returns a byte array for a built-in sound (`"OK"`, `"OK2"`, `"PREV"`, `"NEXT"`, `"COLUMN"`, `"CLICK"`). Use with `Pip.audioStartVar`.
@@ -594,6 +596,11 @@ The following must **never** appear in generated code:
 | `requestAnimationFrame`              | Not available on Espruino.                                        |
 | Deleting/reassigning OS globals      | Corrupts the Pip-Boy OS and prevents returning to the menu.       |
 | `load()` or `E.reboot()` in `remove()`| Rebooting on app exit is poor practice. Apps must clean up and return to the prior state cleanly — let the OS handle navigation. |
+| `Pip.remove()` at top of IIFE         | The Pip-Boy OS cleans up the previous app before invoking a new one. Calling `Pip.remove()` at the top of a new IIFE removes nothing useful and wastes cycles. |
+| Bare `clearWatch()` at init            | Clears ALL hardware watches including OS/system watches. The OS restores them, but this is destructive and unnecessary — no app watches exist at init time. |
+| `let h_alias = h` or similar           | Always use the global `h` object directly (§3.5). Wrapping it in a local variable wastes a variable block and adds indirection for no benefit. |
+| `Pip.audioStop()` before `Pip.audioStart()` | `Pip.audioStart()` automatically stops any currently-playing audio. Calling `Pip.audioStop()` first is redundant. |
+| Try/catch that only calls `Pip.errorBox(e)` | Espruino's global uncaught-exception handler already displays an error box for all exceptions. Catching just to re-display the same error adds overhead with no benefit. Only catch if you need custom recovery logic. |
 | Global variables outside the IIFE    | Pollutes global namespace; conflicts with other holotapes.        |
 | Storing functions in arrays/objects  | Consumes excessive memory blocks on Espruino.                     |
 | Deep object/array nesting (>4 levels)| Wastes variable blocks and hurts performance.                     |
