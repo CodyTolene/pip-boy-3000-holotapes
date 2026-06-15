@@ -7,7 +7,6 @@
 
 (function () {
   const APP_NAME = 'iPip Media Player';
-  const APP_VERSION = '1.1.0';
 
   const PAGE_SIZE = 8;
   const VISIBLE_ROWS = 10;
@@ -299,11 +298,15 @@
       .setFontAlign(-1, -1)
       .drawString(APP_NAME, titleX, LIST_TITLE_Y);
 
-    const versionX = titleX + h.stringWidth(APP_NAME) + 4;
-    h.setColor(C_DIM)
-      .setFont('6x8')
-      .setFontAlign(-1, -1)
-      .drawString('v' + APP_VERSION, versionX, LIST_TITLE_Y + 8);
+    const APP_VERSION = readAppVersion();
+
+    if (APP_VERSION) {
+      const versionX = titleX + h.stringWidth(APP_NAME) + 4;
+      h.setColor(C_DIM)
+        .setFont('6x8')
+        .setFontAlign(-1, -1)
+        .drawString('v' + APP_VERSION, versionX, LIST_TITLE_Y + 8);
+    }
 
     h.setColor(C_DIM).drawLine(
       LIST_X,
@@ -826,6 +829,14 @@
 
     drawNowPlaying(playingName, false);
     drawList();
+  }
+
+  function readAppVersion() {
+    try {
+      return JSON.parse(fs.readFileSync('/APPINFO/IPIP.info')).version;
+    } catch (e) {
+      return '0.0.0';
+    }
   }
 
   function readDir(path) {

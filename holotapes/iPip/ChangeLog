@@ -1,3 +1,7 @@
+1.2.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/24
+- Read version from "APPINFO/IPIP.info" instead of hardcoding it.
+
 1.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/23
 - Update "RANDOM" button to be "SHUFFLE PLAY ALL" for the random play mode.
