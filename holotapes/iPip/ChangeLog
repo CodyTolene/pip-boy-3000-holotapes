@@ -1,4 +1,10 @@
-1.0.1
+1.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/23
+- Update "RANDOM" button to be "SHUFFLE PLAY ALL" for the random play mode.
+- Add new button "SORT A-Z", "SORT Z-A" that sorts the songs in the current playlist.
+- Add new button "PLAY ALL" that plays all songs in the list in the current order.
+
+1.0.2
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/9
 - Improve list "NEXT" and "PREV" page labels, and play a sound when clicked.
 

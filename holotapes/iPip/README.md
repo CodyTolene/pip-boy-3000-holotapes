@@ -12,7 +12,8 @@ A WAV media player.
 
 Every folder in the `MUSIC/` folder is a "station" (playlist)
 
-Browse and play songs one at a time or in random order.
+Browse and play songs one at a time, shuffle them, play the whole list in order,
+or sort the list A-Z / Z-A.
 
 ### SD Card Layout
 
@@ -44,11 +45,19 @@ MUSIC/
 3. The station list loads automatically from `MUSIC/`.
 4. Scroll to a station and press the left knob to open it.
 5. Scroll to a song and press to play. Press the same song again to stop.
-6. Select **RANDOM** to shuffle all songs in the current station. Select it
-   again to stop random playback.
-7. Select **BACK** (top of the song list) to return to the station list.
-8. Use **< PREV PAGE** and **NEXT PAGE >** at the bottom of a long song list to
-   navigate between pages.
+6. Select **= SORT ...** (top of the song list) to toggle the song list order.
+   The label shows the order the next press will apply and the order it is
+   currently in, e.g. **SORT Z-A (CURRENTLY A-Z)**. The chosen order carries
+   over to other stations.
+7. Select **SHUFFLE** to play all songs in the current station in random order.
+   Select it again to stop shuffle playback.
+8. Select **PLAY ALL** to play through the songs in order, starting from the top
+   of the current page. It pages forward automatically and loops back to the
+   first song after the last. Select it again to stop.
+9. Select **BACK TO PLAYLISTS** (top of the song list) to return to the station
+   list.
+10. Use **< PREV PAGE** and **NEXT PAGE >** at the bottom of a long song list to
+    navigate between pages.
 
 ### License(s)
 

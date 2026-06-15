@@ -1,13 +1,13 @@
 // =============================================================================
-//  Name: iPip
+//  Name: iPip Media Player
+//  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
 (function () {
-  const APP_ID = 'iPip';
   const APP_NAME = 'iPip Media Player';
-  const APP_VERSION = '1.0.2';
+  const APP_VERSION = '1.1.0';
 
   const PAGE_SIZE = 8;
   const VISIBLE_ROWS = 10;
@@ -38,7 +38,9 @@
   const KNOB_DEBOUNCE_MS = 30;
 
   const SYM = {
+    sort: '= ',
     random: '~ ',
+    playall: '> ',
     station: '> ',
     back: '< ',
     prev: '<< ',
@@ -64,6 +66,10 @@
   let isRandom = false;
   let randomQueue = [];
   let randomQueueIdx = 0;
+
+  let isPlayAll = false;
+  let playAllIdx = 0;
+  let sortDir = 1; // 1 = A-Z, -1 = Z-A
 
   let suppressAudioStopped = false;
 
@@ -92,16 +98,25 @@
 
   function buildSongItems() {
     const items = [
-      { type: 'random', label: 'RANDOM' },
-      { type: 'back', label: 'BACK' },
+      {
+        type: 'sort',
+        label:
+          sortDir > 0 ? 'SORT Z-A (CURRENTLY A-Z)' : 'SORT A-Z (CURRENTLY Z-A)',
+      },
+      { type: 'random', label: 'SHUFFLE PLAY ALL' },
+      { type: 'playall', label: 'PLAY ALL (TOP-DOWN)' },
+      { type: 'back', label: 'BACK TO PLAYLISTS' },
     ];
     const start = songPage * PAGE_SIZE;
     const end = Math.min(start + PAGE_SIZE, allSongs.length);
+    const base = pathJoin(MUSIC_DIR, currentStation);
     for (let i = start; i < end; i++) {
       const song = allSongs[i];
-      const base = pathJoin(MUSIC_DIR, currentStation);
-      const tooLong = isPathTooLong(base, song.name);
-      items.push({ type: 'song', name: song.name, tooLong: tooLong });
+      items.push({
+        type: 'song',
+        name: song.name,
+        tooLong: isPathTooLong(base, song.name),
+      });
     }
     if (songPage > 0) {
       items.push({ type: 'prev', label: 'PREV PAGE' });
@@ -156,7 +171,11 @@
   }
 
   function drawList() {
+    'ram'; // Suggested by new agents.md. See section 3.8
     const startY = LIST_START_Y;
+    const baseX = LIST_X + 4;
+    const stationBase = pathJoin(MUSIC_DIR, currentStation);
+
     h.setColor(C_BLACK).fillRect(
       LIST_X,
       startY,
@@ -166,19 +185,15 @@
 
     h.setFont('Monofonto14').setFontAlign(-1, -1);
 
-    const visible = listItems.slice(scrollOffset, scrollOffset + VISIBLE_ROWS);
-
-    for (let i = 0; i < visible.length; i++) {
-      const item = visible[i];
-      const absIdx = scrollOffset + i;
+    const last = Math.min(scrollOffset + VISIBLE_ROWS, listItems.length);
+    for (let absIdx = scrollOffset; absIdx < last; absIdx++) {
+      const item = listItems[absIdx];
       const isSelected = absIdx === selectedIdx;
-      const y = startY + i * ROW_H;
+      const y = startY + (absIdx - scrollOffset) * ROW_H;
 
       let color;
       if (item.type === 'song' && item.tooLong) {
         color = isSelected ? C_MED : C_DIM;
-      } else if (item.type === 'prev' || item.type === 'next') {
-        color = isSelected ? C_BRIGHT : C_MED;
       } else {
         color = isSelected ? C_BRIGHT : C_MED;
       }
@@ -187,7 +202,10 @@
         h.setColor(C_DIM).fillRect(LIST_X, y, LIST_X + LIST_W, y + ROW_H - 2);
       }
 
-      if (item.type === 'random' && isRandom) {
+      if (
+        (item.type === 'random' && isRandom) ||
+        (item.type === 'playall' && isPlayAll)
+      ) {
         h.setColor(C_BRIGHT).fillRect(
           LIST_X + LIST_W - 5,
           y + 7,
@@ -198,21 +216,17 @@
 
       h.setColor(color);
 
-      const baseX = LIST_X + 4;
-
       if (item.type === 'song') {
         let labelX = baseX;
-        if (!item.tooLong && playingPath) {
-          const itemPath = pathJoin(
-            pathJoin(MUSIC_DIR, currentStation),
-            item.name,
-          );
-          if (itemPath === playingPath) {
-            const sqY = y + Math.floor((ROW_H - 4) / 2);
-            h.setColor(C_BRIGHT).fillRect(baseX, sqY, baseX + 3, sqY + 3);
-            h.setColor(color);
-            labelX = baseX + 7;
-          }
+        if (
+          !item.tooLong &&
+          playingPath &&
+          pathJoin(stationBase, item.name) === playingPath
+        ) {
+          const sqY = y + Math.floor((ROW_H - 4) / 2);
+          h.setColor(C_BRIGHT).fillRect(baseX, sqY, baseX + 3, sqY + 3);
+          h.setColor(color);
+          labelX = baseX + 7;
         }
         h.drawString(
           ellipsize(songLabel(item.name), LIST_X + LIST_W - labelX - 8),
@@ -220,10 +234,11 @@
           y + 5,
         );
       } else {
-        const sym = SYM[item.type] || '';
-        const label = item.label || item.name || '';
         h.drawString(
-          ellipsize(sym + label, LIST_X + LIST_W - baseX - 8),
+          ellipsize(
+            (SYM[item.type] || '') + (item.label || item.name || ''),
+            LIST_X + LIST_W - baseX - 8,
+          ),
           baseX,
           y + 5,
         );
@@ -264,7 +279,12 @@
         h.setColor(C_DIM)
           .setFont('6x8')
           .setFontAlign(-1, -1)
-          .drawString('(random)', WAVE_X, clearY + 38);
+          .drawString('(shuffle)', WAVE_X, clearY + 38);
+      } else if (isPlayAll) {
+        h.setColor(C_DIM)
+          .setFont('6x8')
+          .setFontAlign(-1, -1)
+          .drawString('(play all)', WAVE_X, clearY + 38);
       }
     }
 
@@ -294,6 +314,7 @@
   }
 
   function drawWaveform() {
+    'ram'; // Suggested by new agents.md. See section 3.8
     if (!wavePoly) return;
     const ym = WAVE_Y + WAVE_H / 2;
     const waveBottom = WAVE_Y + WAVE_H - 10;
@@ -337,6 +358,7 @@
   }
 
   function ellipsize(text, maxPx) {
+    'ram'; // Suggested by new agents.md. See section 3.8
     if (h.stringWidth(text) <= maxPx) return text;
     const dots = '...';
     const dotsW = h.stringWidth(dots);
@@ -364,6 +386,34 @@
     }
   }
 
+  function handlePlayAllSelect() {
+    if (view === 'stations') return;
+
+    if (isPlayAll && isAudioPlaying) {
+      stopSong();
+      return;
+    }
+
+    if (!allSongs.length) return;
+
+    if (isAudioPlaying) suppressAudioStopped = true;
+    isAudioPlaying = false;
+    Pip.radioClipPlaying = false;
+    try {
+      Pip.audioStop();
+    } catch (e) {}
+    playingPath = null;
+
+    isRandom = false;
+    randomQueue = [];
+    isPlayAll = true;
+    playAllIdx = songPage * PAGE_SIZE;
+    if (playAllIdx >= allSongs.length) playAllIdx = 0;
+    playNextPlayAll();
+    drawList();
+    uiSound('SELECT');
+  }
+
   function handleRandomSelect() {
     if (view === 'stations') return;
 
@@ -385,6 +435,30 @@
     uiSound('SELECT');
   }
 
+  function handleSortSelect() {
+    if (view === 'stations' || !allSongs.length) return;
+
+    sortDir = -sortDir;
+    sortSongs();
+
+    if (isPlayAll) {
+      playAllIdx = 0;
+      for (let i = 0; i < allSongs.length; i++) {
+        if (allSongs[i].name === lastPlayedName) {
+          playAllIdx = i + 1;
+          break;
+        }
+      }
+    }
+
+    songPage = 0;
+    selectedIdx = 0; // SORT
+    scrollOffset = 0;
+    rebuildList();
+    drawList();
+    uiSound('TAB');
+  }
+
   function handleSelect() {
     if (removed) return;
     lastSelectTime = Date.now();
@@ -393,6 +467,16 @@
 
     if (item.type === 'random') {
       handleRandomSelect();
+      return;
+    }
+
+    if (item.type === 'playall') {
+      handlePlayAllSelect();
+      return;
+    }
+
+    if (item.type === 'sort') {
+      handleSortSelect();
       return;
     }
 
@@ -409,7 +493,7 @@
     if (item.type === 'prev') {
       if (songPage > 0) {
         songPage--;
-        selectedIdx = 2;
+        selectedIdx = 4;
         scrollOffset = 0;
         rebuildList();
         drawList();
@@ -422,7 +506,7 @@
       const maxPage = Math.floor(Math.max(0, allSongs.length - 1) / PAGE_SIZE);
       if (songPage < maxPage) {
         songPage++;
-        selectedIdx = 2;
+        selectedIdx = 4;
         scrollOffset = 0;
         rebuildList();
         drawList();
@@ -450,6 +534,7 @@
     }
 
     isRandom = false;
+    isPlayAll = false;
     randomQueue = [];
     playSong(currentStation, item.name);
     uiSound('SELECT');
@@ -459,7 +544,7 @@
     if (typeof E !== 'undefined' && E.hwRand) {
       return (E.hwRand() >>> 0) % n;
     }
-    return (Math.random() * n) | 0;
+    return Math.randInt(n);
   }
 
   function initWaveform() {
@@ -492,6 +577,15 @@
         allSongs.push({ name: name });
       }
     }
+    sortSongs();
+  }
+
+  function sortSongs() {
+    allSongs.sort(function (a, b) {
+      const an = a.name.toLowerCase();
+      const bn = b.name.toLowerCase();
+      return an < bn ? -sortDir : an > bn ? sortDir : 0;
+    });
   }
 
   function loadStations() {
@@ -516,6 +610,7 @@
     playingName = null;
     playingStation = null;
     isRandom = false;
+    isPlayAll = false;
     randomQueue = [];
 
     view = 'songs';
@@ -554,6 +649,10 @@
       playNextRandom();
       return;
     }
+    if (isPlayAll) {
+      playNextPlayAll();
+      return;
+    }
     playingName = null;
     drawNowPlaying(null, false);
     drawList();
@@ -590,6 +689,7 @@
   }
 
   function drawVolHud() {
+    'ram'; // Suggested by new agents.md. See section 3.8
     if (waveInterval) {
       clearInterval(waveInterval);
       waveInterval = null;
@@ -661,6 +761,37 @@
     }
     const next = randomQueue[randomQueueIdx++];
     playSong(playingStation || currentStation, next.name);
+  }
+
+  function playNextPlayAll() {
+    if (!isPlayAll) return;
+    const st = playingStation || currentStation;
+    const base = pathJoin(MUSIC_DIR, st);
+
+    // Find next song, wrap to first song if needed.
+    let scanned = 0;
+    while (scanned < allSongs.length) {
+      if (playAllIdx >= allSongs.length) playAllIdx = 0;
+      if (!isPathTooLong(base, allSongs[playAllIdx].name)) break;
+      playAllIdx++;
+      scanned++;
+    }
+    if (scanned >= allSongs.length) {
+      isPlayAll = false;
+      playingName = null;
+      drawNowPlaying(null, false);
+      drawList();
+      return;
+    }
+
+    const idx = playAllIdx++;
+    // Update page to follow new song if needed.
+    const page = Math.floor(idx / PAGE_SIZE);
+    if (page !== songPage) {
+      songPage = page;
+      rebuildList();
+    }
+    playSong(st, allSongs[idx].name);
   }
 
   function playSong(stationName, songName) {
@@ -801,6 +932,7 @@
 
   function startRandom(stationName) {
     isRandom = true;
+    isPlayAll = false;
     randomQueue = buildRandomPool(stationName).slice();
     if (!randomQueue.length) {
       isRandom = false;
@@ -835,6 +967,7 @@
     playingPath = null;
     playingName = null;
     isRandom = false;
+    isPlayAll = false;
     randomQueue = [];
     drawNowPlaying(null, false);
     drawList();
@@ -849,7 +982,7 @@
   start();
 
   return {
-    id: APP_ID,
+    id: 'iPip',
     notDefault: true,
     fullscreen: true,
     remove: remove,
