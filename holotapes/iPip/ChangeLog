@@ -1,5 +1,9 @@
 1.2.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/24
+- On long press/hold of the left wheel button, open the settings menu. Close with another long hold.
+- Sorting functionality and button moved to the new settings menu.
+- New setting added for controlling screen brightness.
+- New setting for controlling audio volume.
 - Read version from "APPINFO/IPIP.info" instead of hardcoding it.
 
 1.1.0

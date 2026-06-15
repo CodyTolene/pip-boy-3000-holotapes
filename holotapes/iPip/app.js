@@ -37,7 +37,6 @@
   const KNOB_DEBOUNCE_MS = 30;
 
   const SYM = {
-    sort: '= ',
     random: '~ ',
     playall: '> ',
     station: '> ',
@@ -88,6 +87,44 @@
   let currentVol = VOL_DEFAULT;
   let volHudTimeout = null;
 
+  // Fixed header rows, currently:
+  // - SHUFFLE
+  // - PLAY ALL
+  // - BACK
+  const SONG_HEADER_COUNT = 3;
+
+  // Settings
+  const SET_X = LIST_X;
+  const SET_W = W - LIST_X - 12;
+  const SET_ROW_H = 50;
+  const SET_START_Y = LIST_START_Y + 6;
+  const SETTINGS_ROWS = ['sort', 'brightness', 'volume'];
+  const LONG_PRESS_MS = 600;
+  const BRIGHT_MIN = 0.01;
+  const BRIGHT_MAX = 1;
+  const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+
+  let settingsOpen = false;
+  let settingsIdx = 0;
+  let currentBright = BRIGHT_MAX;
+  let initialBright = null;
+  let pressTimer = null;
+  let longFired = false;
+
+  function adjustSettingValue(dir) {
+    const row = SETTINGS_ROWS[settingsIdx];
+    if (row === 'sort') {
+      toggleSort();
+      uiSound('TAB');
+    } else {
+      const d = dir > 0 ? 1 : -1;
+      if (row === 'brightness') stepBrightness(d, false);
+      else stepVolume(d, false);
+      uiSound('HIGHLIGHT');
+    }
+    drawSettingsRows();
+  }
+
   function buildRandomPool(stationName) {
     const base = pathJoin(MUSIC_DIR, stationName);
     return allSongs.filter(function (s) {
@@ -97,11 +134,6 @@
 
   function buildSongItems() {
     const items = [
-      {
-        type: 'sort',
-        label:
-          sortDir > 0 ? 'SORT Z-A (CURRENTLY A-Z)' : 'SORT A-Z (CURRENTLY Z-A)',
-      },
       { type: 'random', label: 'SHUFFLE PLAY ALL' },
       { type: 'playall', label: 'PLAY ALL (TOP-DOWN)' },
       { type: 'back', label: 'BACK TO PLAYLISTS' },
@@ -142,6 +174,13 @@
     if (scrollOffset < 0) scrollOffset = 0;
   }
 
+  function closeSettings() {
+    if (!settingsOpen) return;
+    settingsOpen = false;
+    drawAll();
+    uiSound('TAB');
+  }
+
   function drawAll() {
     h.clear(1);
     drawHeader();
@@ -170,7 +209,8 @@
   }
 
   function drawList() {
-    'ram'; // Suggested by new agents.md. See section 3.8
+    'ram'; // Execute function from RAM instead of flash.
+    if (settingsOpen) return;
     const startY = LIST_START_Y;
     const baseX = LIST_X + 4;
     const stationBase = pathJoin(MUSIC_DIR, currentStation);
@@ -249,6 +289,7 @@
   }
 
   function drawNowPlaying(name, isError) {
+    if (settingsOpen) return;
     const clearY = INFO_Y;
     h.setColor(C_BLACK).fillRect(WAVE_X, clearY, W - 1, clearY + 55);
 
@@ -291,6 +332,99 @@
     Pip.lastFlip = getTime();
   }
 
+  function drawSettings() {
+    h.clear(1);
+    drawHeader();
+    drawFooter();
+
+    h.setColor(C_BRIGHT)
+      .setFontMonofonto16()
+      .setFontAlign(-1, -1)
+      .drawString(APP_NAME + ' Settings Menu', LIST_X + 6, LIST_TITLE_Y);
+
+    h.setColor(C_DIM).drawLine(
+      LIST_X,
+      LIST_START_Y - 2,
+      LIST_X + SET_W,
+      LIST_START_Y - 2,
+    );
+
+    const hintY = SET_START_Y + SETTINGS_ROWS.length * SET_ROW_H + 10;
+    h.setColor(C_MED)
+      .setFont('6x8')
+      .setFontAlign(-1, -1)
+      .drawString('Hold the left wheel button to close.', LIST_X + 6, hintY);
+
+    drawSettingsRows();
+  }
+
+  function drawSettingsRows() {
+    'ram'; // Execute function from RAM instead of flash.
+    const x = SET_X;
+    const w = SET_W;
+
+    h.setColor(C_BLACK).fillRect(
+      x,
+      SET_START_Y - 2,
+      x + w,
+      SET_START_Y + SETTINGS_ROWS.length * SET_ROW_H,
+    );
+
+    h.setFontAlign(-1, -1);
+
+    for (let i = 0; i < SETTINGS_ROWS.length; i++) {
+      const row = SETTINGS_ROWS[i];
+      const y = SET_START_Y + i * SET_ROW_H;
+      const selected = i === settingsIdx;
+
+      if (selected) {
+        h.setColor(C_DIM).fillRect(x, y, x + w, y + SET_ROW_H - 10);
+      }
+
+      h.setColor(selected ? C_BRIGHT : C_MED)
+        .setFont('Monofonto14')
+        .setFontAlign(-1, -1)
+        .drawString(settingsLabel(row), x + 8, y + 4);
+
+      if (row === 'sort') {
+        h.setColor(selected ? C_BRIGHT : C_MED)
+          .setFont('Monofonto14')
+          .setFontAlign(1, -1)
+          .drawString(sortDir > 0 ? 'A-Z' : 'Z-A', x + w - 8, y + 4);
+      } else {
+        let frac, valText;
+        if (row === 'brightness') {
+          frac = (currentBright - BRIGHT_MIN) / (BRIGHT_MAX - BRIGHT_MIN);
+          valText = Math.round(currentBright * 100) + '%';
+        } else {
+          frac = VOL_MAX > 0 ? currentVol / VOL_MAX : 0;
+          valText = '' + currentVol;
+        }
+        if (frac < 0) frac = 0;
+        if (frac > 1) frac = 1;
+
+        const barX = x + 8;
+        const barEndX = x + w - 70;
+        const barY = y + 24;
+        const barH = 12;
+        const filled = Math.round(frac * (barEndX - barX));
+
+        h.setColor(C_MED).drawRect(barX, barY, barEndX, barY + barH);
+        if (filled > 0) {
+          h.setColor(C_BRIGHT).fillRect(barX, barY, barX + filled, barY + barH);
+        }
+
+        h.setColor(selected ? C_BRIGHT : C_MED)
+          .setFont('6x8', 2)
+          .setFontAlign(1, -1)
+          .drawString(valText, x + w - 8, barY);
+      }
+    }
+
+    h.flip();
+    Pip.lastFlip = getTime();
+  }
+
   function drawTitleBar() {
     const titleX = LIST_X + 6;
     h.setColor(C_BRIGHT)
@@ -316,9 +450,58 @@
     );
   }
 
+  function drawVolHud() {
+    'ram'; // Execute function from RAM instead of flash.
+    if (waveInterval) {
+      clearInterval(waveInterval);
+      waveInterval = null;
+    }
+
+    const hudY = WAVE_Y + WAVE_H - 18;
+    const labelX = WAVE_X + 6;
+    const barX = labelX + 46;
+    const barEndX = WAVE_X + WAVE_W - 6;
+    const barH = 10;
+
+    h.setClipRect(WAVE_X, hudY - 2, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
+    h.setColor(C_BLACK).fillRect(
+      WAVE_X,
+      hudY - 2,
+      WAVE_X + WAVE_W - 1,
+      WAVE_Y + WAVE_H,
+    );
+
+    const filled = Math.round((currentVol / VOL_MAX) * (barEndX - barX));
+    h.setColor(C_DIM).fillRect(barX, hudY, barEndX, hudY + barH);
+    h.setColor(C_BRIGHT).fillRect(barX, hudY, barX + filled, hudY + barH);
+
+    h.setColor(C_MED)
+      .setFont('6x8')
+      .setFontAlign(-1, -1)
+      .drawString('VOL ' + currentVol, labelX, hudY + 1);
+
+    h.setClipRect(0, 0, W - 1, H - 1);
+    h.flip();
+    Pip.lastFlip = getTime();
+
+    if (volHudTimeout) clearTimeout(volHudTimeout);
+    volHudTimeout = setTimeout(function () {
+      volHudTimeout = null;
+      h.setColor(C_BLACK).fillRect(
+        WAVE_X,
+        WAVE_Y,
+        WAVE_X + WAVE_W - 1,
+        WAVE_Y + WAVE_H,
+      );
+      h.flip();
+      Pip.lastFlip = getTime();
+      startWaveform();
+    }, VOL_HUD_MS);
+  }
+
   function drawWaveform() {
-    'ram'; // Suggested by new agents.md. See section 3.8
-    if (!wavePoly) return;
+    'ram'; // Execute function from RAM instead of flash.
+    if (settingsOpen || !wavePoly) return;
     const ym = WAVE_Y + WAVE_H / 2;
     const waveBottom = WAVE_Y + WAVE_H - 10;
     h.setClipRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
@@ -361,7 +544,7 @@
   }
 
   function ellipsize(text, maxPx) {
-    'ram'; // Suggested by new agents.md. See section 3.8
+    'ram'; // Execute function from RAM instead of flash.
     if (h.stringWidth(text) <= maxPx) return text;
     const dots = '...';
     const dotsW = h.stringWidth(dots);
@@ -438,30 +621,6 @@
     uiSound('SELECT');
   }
 
-  function handleSortSelect() {
-    if (view === 'stations' || !allSongs.length) return;
-
-    sortDir = -sortDir;
-    sortSongs();
-
-    if (isPlayAll) {
-      playAllIdx = 0;
-      for (let i = 0; i < allSongs.length; i++) {
-        if (allSongs[i].name === lastPlayedName) {
-          playAllIdx = i + 1;
-          break;
-        }
-      }
-    }
-
-    songPage = 0;
-    selectedIdx = 0; // SORT
-    scrollOffset = 0;
-    rebuildList();
-    drawList();
-    uiSound('TAB');
-  }
-
   function handleSelect() {
     if (removed) return;
     lastSelectTime = Date.now();
@@ -478,11 +637,6 @@
       return;
     }
 
-    if (item.type === 'sort') {
-      handleSortSelect();
-      return;
-    }
-
     if (item.type === 'back') {
       navigateToStations();
       return;
@@ -496,7 +650,7 @@
     if (item.type === 'prev') {
       if (songPage > 0) {
         songPage--;
-        selectedIdx = 4;
+        selectedIdx = SONG_HEADER_COUNT;
         scrollOffset = 0;
         rebuildList();
         drawList();
@@ -509,7 +663,7 @@
       const maxPage = Math.floor(Math.max(0, allSongs.length - 1) / PAGE_SIZE);
       if (songPage < maxPage) {
         songPage++;
-        selectedIdx = 4;
+        selectedIdx = SONG_HEADER_COUNT;
         scrollOffset = 0;
         rebuildList();
         drawList();
@@ -525,6 +679,21 @@
       }
       handleSongSelect(item);
     }
+  }
+
+  function handleSettingsSelect() {
+    const row = SETTINGS_ROWS[settingsIdx];
+    if (row === 'sort') {
+      toggleSort();
+      uiSound('TAB');
+    } else if (row === 'brightness') {
+      stepBrightness(1, true);
+      uiSound('HIGHLIGHT');
+    } else {
+      stepVolume(1, true);
+      uiSound('HIGHLIGHT');
+    }
+    drawSettingsRows();
   }
 
   function handleSongSelect(item) {
@@ -583,14 +752,6 @@
     sortSongs();
   }
 
-  function sortSongs() {
-    allSongs.sort(function (a, b) {
-      const an = a.name.toLowerCase();
-      const bn = b.name.toLowerCase();
-      return an < bn ? -sortDir : an > bn ? sortDir : 0;
-    });
-  }
-
   function loadStations() {
     const entries = readDir(MUSIC_DIR);
     stations = [];
@@ -600,6 +761,16 @@
         stations.push(name);
       }
     }
+  }
+
+  function moveSettingsSelection(dir) {
+    settingsIdx += dir > 0 ? 1 : -1;
+    if (settingsIdx < 0) settingsIdx = 0;
+    if (settingsIdx >= SETTINGS_ROWS.length) {
+      settingsIdx = SETTINGS_ROWS.length - 1;
+    }
+    drawSettingsRows();
+    uiSound('HIGHLIGHT');
   }
 
   function navigateToSongs(stationName) {
@@ -662,10 +833,16 @@
   }
 
   function onKnob1(dir) {
+    if (!dir) return;
     const now = Date.now();
     if (now - lastKnobTime < KNOB_DEBOUNCE_MS) return;
     if (now - lastSelectTime < POST_SELECT_IGNORE_MS) return;
     lastKnobTime = now;
+
+    if (settingsOpen) {
+      moveSettingsSelection(dir);
+      return;
+    }
 
     selectedIdx += dir > 0 ? 1 : -1;
     if (selectedIdx < 0) selectedIdx = 0;
@@ -676,13 +853,19 @@
   }
 
   function onKnob2(dir) {
+    if (!dir) return;
     const now = Date.now();
     if (now - lastVolKnobTime < KNOB_DEBOUNCE_MS) return;
     lastVolKnobTime = now;
 
+    if (settingsOpen) {
+      adjustSettingValue(dir);
+      return;
+    }
+
     currentVol = Math.max(
       VOL_MIN,
-      Math.min(VOL_MAX, currentVol + (dir > 0 ? -1 : 1)),
+      Math.min(VOL_MAX, currentVol + (dir > 0 ? 1 : -1)),
     );
     try {
       Pip.setVol(currentVol);
@@ -691,79 +874,49 @@
     drawVolHud();
   }
 
-  function drawVolHud() {
-    'ram'; // Suggested by new agents.md. See section 3.8
+  function onPressDown() {
+    longFired = false;
+    if (pressTimer) clearTimeout(pressTimer);
+    pressTimer = setTimeout(function () {
+      pressTimer = null;
+      longFired = true;
+      toggleSettings();
+    }, LONG_PRESS_MS);
+  }
+
+  function onPressUp() {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    if (longFired) {
+      longFired = false;
+      return;
+    }
+    if (settingsOpen) handleSettingsSelect();
+    else handleSelect();
+  }
+
+  function openSettings() {
+    if (settingsOpen) return;
+    settingsOpen = true;
+    settingsIdx = 0;
     if (waveInterval) {
       clearInterval(waveInterval);
       waveInterval = null;
     }
-
-    const hudY = WAVE_Y + WAVE_H - 18;
-    const labelX = WAVE_X + 6;
-    const barX = labelX + 46;
-    const barEndX = WAVE_X + WAVE_W - 6;
-    const barH = 10;
-
-    h.setClipRect(WAVE_X, hudY - 2, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
-    h.setColor(C_BLACK).fillRect(
-      WAVE_X,
-      hudY - 2,
-      WAVE_X + WAVE_W - 1,
-      WAVE_Y + WAVE_H,
-    );
-
-    const filled = Math.round((currentVol / VOL_MAX) * (barEndX - barX));
-    h.setColor(C_DIM).fillRect(barX, hudY, barEndX, hudY + barH);
-    h.setColor(C_BRIGHT).fillRect(barX, hudY, barX + filled, hudY + barH);
-
-    h.setColor(C_MED)
-      .setFont('6x8')
-      .setFontAlign(-1, -1)
-      .drawString('VOL ' + currentVol, labelX, hudY + 1);
-
-    h.setClipRect(0, 0, W - 1, H - 1);
-    h.flip();
-    Pip.lastFlip = getTime();
-
-    if (volHudTimeout) clearTimeout(volHudTimeout);
-    volHudTimeout = setTimeout(function () {
+    if (volHudTimeout) {
+      clearTimeout(volHudTimeout);
       volHudTimeout = null;
-      h.setColor(C_BLACK).fillRect(
-        WAVE_X,
-        WAVE_Y,
-        WAVE_X + WAVE_W - 1,
-        WAVE_Y + WAVE_H,
-      );
-      h.flip();
-      Pip.lastFlip = getTime();
-      startWaveform();
-    }, VOL_HUD_MS);
+    }
+    drawSettings();
+    uiSound('TAB');
   }
 
   function pathJoin(a, b) {
     if (!a) return b;
     if (!b) return a;
     return a + '/' + b;
-  }
-
-  function playNextRandom() {
-    if (!isRandom || !randomQueue.length) {
-      isRandom = false;
-      drawNowPlaying(null, false);
-      drawList();
-      return;
-    }
-    if (randomQueueIdx >= randomQueue.length) {
-      shuffle(randomQueue);
-      if (randomQueue.length > 1 && randomQueue[0].name === lastPlayedName) {
-        const t = randomQueue[0];
-        randomQueue[0] = randomQueue[1];
-        randomQueue[1] = t;
-      }
-      randomQueueIdx = 0;
-    }
-    const next = randomQueue[randomQueueIdx++];
-    playSong(playingStation || currentStation, next.name);
   }
 
   function playNextPlayAll() {
@@ -795,6 +948,26 @@
       rebuildList();
     }
     playSong(st, allSongs[idx].name);
+  }
+
+  function playNextRandom() {
+    if (!isRandom || !randomQueue.length) {
+      isRandom = false;
+      drawNowPlaying(null, false);
+      drawList();
+      return;
+    }
+    if (randomQueueIdx >= randomQueue.length) {
+      shuffle(randomQueue);
+      if (randomQueue.length > 1 && randomQueue[0].name === lastPlayedName) {
+        const t = randomQueue[0];
+        randomQueue[0] = randomQueue[1];
+        randomQueue[1] = t;
+      }
+      randomQueueIdx = 0;
+    }
+    const next = randomQueue[randomQueueIdx++];
+    playSong(playingStation || currentStation, next.name);
   }
 
   function playSong(stationName, songName) {
@@ -837,6 +1010,18 @@
     } catch (e) {
       return '0.0.0';
     }
+  }
+
+  function readBrightness() {
+    let b = BRIGHT_MAX;
+    try {
+      if (typeof Pip !== 'undefined' && typeof Pip.brightness === 'number') {
+        b = Pip.brightness;
+      }
+    } catch (e) {}
+    if (b < BRIGHT_MIN) b = BRIGHT_MIN;
+    if (b > BRIGHT_MAX) b = BRIGHT_MAX;
+    return Math.round(b * 100) / 100;
   }
 
   function readDir(path) {
@@ -885,6 +1070,11 @@
       clearTimeout(volHudTimeout);
       volHudTimeout = null;
     }
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    settingsOpen = false;
 
     Pip.removeListener('knob1', onKnob1);
     Pip.removeListener('knob2', onKnob2);
@@ -894,8 +1084,20 @@
     Pip.radioClipPlaying = false;
     Pip.audioStop();
 
+    if (initialBright !== null) {
+      try {
+        Pip.setBrightness(initialBright);
+      } catch (e) {}
+    }
+
     h.clear();
     h.flip();
+  }
+
+  function settingsLabel(row) {
+    if (row === 'sort') return 'SONG SORT ORDER';
+    if (row === 'brightness') return 'SCREEN BRIGHTNESS';
+    return 'AUDIO VOLUME';
   }
 
   function shuffle(arr) {
@@ -911,6 +1113,14 @@
     return name.replace(/\.wav$/i, '');
   }
 
+  function sortSongs() {
+    allSongs.sort(function (a, b) {
+      const an = a.name.toLowerCase();
+      const bn = b.name.toLowerCase();
+      return an < bn ? -sortDir : an > bn ? sortDir : 0;
+    });
+  }
+
   function start() {
     h.clear();
     Pip.audioStop();
@@ -919,6 +1129,13 @@
       Pip.setVol(currentVol);
     } catch (e) {}
 
+    try {
+      if (typeof Pip !== 'undefined' && typeof Pip.brightness === 'number') {
+        initialBright = Pip.brightness;
+      }
+    } catch (e) {}
+    currentBright = readBrightness();
+
     Pip.onExclusive('knob1', onKnob1);
     Pip.onExclusive('knob2', onKnob2);
 
@@ -926,7 +1143,8 @@
       clickWatch = setWatch(
         function (e) {
           lastSelectTime = Date.now();
-          if (e.state) handleSelect();
+          if (e.state) onPressDown();
+          else onPressUp();
         },
         ENC1_PRESS,
         { repeat: true, edge: 'both', debounce: 50 },
@@ -968,6 +1186,49 @@
     waveInterval = setInterval(drawWaveform, WAVEFORM_MS);
   }
 
+  function stepBrightness(delta, wrap) {
+    const maxIdx = BRIGHT_LEVELS.length - 1;
+    let idx = 0;
+    let bestDiff = Infinity;
+
+    for (let i = 0; i <= maxIdx; i++) {
+      const diff = Math.abs(BRIGHT_LEVELS[i] - currentBright);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        idx = i;
+      }
+    }
+
+    idx += delta;
+    if (wrap) {
+      if (idx > maxIdx) idx = 0;
+      else if (idx < 0) idx = maxIdx;
+    } else {
+      if (idx > maxIdx) idx = maxIdx;
+      else if (idx < 0) idx = 0;
+    }
+
+    currentBright = BRIGHT_LEVELS[idx];
+    try {
+      Pip.setBrightness(currentBright);
+    } catch (e) {}
+  }
+
+  function stepVolume(delta, wrap) {
+    let v = currentVol + delta;
+    if (wrap) {
+      if (v > VOL_MAX) v = VOL_MIN;
+      else if (v < VOL_MIN) v = VOL_MAX;
+    } else {
+      if (v > VOL_MAX) v = VOL_MAX;
+      else if (v < VOL_MIN) v = VOL_MIN;
+    }
+    currentVol = v;
+    try {
+      Pip.setVol(currentVol);
+    } catch (e) {}
+  }
+
   function stopSong() {
     suppressAudioStopped = true;
     isAudioPlaying = false;
@@ -982,6 +1243,33 @@
     randomQueue = [];
     drawNowPlaying(null, false);
     drawList();
+  }
+
+  function toggleSettings() {
+    if (settingsOpen) closeSettings();
+    else openSettings();
+  }
+
+  function toggleSort() {
+    sortDir = -sortDir;
+    if (!allSongs.length) return;
+
+    sortSongs();
+
+    if (isPlayAll) {
+      playAllIdx = 0;
+      for (let i = 0; i < allSongs.length; i++) {
+        if (allSongs[i].name === lastPlayedName) {
+          playAllIdx = i + 1;
+          break;
+        }
+      }
+    }
+
+    songPage = 0;
+    selectedIdx = 0;
+    scrollOffset = 0;
+    rebuildList();
   }
 
   function uiSound(name) {
