@@ -194,6 +194,32 @@
     startWaveform();
   }
 
+  function drawEmptyState() {
+    const x = LIST_X + 4;
+    let y = LIST_START_Y + 8;
+
+    h.setColor(C_BRIGHT)
+      .setFont('Monofonto14')
+      .setFontAlign(-1, -1)
+      .drawString('NO PLAYLISTS FOUND', x, y);
+    y += 30;
+
+    h.setColor(C_MED).setFont('6x8').setFontAlign(-1, -1);
+    const lines = h.wrapString(
+      'No station playlists were found in the MUSIC folder. Add one online to get started:',
+      LIST_W - 8,
+    );
+    for (let i = 0; i < lines.length; i++) {
+      h.drawString(lines[i], x, y);
+      y += 12;
+    }
+
+    y += 8;
+    h.setColor(C_BRIGHT)
+      .setFont('Monofonto14')
+      .drawString('pip-boy.com/3000/ipip-media-player', x, y);
+  }
+
   function drawFooter() {
     try {
       Pip.renderFooter();
@@ -223,6 +249,13 @@
       LIST_X + LIST_W,
       startY + VISIBLE_ROWS * ROW_H,
     );
+
+    if (view === 'stations' && !stations.length) {
+      drawEmptyState();
+      h.flip();
+      Pip.lastFlip = getTime();
+      return;
+    }
 
     h.setFont('Monofonto14').setFontAlign(-1, -1);
 
@@ -563,6 +596,13 @@
       }
     }
     return text.slice(0, best) + dots;
+  }
+
+  function ensureMusicDir() {
+    if (isDirectory(MUSIC_DIR)) return;
+    try {
+      fs.mkdir('/' + MUSIC_DIR);
+    } catch (e) {}
   }
 
   function fileExists(path) {
@@ -1186,6 +1226,7 @@
     Pip.on('audioStopped', onAudioStopped);
 
     initWaveform();
+    ensureMusicDir();
     loadStations();
     rebuildList();
     drawAll();

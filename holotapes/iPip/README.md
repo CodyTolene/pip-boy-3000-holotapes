@@ -31,6 +31,9 @@ MUSIC/
 - Sub-folders inside station folders are ignored (one level only).
 - Full file paths must stay under 56 characters — oversized entries are shown
   dimmed and cannot be played.
+- The `MUSIC/` folder is created automatically on launch if it does not exist.
+  When no station playlists are found, the app shows a prompt to add one at
+  [pip-boy.com](https://www.pip-boy.com/3000/ipip-media-player).
 
 ### Controls
 
