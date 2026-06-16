@@ -1,5 +1,5 @@
 1.2.1
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/26
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/27
 - Create the "MUSIC" folder automatically on launch if it is missing so the app no longer fails to load.
 - Show a "NO PLAYLISTS FOUND" message linking to pip-boy.com when no station playlists exist.
 
