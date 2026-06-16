@@ -80,11 +80,13 @@
   let lastSelectTime = 0;
   const POST_SELECT_IGNORE_MS = 150;
 
+  // Volume
   const VOL_MIN = 0;
   const VOL_MAX = 27;
   const VOL_DEFAULT = 20;
   const VOL_HUD_MS = 1500;
   let currentVol = VOL_DEFAULT;
+  let initialVol = null;
   let volHudTimeout = null;
 
   // Fixed header rows, currently:
@@ -1012,11 +1014,34 @@
     }
   }
 
-  function readBrightness() {
+  function readSystemVolume() {
+    let v = VOL_DEFAULT;
+    try {
+      if (
+        typeof Pip !== 'undefined' &&
+        Pip.settings &&
+        typeof Pip.settings.volume === 'number'
+      ) {
+        initialVol = Pip.settings.volume;
+        v = initialVol;
+      }
+    } catch (e) {}
+    if (v < VOL_MIN) v = VOL_MIN;
+    if (v > VOL_MAX) v = VOL_MAX;
+    return v;
+  }
+
+  function readSystemBrightness() {
     let b = BRIGHT_MAX;
     try {
-      if (typeof Pip !== 'undefined' && typeof Pip.brightness === 'number') {
-        b = Pip.brightness;
+      if (typeof Pip !== 'undefined') {
+        if (Pip.settings && typeof Pip.settings.brightness === 'number') {
+          initialBright = Pip.settings.brightness;
+          b = initialBright;
+        } else if (typeof Pip.brightness === 'number') {
+          initialBright = Pip.brightness;
+          b = initialBright;
+        }
       }
     } catch (e) {}
     if (b < BRIGHT_MIN) b = BRIGHT_MIN;
@@ -1084,9 +1109,17 @@
     Pip.radioClipPlaying = false;
     Pip.audioStop();
 
+    // Restore initial brightness on app exit
     if (initialBright !== null) {
       try {
         Pip.setBrightness(initialBright);
+      } catch (e) {}
+    }
+
+    // Restore initial volume on app exit
+    if (initialVol !== null) {
+      try {
+        Pip.setVol(initialVol);
       } catch (e) {}
     }
 
@@ -1125,16 +1158,15 @@
     h.clear();
     Pip.audioStop();
 
+    currentVol = readSystemVolume();
     try {
       Pip.setVol(currentVol);
     } catch (e) {}
 
+    currentBright = readSystemBrightness();
     try {
-      if (typeof Pip !== 'undefined' && typeof Pip.brightness === 'number') {
-        initialBright = Pip.brightness;
-      }
+      Pip.setBrightness(currentBright);
     } catch (e) {}
-    currentBright = readBrightness();
 
     Pip.onExclusive('knob1', onKnob1);
     Pip.onExclusive('knob2', onKnob2);

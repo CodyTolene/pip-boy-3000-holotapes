@@ -37,6 +37,7 @@ MUSIC/
 - Left knob scroll: Move selection up / down in list
 - Left knob press: Open station / play or stop song / navigate pages
 - Right knob scroll: Adjust volume
+- Left knob long press: Open settings menu (close with another long press)
 
 ### Instructions
 
@@ -45,19 +46,23 @@ MUSIC/
 3. The station list loads automatically from `MUSIC/`.
 4. Scroll to a station and press the left knob to open it.
 5. Scroll to a song and press to play. Press the same song again to stop.
-6. Select **= SORT ...** (top of the song list) to toggle the song list order.
-   The label shows the order the next press will apply and the order it is
-   currently in, e.g. **SORT Z-A (CURRENTLY A-Z)**. The chosen order carries
-   over to other stations.
-7. Select **SHUFFLE** to play all songs in the current station in random order.
-   Select it again to stop shuffle playback.
-8. Select **PLAY ALL** to play through the songs in order, starting from the top
-   of the current page. It pages forward automatically and loops back to the
-   first song after the last. Select it again to stop.
-9. Select **BACK TO PLAYLISTS** (top of the song list) to return to the station
+6. Select **SHUFFLE PLAY ALL** to play all songs in the current station in
+   random order. Select it again to stop playback.
+7. Select **PLAY ALL (TOP-DOWN)** to play all songs in the current station in
+   order, starting from the top. Select it again to stop playback.
+8. Select **BACK TO PLAYLISTS** (top of the song list) to return to the station
    list.
-10. Use **< PREV PAGE** and **NEXT PAGE >** at the bottom of a long song list to
-    navigate between pages.
+9. Use **< PREV PAGE** and **NEXT PAGE >** at the bottom of a long song list to
+   navigate between pages.
+
+### Settings
+
+1. To open the settings menu in-app, hold/long press the left wheel button.
+2. Select a setting to adjust using the left knob.
+3. Adjust sorting from A-Z or Z-A.
+4. Adjust screen brightness with the right knob.
+5. Adjust volume with the right knob.
+6. Close settings menu with another long hold press of the left wheel button.
 
 ### License(s)
 

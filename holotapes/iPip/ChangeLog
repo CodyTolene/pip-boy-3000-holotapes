@@ -1,10 +1,12 @@
 1.2.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/24
 - On long press/hold of the left wheel button, open the settings menu. Close with another long hold.
-- Sorting functionality and button moved to the new settings menu.
-- New setting added for controlling screen brightness.
-- New setting for controlling audio volume.
-- Read version from "APPINFO/IPIP.info" instead of hardcoding it.
+- Sorting functionality button moved into the new settings menu.
+- New setting added for controlling screen brightness from the settings menu.
+- New setting for controlling audio volume from the settings menu.
+- Read version dynamically from "APPINFO/IPIP.info" instead of hardcoding it in the app.
+- Restore volume to system settings on exit.
+- Restore brightness to system settings on exit.
 
 1.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/23
