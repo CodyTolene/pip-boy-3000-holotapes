@@ -8,6 +8,11 @@
 "previews": [],
 "type": "app",
 "readme": "README.md",
-"storage": [{ "name": "HOLO/IPIP/APP.JS", "url": "app.js" }],
+"storage": [
+{
+"name": "HOLO/IPIP/APP.JS",
+"url": "app.js"
+}
+],
 "storageOptional": []
 }
