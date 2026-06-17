@@ -1,152 +1,182 @@
-iPip Media Player v1.3.0 – Joe Modifications to Cody Build
+# iPip Media Player v1.3.0
 
-Base Version:
+## Joe Modifications to Cody Build
 
-* Cody Update build
+### Base Version
 
-Current Version:
+Cody Update Build
 
-* Cody/Joe Hybrid build
+### Current Version
 
-FEATURE CHANGES
+Cody/Joe Hybrid Build
 
-1. Added Upload-Order Song Sorting
+---
 
-* Added a third sort mode: UPLOAD.
-* Original build only supported A-Z and Z-A sorting.
+# FEATURE CHANGES
+
+### Added Upload-Order Song Sorting
+
+* Added a third sort mode: **UPLOAD**.
+* Original build only supported **A-Z** and **Z-A** sorting.
 * Upload order is now the default mode.
-* Added upload-order backup array (ao) to preserve the original file order.
+* Added upload-order backup array (`ao`) to preserve original file order.
 
-2. Added Upload/A-Z/Z-A Sort Cycling
+### Added Upload / A-Z / Z-A Sort Cycling
 
 * Sort menu now cycles:
-  UPLOAD → A-Z → Z-A → UPLOAD
-* Previously only toggled:
-  A-Z ↔ Z-A
 
-3. Increased Filename/Path Limit
+  * UPLOAD → A-Z → Z-A → UPLOAD
+* Original version only toggled:
+
+  * A-Z ↔ Z-A
+
+### Increased Filename / Path Length Limit
 
 * Raised path-length limit from 56 characters to 200 characters.
-* Longer song names that previously displayed "FILE NAME TOO LONG" now load and play normally.
+* Longer filenames that were previously rejected can now be loaded and played.
 
-4. Added Long Song Title Scrolling
+### Added Long Song Title Scrolling
 
-* Added scrollTitle() system.
-* Long titles now scroll across the currently-playing display area.
-* Includes pause before scrolling begins.
-* Continuously loops while the song is playing.
+* Added scrolling title system for currently playing tracks.
+* Includes a pause before scrolling begins.
+* Continuously scrolls while music is playing.
+* Improves readability of long song names.
 
-PLAYBACK CHANGES
+---
 
-5. Modified Song Selection Behavior
+# PLAYBACK CHANGES
 
-* Selecting an individual song now prepares sequential playback continuation.
+### Modified Song Selection Behavior
+
+* Selecting an individual song now prepares proper sequential playback continuation.
 * Current song position is tracked so playback can continue correctly afterward.
 
-6. Modified Play-All Logic
+### Modified Play-All Logic
 
-* Play-all position is recalculated after sorting changes.
+* Play-all position is recalculated after sort-order changes.
 * Current song is preserved when sort order changes during playback.
 
-7. Modified Audio-Stopped Callback
+### Modified Audio-Stopped Callback
 
 * Added delayed advancement during sequential playback.
 * Play-all now advances through a timeout instead of immediately.
-* Intended to reduce callback-related instability and crashes.
+* Intended to reduce callback-related instability observed during testing.
 
-RANDOM PLAYBACK CHANGES
+---
 
-8. Reworked Random Queue Construction
+# RANDOM PLAYBACK CHANGES
+
+### Reworked Random Queue Construction
 
 * Random queue now builds manually from valid songs.
-* Random playback continues to avoid replaying the current song immediately after reshuffle.
+* Random playback avoids immediately replaying the currently playing song after reshuffling.
+* Queue reshuffles automatically when exhausted.
 
-USER INTERFACE CHANGES
+---
 
-9. Simplified Main Menu Labels
+# USER INTERFACE CHANGES
 
-* Removed:
-  SHUFFLE PLAY ALL
-  PLAY ALL (TOP-DOWN)
-  BACK TO PLAYLISTS
+### Simplified Main Menu Labels
 
-* Replaced with:
-  RANDOMIZE
-  BACK
+Removed:
 
-10. Updated Sort Menu Display
+* SHUFFLE PLAY ALL
+* PLAY ALL
+* PLAY ALL (TOP-DOWN)
+* BACK TO PLAYLISTS
 
-* Sort setting now displays:
-  UPLOAD
-  A-Z
-  Z-A
+Replaced with:
+
+* RANDOMIZE
+* BACK
+
+### Updated Sort Menu Display
+
+Sort menu now displays:
+
+* UPLOAD
+* A-Z
+* Z-A
 
 instead of only:
-A-Z
-Z-A
 
-11. Updated Playback Status Text
+* A-Z
+* Z-A
 
-* Random mode status text updated to match RANDOMIZE terminology.
+### Updated Playback Status Text
 
-PERFORMANCE / RESPONSIVENESS CHANGES
+* Random playback status text updated to match RANDOMIZE terminology.
 
-12. Increased Wheel Responsiveness
+---
+
+# PERFORMANCE / RESPONSIVENESS CHANGES
+
+### Increased Wheel Responsiveness
 
 * Thumbwheel debounce reduced from 50ms to 5ms.
-* Wheel feels significantly more responsive.
+* Improves wheel responsiveness and menu navigation feel.
 
-13. Reduced Navigation Throttle
+### Reduced Navigation Delay
 
-* Navigation throttle changed from 30ms to 0ms.
-* Menu scrolling reacts immediately to wheel movement.
+* Navigation timing adjusted to improve menu responsiveness.
+* Menu movement reacts more immediately to wheel input.
 
-14. Increased Default Volume
-
-* Startup volume increased from 20 to 27.
-
-15. Increased Volume Overlay Visibility
+### Increased Volume Overlay Visibility
 
 * Volume display timeout increased from 1.5 seconds to 3 seconds.
 
-INTERNAL CODE CHANGES
+---
 
-16. Added Upload-Order Backup Array
+# INTERNAL CODE CHANGES
 
-* Added:
-  ao = []
+### Added Upload-Order Backup Array
+
+Added:
+
+* `ao = []`
+
+Purpose:
 
 * Stores original song order independently of active sort order.
+* Allows instant restoration of upload order.
 
-17. Replaced Built-In Sort Method
+### Replaced Built-In Sort Method
 
-* Original version used Array.sort().
-* Hybrid version uses custom insertion sort logic.
-* Allows upload-order preservation and sort-mode switching.
+* Original version relied on JavaScript's built-in sort behavior.
+* Hybrid version uses custom sorting logic to preserve upload order and support sort-mode switching.
 
-18. Added Scrolling Title State Variables
+### Added Scrolling Title State Variables
 
-* Added:
-  ts
-  tsLast
-  tsName
+Added:
 
-* Used by scrolling title system.
+* `ts`
+* `tsLast`
+* `tsName`
 
-19. Modified Waveform Refresh Timer
+Purpose:
 
-* Waveform refresh timer now also updates scrolling titles during playback.
+* Manage title scrolling position and timing.
 
-STABILITY CHANGES
+### Modified Waveform Refresh Timer
 
-20. Addressed Sort-Related Memory Issues
+* Waveform refresh timer now also updates scrolling song titles during playback.
 
-* Sort implementation changed to avoid some memory-related crashes encountered during development and testing.
+---
 
-21. Improved Sort/Playback Synchronization
+# STABILITY CHANGES
+
+### Reduced Sort-Related Stability Issues
+
+* Sort implementation was revised after crashes were observed during development and testing.
+* New implementation has demonstrated improved stability during testing.
+
+### Improved Sort / Playback Synchronization
 
 * Sorting while playback is active now attempts to preserve the correct next-song position.
+* Helps maintain playback continuity after sort changes.
 
-Overall Goal:
+---
 
-* Preserve Cody's original functionality while improving ease of use, adding upload-order playback, longer filename support, scrolling titles, improved responsiveness, and more flexible sorting behavior.
+# PROJECT GOAL
+
+Preserve Cody's original iPip functionality while improving usability, adding upload-order playback support, increasing filename compatibility, improving navigation responsiveness, adding scrolling titles, and providing more flexible sorting behavior.
