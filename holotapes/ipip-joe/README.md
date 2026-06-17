@@ -1,14 +1,8 @@
 # iPip Media Player v1.3.0
 
-## Joe Modifications to Cody Build
+### Modifications by Joe Byers
 
-### Base Version
-
-Cody Update Build
-
-### Current Version
-
-Cody/Joe Hybrid Build
+### Based on iPip Media Player v1.2.1 by Cody Tolene
 
 ---
 
