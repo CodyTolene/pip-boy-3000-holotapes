@@ -1,13 +1,13 @@
 {
-  "id": "ipip-joe",
-  "name": "iPip v1.0.3 (Joe Edition)",
-  "author": "Joe Byers",
-  "version": "1.0.3",
-  "description": "A modified version of iPip with quality-of-life improvements including continuous sequential playback, wraparound playlist playback, marquee scrolling, improved wheel responsiveness, custom file order support, and readability improvements.",
-  "icon": "assets/iPip.png",
-  "previews": [],
-  "type": "app",
-  "readme": "README.md",
-  "storage": [{ "name": "HOLO/IPIP-JOE/APP.JS", "url": "app.js" }],
-  "storageOptional": []
+"id": "iPip",
+"name": "iPip Media Player",
+"author": "@CodyTolene & Joe Byers",
+"version": "1.3.0",
+"description": "iPip is a WAV media player that turns each folder inside MUSIC/ into its own station playlist. Includes upload-order sorting, A-Z/Z-A sorting, scrolling titles, improved navigation responsiveness, and enhanced playback controls.",
+"icon": "assets/iPip.png",
+"previews": [],
+"type": "app",
+"readme": "README.md",
+"storage": [{ "name": "HOLO/IPIP/APP.JS", "url": "app.js" }],
+"storageOptional": []
 }
