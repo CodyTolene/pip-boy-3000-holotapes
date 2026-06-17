@@ -1,4 +1,4 @@
-iPip Media Player – Joe Modifications to Cody Build
+iPip Media Player v1.3.0 – Joe Modifications to Cody Build
 
 Base Version:
 
