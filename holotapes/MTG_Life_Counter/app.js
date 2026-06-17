@@ -1,5 +1,12 @@
+// =============================================================================
+//  Name: iPip Media Player
+//  Author: @tylerjbartlett
+//  License: CC-BY-NC-4.0
+//  Repository: https://github.com/tylerjbartlett/pip-boy-3000a-holotapes
+// =============================================================================
+
 (function () {
-  // General
+  // General constants
   const C = {
     APP_NAME: 'MTG Life Counter',
     APP_VERSION: '1.0.0',
@@ -8,7 +15,7 @@
     GAME_STANDARD_HP: 20,
     GAME_COMMANDER_HP: 40,
     KNOB_DEBOUNCE: 10,
-    SHOW_MENU_BOUNDRIES: true,
+    SHOW_MENU_BOUNDARIES: true,
   };
 
   // Menu variables
@@ -41,7 +48,12 @@
   const W = h.getWidth();
   const H = h.getHeight();
 
-  const SCREEN_XY = { x1: 60, y1: 40, x2: W - 60, y2: H - 20 };
+  const SCREEN_XY = {
+    x1: 60,
+    y1: 40,
+    x2: W - 60,
+    y2: H - 20,
+  };
   const TITLE_XY = {
     x1: SCREEN_XY.x1,
     y1: 10,
@@ -99,7 +111,6 @@
 
   // Runtime state
   let lastLeftKnobTime = 0;
-  let footerInterval = null;
   let originalIdleTimeout = Pip.settings.idleTimeout;
 
   function Player(index, name, currentLife) {
@@ -115,18 +126,6 @@
     this.amount = 0;
   }
 
-  function limitNumberWithinRange(num, min, max) {
-    const parsed = parseInt(num);
-    return Math.min(Math.max(parsed, min), max);
-  }
-
-  function clearFooterBar() {
-    if (footerInterval) {
-      clearInterval(footerInterval);
-    }
-    footerInterval = null;
-  }
-
   function clearScreenArea(area) {
     h.clearRect(area.x1, area.y1, area.x2, area.y2);
   }
@@ -135,14 +134,14 @@
     h.drawRect(area.x1, area.y1, area.x2, area.y2);
   }
 
-  function drawMenuBoundries() {
-    if (C.SHOW_MENU_BOUNDRIES === false) return;
+  function drawMenuBoundaries() {
+    if (C.SHOW_MENU_BOUNDARIES === false) return;
     drawBoundaries(SCREEN_XY);
     drawBoundaries(MENU_HEADER_XY);
     drawBoundaries(MENU_XY);
   }
 
-  function drawGameBoundries() {
+  function drawGameBoundaries() {
     switch (playerCount) {
       case 1:
         drawBoundaries(SCREEN_XY);
@@ -230,7 +229,7 @@
       }
     });
 
-    drawMenuBoundries();
+    drawMenuBoundaries();
   }
 
   function drawMenuHelp() {
@@ -252,7 +251,7 @@
     h.drawString('Back', MENU_XY.x1 + padding, backY);
     Pip.shadeBox(MENU_XY.x1, backY - padding, MENU_XY.x2, backY + rowHeight);
 
-    drawMenuBoundries();
+    drawMenuBoundaries();
   }
 
   function drawPlayerTile(area, player) {
@@ -295,7 +294,7 @@
         .drawString(commanderPrompt, commanderPromptX, commanderPromptY);
     }
 
-    drawGameBoundries();
+    drawGameBoundaries();
   }
 
   function drawGameBoard() {
@@ -323,7 +322,7 @@
         break;
     }
 
-    drawGameBoundries();
+    drawGameBoundaries();
   }
 
   function menuLoad(menuOptions, menuHeader) {
@@ -337,7 +336,7 @@
 
     switch (menuDisplayed) {
       case 'main':
-        menuIndexSelected = limitNumberWithinRange(
+        menuIndexSelected = E.clip(
           menuIndexSelected + dir,
           0,
           MENU_MAIN_OPTIONS.length - 1,
@@ -345,7 +344,7 @@
         drawMenu(MENU_MAIN_OPTIONS);
         break;
       case 'gameNew':
-        menuIndexSelected = limitNumberWithinRange(
+        menuIndexSelected = E.clip(
           menuIndexSelected + dir,
           0,
           MENU_GAME_NEW_OPTIONS.length - 1,
@@ -353,7 +352,7 @@
         drawMenu(MENU_GAME_NEW_OPTIONS);
         break;
       case 'commanderDamage':
-        menuIndexSelected = limitNumberWithinRange(
+        menuIndexSelected = E.clip(
           menuIndexSelected + dir,
           0,
           PLAYERS[playerIndexSelected].commanderDamageSources.length - 1,
@@ -361,7 +360,7 @@
         drawMenu(PLAYERS[playerIndexSelected].commanderDamageSources);
         break;
       case 'inGameOptions':
-        menuIndexSelected = limitNumberWithinRange(
+        menuIndexSelected = E.clip(
           menuIndexSelected + dir,
           0,
           MENU_INGAME_OPTIONS.length - 1,
@@ -378,7 +377,7 @@
   function playerScroll(dir) {
     const prevIndex = playerIndexSelected;
     if (inGame === false) return;
-    playerIndexSelected = limitNumberWithinRange(
+    playerIndexSelected = E.clip(
       playerIndexSelected + dir,
       0,
       PLAYERS.length - 1,
@@ -527,7 +526,7 @@
     if (inGame === false) {
       if (menuDisplayed === 'gameNew' && menuIndexSelected === 0) {
         prevIndex = playerCount;
-        playerCount = limitNumberWithinRange(
+        playerCount = E.clip(
           playerCount + dir,
           C.PLAYER_COUNT_MIN,
           C.PLAYER_COUNT_MAX,
@@ -550,7 +549,7 @@
         PLAYERS[playerIndexSelected].commanderDamageSources[menuIndexSelected]
           .amount;
       let cmndrDmgBoundsHack = cmndrDmg + dir;
-      cmndrDmg = limitNumberWithinRange(cmndrDmg + dir, 0, 21);
+      cmndrDmg = E.clip(cmndrDmg + dir, 0, 21);
       PLAYERS[playerIndexSelected].commanderDamageSources[
         menuIndexSelected
       ].amount = cmndrDmg;
@@ -570,19 +569,18 @@
 
   h.clear(1).flip();
 
-  Pip.on('knob1', handleLeftKnob);
-  Pip.on('knob2', handleRightKnob);
+  Pip.onExclusive('knob1', handleLeftKnob);
+  Pip.onExclusive('knob2', handleRightKnob);
 
   menuLoad(MENU_MAIN_OPTIONS, 'Main Menu');
   drawAppTitleAndVersion();
-  drawMenuBoundries();
+  drawMenuBoundaries();
 
   return {
-    id: 'MTG_LIFE_COUNTER',
+    id: 'mtgtracker',
     notDefault: true,
     fullscreen: true,
     remove: function () {
-      clearFooterBar();
       Pip.removeListener('knob1', handleLeftKnob);
       Pip.removeListener('knob2', handleRightKnob);
       Pip.settings.idleTimeout = originalIdleTimeout;
