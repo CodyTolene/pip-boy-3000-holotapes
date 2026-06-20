@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: iPip Media Player
+//  Name: MTG life Counter
 //  Author: @tylerjbartlett
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/tylerjbartlett/pip-boy-3000a-holotapes
@@ -9,7 +9,7 @@
   // General constants
   const C = {
     APP_NAME: 'MTG Life Counter',
-    APP_VERSION: '1.0.0',
+    APP_VERSION: '1.0.1',
     PLAYER_COUNT_MIN: 1,
     PLAYER_COUNT_MAX: 4,
     GAME_STANDARD_HP: 20,
