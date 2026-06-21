@@ -1,0 +1,13 @@
+{
+  "id": "killteamtracker",
+  "name": "Kill Team Tracker",
+  "author": "@sethsanchez",
+  "version": "1.1.0",
+  "description": "A Pip-powered counter for 40k Kill Team. Will track your VP, CP, and the TP.",
+  "icon": "assets/killteam.png",
+  "tags": "game,tool",
+  "type": "app",
+  "readme": "README.md",
+  "custom": "",
+  "storage": [{ "name": "HOLO/KILLTEAM/APP.js", "url": "app.min.js" }]
+}
