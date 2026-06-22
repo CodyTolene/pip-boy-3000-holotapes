@@ -26,6 +26,8 @@ A simple calculator app for the Pip-Boy 3000a.
 
 - Pip-Calc does not support implicit multiplication. An expression like `2(3+1)`
   will evaluate to `ERR`. Use an explicit `*` instead, e.g. `2*(3+1)`.
+- Input is capped at 14 characters. This keeps calculated results within safe
+  integer precision.
 
 ### AI Usage Disclaimer
 
