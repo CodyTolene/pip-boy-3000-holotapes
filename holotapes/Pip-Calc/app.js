@@ -19,6 +19,7 @@
     DISP_W: W - 32,
     DISP_H: 52,
     DISP_MAX_CHARS: 24,
+    EXPR_MAX_CHARS: 14,
     GRID_X: 16,
     GRID_Y: 68,
     BTN_GAP: 4,
@@ -67,7 +68,17 @@
       const result = eval(s);
       if (result === undefined || result !== result) return 'ERR';
       if (result === Infinity || result === -Infinity) return 'ERR';
-      return '' + Math.round(result * 1e8) / 1e8;
+      // Only round non-integer results — rounding is meant to clean up
+      // float noise from division/decimals (e.g. 0.1+0.2). For integers it
+      // serves no purpose and pushes the value through a much larger
+      // intermediate (result * 1e8), which has caused incorrect output on
+      // Espruino for large integers (e.g. 999999*999999). Uses `% 1` rather
+      // than Number.isInteger() since that method isn't guaranteed to exist
+      // on this device's JS engine.
+      const value = result % 1 === 0 ? result : Math.round(result * 1e8) / 1e8;
+      const formatted = '' + value;
+      if (formatted.length > C.DISP_MAX_CHARS) return 'ERR';
+      return formatted;
     } catch (e) {
       return 'ERR';
     }
@@ -177,10 +188,24 @@
       expression = isOperator ? expression + label : label;
       justEvaluated = false;
     } else {
-      expression =
-        expression === '0' && label !== '.' && label !== '(' && label !== ')'
-          ? label
-          : expression + label;
+      const isOperator =
+        label === '+' || label === '-' || label === '*' || label === '/';
+      const lastChar = expression.slice(-1);
+      const lastIsOperator =
+        lastChar === '+' ||
+        lastChar === '-' ||
+        lastChar === '*' ||
+        lastChar === '/';
+
+      if (isOperator && lastIsOperator) {
+        expression = expression.slice(0, -1) + label;
+      } else if (expression.length >= C.EXPR_MAX_CHARS) {
+        // Input is already at the safety cap — ignore further appends.
+        // (Operator replacement above and DEL are unaffected by this cap.)
+      } else {
+        expression =
+          expression === '0' && label !== '.' ? label : expression + label;
+      }
     }
 
     dirtyDisplay = 1;
