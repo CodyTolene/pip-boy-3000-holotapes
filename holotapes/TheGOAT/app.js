@@ -57,27 +57,18 @@
 
   function drawBorder() {
     h.setColor(3);
-    h.drawRect(18, 18, 461, 301);
-    h.drawRect(20, 20, 459, 299);
-    h.fillRect(180, 18, 300, 22);
-    h.fillRect(180, 297, 300, 301);
-    h.fillRect(18, 120, 22, 200);
-    h.fillRect(457, 120, 461, 200);
+    h.drawRect(18, 18, 461, 301).drawRect(20, 20, 459, 299).fillRect(180, 18, 300, 22).fillRect(180, 297, 300, 301).fillRect(18, 120, 22, 200).fillRect(457, 120, 461, 200);
   }
 
   function drawTitle() {
     h.clear(0);
     drawBorder();
-    h.setColor(3).setFontMonofonto23().setFontAlign(0, 0).drawString("The", 240, 56);
-    h.setColor(3).setFontMonofonto36().setFontAlign(0, 0).drawString("G.O.A.T.", 247, 94);
-    h.setColor(3).setFontMonofonto18().setFontAlign(0, 0);
+    h.setColor(3).setFontMonofonto23().setFontAlign(0, 0).drawString("The", 240, 56).setFontMonofonto36().setFontAlign(0, 0).drawString("G.O.A.T.", 247, 94).setFontMonofonto18().setFontAlign(0, 0);
     h.drawString("Press the left wheel to begin your test!", 240, 160);
     h.drawRect(45, 140, 435, 180);
     h.setColor(3).setFontMonofonto23().setFontAlign(0, 0);
     h.drawString("Generalized Occupational", 240, 225);
     h.drawString("Aptitude Test", 240, 255);
-    h.flip();
-    Pip.lastFlip = getTime();
   }
 
   function wrap(i) {
@@ -111,8 +102,6 @@
       for (let r = 0; r < rows.length; r++) h.drawString(rows[r], 50, y + 4 + r * 15);
       y += rh + 5;
     }
-    h.flip();
-    Pip.lastFlip = getTime();
   }
 
   function drawResult() {
@@ -130,16 +119,13 @@
     h.setColor(1).setFontMonofonto28().setFontAlign(0, -1).drawString("G.O.A.T. RESULTS", 240, 60);
     
     // Draw Border around Job Title
-    h.setColor(3).drawRect(lx, 100, rx, 140);
-    h.setColor(3).setFontMonofonto23().setFontAlign(0, -1).drawString(job[0], 240, 110);
+    h.setColor(3).drawRect(lx, 100, rx, 140).setFontMonofonto23().setFontAlign(0, -1).drawString(job[0], 240, 110);
     
     const flav = h.setFontMonofonto16().wrapString(job[1], 400);
     h.setColor(2).setFontMonofonto16().setFontAlign(0, -1);
     let y = 160;
     for (let i = 0; i < flav.length; i++) { h.drawString(flav[i], 240, y); y += 20; }
     h.setColor(3).setFontMonofonto14().setFontAlign(0, 1).drawString("Press left wheel to retake the test.", 240, 280);
-    h.flip();
-    Pip.lastFlip = getTime();
   }
 
   function nextQuestion() {
