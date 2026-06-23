@@ -24,7 +24,7 @@
   const DEFAULT_STATS = [
     { name: 'Turning Point', defaultVal: 1, min: 1, max: 4 },
     { name: 'Command Points', defaultVal: 3, min: 0, max: 99 },
-    { name: 'Victory Points', defaultVal: 0, min: 0, max: 99 }
+    { name: 'Victory Points', defaultVal: 0, min: 0, max: 99 },
   ];
   let currentStats = [];
   let activeStatIndex = 0;
@@ -34,9 +34,24 @@
   const H = h.getHeight();
 
   const SCREEN_XY = { x1: 60, y1: 40, x2: W - 60, y2: H - 20 };
-  const TITLE_XY = { x1: SCREEN_XY.x1, y1: 10, x2: SCREEN_XY.x2, y2: SCREEN_XY.y2 };
-  const MENU_HEADER_XY = { x1: SCREEN_XY.x1 + 10, y1: SCREEN_XY.y1 + 10, x2: SCREEN_XY.x2 - 10, y2: SCREEN_XY.y1 + 35 };
-  const MENU_XY = { x1: MENU_HEADER_XY.x1, y1: MENU_HEADER_XY.y2 + 5, x2: MENU_HEADER_XY.x2, y2: SCREEN_XY.y2 - 20 };
+  const TITLE_XY = {
+    x1: SCREEN_XY.x1,
+    y1: 10,
+    x2: SCREEN_XY.x2,
+    y2: SCREEN_XY.y2,
+  };
+  const MENU_HEADER_XY = {
+    x1: SCREEN_XY.x1 + 10,
+    y1: SCREEN_XY.y1 + 10,
+    x2: SCREEN_XY.x2 - 10,
+    y2: SCREEN_XY.y1 + 35,
+  };
+  const MENU_XY = {
+    x1: MENU_HEADER_XY.x1,
+    y1: MENU_HEADER_XY.y2 + 5,
+    x2: MENU_HEADER_XY.x2,
+    y2: SCREEN_XY.y2 - 20,
+  };
 
   // Calculate 2/3 and 1/3 vertical splits for the layout
   const TOTAL_TRACKER_HEIGHT = SCREEN_XY.y2 - SCREEN_XY.y1;
@@ -46,13 +61,13 @@
     x1: SCREEN_XY.x1,
     y1: SCREEN_XY.y1,
     x2: SCREEN_XY.x2,
-    y2: SCREEN_XY.y1 + TWO_THIRDS_HEIGHT
+    y2: SCREEN_XY.y1 + TWO_THIRDS_HEIGHT,
   };
   const TABLE_XY = {
     x1: SCREEN_XY.x1,
     y1: ACTIVE_XY.y2,
     x2: SCREEN_XY.x2,
-    y2: SCREEN_XY.y2
+    y2: SCREEN_XY.y2,
   };
 
   // Runtime state
@@ -86,7 +101,11 @@
 
     h.setFontAlign(-1, -1, 0)
       .setFont('4x6', 2)
-      .drawString(appVersion, TITLE_XY.x1 + titleWidth + padding, TITLE_XY.y1 + 14);
+      .drawString(
+        appVersion,
+        TITLE_XY.x1 + titleWidth + padding,
+        TITLE_XY.y1 + 14,
+      );
   }
 
   function drawMenuHeader(text) {
@@ -94,7 +113,11 @@
     const padding = 5;
     h.setFontAlign(-1, -1, 0)
       .setFontMonofonto16()
-      .drawString(text.toUpperCase(), MENU_HEADER_XY.x1 + padding, MENU_HEADER_XY.y1 + padding);
+      .drawString(
+        text.toUpperCase(),
+        MENU_HEADER_XY.x1 + padding,
+        MENU_HEADER_XY.y1 + padding,
+      );
   }
 
   function drawMenu(menuOptions) {
@@ -147,7 +170,7 @@
     h.setFontMonofonto28().setFontAlign(0, 0, 0); // Center text alignment
     const activeX = (ACTIVE_XY.x1 + ACTIVE_XY.x2) / 2;
     const activeY = (ACTIVE_XY.y1 + ACTIVE_XY.y2) / 2;
-    
+
     const activeText = `< ${activeStat.name}: ${activeStat.value} >`;
     h.drawString(activeText, activeX, activeY);
     Pip.shadeBox(ACTIVE_XY.x1, ACTIVE_XY.y1, ACTIVE_XY.x2, ACTIVE_XY.y2);
@@ -164,24 +187,33 @@
       if (i === activeStatIndex) continue; // Skip rendering the active one in the table
 
       const stat = currentStats[i];
-      const rowY1 = TABLE_XY.y1 + (rowIndex * rowHeight);
-      
+      const rowY1 = TABLE_XY.y1 + rowIndex * rowHeight;
+
       // Print stat name on the left, value on the right
       h.drawString(stat.name, TABLE_XY.x1 + textPaddingX, rowY1 + textPaddingY);
-      
+
       // Right align the values manually relative to screen width boundaries
-      const totalString = "" + stat.value;
+      const totalString = '' + stat.value;
       const strWidth = h.stringWidth(totalString);
-      h.drawString(totalString, TABLE_XY.x2 - textPaddingX - strWidth, rowY1 + textPaddingY);
+      h.drawString(
+        totalString,
+        TABLE_XY.x2 - textPaddingX - strWidth,
+        rowY1 + textPaddingY,
+      );
 
       rowIndex++;
     }
 
     if (C.SHOW_MENU_BOUNDARIES) {
-        drawBoundaries(SCREEN_XY);
-        drawBoundaries(ACTIVE_XY);
-        // Draw the horizontal line separating the two table rows
-        h.drawLine(TABLE_XY.x1, TABLE_XY.y1 + rowHeight, TABLE_XY.x2, TABLE_XY.y1 + rowHeight);
+      drawBoundaries(SCREEN_XY);
+      drawBoundaries(ACTIVE_XY);
+      // Draw the horizontal line separating the two table rows
+      h.drawLine(
+        TABLE_XY.x1,
+        TABLE_XY.y1 + rowHeight,
+        TABLE_XY.x2,
+        TABLE_XY.y1 + rowHeight,
+      );
     }
   }
 
@@ -196,8 +228,12 @@
     let maxLen = 0;
 
     switch (menuDisplayed) {
-      case 'main': maxLen = MENU_MAIN_OPTIONS.length - 1; break;
-      case 'inGameOptions': maxLen = MENU_INGAME_OPTIONS.length - 1; break;
+      case 'main':
+        maxLen = MENU_MAIN_OPTIONS.length - 1;
+        break;
+      case 'inGameOptions':
+        maxLen = MENU_INGAME_OPTIONS.length - 1;
+        break;
     }
 
     menuIndexSelected = E.clip(menuIndexSelected + dir, 0, maxLen);
@@ -214,7 +250,7 @@
     if (!inGame || menuDisplayed !== '') return;
     const prevIndex = activeStatIndex;
     activeStatIndex = E.clip(activeStatIndex + dir, 0, currentStats.length - 1);
-    
+
     if (prevIndex !== activeStatIndex) {
       Pip.playSound('SCROLL');
       drawTrackerBoard();
@@ -223,17 +259,17 @@
 
   function initializeStats() {
     currentStats = [];
-    
+
     for (let i = 0; i < DEFAULT_STATS.length; i++) {
       let stat = DEFAULT_STATS[i];
       currentStats.push({
         name: stat.name,
         min: stat.min,
         max: stat.max,
-        value: stat.defaultVal
+        value: stat.defaultVal,
       });
     }
-    
+
     activeStatIndex = 0;
   }
 
@@ -257,27 +293,23 @@
 
     if (dir !== 0 && menuDisplayed !== '') {
       return menuScroll(dir);
-    } 
-    else if (dir !== 0 && inGame && menuDisplayed === '') {
+    } else if (dir !== 0 && inGame && menuDisplayed === '') {
       return statScroll(dir);
-    } 
-    else if (dir === 0) {
+    } else if (dir === 0) {
       Pip.playSound('SCROLL');
-      
+
       if (!inGame) {
         if (menuDisplayed === 'main') {
           if (menuIndexSelected === 0) gameStart();
           else if (menuIndexSelected === 1) {
             menuDisplayed = 'help';
             drawMenuHelp();
-          }
-          else if (menuIndexSelected === 2) exitApp();
+          } else if (menuIndexSelected === 2) exitApp();
         } else if (menuDisplayed === 'help') {
           menuDisplayed = 'main';
           menuLoad(MENU_MAIN_OPTIONS, 'Main Menu');
         }
-      } 
-      else {
+      } else {
         if (menuDisplayed === '') {
           menuDisplayed = 'inGameOptions';
           menuLoad(MENU_INGAME_OPTIONS, 'Options');
@@ -304,10 +336,10 @@
       let stat = currentStats[activeStatIndex];
       let prevValue = stat.value;
       stat.value = E.clip(stat.value + dir, stat.min, stat.max);
-      
+
       if (prevValue !== stat.value) {
-         Pip.playSound('SCROLL');
-         drawTrackerBoard();
+        Pip.playSound('SCROLL');
+        drawTrackerBoard();
       }
     }
   }
