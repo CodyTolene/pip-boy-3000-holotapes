@@ -35,12 +35,10 @@
     } else if (state.phase === 'LIST') {
       h.setFontMonofonto18().setFontAlign(-1, -1);
 
-      // --- DRAW TOP SCROLL INDICATOR ---
       if (state.windowStart > 0) {
         h.drawString('▲ More Videos Above', 40, 60);
       }
 
-      // Draw items within our visible window frame
       for (let i = 0; i < VISIBLE_COUNT; i++) {
         let itemIndex = state.windowStart + i;
         if (itemIndex >= videoList.length) break;
