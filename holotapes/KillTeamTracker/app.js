@@ -6,7 +6,7 @@
 (function () {
   const C = {
     APP_NAME: 'Kill Team Tracker',
-    APP_VERSION: '1.1.0',
+    APP_VERSION: '1.0.0',
     KNOB_DEBOUNCE: 10,
     SHOW_MENU_BOUNDARIES: true,
   };
