@@ -1,0 +1,13 @@
+{
+  "id": "PIPCALC",
+  "name": "Pip-Calc",
+  "author": "@tylerjbartlett",
+  "version": "1.0.0",
+  "description": "A simple calculator app for the Pip-Boy 3000.",
+  "icon": "assets/pipcalc.png",
+  "tags": "tool",
+  "type": "app",
+  "readme": "README.md",
+  "custom": "",
+  "storage": [{ "name": "HOLO/PIPCALC/APP.js", "url": "app.min.js" }]
+}

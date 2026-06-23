@@ -153,6 +153,24 @@
     "storageOptional": []
   },
   {
+    "id": "GOATTEST",
+    "name": "G.O.A.T.",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "A text-based recreation of the Vault 101 Generalized Occupational Aptitude Test (G.O.A.T.) from Fallout 3. This holotape recreates all 10 original test questions and answers. Your answers are tallied by skill, and at the end of the test you're assigned a Vault job.",
+    "icon": "TheGOAT/assets/GOAT.png",
+    "previews": [],
+    "type": "game",
+    "readme": "TheGOAT/README.md",
+    "storage": [
+      {
+        "name": "HOLO/THEGOAT/APP.JS",
+        "url": "TheGOAT/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "iPip",
     "name": "iPip Media Player",
     "author": "@CodyTolene",
@@ -169,6 +187,24 @@
       }
     ],
     "storageOptional": []
+  },
+  {
+    "id": "killteamtracker",
+    "name": "Kill Team Tracker",
+    "author": "@SethSanchez",
+    "version": "1.0.0",
+    "description": "A Pip-powered counter for 40k Kill Team. Will track your VP, CP, and the TP.",
+    "icon": "KillTeamTracker/assets/killteam.png",
+    "tags": "game,tool",
+    "type": "game",
+    "readme": "KillTeamTracker/README.md",
+    "custom": "",
+    "storage": [
+      {
+        "name": "HOLO/KILLTEAM/APP.js",
+        "url": "KillTeamTracker/app.min.js"
+      }
+    ]
   },
   {
     "id": "mtgtracker",
@@ -205,6 +241,24 @@
       }
     ],
     "storageOptional": []
+  },
+  {
+    "id": "PIPCALC",
+    "name": "Pip-Calc",
+    "author": "@tylerjbartlett",
+    "version": "1.0.0",
+    "description": "A simple calculator app for the Pip-Boy 3000.",
+    "icon": "Pip-Calc/assets/pipcalc.png",
+    "tags": "tool",
+    "type": "app",
+    "readme": "Pip-Calc/README.md",
+    "custom": "",
+    "storage": [
+      {
+        "name": "HOLO/PIPCALC/APP.js",
+        "url": "Pip-Calc/app.min.js"
+      }
+    ]
   },
   {
     "id": "piptactoe",
