@@ -171,6 +171,24 @@
     "storageOptional": []
   },
   {
+    "id": "killteamtracker",
+    "name": "Kill Team Tracker",
+    "author": "@SethSanchez",
+    "version": "1.0.0",
+    "description": "A Pip-powered counter for 40k Kill Team. Will track your VP, CP, and the TP.",
+    "icon": "KillTeamTracker/assets/killteam.png",
+    "tags": "game,tool",
+    "type": "game",
+    "readme": "KillTeamTracker/README.md",
+    "custom": "",
+    "storage": [
+      {
+        "name": "HOLO/KILLTEAM/APP.js",
+        "url": "KillTeamTracker/app.min.js"
+      }
+    ]
+  },
+  {
     "id": "mtgtracker",
     "name": "MTG Life Counter",
     "author": "@tylerjbartlett",
