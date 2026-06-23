@@ -1,5 +1,5 @@
 {
-  "id": "G.O.A.T.",
+  "id": "GOATTEST",
   "name": "G.O.A.T.",
   "author": "@Theeohn",
   "version": "1.0.0",
@@ -8,6 +8,6 @@
   "previews": [],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/TheGOAT/APP.JS", "url": "app.min.js" }],
+  "storage": [{ "name": "HOLO/THEGOAT/APP.JS", "url": "app.min.js" }],
   "storageOptional": []
 }
