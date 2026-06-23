@@ -22,24 +22,28 @@
     {
       "label": "Big Band Swing (Music)",
       "name": "HOLO/PIPTRIS/piptris-big-band-swing.wav",
+      "previewMp3": "assets/piptris-big-band-swing.mp3",
       "sizeKB": 826,
       "url": "assets/piptris-big-band-swing.wav"
     },
     {
       "label": "Electro Swing (Music)",
       "name": "HOLO/PIPTRIS/piptris-electro-swing.wav",
+      "previewMp3": "assets/piptris-electro-swing.mp3",
       "sizeKB": 1150,
       "url": "assets/piptris-electro-swing.wav"
     },
     {
       "label": "Symphony (Music)",
       "name": "HOLO/PIPTRIS/piptris-symphony.wav",
+      "previewMp3": "assets/piptris-symphony.mp3",
       "sizeKB": 1614,
       "url": "assets/piptris-symphony.wav"
     },
     {
       "label": "Whimsical (Music)",
       "name": "HOLO/PIPTRIS/piptris-whimsical.wav",
+      "previewMp3": "assets/piptris-whimsical.mp3",
       "sizeKB": 1635,
       "url": "assets/piptris-whimsical.wav"
     }
