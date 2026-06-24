@@ -130,16 +130,16 @@
       result = 'BLACKJACK!';
       chips += Math.floor(bet * 1.5) + bet;
     } else if (isBust(playerHand)) {
-      result = 'BUST';
+      result = 'BUST...';
       chips -= bet;
     } else if (isBust(dealerHand)) {
-      result = 'DEALER BUSTS';
+      result = 'DEALER BUSTS!';
       chips += bet;
     } else if (pVal > dVal) {
-      result = 'YOU WIN';
+      result = 'YOU WIN!';
       chips += bet;
     } else if (dVal > pVal) {
-      result = 'DEALER WINS';
+      result = 'DEALER WINS...';
       chips -= bet;
     } else {
       result = 'PUSH';
@@ -172,20 +172,20 @@
     h.setColor(2).fillRect(x, y, x + CARD_W, y + CARD_H);
     h.setColor(1).drawRect(x, y, x + CARD_W, y + CARD_H);
     if (faceDown) {
-      h.setColor(3)
-        .setFontMonofonto18()
+      h.setColor(0)
+        .setFontMonofonto23()
         .setFontAlign(0, 0)
         .drawString('?', x + CARD_W / 2, y + CARD_H / 2);
     } else {
-      h.setColor(3)
-        .setFontMonofonto18()
+      h.setColor(0)
+        .setFontMonofonto23()
         .setFontAlign(0, 0)
         .drawString(rank, x + CARD_W / 2, y + CARD_H / 2);
     }
   }
 
   function drawHand(hand, startY, hideFirst) {
-    let startX = 20;
+    let startX = 70;
     for (let i = 0; i < hand.length; i++) {
       drawCardAt(
         hand[i],
@@ -203,54 +203,64 @@
     h.setColor(3)
       .setFontMonofonto16()
       .setFontAlign(-1, 0)
-      .drawString('CHIPS: ' + chips, 10, 15);
+      .drawString('CHIPS: ' + chips, 30, 29);
     h.setColor(3)
       .setFontMonofonto16()
       .setFontAlign(1, 0)
-      .drawString('BET: ' + bet, 470, 15);
+      .drawString('BET: ' + bet, 450, 29);
 
     // Dealer area
     let hideDealer = gameState === STATES.PLAYER;
     let dealerScore = hideDealer ? '?' : handValue(dealerHand);
     h.setColor(2)
-      .setFontMonofonto16()
+      .setFontMonofonto18()
       .setFontAlign(-1, 0)
-      .drawString('DEALER  ' + dealerScore, 10, 50);
-    drawHand(dealerHand, 62, hideDealer);
+      .drawString('DEALER', 60, 69);
+    h.setColor(3).drawRect(144, 55, 188, 83);
+    h.drawRect(145, 56, 187, 82);
+    h.setFontMonofonto18().setFontAlign(0, 0)
+      .drawString('' + dealerScore, 166, 69);
+    drawHand(dealerHand, 89, hideDealer);
 
     // Player area
     let playerScore = handValue(playerHand);
     h.setColor(2)
-      .setFontMonofonto16()
+      .setFontMonofonto18()
       .setFontAlign(-1, 0)
       .drawString(
-        'PLAYER  ' + (playerHand.length > 0 ? playerScore : ''),
-        10,
-        165,
+        'PLAYER',
+        60,
+        177,
       );
-    drawHand(playerHand, 177, false);
+    if (playerHand.length > 0) {
+      h.setColor(3).drawRect(144, 163, 188, 191);
+      h.drawRect(145, 164, 187, 190);
+      h.setFontMonofonto18().setFontAlign(0, 0)
+        .drawString('' + playerScore, 166, 177);
+    }
+    drawHand(playerHand, 197, false);
 
     // Bottom action area
     if (gameState === STATES.BET) {
       h.setColor(2)
         .setFontMonofonto16()
         .setFontAlign(0, 0)
-        .drawString('KNOB1: ADJUST BET', 240, 285);
-      Pip.shadeBox(140, 295, 340, 315);
+        .drawString('LEFT WHEEL: ADJUST BET', 240, 279);
+      Pip.shadeBox(140, 289, 340, 309);
       h.setColor(3)
         .setFontMonofonto16()
         .setFontAlign(0, 0)
-        .drawString('PRESS TO DEAL', 240, 305);
+        .drawString('PRESS TO DEAL', 240, 299);
     } else if (gameState === STATES.PLAYER) {
       for (let i = 0; i < ACTIONS.length; i++) {
         let x = 160 + i * 160;
         if (i === actionIndex) {
-          Pip.shadeBox(x - 60, 288, x + 60, 315);
+          Pip.shadeBox(x - 60, 282, x + 60, 309);
         }
         h.setColor(3)
           .setFontMonofonto18()
           .setFontAlign(0, 0)
-          .drawString(ACTIONS[i], x, 305);
+          .drawString(ACTIONS[i], x, 299);
       }
     } else if (gameState === STATES.RESULT) {
       let isLoss =
@@ -260,11 +270,11 @@
       h.setColor(isLoss ? 1 : 3)
         .setFontMonofonto23()
         .setFontAlign(0, 0)
-        .drawString(result, 240, 293);
+        .drawString(result, 240, 287);
       h.setColor(2)
         .setFontMonofonto16()
         .setFontAlign(0, 0)
-        .drawString('PRESS TO CONTINUE', 240, 313);
+        .drawString('PRESS TO CONTINUE', 240, 307);
     }
 
     h.flip();
