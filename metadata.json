@@ -1,0 +1,13 @@
+{
+  "id": "Fanorona",
+  "name": "Fanorona",
+  "author": "@Theeohn",
+  "version": "1.0.0",
+  "description": "An abstract strategy board game for 2 players, native to Madagascar.",
+  "icon": "assets/fanorona.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/FANORONA/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}
