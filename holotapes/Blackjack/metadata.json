@@ -1,7 +1,7 @@
 {
   "id": "Blackjack",
   "name": "Blackjack",
-  "author": "@trekker87, @Theeohn",
+  "author": "@trekker87 @Theeohn",
   "version": "1.1.0",
   "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
   "icon": "assets/blackjack.png",
