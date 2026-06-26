@@ -1,5 +1,4 @@
 (function () {
-  const APP_ID = 'BLACKJACK';
   const START_CHIPS = 500;
   const MIN_BET = 10;
   const BET_STEP = 10;
@@ -358,7 +357,7 @@
   start();
 
   return {
-    id: APP_ID,
+    id: 'blackjack',
     notDefault: true,
     fullscreen: true,
     remove: remove,
