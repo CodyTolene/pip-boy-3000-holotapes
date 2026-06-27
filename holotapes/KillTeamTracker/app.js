@@ -366,4 +366,4 @@
       Pip.settings.idleTimeout = originalIdleTimeout;
     },
   };
-})();
+});

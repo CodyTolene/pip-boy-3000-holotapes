@@ -1,0 +1,15 @@
+{
+  "id": "pipvideocontroller",
+  "name": "PipVideoController",
+  "author": "@OrionMissesRust",
+  "version": "1.0.0",
+  "description": "Play videos using your pip-boy on your pc.",
+  "icon": "assets/missing-icon.png",
+  "previews": [],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/PIPVIDEOCONTROLLER/APP.JS", "url": "app.min.js" }
+  ],
+  "storageOptional": []
+}

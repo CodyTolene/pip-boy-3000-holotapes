@@ -416,9 +416,7 @@ All images used by holotapes must be **bitmaps at a maximum of 4 bits per pixel 
 
 **Prefer bitmaps over procedural drawing for sprites.** Drawing a sprite with many individual `fillRect`/`drawLine` calls (e.g. 10+ calls per frame for a small character) is wasteful — each call adds overhead. A single `h.drawImage(bitmap, x, y)` call replaces all of them. If the sprite has animated parts, draw a static base as a bitmap and overlay only the animated portions procedurally, or use a multi-frame bitmap with the `{frame: n}` option.
 
-- Convert images using the online [Espruino Image Converter](https://www.espruino.com/Image+Converter).
-- Alternatively, use the [imageconverter.js](https://github.com/espruino/EspruinoWebTools/blob/master/imageconverter.js) tool programmatically.
-- The converter outputs a format that can be loaded via `eval(require("fs").readFileSync(...))` or `require(...)`.
+- Convert images using the online [Image Converter](https://www.pip-boy.com/tools/image-converter).
 
 Images can be defined **inline** in the app code or stored as **separate files** on the SD card:
 

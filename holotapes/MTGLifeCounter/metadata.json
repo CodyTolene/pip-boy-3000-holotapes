@@ -8,6 +8,5 @@
   "tags": "game,tool",
   "type": "app",
   "readme": "README.md",
-  "custom": "",
   "storage": [{ "name": "HOLO/MTGTRACKER/APP.js", "url": "app.min.js" }]
 }

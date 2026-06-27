@@ -1,0 +1,13 @@
+{
+  "id": "pipchess",
+  "name": "PipChess",
+  "author": "@OrionMissesRust",
+  "version": "1.0.0",
+  "description": "Chess on the Pip-Boy!",
+  "icon": "assets/missing-icon.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/PIPCHESS/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}

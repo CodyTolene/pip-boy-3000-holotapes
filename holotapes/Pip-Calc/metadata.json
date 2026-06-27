@@ -8,6 +8,5 @@
   "tags": "tool",
   "type": "app",
   "readme": "README.md",
-  "custom": "",
   "storage": [{ "name": "HOLO/PIPCALC/APP.js", "url": "app.min.js" }]
 }

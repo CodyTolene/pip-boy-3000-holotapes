@@ -13,20 +13,21 @@
 
 ###Description
 
-An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.
+An abstract strategy board game for 2 players, similar to checkers. Originates
+from Madagascar.
 
 ## Controls
 
-| Input             | Action                                  |
-|--------------------|------------------------------------------|
-| Left wheel (rotate) | Move the selector up and down on board    |
-| Left wheel (press)  | Confirm the title screen, select piece, or restart after game is over |
-| Right wheel (rotate)| Move the selector left and right on board |
-
+| Input                | Action                                                                |
+| -------------------- | --------------------------------------------------------------------- |
+| Left wheel (rotate)  | Move the selector up and down on board                                |
+| Left wheel (press)   | Confirm the title screen, select piece, or restart after game is over |
+| Right wheel (rotate) | Move the selector left and right on board                             |
 
 ## Credits
 
-- Claude threw most of this together, I'm no programmer but I edited a lot by hand.
+- Claude threw most of this together, I'm no programmer but I edited a lot by
+  hand.
 
 ### License(s)
 

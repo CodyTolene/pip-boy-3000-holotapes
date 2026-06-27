@@ -40,8 +40,8 @@
   {
     "id": "blackjack",
     "name": "Blackjack",
-    "author": "@trekker87",
-    "version": "1.0.0",
+    "author": "@trekker87 @Theeohn",
+    "version": "1.1.0",
     "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
     "icon": "Blackjack/assets/blackjack.png",
     "previews": [],
@@ -79,18 +79,21 @@
       {
         "label": "Eat (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-eat.wav",
+        "previewMp3": "assets/bloodworm-eat.mp3",
         "sizeKB": 10,
         "url": "Bloodworm/assets/bloodworm-eat.wav"
       },
       {
         "label": "Die (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-die.wav",
+        "previewMp3": "assets/bloodworm-die.mp3",
         "sizeKB": 12,
         "url": "Bloodworm/assets/bloodworm-die.wav"
       },
       {
         "label": "Start (Sound Effect)",
         "name": "HOLO/BLOODWORM/bloodworm-start.wav",
+        "previewMp3": "assets/bloodworm-start.mp3",
         "sizeKB": 19,
         "url": "Bloodworm/assets/bloodworm-start.wav"
       }
@@ -110,6 +113,24 @@
       {
         "name": "HOLO/CHECKERS/APP.JS",
         "url": "Checkers/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "Fanorona",
+    "name": "Fanorona",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
+    "icon": "Fanorona/assets/fanorona.png",
+    "previews": [],
+    "type": "game",
+    "readme": "Fanorona/README.md",
+    "storage": [
+      {
+        "name": "HOLO/FANORONA/APP.JS",
+        "url": "Fanorona/app.min.js"
       }
     ],
     "storageOptional": []
@@ -153,6 +174,24 @@
     "storageOptional": []
   },
   {
+    "id": "GOATTEST",
+    "name": "G.O.A.T.",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "A text-based recreation of the Vault 101 Generalized Occupational Aptitude Test (G.O.A.T.) from Fallout 3. This holotape recreates all 10 original test questions and answers. Your answers are tallied by skill, and at the end of the test you're assigned a Vault job.",
+    "icon": "TheGOAT/assets/GOAT.png",
+    "previews": [],
+    "type": "game",
+    "readme": "TheGOAT/README.md",
+    "storage": [
+      {
+        "name": "HOLO/THEGOAT/APP.JS",
+        "url": "TheGOAT/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "iPip",
     "name": "iPip Media Player",
     "author": "@CodyTolene",
@@ -180,10 +219,9 @@
     "tags": "game,tool",
     "type": "game",
     "readme": "KillTeamTracker/README.md",
-    "custom": "",
     "storage": [
       {
-        "name": "HOLO/KILLTEAM/APP.js",
+        "name": "HOLO/KILLTEAM/APP.JS",
         "url": "KillTeamTracker/app.min.js"
       }
     ]
@@ -198,7 +236,6 @@
     "tags": "game,tool",
     "type": "app",
     "readme": "MTGLifeCounter/README.md",
-    "custom": "",
     "storage": [
       {
         "name": "HOLO/MTGTRACKER/APP.js",
@@ -234,7 +271,6 @@
     "tags": "tool",
     "type": "app",
     "readme": "Pip-Calc/README.md",
-    "custom": "",
     "storage": [
       {
         "name": "HOLO/PIPCALC/APP.js",
@@ -248,42 +284,42 @@
     "author": "@pip-4111 @JLDenson",
     "version": "1.0.0",
     "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
-    "icon": "Pip-Tac-Toe/assets/piptactoe.png",
+    "icon": "PipTacToe/assets/piptactoe.png",
     "previews": [],
     "type": "game",
-    "readme": "Pip-Tac-Toe/README.md",
+    "readme": "PipTacToe/README.md",
     "storage": [
       {
         "name": "HOLO/PIPTACTOE/APP.JS",
-        "url": "Pip-Tac-Toe/app.min.js"
+        "url": "PipTacToe/app.min.js"
       },
       {
         "name": "HOLO/PIPTACTOE/Loser.wav",
-        "url": "Pip-Tac-Toe/assets/Loser.wav"
+        "url": "PipTacToe/assets/Loser.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/PlaceO.wav",
-        "url": "Pip-Tac-Toe/assets/PlaceO.wav"
+        "url": "PipTacToe/assets/PlaceO.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/PlaceX.wav",
-        "url": "Pip-Tac-Toe/assets/PlaceX.wav"
+        "url": "PipTacToe/assets/PlaceX.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/StartGame.wav",
-        "url": "Pip-Tac-Toe/assets/StartGame.wav"
+        "url": "PipTacToe/assets/StartGame.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/StartPlay.wav",
-        "url": "Pip-Tac-Toe/assets/StartPlay.wav"
+        "url": "PipTacToe/assets/StartPlay.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/Tied.wav",
-        "url": "Pip-Tac-Toe/assets/Tied.wav"
+        "url": "PipTacToe/assets/Tied.wav"
       },
       {
         "name": "HOLO/PIPTACTOE/Winner.wav",
-        "url": "Pip-Tac-Toe/assets/Winner.wav"
+        "url": "PipTacToe/assets/Winner.wav"
       }
     ],
     "storageOptional": []
@@ -294,18 +330,36 @@
     "author": "@amogus-67",
     "version": "1.0.0",
     "description": "A Wordle clone for the Pip-Boy 3000.",
-    "icon": "Pip-Wordle/assets/missing-icon.png",
+    "icon": "PipWordle/assets/wordle.png",
     "previews": [],
     "type": "game",
-    "readme": "Pip-Wordle/README.md",
+    "readme": "PipWordle/README.md",
     "storage": [
       {
         "name": "HOLO/PIP_WORDLE/APP.JS",
-        "url": "Pip-Wordle/app.min.js"
+        "url": "PipWordle/app.min.js"
       },
       {
         "name": "HOLO/PIP_WORDLE/words_5.TXT",
-        "url": "Pip-Wordle/assets/words_5.txt"
+        "url": "PipWordle/assets/words_5.txt"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "pipchess",
+    "name": "PipChess",
+    "author": "@OrionMissesRust",
+    "version": "1.0.0",
+    "description": "Chess on the Pip-Boy!",
+    "icon": "PipChess/assets/missing-icon.png",
+    "previews": [],
+    "type": "game",
+    "readme": "PipChess/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPCHESS/APP.JS",
+        "url": "PipChess/app.min.js"
       }
     ],
     "storageOptional": []
@@ -364,28 +418,68 @@
       {
         "label": "Big Band Swing (Music)",
         "name": "HOLO/PIPTRIS/piptris-big-band-swing.wav",
+        "previewMp3": "assets/piptris-big-band-swing.mp3",
         "sizeKB": 826,
         "url": "Piptris/assets/piptris-big-band-swing.wav"
       },
       {
         "label": "Electro Swing (Music)",
         "name": "HOLO/PIPTRIS/piptris-electro-swing.wav",
+        "previewMp3": "assets/piptris-electro-swing.mp3",
         "sizeKB": 1150,
         "url": "Piptris/assets/piptris-electro-swing.wav"
       },
       {
         "label": "Symphony (Music)",
         "name": "HOLO/PIPTRIS/piptris-symphony.wav",
+        "previewMp3": "assets/piptris-symphony.mp3",
         "sizeKB": 1614,
         "url": "Piptris/assets/piptris-symphony.wav"
       },
       {
         "label": "Whimsical (Music)",
         "name": "HOLO/PIPTRIS/piptris-whimsical.wav",
+        "previewMp3": "assets/piptris-whimsical.mp3",
         "sizeKB": 1635,
         "url": "Piptris/assets/piptris-whimsical.wav"
       }
     ]
+  },
+  {
+    "id": "pipvideocontroller",
+    "name": "PipVideoController",
+    "author": "@OrionMissesRust",
+    "version": "1.0.0",
+    "description": "Play videos using your pip-boy on your pc.",
+    "icon": "PipVideoController/assets/missing-icon.png",
+    "previews": [],
+    "type": "app",
+    "readme": "PipVideoController/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPVIDEOCONTROLLER/APP.JS",
+        "url": "PipVideoController/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "radrunner",
+    "name": "RAD RUNNER",
+    "author": "@SukeMobile",
+    "version": "1.0.0",
+    "description": "RAD RUNNER is an endless three-lane wasteland runner for the Pip-Boy 3000. Bomb down a cracked desert highway: switch lanes to dodge wrecked cars, jump the radroaches, duck the busted signs, and shoot the ghouls. Score is distance survived, and it gets faster the longer you last.",
+    "icon": "RADRUNNER/assets/missing-icon.png",
+    "previews": [],
+    "type": "game",
+    "readme": "RADRUNNER/README.md",
+    "storage": [
+      {
+        "name": "HOLO/RADRUNNER/APP.JS",
+        "url": "RADRUNNER/APP.MIN.JS"
+      }
+    ],
+    "storageOptional": []
   },
   {
     "id": "vaulttimer",
@@ -404,5 +498,105 @@
       }
     ],
     "storageOptional": []
+  },
+  {
+    "id": "vnd",
+    "name": "Vaults & Deathclaws",
+    "author": "@CodyTolene",
+    "version": "1.0.0",
+    "description": "A Fallout RPG Character and Dice Terminal.",
+    "icon": "VaultsAndDeathclaws/assets/VND.png",
+    "previews": [],
+    "type": "app",
+    "readme": "VaultsAndDeathclaws/README.md",
+    "storage": [
+      {
+        "name": "HOLO/VND/APP.JS",
+        "url": "VaultsAndDeathclaws/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/CONFIRM.JS",
+        "url": "VaultsAndDeathclaws/assets/CONFIRM.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/DICE.JS",
+        "url": "VaultsAndDeathclaws/assets/DICE.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/DICE_MENU.JS",
+        "url": "VaultsAndDeathclaws/assets/DICE_MENU.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/DICE_ROLL.JS",
+        "url": "VaultsAndDeathclaws/assets/DICE_ROLL.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_BASIC.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_BASIC.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_BODY.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_BODY.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_DATA.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_DATA.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_DELETE.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_DELETE.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_FORM.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_FORM.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_MENU.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_MENU.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_SKILL.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_SKILL.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_TABLE.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_TABLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/EDIT_TEXT.JS",
+        "url": "VaultsAndDeathclaws/assets/EDIT_TEXT.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/INTRO.JS",
+        "url": "VaultsAndDeathclaws/assets/INTRO.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/KEYBOARD.JS",
+        "url": "VaultsAndDeathclaws/assets/KEYBOARD.MIN.JS"
+      },
+      {
+        "name": "HOLO/VND/LIST.JS",
+        "url": "VaultsAndDeathclaws/assets/LIST.MIN.JS"
+      }
+    ],
+    "storageOptional": [
+      {
+        "label": "Vault Intro Video",
+        "name": "HOLO/VND/VAULT.AVI",
+        "sizeKB": 3887,
+        "url": "VaultsAndDeathclaws/assets/VAULT.AVI"
+      },
+      {
+        "label": "Dice Throw Sound",
+        "name": "HOLO/VND/DICE_THROW.WAV",
+        "previewMp3": "assets/DICE_THROW.mp3",
+        "sizeKB": 35,
+        "url": "VaultsAndDeathclaws/assets/DICE_THROW.WAV"
+      }
+    ]
   }
 ]
