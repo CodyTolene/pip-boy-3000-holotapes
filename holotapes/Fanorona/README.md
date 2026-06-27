@@ -16,7 +16,7 @@
 An abstract strategy board game for 2 players, similar to checkers. Originates
 from Madagascar.
 
-## Controls
+### Controls
 
 | Input                | Action                                                                |
 | -------------------- | --------------------------------------------------------------------- |
@@ -24,7 +24,7 @@ from Madagascar.
 | Left wheel (press)   | Confirm the title screen, select piece, or restart after game is over |
 | Right wheel (rotate) | Move the selector left and right on board                             |
 
-## Credits
+### Credits
 
 - Claude threw most of this together, I'm no programmer but I edited a lot by
   hand.

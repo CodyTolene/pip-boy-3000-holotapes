@@ -892,7 +892,7 @@
   drawTitle();
 
   return {
-    id: 'FANORONA',
+    id: 'fanorona',
     notDefault: true,
     fullscreen: true,
     remove: function () {
