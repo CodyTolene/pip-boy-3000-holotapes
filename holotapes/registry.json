@@ -118,6 +118,24 @@
     "storageOptional": []
   },
   {
+    "id": "fanorona",
+    "name": "Fanorona",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
+    "icon": "Fanorona/assets/fanorona.png",
+    "previews": [],
+    "type": "game",
+    "readme": "Fanorona/README.md",
+    "storage": [
+      {
+        "name": "HOLO/FANORONA/APP.JS",
+        "url": "Fanorona/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "flappy",
     "name": "Flappy Roach",
     "author": "@JLDenson",
