@@ -1,36 +1,34 @@
-# Piptris
+# Roach Stomp
 
 ### Info
 
-**Author:** Cody Tolene
+**Author:**
+
+- [@tylerjbartlett](https://github.com/tylerjbartlett)
 
 **Website(s):**
 
-- [Personal Site](https://www.CodyTolene.com)
-- [GitHub](https://github.com/CodyTolene)
-- [Pip-Boy](https://www.Pip-Boy.com)
+- [Pip-Boy.com](https://www.Pip-Boy.com)
+- [Join the Discord!](https://discord.gg/UKpv9bk5Yj)
 
 ### Description
 
-Stack, rotate, and clear falling blocks in this Tetris inspired mini-game.
-Simple, addictive, and perfect for idle moments between scavenging runs or
-stimpak breaks.
+Radroaches are swarming the vault and all you've got is your trusty boot. Stomp
+the roaches and save the vault!
 
 ### Controls
 
-- Use the left knob to rotate pieces.
-- Hold the left knob to speed up the drop.
-- Use the right knob to move pieces left and right.
+- Scroll the top-right wheel (knob2) left/right to move your boot from lane to
+  lane.
+- Short-press the front-left wheel (knob1) to stomp that roach!
 
-### Instructions
+### AI Usage Disclaimer
 
-As blocks fall, rotate and move them to create complete lines. When a line is
-completed, it will disappear for points. The game ends when the blocks reach the
-top of the screen.
+An AI assistant was used for detecting issues, improving comments for the
+community to use as a reference, and checking written code against the best
+practices in `agents.md`.
 
-### Tips
-
-Try to clear as many lines as possible!
+An AI assistant was used to generate the visual assets used in this game.
 
 ### License(s)
 
@@ -39,16 +37,11 @@ International License. See
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
 information.
 
-This game uses music from pixabay.com. This music uses a special license that
-allows for free use in personal and commercial projects. More information about
-this license can be found here: https://pixabay.com/service/license-summary/
+This game uses sound files from freesound.org which hosts a vast library of
+user-uploaded sounds, categorized entirely by open Creative Commons (CC)
+licenses.
 
-- [`piptris-symphony.wav`](https://pixabay.com/music/classical-string-quartet-tetris-theme-korobeiniki-rearranged-arr-for-strings-185592/)
-
-- [`piptris-whimsical.wav`](https://pixabay.com/music/lullabies-tetris-theme-korobeiniki-rearranged-arr-for-music-box-184978/)
-
-- [`piptris-electro-swing.wav`](https://pixabay.com/music/acid-jazz-swinging-electro-swing-funny-catchy-151280/)
-
-- [`piptris-big-band-swing.wav`](https://pixabay.com/music/big-band-big-band-swing-instrumental-1123-223354/)
+[splat 005.wav by yottasounds](https://freesound.org/s/232135/) -- License:
+Creative Commons 0
 
 `SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`
