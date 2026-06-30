@@ -1,6 +1,6 @@
 // =============================================================================
 //  Name: iPip Media Player
-//  Author: @CodyTolene
+//  Author: @CodyTolene & Joe Byers
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
@@ -31,10 +31,10 @@
   const INFO_Y = WAVE_Y + WAVE_H + 22;
 
   const MUSIC_DIR = 'MUSIC';
-  const MAX_PATH = 56;
+  const MAX_PATH = 200;
 
   const WAVEFORM_MS = 50;
-  const KNOB_DEBOUNCE_MS = 30;
+  const KNOB_DEBOUNCE_MS = 0;
 
   const SYM = {
     random: '~ ',
@@ -67,7 +67,8 @@
 
   let isPlayAll = false;
   let playAllIdx = 0;
-  let sortDir = 1; // 1 = A-Z, -1 = Z-A
+  let sortDir = 0; // 0 = upload order, 1 = A-Z, -1 = Z-A
+  let uploadOrderSongs = [];
 
   let suppressAudioStopped = false;
 
@@ -83,11 +84,14 @@
   // Volume
   const VOL_MIN = 0;
   const VOL_MAX = 27;
-  const VOL_DEFAULT = 20;
+  const VOL_DEFAULT = 27;
   const VOL_HUD_MS = 1500;
   let currentVol = VOL_DEFAULT;
   let initialVol = null;
   let volHudTimeout = null;
+  let titleScrollOffset = 0;
+  let titleScrollLast = 0;
+  let titleScrollName = null;
 
   // Fixed header rows, currently:
   // - SHUFFLE
@@ -101,7 +105,7 @@
   const SET_ROW_H = 50;
   const SET_START_Y = LIST_START_Y + 6;
   const SETTINGS_ROWS = ['sort', 'brightness', 'volume'];
-  const LONG_PRESS_MS = 600;
+  const LONG_PRESS_MS = 250;
   const BRIGHT_MIN = 0.01;
   const BRIGHT_MAX = 1;
   const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
@@ -136,9 +140,8 @@
 
   function buildSongItems() {
     const items = [
-      { type: 'random', label: 'SHUFFLE PLAY ALL' },
-      { type: 'playall', label: 'PLAY ALL (TOP-DOWN)' },
-      { type: 'back', label: 'BACK TO PLAYLISTS' },
+      { type: 'back', label: 'BACK' },
+      { type: 'random', label: 'RANDOMIZE' },
     ];
     const start = songPage * PAGE_SIZE;
     const end = Math.min(start + PAGE_SIZE, allSongs.length);
@@ -323,6 +326,8 @@
     Pip.lastFlip = getTime();
   }
 
+  function scrollTitle(name) { if (!name) return ''; if (name !== titleScrollName) { titleScrollName = name; titleScrollOffset = 0; titleScrollLast = Date.now(); } if (name.length <= 19) return name; const gap = '      '; const loop = name + gap + name; const resetAt = name.length + gap.length; if (titleScrollOffset === 0 && Date.now() - titleScrollLast < 5000) return loop.slice(0, 19); if (Date.now() - titleScrollLast > 100) { titleScrollLast = Date.now(); titleScrollOffset++; if (titleScrollOffset >= resetAt) { titleScrollOffset = 0; titleScrollLast = Date.now(); } } return loop.slice(titleScrollOffset, titleScrollOffset + 19); }
+
   function drawNowPlaying(name, isError) {
     if (settingsOpen) return;
     const clearY = INFO_Y;
@@ -331,11 +336,7 @@
     if (!name) return;
 
     const color = isError ? C_DIM : C_BRIGHT;
-    const display = isError
-      ? name
-      : name.length > 19
-        ? name.slice(0, 16) + '...'
-        : name;
+    const display = isError ? name : scrollTitle(name);
 
     h.setColor(color)
       .setFont('6x8', 2)
@@ -354,12 +355,7 @@
         h.setColor(C_DIM)
           .setFont('6x8')
           .setFontAlign(-1, -1)
-          .drawString('(shuffle)', WAVE_X, clearY + 38);
-      } else if (isPlayAll) {
-        h.setColor(C_DIM)
-          .setFont('6x8')
-          .setFontAlign(-1, -1)
-          .drawString('(play all)', WAVE_X, clearY + 38);
+          .drawString('(RANDOMIZE)', WAVE_X, clearY + 38);
       }
     }
 
@@ -425,7 +421,7 @@
         h.setColor(selected ? C_BRIGHT : C_MED)
           .setFont('Monofonto14')
           .setFontAlign(1, -1)
-          .drawString(sortDir > 0 ? 'A-Z' : 'Z-A', x + w - 8, y + 4);
+          .drawString(sortDir === 0 ? 'UPLOAD' : sortDir > 0 ? 'A-Z' : 'Z-A', x + w - 8, y + 4);
       } else {
         let frac, valText;
         if (row === 'brightness') {
@@ -487,11 +483,6 @@
 
   function drawVolHud() {
     'ram'; // Execute function from RAM instead of flash.
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      waveInterval = null;
-    }
-
     const hudY = WAVE_Y + WAVE_H - 18;
     const labelX = WAVE_X + 6;
     const barX = labelX + 46;
@@ -531,14 +522,14 @@
       h.flip();
       Pip.lastFlip = getTime();
       startWaveform();
-    }, VOL_HUD_MS);
+    }, 3000);
   }
 
   function drawWaveform() {
     'ram'; // Execute function from RAM instead of flash.
     if (settingsOpen || !wavePoly) return;
     const ym = WAVE_Y + WAVE_H / 2;
-    const waveBottom = WAVE_Y + WAVE_H - 10;
+    const waveBottom = WAVE_Y + WAVE_H - 22;
     h.setClipRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
     h.clearRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
     if (isAudioPlaying) {
@@ -619,6 +610,7 @@
 
     if (isPlayAll && isAudioPlaying) {
       stopSong();
+      uiSound('SELECT');
       return;
     }
 
@@ -647,6 +639,7 @@
 
     if (isRandom && isAudioPlaying) {
       stopSong();
+      uiSound('SELECT');
       return;
     }
 
@@ -671,11 +664,6 @@
 
     if (item.type === 'random') {
       handleRandomSelect();
-      return;
-    }
-
-    if (item.type === 'playall') {
-      handlePlayAllSelect();
       return;
     }
 
@@ -738,21 +726,7 @@
     drawSettingsRows();
   }
 
-  function handleSongSelect(item) {
-    const full = pathJoin(pathJoin(MUSIC_DIR, currentStation), item.name);
-
-    if (playingPath === full) {
-      stopSong();
-      isRandom = false;
-      return;
-    }
-
-    isRandom = false;
-    isPlayAll = false;
-    randomQueue = [];
-    playSong(currentStation, item.name);
-    uiSound('SELECT');
-  }
+  function handleSongSelect(item) { const full = pathJoin(pathJoin(MUSIC_DIR, currentStation), item.name); if (playingPath === full) { stopSong(); isRandom = false; uiSound('SELECT'); return; } isRandom = false; randomQueue = []; isPlayAll = true; playAllIdx = 0; for (let i = 0; i < allSongs.length; i++) { if (allSongs[i].name === item.name) { playAllIdx = i + 1; break; } } playSong(currentStation, item.name); uiSound('SELECT'); }
 
   function hwRandInt(n) {
     if (typeof E !== 'undefined' && E.hwRand) {
@@ -781,18 +755,7 @@
     return ('/' + pathJoin(base, name)).length > MAX_PATH;
   }
 
-  function loadSongs(stationName) {
-    const dir = pathJoin(MUSIC_DIR, stationName);
-    const entries = readDir(dir);
-    allSongs = [];
-    for (let i = 0; i < entries.length; i++) {
-      const name = entries[i];
-      if (/\.wav$/i.test(name)) {
-        allSongs.push({ name: name });
-      }
-    }
-    sortSongs();
-  }
+  function loadSongs(stationName) { const dir = pathJoin(MUSIC_DIR, stationName); const entries = readDir(dir); allSongs = []; uploadOrderSongs = []; for (let i = 0; i < entries.length; i++) { const name = entries[i]; if (/\.wav$/i.test(name)) { const song = { name: name }; allSongs.push(song); uploadOrderSongs.push(song); } } if (sortDir !== 0) sortSongs(); }
 
   function loadStations() {
     const entries = readDir(MUSIC_DIR);
@@ -815,30 +778,7 @@
     uiSound('HIGHLIGHT');
   }
 
-  function navigateToSongs(stationName) {
-    if (isAudioPlaying) suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    playingPath = null;
-    playingName = null;
-    playingStation = null;
-    isRandom = false;
-    isPlayAll = false;
-    randomQueue = [];
-
-    view = 'songs';
-    currentStation = stationName;
-    songPage = 0;
-    selectedIdx = 0;
-    scrollOffset = 0;
-    loadSongs(stationName);
-    rebuildList();
-    drawAll();
-    uiSound('TAB');
-  }
+  function navigateToSongs(stationName) { uiSound('TAB'); view = 'songs'; currentStation = stationName; songPage = 0; selectedIdx = 0; scrollOffset = 0; loadSongs(stationName); rebuildList(); drawNowPlaying(playingName, false); drawList(); }
 
   function navigateToStations() {
     view = 'stations';
@@ -866,7 +806,7 @@
       return;
     }
     if (isPlayAll) {
-      playNextPlayAll();
+      setTimeout(playNextPlayAll, 1000);
       return;
     }
     playingName = null;
@@ -886,11 +826,10 @@
       return;
     }
 
-    selectedIdx += dir > 0 ? 1 : -1;
-    if (selectedIdx < 0) selectedIdx = 0;
-    if (selectedIdx >= listItems.length) selectedIdx = listItems.length - 1;
-    clampScroll();
-    drawList();
+    const oldIdx = selectedIdx; selectedIdx += dir;
+    if (selectedIdx < 0) selectedIdx = 0; 
+    if (selectedIdx >= listItems.length) selectedIdx = listItems.length - 1; 
+    if (selectedIdx === oldIdx) return; clampScroll(); drawList(); 
     uiSound('HIGHLIGHT');
   }
 
@@ -907,7 +846,7 @@
 
     currentVol = Math.max(
       VOL_MIN,
-      Math.min(VOL_MAX, currentVol + (dir > 0 ? 1 : -1)),
+      Math.min(VOL_MAX, currentVol + (dir > 0 ? -1 : 1)),
     );
     try {
       Pip.setVol(currentVol);
@@ -1095,8 +1034,7 @@
         .readdir('/' + path)
         .filter(function (n) {
           return n !== '.' && n !== '..';
-        })
-        .sort();
+        });
     } catch (e) {
       try {
         E.defrag();
@@ -1104,8 +1042,7 @@
           .readdir('/' + path)
           .filter(function (n) {
             return n !== '.' && n !== '..';
-          })
-          .sort();
+          });
       } catch (e2) {
         return [];
       }
@@ -1186,13 +1123,7 @@
     return name.replace(/\.wav$/i, '');
   }
 
-  function sortSongs() {
-    allSongs.sort(function (a, b) {
-      const an = a.name.toLowerCase();
-      const bn = b.name.toLowerCase();
-      return an < bn ? -sortDir : an > bn ? sortDir : 0;
-    });
-  }
+  function sortSongs() { for (let i = 1; i < allSongs.length; i++) { const song = allSongs[i]; let j = i - 1; while (j >= 0 && (sortDir > 0 ? allSongs[j].name > song.name : allSongs[j].name < song.name)) { allSongs[j + 1] = allSongs[j]; j--; } allSongs[j + 1] = song; } }
 
   function start() {
     h.clear();
@@ -1219,7 +1150,7 @@
           else onPressUp();
         },
         ENC1_PRESS,
-        { repeat: true, edge: 'both', debounce: 50 },
+        { repeat: true, edge: 'both', debounce: 5 },
       );
     }
 
@@ -1232,32 +1163,9 @@
     drawAll();
   }
 
-  function startRandom(stationName) {
-    isRandom = true;
-    isPlayAll = false;
-    randomQueue = buildRandomPool(stationName).slice();
-    if (!randomQueue.length) {
-      isRandom = false;
-      return;
-    }
-    shuffle(randomQueue);
-    if (
-      lastPlayedName &&
-      randomQueue.length > 1 &&
-      randomQueue[0].name === lastPlayedName
-    ) {
-      const t = randomQueue[0];
-      randomQueue[0] = randomQueue[1];
-      randomQueue[1] = t;
-    }
-    randomQueueIdx = 0;
-    playSong(stationName, randomQueue[randomQueueIdx++].name);
-  }
+  function startRandom(stationName) { isRandom = true; isPlayAll = false; randomQueue = []; const base = pathJoin(MUSIC_DIR, stationName); for (let i = 0; i < allSongs.length; i++) { if (!isPathTooLong(base, allSongs[i].name)) randomQueue.push(allSongs[i]); } if (!randomQueue.length) { isRandom = false; return; } shuffle(randomQueue); if (lastPlayedName && randomQueue.length > 1 && randomQueue[0].name === lastPlayedName) { const t = randomQueue[0]; randomQueue[0] = randomQueue[1]; randomQueue[1] = t; } randomQueueIdx = 0; playSong(stationName, randomQueue[randomQueueIdx++].name); }
 
-  function startWaveform() {
-    if (waveInterval) return;
-    waveInterval = setInterval(drawWaveform, WAVEFORM_MS);
-  }
+  function startWaveform() { if (waveInterval) return; waveInterval = setInterval(function () { drawWaveform(); if (playingName) drawNowPlaying(playingName, false); }, WAVEFORM_MS); }
 
   function stepBrightness(delta, wrap) {
     const maxIdx = BRIGHT_LEVELS.length - 1;
@@ -1323,27 +1231,7 @@
     else openSettings();
   }
 
-  function toggleSort() {
-    sortDir = -sortDir;
-    if (!allSongs.length) return;
-
-    sortSongs();
-
-    if (isPlayAll) {
-      playAllIdx = 0;
-      for (let i = 0; i < allSongs.length; i++) {
-        if (allSongs[i].name === lastPlayedName) {
-          playAllIdx = i + 1;
-          break;
-        }
-      }
-    }
-
-    songPage = 0;
-    selectedIdx = 0;
-    scrollOffset = 0;
-    rebuildList();
-  }
+  function toggleSort() { sortDir = sortDir === 0 ? 1 : sortDir === 1 ? -1 : 0; if (!allSongs.length) return; if (sortDir === 0) { allSongs = uploadOrderSongs.slice(); } else { sortSongs(); } if (isPlayAll) { playAllIdx = 0; for (let i = 0; i < allSongs.length; i++) { if (allSongs[i].name === lastPlayedName) { playAllIdx = i + 1; break; } } } songPage = 0; selectedIdx = 0; scrollOffset = 0; rebuildList(); }
 
   function uiSound(name) {
     try {

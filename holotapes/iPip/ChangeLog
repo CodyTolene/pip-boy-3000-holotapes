@@ -1,3 +1,28 @@
+1.3.0
+- Upload Order is now the default sorting mode.
+- Added sort mode cycling: Upload Order → A-Z → Z-A → Upload Order.
+- Increased maximum playable file path length from 56 to 200 characters.
+- Added automatic scrolling marquee for long song titles in the Now Playing display.
+- Added delay before title scrolling marquee begins.
+- Added continuous playlist playback starting from any selected song.
+- Removed dedicated PLAY ALL menu option.
+- Renamed SHUFFLE PLAY ALL to RANDOMIZE.
+- Renamed BACK TO PLAYLISTS to BACK.
+- Playlist changes no longer stop the currently playing song.
+- Entering playlists while music is playing now preserves playback.
+- Added TAB menu audio feedback when entering playlists during playback.
+- Reduced delay when entering playlists.
+- Updated cursor handling to use native Pip-Boy wheel acceleration values.
+- Cursor movement now supports multi-row wheel events.
+- Improved wheel navigation consistency.
+- Prevented scroll sounds from playing when already at the top/bottom of a list.
+- Reversed volume adjustment direction to match wheel movement.
+- Waveform display now remains active while adjusting volume.
+- Reduced Settings Menu long-press delay from 600ms to 250ms.
+- Improved memory handling and runtime stability.
+- Improved overall application responsiveness.
+Modified and expanded by Joe Byers.
+
 1.2.1
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/27
 - Create the "MUSIC" folder automatically on launch if it is missing so the app no longer fails to load.
