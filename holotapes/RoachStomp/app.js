@@ -6,14 +6,11 @@
 // =============================================================================
 
 (function () {
-  const FILE_PATHS = {
-    APPINFO: '/APPINFO/ROACHSTOMP.info',
+  const IMG = {
     ROACH1: '/HOLO/ROACHSTOMP/ROACH1.JSON',
     ROACH2: '/HOLO/ROACHSTOMP/ROACH2.JSON',
-    // BOOT1: '/HOLO/ROACHSTOMP/BOOT1.JSON',
-    BOOT2: '/HOLO/ROACHSTOMP/BOOT2.JSON',
+    BOOT1: '/HOLO/ROACHSTOMP/BOOT1.JSON',
     SPLAT1: '/HOLO/ROACHSTOMP/SPLAT1.JSON',
-    // SPLAT2: '/HOLO/ROACHSTOMP/SPLAT2.JSON',
     HEARTFULL: '/HOLO/ROACHSTOMP/HEART_FULL.JSON',
     HEARTEMPTY: '/HOLO/ROACHSTOMP/HEART_EMPTY.JSON',
     TITLE: '/HOLO/ROACHSTOMP/TITLE.IMG',
@@ -27,6 +24,7 @@
     WHOOSH: '/HOLO/ROACHSTOMP/WHOOSH.WAV',
   };
 
+  const fpAPPINFO = '/APPINFO/ROACHSTOMP.info';
   const MENU_MAIN_OPTIONS = ['EASY', 'MEDIUM', 'HARD'];
 
   // prettier-ignore
@@ -54,18 +52,34 @@
   const HEART_LOCS_X = [400, 420, 440];
 
   const GAME_CONSTS = {
-    MARCH_BASE_MS: 2000,
-    MARCH_STEP_MS: 50,
-    MARCH_FLOOR_MS: 1000,
+    MARCH_BASE_MS: {
+      EASY: 1500,
+      MEDIUM: 2000,
+      HARD: 2000,
+    },
+
+    MARCH_STEP_MS: 150,
+
+    MARCH_FLOOR_MS: {
+      EASY: 500,
+      MEDIUM: 1000,
+      HARD: 1000,
+    },
 
     STOMP_WINDOW_BASE_MS: 2000,
-    STOMP_WINDOW_STEP_MS: 20,
+    STOMP_WINDOW_STEP_MS: 150,
     STOMP_WINDOW_FLOOR_MS: 1000,
 
     SPAWN_GAP_MIN_MULT: 3,
     SPAWN_GAP_MAX_MULT: 6,
 
     STARTING_HEALTH: 3,
+
+    SCORE_TIERS: {
+      EASY: [50, 100, 150, 200, 300, 400, 500],
+      MEDIUM: [100, 250, 450, 700, 1000, 1400, 1900, 2500],
+      HARD: [100, 250, 450, 700, 1000, 1400, 1900, 2500],
+    },
   };
 
   let fadeOn = 0;
@@ -74,13 +88,12 @@
   let roach1Image = undefined;
   let roach2Image = undefined;
   let boot1Image = undefined;
-  let boot2Image = undefined;
   let splat1Image = undefined;
-  let splat2Image = undefined;
   let heartFullImage = undefined;
   let heartEmptyImage = undefined;
   let score = 0;
   let health = 0;
+  let difficulty = undefined;
   let assetsLoaded = false;
   let playerLaneIndexSelected = 0;
   let playerLaneMaxIndex = 0;
@@ -97,7 +110,7 @@
   // HELPER FUNCTIONS
   function readAppVersion() {
     try {
-      return JSON.parse(require('fs').readFileSync(FILE_PATHS.APPINFO)).version;
+      return JSON.parse(require('fs').readFileSync(fpAPPINFO)).version;
     } catch (e) {
       return '0.0.0';
       // return e;
@@ -129,14 +142,12 @@
     if (assetsLoaded === true) return;
 
     E.defrag();
-    roach1Image = loadImage(FILE_PATHS.ROACH1);
-    roach2Image = loadImage(FILE_PATHS.ROACH2);
-    // boot1Image = loadImage(FILE_PATHS.BOOT1);
-    boot2Image = loadImage(FILE_PATHS.BOOT2);
-    splat1Image = loadImage(FILE_PATHS.SPLAT1);
-    // splat2Image = loadImage(FILE_PATHS.SPLAT2);
-    heartFullImage = loadImage(FILE_PATHS.HEARTFULL);
-    heartEmptyImage = loadImage(FILE_PATHS.HEARTEMPTY);
+    roach1Image = loadImage(IMG.ROACH1);
+    roach2Image = loadImage(IMG.ROACH2);
+    boot1Image = loadImage(IMG.BOOT1);
+    splat1Image = loadImage(IMG.SPLAT1);
+    heartFullImage = loadImage(IMG.HEARTFULL);
+    heartEmptyImage = loadImage(IMG.HEARTEMPTY);
 
     assetsLoaded = true;
   }
@@ -172,9 +183,21 @@
     }
   }
 
+  function scoreTiersCrossed() {
+    const tiers = GAME_CONSTS.SCORE_TIERS[difficulty];
+    let count = 0;
+    for (let i = 0; i < tiers.length; i++) {
+      if (score >= tiers[i]) count++;
+    }
+    return count;
+  }
+
   function currentMarchIntervalMs() {
-    // this can be used to speed up the marching (ie after a higher score)
-    return GAME_CONSTS.MARCH_BASE_MS;
+    return Math.max(
+      GAME_CONSTS.MARCH_FLOOR_MS[difficulty],
+      GAME_CONSTS.MARCH_BASE_MS[difficulty] -
+        scoreTiersCrossed() * GAME_CONSTS.MARCH_STEP_MS,
+    );
   }
 
   function currentStompWindowMs() {
@@ -313,7 +336,7 @@
     }, 500);
   }
 
-  function startGame(difficulty) {
+  function startGame() {
     if (difficulty === 'EASY') {
       gameBoard = GAME_BOARD_EASY;
       setLanes(gameBoard[0].length);
@@ -419,12 +442,12 @@
 
     if (roach) {
       if (roach.row < 2) {
-        h.drawImage(boot2Image, cellX, cellY);
+        h.drawImage(boot1Image, cellX, cellY);
       } else {
         h.drawImage(splat1Image, cellX, cellY);
       }
     } else {
-      h.drawImage(boot2Image, cellX, cellY);
+      h.drawImage(boot1Image, cellX, cellY);
     }
   }
 
@@ -435,7 +458,7 @@
       playerBoard[prevIndex].x + 64,
       playerBoard[prevIndex].y + 64,
     );
-    h.drawImage(boot2Image, playerBoard[newIndex].x, playerBoard[newIndex].y);
+    h.drawImage(boot1Image, playerBoard[newIndex].x, playerBoard[newIndex].y);
   }
 
   function drawMenuMain() {
@@ -468,7 +491,7 @@
   function drawTitleScreen() {
     const APP_VERSION = readAppVersion();
 
-    let f = E.openFile(FILE_PATHS.TITLE, 'r');
+    let f = E.openFile(IMG.TITLE, 'r');
     let a = new Uint8Array(h.buffer);
     let b = f.read(2048),
       offset = 0;
@@ -529,12 +552,13 @@
       Pip.removeListener('knob1', onKnob1_MenuMain);
       Pip.audioStop();
       if (menuIndexSelected === 0) {
-        startGame('EASY');
+        difficulty = 'EASY';
       } else if (menuIndexSelected === 1) {
-        startGame('MEDIUM');
+        difficulty = 'MEDIUM';
       } else if (menuIndexSelected === 2) {
-        startGame('HARD');
+        difficulty = 'HARD';
       }
+      startGame();
     } else {
       menuIndexSelected = E.clip(
         menuIndexSelected + dir,
