@@ -330,10 +330,6 @@
       playerLaneMaxIndex = 6;
     }
 
-    frameInterval = setInterval(onGameInterval, 50);
-    scheduleMarchTick();
-    for (let i = 0; i < lanes.length; i++) scheduleSpawn(i);
-
     h.clear(1);
     drawPlayer(playerLaneIndexSelected, playerLaneIndexSelected - 1);
     updateHealth(GAME_CONSTS.STARTING_HEALTH);
@@ -344,6 +340,24 @@
 
     Pip.onExclusive('knob1', onKnob1_InGame);
     Pip.onExclusive('knob2', onKnob2_InGame);
+
+    frameInterval = setInterval(onGameInterval, 50);
+    scheduleMarchTick();
+    for (let i = 0; i < lanes.length; i++) scheduleSpawn(i);
+
+    // do the initial spawn while the timers are still being scheduled
+    for (let i = 0; i < lanes.length; i++) {
+      if (Math.randInt(2) === 0) spawnRoach(i);
+    }
+    // guarantee at least one roach on start
+    let anySpawned = false;
+    for (let i = 0; i < lanes.length; i++) {
+      if (lanes[i]) {
+        anySpawned = true;
+        break;
+      }
+    }
+    if (!anySpawned) spawnRoach(Math.randInt(lanes.length));
   }
 
   function drawGameOverScreen() {
@@ -356,7 +370,7 @@
     h.setColor(1)
       .setFontMonofonto16()
       .drawString('Press left knob to return to title screen', 240, 300);
-    h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1, 0);
+    // h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1, 0)
     // .drawString('staleTimerFires: ' + staleTimerFires, 20, 10);
   }
 
@@ -493,8 +507,6 @@
   }
 
   function onKnob1_MenuMain(dir) {
-    const prevIndex = menuIndexSelected;
-
     if (dir === 0) {
       Pip.removeListener('knob1', onKnob1_MenuMain);
       Pip.audioStop();
@@ -511,7 +523,7 @@
         0,
         MENU_MAIN_OPTIONS.length - 1,
       );
-      drawMenuMain(MENU_MAIN_OPTIONS);
+      drawMenuMain();
     }
   }
 
