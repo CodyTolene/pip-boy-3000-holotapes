@@ -536,7 +536,6 @@
 
   function onKnob1_InGame(dir) {
     if (dir === 0) {
-      drawKick(playerLaneIndexSelected);
       const roach = lanes[playerLaneIndexSelected];
       dirtyLanes[playerLaneIndexSelected] = 1;
       if (roach && roach.row === 2) {
@@ -546,6 +545,7 @@
       } else {
         Pip.audioStart(SFX.WHOOSH);
       }
+      drawKick(playerLaneIndexSelected);
     }
   }
 
