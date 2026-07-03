@@ -269,6 +269,10 @@
       return;
     }
 
+    for (let i = 0; i < lanes.length; i++) {
+      if (lanes[i] && lanes[i].row === 2) dirtyLanes[i] = 1;
+    }
+
     drawDirtyLanes();
   }
 
@@ -389,6 +393,20 @@
         h.drawImage(roach1Image, cell.x, cell.y);
       } else {
         h.drawImage(roach2Image, cell.x, cell.y);
+        const remaining = E.clip(
+          (roach.stompDeadline - getTime()) / (currentStompWindowMs() / 1000),
+          0,
+          1,
+        );
+        const barWidth = (64 * remaining) | 0;
+        if (barWidth > 0) {
+          h.setColor(3).fillRect(
+            cell.x,
+            cell.y + 60,
+            cell.x + barWidth,
+            cell.y + 63,
+          );
+        }
       }
     }
   }
