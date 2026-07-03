@@ -52,33 +52,43 @@
   const HEART_LOCS_X = [400, 420, 440];
 
   const GAME_CONSTS = {
+    STARTING_HEALTH: 3,
+
+    SPAWN_GAP_MIN_MULT: 3,
+    SPAWN_GAP_MAX_MULT: 6,
+
+    SCORE_TIERS: {
+      EASY: [60, 120, 200, 280, 380, 480, 600],
+      MEDIUM: [100, 200, 300, 450, 600, 750, 900],
+      HARD: [100, 200, 300, 450, 600, 750, 900],
+    },
+
     MARCH_BASE_MS: {
       EASY: 1500,
       MEDIUM: 2000,
       HARD: 2000,
     },
-
-    MARCH_STEP_MS: 150,
-
     MARCH_FLOOR_MS: {
       EASY: 500,
       MEDIUM: 1000,
       HARD: 1000,
     },
+    MARCH_STEP_MS: 150,
 
-    STOMP_WINDOW_BASE_MS: 2000,
-    STOMP_WINDOW_STEP_MS: 150,
-    STOMP_WINDOW_FLOOR_MS: 1000,
-
-    SPAWN_GAP_MIN_MULT: 3,
-    SPAWN_GAP_MAX_MULT: 6,
-
-    STARTING_HEALTH: 3,
-
-    SCORE_TIERS: {
-      EASY: [50, 100, 150, 200, 300, 400, 500],
-      MEDIUM: [100, 250, 450, 700, 1000, 1400, 1900, 2500],
-      HARD: [100, 250, 450, 700, 1000, 1400, 1900, 2500],
+    STOMP_WINDOW_BASE_MS: {
+      EASY: 2000,
+      MEDIUM: 2400,
+      HARD: 2800,
+    },
+    STOMP_WINDOW_FLOOR_MS: {
+      EASY: 1500,
+      MEDIUM: 1800,
+      HARD: 2000,
+    },
+    STOMP_WINDOW_STEP_MS: {
+      EASY: 72,
+      MEDIUM: 86,
+      HARD: 115,
     },
   };
 
@@ -201,8 +211,11 @@
   }
 
   function currentStompWindowMs() {
-    // this can be used to speed up the stomp timer (ie after a higher score) // makes the window shorter / game harder
-    return GAME_CONSTS.STOMP_WINDOW_BASE_MS;
+    return Math.max(
+      GAME_CONSTS.STOMP_WINDOW_FLOOR_MS[difficulty],
+      GAME_CONSTS.STOMP_WINDOW_BASE_MS[difficulty] -
+        scoreTiersCrossed() * GAME_CONSTS.STOMP_WINDOW_STEP_MS[difficulty],
+    );
   }
 
   function spawnGapMs(laneIndex) {
