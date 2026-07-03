@@ -1,8 +1,8 @@
 {
-  "id": "fanorona",
+  "id": "Fanorona",
   "name": "Fanorona",
   "author": "@Theeohn",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
   "icon": "assets/fanorona.png",
   "previews": [],
