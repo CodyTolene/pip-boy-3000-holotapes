@@ -120,6 +120,7 @@
   let sfxSplatRawInfo = {};
   let sfxWhoosh = undefined;
   let sfxSplat = undefined;
+  let clickWatch = undefined;
 
   // HELPER FUNCTIONS
   function readAppVersion() {
@@ -155,6 +156,7 @@
   function loadAssets() {
     if (assetsLoaded === true) return;
 
+    process.memory(true);
     E.defrag();
     roach1Image = loadImage(IMG.ROACH1);
     roach2Image = loadImage(IMG.ROACH2);
@@ -316,6 +318,13 @@
     }
 
     drawDirtyLanes();
+
+    // const mem = process.memory();
+    // h.clearRect(240, 10, 340, 28);
+    // h.setColor(3)
+    //   .setFontMonofonto16()
+    //   .setFontAlign(-1, -1, 0)
+    //   .drawString(mem.free + '/' + mem.total, 240, 10);
   }
 
   function setLanes(count) {
@@ -329,7 +338,10 @@
 
   function endGame() {
     Pip.audioStart(SFX.GAMEOVER);
-    Pip.removeListener('knob1', onKnob1_InGame);
+    if (clickWatch) {
+      clearWatch(clickWatch);
+      clickWatch = undefined;
+    }
     Pip.removeListener('knob2', onKnob2_InGame);
 
     if (frameInterval != null) {
@@ -384,8 +396,12 @@
       .setFontAlign(-1, -1, 0)
       .drawString('Score: ' + score, 20, 10);
 
-    Pip.onExclusive('knob1', onKnob1_InGame);
     Pip.onExclusive('knob2', onKnob2_InGame);
+    clickWatch = setWatch(onClick_InGame, ENC1_PRESS, {
+      repeat: true,
+      edge: 'rising',
+      debounce: 20,
+    });
 
     frameInterval = setInterval(onGameInterval, 50);
     scheduleMarchTick();
@@ -523,8 +539,8 @@
     Pip.audioStart(SFX.TITLE, { repeat: true });
   }
 
-  function onKnob1_InGame(dir) {
-    if (dir === 0) {
+  function onClick_InGame(event) {
+    if (event.state) {
       const roach = lanes[playerLaneIndexSelected];
       dirtyLanes[playerLaneIndexSelected] = 1;
       if (roach && roach.row === 2) {
@@ -537,8 +553,7 @@
         );
         updateScore(10);
       } else {
-        // Pip.audioStart(SFX.WHOOSH);
-        Pip.audioStartVar(sfxWhoosh, sfxWhooshRawInfo); // CRASHES
+        Pip.audioStartVar(sfxWhoosh, sfxWhooshRawInfo);
         h.drawImage(
           boot1Image,
           gameBoard[2][playerLaneIndexSelected].x,
@@ -611,6 +626,8 @@
     id: 'ROACHSTOMP',
     fullscreen: true,
     remove: function () {
+      Pip.audioStop();
+
       if (fadeInterval != null) {
         clearInterval(fadeInterval);
       }
@@ -630,10 +647,11 @@
           }
         }
       }
-      Pip.audioStop();
+
+      if (clickWatch) clearWatch(clickWatch);
+
       Pip.removeListener('knob1', onKnob1_TitleScreen);
       Pip.removeListener('knob1', onKnob1_MenuMain);
-      Pip.removeListener('knob1', onKnob1_InGame);
       Pip.removeListener('knob2', onKnob2_InGame);
       Pip.removeListener('knob1', onKnob1_GameOver);
 
