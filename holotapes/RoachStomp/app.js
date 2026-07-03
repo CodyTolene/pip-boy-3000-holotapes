@@ -116,6 +116,10 @@
   let frameInterval = undefined;
   let gameOverInputDelay = undefined;
   // let staleTimerFires = 0; // diagnostic only — how often a timer fired after teardown
+  let sfxWhooshRawInfo = {};
+  let sfxSplatRawInfo = {};
+  let sfxWhoosh = undefined;
+  let sfxSplat = undefined;
 
   // HELPER FUNCTIONS
   function readAppVersion() {
@@ -158,6 +162,8 @@
     splat1Image = loadImage(IMG.SPLAT1);
     heartFullImage = loadImage(IMG.HEARTFULL);
     heartEmptyImage = loadImage(IMG.HEARTEMPTY);
+    sfxWhoosh = Pip.audioRead(SFX.WHOOSH, sfxWhooshRawInfo);
+    sfxSplat = Pip.audioRead(SFX.SPLAT, sfxSplatRawInfo);
 
     assetsLoaded = true;
   }
@@ -447,23 +453,6 @@
     }
   }
 
-  function drawKick(laneIndex) {
-    const cellX = gameBoard[2][laneIndex].x;
-    const cellY = gameBoard[2][laneIndex].y;
-
-    const roach = lanes[laneIndex];
-
-    if (roach) {
-      if (roach.row < 2) {
-        h.drawImage(boot1Image, cellX, cellY);
-      } else {
-        h.drawImage(splat1Image, cellX, cellY);
-      }
-    } else {
-      h.drawImage(boot1Image, cellX, cellY);
-    }
-  }
-
   function drawPlayer(newIndex, prevIndex) {
     h.clearRect(
       playerBoard[prevIndex].x,
@@ -539,13 +528,23 @@
       const roach = lanes[playerLaneIndexSelected];
       dirtyLanes[playerLaneIndexSelected] = 1;
       if (roach && roach.row === 2) {
-        Pip.audioStart(SFX.SPLAT);
         lanes[playerLaneIndexSelected] = null;
+        Pip.audioStartVar(sfxSplat, sfxSplatRawInfo);
+        h.drawImage(
+          splat1Image,
+          gameBoard[2][playerLaneIndexSelected].x,
+          gameBoard[2][playerLaneIndexSelected].y,
+        );
         updateScore(10);
       } else {
-        Pip.audioStart(SFX.WHOOSH);
+        // Pip.audioStart(SFX.WHOOSH);
+        Pip.audioStartVar(sfxWhoosh, sfxWhooshRawInfo); // CRASHES
+        h.drawImage(
+          boot1Image,
+          gameBoard[2][playerLaneIndexSelected].x,
+          gameBoard[2][playerLaneIndexSelected].y,
+        );
       }
-      drawKick(playerLaneIndexSelected);
     }
   }
 
