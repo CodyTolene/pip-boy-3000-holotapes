@@ -404,7 +404,7 @@
 
           if (getTime() - lastFlapTime >= 0.2) {
             lastFlapTime = getTime();
-            Pip.audioStart('HOLO/RADROACH_RACES/assets/FLAP.WAV');
+            Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
           }
         }
       }
