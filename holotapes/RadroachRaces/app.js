@@ -466,7 +466,7 @@
       if (r.cx >= goalX1 && r.cx <= goalX2 && r.cy >= goalY1 && r.cy <= goalY2) {
         gameState = 'GAMEOVER';
         winnerId = r.id;
-        Pip.audioStart('HOLO/RADROACH_RACES/assets/WINNER.WAV');
+        Pip.audioStart('HOLO/RADROACH_RACES/WINNER.WAV');
         break;
       }
     }
