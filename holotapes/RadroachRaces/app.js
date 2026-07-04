@@ -154,7 +154,7 @@
   function handleKnobStart(dir) {
     if (dir !== 0) return;
     if (gameState === 'TITLE_SCREEN') {
-      Pip.audioStart('HOLO/RADROACH_RACES/assets/BUGLE.WAV');
+      Pip.audioStart('HOLO/RADROACH_RACES/BUGLE.WAV');
       startCountdown();
     } else if (gameState === 'GAMEOVER') {
       showTitleScreen();
