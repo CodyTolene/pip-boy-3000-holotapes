@@ -501,7 +501,7 @@
   mainLoopInterval = setInterval(mainLoop, 33); // ~30fps
 
   return {
-    id: "RADROACHRACES",
+    id: "radroachraces",
     notDefault: true,
     fullscreen: true,
     remove: function() {
