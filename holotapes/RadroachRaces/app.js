@@ -131,7 +131,10 @@
     gameState = 'TITLE_SCREEN';
     winnerId = -1;
 
-    h.setColor(0).fillRect(0, 0, 480, 320).setColor(2).drawRect(18, 18, 465, 298);
+    h.setColor(0)
+     .fillRect(0, 0, 480, 320)
+     .setColor(2)
+     .drawRect(18, 18, 465, 298);
 
     h.setFont("Monofonto36").setFontAlign(0, -1).setColor(3).drawString("RADROACH RACES", 240, 52).setFont("Monofonto18").setFontAlign(0, -1).setColor(2).drawString("by Theeohn", 360, 94);
 
