@@ -482,6 +482,40 @@
     "storageOptional": []
   },
   {
+    "id": "radroachraces",
+    "name": "Radroach Races",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "A version of the internet famous \"Horse Race Tests\" game now for your Pip-boy. Start the game up, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 10 seperate tracks, 5 shapes for your roaches. Endless hours of fun watching, betting, and forming your own headcanons!",
+    "icon": "RadroachRaces/assets/RACES.png",
+    "previews": [],
+    "type": "game",
+    "readme": "RadroachRaces/README.md",
+    "storage": [
+      {
+        "name": "HOLO/RADROACH_RACES/APP.JS",
+        "url": "RadroachRaces/app.min.js"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
+        "url": "RadroachRaces/assets/WINNER.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
+        "url": "RadroachRaces/assets/BUGLE.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/FLAP.WAV",
+        "url": "RadroachRaces/assets/FLAP.WAV"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "vaulttimer",
     "name": "Vault-Tec Timer",
     "author": "@trekker87",
