@@ -1,13 +1,18 @@
 {
   "id": "checkers",
   "name": "Checkers",
-  "author": "@trekker87",
-  "version": "1.0.0",
+  "author": "@trekker87 @CodyTolene",
+  "version": "1.1.0",
   "description": "A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI opponent. Standard rules apply including forced jumps, multi-jumps, and king promotion.",
   "icon": "assets/checkers.png",
   "previews": [],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/CHECKERS/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    { "name": "HOLO/CHECKERS/APP.JS", "url": "app.min.js" },
+    { "name": "HOLO/CHECKERS/GAME.JS", "url": "assets/GAME.MIN.JS" },
+    { "name": "HOLO/CHECKERS/HELP.JS", "url": "assets/HELP.MIN.JS" },
+    { "name": "HOLO/CHECKERS/MENU.JS", "url": "assets/MENU.MIN.JS" }
+  ],
   "storageOptional": []
 }
