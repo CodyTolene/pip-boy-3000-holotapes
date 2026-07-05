@@ -41,7 +41,7 @@
 - [Input handling](#input)
 - [Memory and Performance](#memory)
 - [Contributing](#contributing)
-- [License(s)](#licenses)
+- [License](#licenses)
 
 <!---------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------->
@@ -541,17 +541,22 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 <!---------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------->
 
-## License(s) <a name="licenses"></a>
+## License <a name="licenses"></a>
 
-This project is licensed under the MIT License.
+This repository is licensed under the MIT License.
 
-Some projects in this repository may have their own licenses. Check each app or
-game's individual files and README for license terms that apply to that specific
-project.
+All code, holotapes, apps, games, scripts, metadata, documentation, and other
+contributions submitted to this repository must be licensed under the MIT
+License unless explicitly stated otherwise by the repository maintainer in
+writing.
 
-See the [LICENSE-MIT](LICENSE-MIT) file for more details.
+By submitting a pull request or contribution, you agree that your contribution
+is provided under the MIT License. See [CONTRIBUTING.md](CONTRIBUTING.md) for
+details.
 
-`SPDX-License-Identifiers: MIT`
+See the [LICENSE](LICENSE) file for details.
+
+`SPDX-License-Identifier: MIT`
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
