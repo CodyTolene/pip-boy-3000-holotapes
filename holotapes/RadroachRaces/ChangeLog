@@ -1,0 +1,9 @@
+1.1.0 (2026-07-04)
+- Split the app into scenes reducing memory usage.
+- Release the map data from memory as soon as the selected track's walls are
+  extracted, so only the active track is kept during a race.
+- 
+
+1.0.0 (2026-07-04)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/43
+- Add new app.
