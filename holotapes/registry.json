@@ -497,6 +497,10 @@
         "url": "RadroachRaces/app.min.js"
       },
       {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.JS"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/WINNER.WAV",
         "url": "RadroachRaces/assets/WINNER.WAV"
       },
@@ -506,7 +510,7 @@
       },
       {
         "name": "HOLO/RADROACH_RACES/FLAP.WAV",
-        "url": "RadroachRaces/assets/FLAP.wav‎"
+        "url": "RadroachRaces/assets/FLAP.WAV"
       }
     ],
     "storageOptional": []

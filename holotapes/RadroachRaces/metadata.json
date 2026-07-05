@@ -10,9 +10,10 @@
   "readme": "README.md",
   "storage": [
     { "name": "HOLO/RADROACH_RACES/APP.JS", "url": "app.min.js" },
+    { "name": "HOLO/RADROACH_RACES/MAPS.JS", "url": "assets/MAPS.JS" },
     { "name": "HOLO/RADROACH_RACES/WINNER.WAV", "url": "assets/WINNER.WAV" },
     { "name": "HOLO/RADROACH_RACES/BUGLE.WAV", "url": "assets/BUGLE.WAV" },
-    { "name": "HOLO/RADROACH_RACES/FLAP.WAV", "url": "assets/FLAP.wav‎" }
+    { "name": "HOLO/RADROACH_RACES/FLAP.WAV", "url": "assets/FLAP.WAV" }
   ],
   "storageOptional": []
 }
