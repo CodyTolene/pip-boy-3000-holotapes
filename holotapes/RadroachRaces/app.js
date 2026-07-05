@@ -1,7 +1,7 @@
 // =============================================================================
 //  Name: Radroach Races
 //  Author: Theeohn Megistus
-//  License: CC-BY-NC-4.0
+//  License: MIT
 //  Repository: https://github.com/Theeohn/Radroach-Races
 // =============================================================================
 
