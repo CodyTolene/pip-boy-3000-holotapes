@@ -11,6 +11,10 @@
 - [Pip-Boy](https://www.Pip-Boy.com)
 - [Pip-Boy Apps](https://github.com/CodyTolene/pip-boy-3000-holotapes)
 
+**Contributor(s):**
+
+- [Cody Tolene](https://github.com/CodyTolene)
+
 ### Description
 
 A version of the internet famous "Horse Race Tests" game now for your Pip-boy.
