@@ -10,6 +10,12 @@
   const fillRectCached = h.fillRect.bind(h);
   const drawStringCached = h.drawString.bind(h);
 
+  const SFX = {
+    BUGLE: 'HOLO/RADROACH_RACES/BUGLE.WAV',
+    FLAP: 'HOLO/RADROACH_RACES/FLAP.WAV',
+    WINNER: 'HOLO/RADROACH_RACES/WINNER.WAV',
+  };
+
   const dirty = new Int16Array(20);
 
   let mainLoopInterval = null;
@@ -57,42 +63,67 @@
   //   index+4 : wallCount  (number of walls)
   //   index+5 .. index+4+wallCount*4 : wall entries (x1,y1,x2,y2 each)
 
+  // prettier-ignore
   const MAP_DATA = new Int16Array([
     // Map 1
-    420, 205, 22, 62, 0,
+    420, 205, 22, 62,  0,
 
     // Map 2
-    392, 260, 40, 27, 2, 160, 18, 160, 200, 326, 113, 326, 298,
+    392, 260, 40, 27,  2,
+    160, 18, 160, 200,
+    326, 113, 326, 298,
 
     // Map 3
-    340, 150, 22, 110, 2, 160, 95, 160, 225, 323, 75, 323, 245,
+    340, 150, 22, 110,  2,
+    160, 95, 160, 225,
+    323, 75, 323, 245,
 
     // Map 4
-    32, 220, 22, 38, 3, 18, 160, 340, 160, 395, 18, 465, 94, 395, 298, 465, 226,
+    32, 220, 22, 38,  3,
+    18, 160, 340, 160,
+    395, 18, 465, 94,
+    395, 298, 465, 226,
 
     // Map 5
-    75, 176, 450, 36, 3, 18, 160, 180, 160, 300, 160, 465, 160, 240, 220, 240,
-    298,
+    75, 176, 450, 36,  3,
+    18, 160, 180, 160,
+    300, 160, 465, 160,
+    240, 220, 240, 298,
 
     // Map 6
-    165, 210, 348, 28, 3, 200, 184, 200, 298, 120, 110, 200, 184, 330, 18, 330,
-    165,
+    165, 210, 348, 28,  3,
+    200, 184, 200, 298,
+    120, 110, 200, 184,
+    330, 18, 330, 165,
 
     // Map 7
-    357, 130, 22, 110, 4, 160, 160, 223, 70, 95, 160, 158, 250, 310, 160, 373,
-    70, 245, 160, 308, 250,
+    357, 130, 22, 110,  4,
+    160, 160, 223, 70,
+    95, 160, 158, 250,
+    310, 160, 373, 70,
+    245, 160, 308, 250,
 
     // Map 8
-    35, 65, 190, 28, 4, 140, 18, 140, 135, 100, 215, 220, 250, 300, 115, 465,
-    115, 316, 175, 316, 258,
+    35, 65, 190, 28,  4,
+    140, 18, 140, 135,
+    100, 215, 220, 250,
+    300, 115, 465, 115,
+    316, 175, 316, 258,
 
     // Map 9
-    172, 172, 22, 38, 4, 18, 160, 219, 160, 175, 235, 246, 120, 350, 18, 380,
-    145, 290, 220, 385, 220,
+    172, 172, 22, 38,  4,
+    18, 160, 219, 160,
+    175, 235, 246, 120,
+    350, 18, 380, 145,
+    290, 220, 385, 220,
 
     // Map 10
-    250, 186, 22, 32, 5, 18, 145, 305, 145, 90, 145, 90, 210, 305, 145, 305,
-    238, 140, 238, 305, 238, 382, 66, 465, 116,
+    250, 186, 22, 32,  5,
+    18, 145, 305, 145,
+    90, 145, 90, 210,
+    305, 145, 305, 238,
+    140, 238, 305, 238,
+    382, 66, 465, 116
   ]);
 
   function findMapBase(m) {
@@ -151,7 +182,7 @@
   function handleKnobStart(dir) {
     if (dir !== 0) return;
     if (gameState === 'TITLE_SCREEN') {
-      Pip.audioStart('HOLO/RADROACH_RACES/BUGLE.WAV');
+      Pip.audioStart(SFX.BUGLE);
       startCountdown();
     } else if (gameState === 'GAMEOVER') {
       showTitleScreen();
@@ -435,7 +466,7 @@
     if (bounced) {
       if (getTime() - lastFlapTime >= 0.2) {
         lastFlapTime = getTime();
-        Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
+        Pip.audioStart(SFX.FLAP);
       }
 
       const vxAbs = r.vx < 0 ? -r.vx : r.vx;
@@ -522,7 +553,7 @@
 
           if (getTime() - lastFlapTime >= 0.2) {
             lastFlapTime = getTime();
-            Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
+            Pip.audioStart(SFX.FLAP);
           }
         }
       }
@@ -597,7 +628,7 @@
       ) {
         gameState = 'GAMEOVER';
         winnerId = r.id;
-        Pip.audioStart('HOLO/RADROACH_RACES/WINNER.WAV');
+        Pip.audioStart(SFX.WINNER);
         break;
       }
     }
