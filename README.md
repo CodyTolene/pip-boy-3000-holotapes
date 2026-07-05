@@ -492,6 +492,12 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 4. Make the change. New Holotapes must include all files described in
    [Creating a new Holotape](#create).
 
+   > ![Warn][img-warn] Submissions must include the original, human-readable
+   > source code (`app.js`). Pull requests containing only minified code
+   > (`app.min.js`) will be rejected. This is an open source project, and
+   > readable source is essential so the community can review changes, maintain
+   > and update apps over time, fix bugs, and learn from each other's work.
+
 5. Run the repository build and test the Holotape on the device:
 
    ```sh
@@ -500,6 +506,8 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
    ```
 
 6. Before opening a pull request, verify:
+   - The original unminified source (`app.js`) is included; minified code alone
+     is not accepted.
    - `app.js` starts with `(function() {`, ends with `});`, and is not invoked.
    - The return object contains a literal uppercase alphanumeric `id` and a
      `remove` function.
