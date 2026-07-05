@@ -139,6 +139,7 @@ return {
 ### 3.4 Variable Declarations
 
 - Use `const` for constants, `let` for mutable variables. **Never use `var`** — while `var` inside an IIFE doesn't leak globally, it still wastes variable blocks unnecessarily and `const`/`let` are clearer.
+- **Espruino does NOT block-scope `let`/`const`.** A `for (let i = 0; ...)` loop variable leaks to function scope and behaves like `var`. Never reuse a name inside a block if a variable of the same name is still needed after the block; the inner assignment clobbers the outer value. This also constrains minification (see [7.1](#71-minification)).
 - **Minimize the number of variables declared.** Every variable consumes a scarce Espruino block. If a value never changes (e.g. screen dimensions, grid sizes), hardcode the literal number instead of assigning it to a constant.
 - **Screen dimensions are constant.** Use `const W = h.getWidth(), H = h.getHeight()` — the display never changes size at runtime. Do NOT declare `W`/`H` as `let` and reassign them in a `resetGame()` function.
 - Do not declare an `APP_ID` constant — put the ID string directly in the return object.
@@ -251,7 +252,7 @@ function drawTicks() {  "jit";
 
 **Whitespace matters:** Espruino executes directly from source. Whitespace and comments inside loop bodies cost time on every iteration. Keep comments outside hot loops and minimize whitespace between loop statements.
 
-### 3.9 Sound
+### 3.9 Sound, Volume & Brightness
 
 - `Pip.playSound('TAB')` — confirm/select sound.
 - `Pip.playSound('SCROLL')` — navigation/scroll sound.
@@ -263,7 +264,10 @@ function drawTicks() {  "jit";
 - `Pip.audioBuiltin(name)` — returns a byte array for a built-in sound (`"OK"`, `"OK2"`, `"PREV"`, `"NEXT"`, `"COLUMN"`, `"CLICK"`). Use with `Pip.audioStartVar`.
 - `Pip.typeText(text, x, y, W, H, fontName)` — typewriter-style text reveal effect. Returns a `Promise` that resolves when complete. Default font is `"Monofonto16"`. Note the uppercase `W` and `H` parameters.
 - `Pip.audioStop()` — immediately stop all audio playback.
-- `Pip.setVol(volume)` — set output volume, range `0`–`33`.
+- `Pip.setVol(volume)` — set output volume, range `0`-`33` (the firmware's own settings UI stays within `3`-`27`).
+- `Pip.setBrightness(v)`: set screen brightness; `v` is a float from roughly `0.001` (near off) to `1` (max). The current value is readable as the property `Pip.brightness` (guard with `typeof Pip.brightness === "number"`).
+- **Scale gotcha:** `Pip.settings.brightness` is the firmware UI integer scale `1`-`20`, NOT the `0`-`1` float scale used by `Pip.setBrightness()`. Never feed one into the other. For capture/restore, read and write the live `Pip.brightness` float so the values stay self-consistent. `Pip.settings.volume` is an integer `3`-`27` and IS directly compatible with `Pip.setVol()`.
+- If an app changes brightness or volume, capture the initial values on load (`Pip.brightness` for brightness, `Pip.settings.volume` for volume) and restore them in `remove()` so in-app changes are session-only and never override the system settings after exit.
 
 ### 3.10 Math & Utilities
 
@@ -274,6 +278,8 @@ function drawTicks() {  "jit";
 - `Math.sqrt()`, `Math.sin()`, `Math.cos()` — all standard Math functions are available.
 
 ### 3.11 App Initialization
+
+**Declaration order is critical: Espruino does NOT hoist function declarations.** Statements run strictly in source order, and a `function name() {}` only exists once its declaration line has executed. Referencing a function by name before that line runs (calling it, or passing it to `setInterval`, `setTimeout`, `Pip.on`, `Pip.onExclusive`, `setWatch`, etc.) throws `ReferenceError: "name" is not defined` on the device. Declare ALL functions first, then put initialization and side-effect code (listener registration, intervals, the first `draw()`) at the bottom of the file. Node and browsers DO hoist, so this bug is invisible to any off-device syntax check or simulation; it only surfaces on real hardware. Exception: a not-yet-declared function may safely be referenced inside a callback body that runs later (for example inside a `setTimeout(fn, 0)` callback), because the whole file has finished executing by the time the callback fires. Only the first synchronous pass through the file is affected.
 
 App initialization code runs at the top level of the IIFE. There is no requirement for a `start()` function. Common initialization patterns:
 
@@ -393,7 +399,9 @@ function showMenu(items) {
 }
 ```
 
-The `""` key holds options: `{ title, selected, rowHeight, wrapSelection, predraw }`. Menu items are functions (actions) or objects with `value` (booleans toggle, numbers edit inline with `min`/`max`/`step`/`onchange`).
+The `""` key holds options: `{ title, selected, rowHeight, wrapSelection, predraw }`. Menu items are functions (actions) or objects with `value` (booleans toggle, numbers edit inline with `min`/`max`/`step`/`onchange`). Confirmation dialogs are just a sub-menu: `{ "": { title: "Delete?", back: fn }, Yes: fn }`.
+
+**Text entry:** there is no global firmware keyboard API for holotapes to call; even the firmware's bundled holotapes ship their own. You can copy the firmware's `showTextEntry` design instead: a KEYMAP grid of 4 rows by 14 columns (lower/upper variants, with control characters `\b` backspace, `\x02` shift, `\x03` enter), where knob2 selects the column, knob1 selects the row and its press types the key, long press repeats, and a `setInterval` blinks the cursor (clear that interval on remove). The callback receives the final text on Enter.
 
 ### 3.17 Text Wrapping & Caching
 
@@ -467,7 +475,22 @@ ffmpeg -i "input.mp4" -vf "scale=480:-1,format=gray,format=rgb555le" \
   -c:a adpcm_ima_wav -ac 1 -ar 16000 output.AVI
 ```
 
-Video playback uses `Pip.videoStart(path, { x, y, repeat })`.
+**Video playback:**
+
+- `Pip.videoStart(path, { x, y, repeat })` plays an AVI, non-blocking. For a full-screen 480×320 clip use `{ x: 0, y: 0 }` (the firmware's BOOT.avi uses `x: 40` only because that clip is narrower than the screen).
+- `Pip.on("videoStopped", cb)` fires when the clip finishes. Pair with `Pip.removeListener("videoStopped", cb)` in cleanup.
+- `Pip.videoStop()` stops playback early. When skipping, remove the `videoStopped` listener BEFORE calling `videoStop()` so a synchronous stop event cannot re-trigger your transition.
+- Audio is separate: start the matching WAV with `Pip.audioStart(path)` alongside `videoStart`, and stop both together.
+- Always provide a knob-press skip path. A clip that fails to decode may never fire `videoStopped`, so the user must be able to escape.
+- **Format gotcha:** only MS RLE AVI decodes on-device. An mpeg4/yuv420p AVI will NOT play.
+- **Size gotcha:** MS RLE is lossless run-length encoding, so detailed or noisy grayscale content produces huge files (a plain `pal8` palette can reach 256 colors and an 8 MB file for a few seconds of video). Constrain the palette to about 16 gray levels with no dithering (dithering breaks RLE runs and bloats size) to cut file size roughly 2.6x:
+
+  ```sh
+  ffmpeg -i in.avi -vf "format=gray,split[a][b];[a]palettegen=max_colors=16:reserve_transparent=0[p];[b][p]paletteuse=dither=none" \
+    -c:v msrle -c:a adpcm_ima_wav -ac 1 -ar 16000 out.avi
+  ```
+
+  For reference, the device's own boot animation is 2.65 MB (385×320, 12 fps, 10.6 s), so a ~3 MB full-screen intro is normal and playable.
 
 ---
 
@@ -606,6 +629,8 @@ The following must **never** appear in generated code:
 | `Pip.audioStop()` before `Pip.audioStart()` | `Pip.audioStart()` automatically stops any currently-playing audio. Calling `Pip.audioStop()` first is redundant. |
 | Single-call function wrappers            | `function playSound(n) { Pip.audioStart(n); }` wastes a function block. If a function body is just one call with the same arguments, inline the call at every call site. Only wrap if there is additional logic (debounce, error handling, state tracking). |
 | Try/catch that only calls `Pip.errorBox(e)` | Espruino's global uncaught-exception handler already displays an error box for all exceptions. Catching just to re-display the same error adds overhead with no benefit. Only catch if you need custom recovery logic. |
+| Referencing a function before its declaration line | Espruino does not hoist function declarations (§3.11). Throws `ReferenceError` on-device. Declare all functions first, init code last. |
+| Reusing a `let` name that an outer variable still needs | Espruino's `let` is function-scoped, not block-scoped (§3.4). The inner assignment clobbers the outer value. |
 | Global variables outside the IIFE    | Pollutes global namespace; conflicts with other holotapes.        |
 | Storing functions in arrays/objects  | Consumes excessive memory blocks on Espruino.                     |
 | Deep object/array nesting (>4 levels)| Wastes variable blocks and hurts performance.                     |
@@ -623,13 +648,20 @@ The `app.min.js` is produced from `app.js` using a two-pass pipeline:
 Strip whitespace, comments, and shorten identifiers. One suggested tool is [Terser](https://github.com/terser/terser):
 
 ```sh
-terser app.js -c negate_iife=false,side_effects=false -o app.min.js
+terser app.js -c negate_iife=false,side_effects=false,directives=false -o app.min.js
 ```
 
 - `negate_iife=false` — preserves the IIFE wrapper (required by rule R01).
 - `side_effects=false` — disables dead-code removal that could strip side-effectful calls (e.g. `setWatch`, `Pip.on`).
+- `directives=false`: prevents terser from treating the `"ram"` / `"jit"` directive strings (§3.8) as removable no-op expressions. Without it the directives are stripped and the performance benefit is silently lost.
 
-Any minifier that preserves the IIFE structure and avoids stripping side-effectful calls is acceptable.
+Any minifier that preserves the IIFE structure, keeps the directive strings, and avoids stripping side-effectful calls is acceptable.
+
+**Name mangling (`-m`) caveat:** terser's mangler legitimately reuses identifier names across block scopes, relying on spec-correct block scoping. Espruino treats `let` as function-scoped (§3.4), so a mangled `for(let C=0;...)` can clobber a still-live variable that terser renamed to `C` (classically a function parameter), producing runtime failures like `Function not found!` after the loop. Consequences:
+
+- Files that are **eval'd as modules or data builders** (§3.24) must be built WITHOUT `-m`: keep the `-c` flags above and drop mangling. They load transiently, so the unmangled size has zero resident-RAM cost.
+- Mangling the main `app.js` is only safe when every loop either references the would-be-clobbered variable inside the loop body (keeping it live so terser won't reuse the name) or the variable is not used after the loop. When in doubt, don't mangle.
+- After minifying an eval'd module file, verify it still starts with `(function(`.
 
 ### 7.2 Espruino CLI (Pretokenisation)
 
@@ -719,8 +751,14 @@ Pip.typeText(txt, x, y, W, H, font);       // Typewriter text, returns Promise
 Pip.screenGlitch();                        // Random CRT glitch effect + sound
 Pip.errorBox(err);                          // Standard error display
 Pip.log(txt, logFile);                     // Log to console + SD card LOGS/
-Pip.videoStart(path, options);              // Play AVI video
+Pip.videoStart(path, options);              // Play AVI video (MS RLE only)
 Pip.videoStop();                           // Stop AVI playback
+Pip.on('videoStopped', callback);          // Fires when AVI playback finishes
+Pip.setVol(volume);                        // Set volume, 0-33
+Pip.setBrightness(v);                      // Set brightness, float ~0.001-1
+Pip.brightness;                            // Current brightness (0-1 float)
+Pip.settings.brightness;                   // Firmware UI scale 1-20 (NOT the 0-1 float!)
+Pip.settings.volume;                       // 3-27 int, compatible with setVol()
 Pip.remove();                               // Call CURRENT.remove() safely
 Pip.lastFlip = getTime();                  // Tell Pip.timers.flip screen is current
 ```
@@ -734,8 +772,12 @@ E.clip(value, min, max);                   // Clamp value
 E.defrag();                                // Defragment memory
 Math.randInt(n);                           // Random int [0, n-1]
 Math.atan2(y, x);                          // Arc tangent
-require("fs").readFileSync(path);          // Read file from storage
-require("fs").writeFileSync(path, data);   // Write file to storage
+fs.readFileSync(path);                     // Read file (fs is a global; require("fs") optional)
+fs.writeFileSync(path, data);              // Write file to storage
+fs.readdir(path);                          // List directory entries
+fs.statSync(path);                         // Stat; returns undefined if missing (does NOT throw)
+fs.mkdir(path);                            // Create directory (does NOT create parents)
+fs.unlink(path);                           // Delete a file
 E.openFile(path, mode);                    // Open file for streaming
 JSON.parse(string);                        // Parse JSON
 JSON.stringify(value);                     // Serialize to JSON
@@ -743,6 +785,7 @@ E.sum(array);                              // Optimized array sum
 E.variance(array);                         // Optimized array variance
 E.getSizeOf(value, depth);                 // Storage units used by object
 process.memory();                          // Free blocks and memory info
+process.memory(true);                      // Force a GC pass, then report memory
 E.toFlatString(data);                      // Allocate flat contiguous string
 debug(msg);                                // Log debug message
 EMU;                                       // true if running in emulator
@@ -846,5 +889,52 @@ require("fs").writeFileSync("SETTINGS/MYAPP.JSON", JSON.stringify(data));
 let data = require("fs").readFileSync("SETTINGS/MYAPP.JSON");
 ```
 
+**Filesystem details:**
+
+- `fs` is a **global** on the device; `require("fs")` is optional. Firmware code calls `fs.statSync`, `fs.readdir`, `fs.readFileSync` etc. directly.
+- **Path convention:** prefer NO leading slash (`fs.readFileSync("HOLO/MYAPP/DATA.JSON")`). This is the firmware idiom everywhere. Leading-slash variants often work too, but code that eval-loads sibling module files should match the firmware exactly.
+- `fs.mkdir(path)` creates a directory synchronously (throws on error). It does **not** create parent directories; for a nested path like `HOLO/MYAPP/SAVES`, walk and create each level, skipping levels that already exist.
+- **`fs.statSync(path)` returns `undefined` for a missing path; it does NOT throw.** So `try { fs.statSync(p) } catch (e) { fs.mkdir(p) }` is a bug: the catch never fires and the directory is never created. Check the return value instead:
+
+  ```js
+  let st = fs.statSync(p);
+  if (!st || !st.dir) fs.mkdir(p);
+  ```
+
+- `fs.unlink(path)` deletes a file.
+- Error meanings: `NO_FILE` means the path resolved but the file is missing (commonly a `storage` entry that was never installed to the SD card); `NO_PATH` means an intermediate directory is missing.
+
 When the firmware loads app code, function bodies and `const` declarations inside functions may be stored more efficiently than top-level variables. The `"ram"` directive loads a function into RAM for faster execution.
 
+### 3.24 Lazy Module Loading (On-Demand Files)
+
+To keep a holotape's RAM footprint small, split rarely-active screens (settings pages, editors, keyboards) into separate files that are loaded from the SD card only while in use, then dropped. This mirrors how the firmware itself loads its menu screens.
+
+Each module file is a single **function expression** (not invoked, no trailing `()`), just like an app:
+
+```js
+// SETTINGS.JS evaluates to a function; calling it returns the module object
+(function (api) {
+  // ... module code ...
+  return { id: "SETTINGS", select: doSelect, remove: doRemove };
+});
+```
+
+The parent loads, uses, and unloads it:
+
+```js
+let mod = eval(fs.readFileSync("HOLO/MYAPP/SETTINGS.JS"))(api);
+// ... later, on close:
+mod.remove();
+mod = null;
+try { process.memory(true); } catch (e) {}  // force a GC pass to reclaim the code
+```
+
+Rules for this pattern:
+
+- The module registers its own `Pip.onExclusive("knob1"/"knob2", ...)` handlers (displacing the parent's); on unload the parent re-registers its own. The parent keeps owning any `ENC1_PRESS` `setWatch` and delegates presses to `mod.select()`.
+- Pass state and write-back callbacks through the `api` object. Globals (`h`, `Pip`, `getTime`, `fs`) are usable directly inside the module.
+- The parent gates its own draws with `if (mod) return;` so background events don't paint over the child's screen.
+- Modules can nest: a child may eval-load its own children. Each parent must `remove()` its child on exit (which in turn removes any grandchild), then run `process.memory(true)`.
+- **Packaging:** every extra file needs its own `storage` entry in `metadata.json`, e.g. `{ "name": "HOLO/MYAPP/SETTINGS.JS", "url": "settings.min.js" }`. Every storage entry must actually be installed to the SD card or loading fails with `NO_FILE`.
+- **Minification caveat:** the minified module file must still begin with `(function(` (a bare function expression). See [7.1](#71-minification) for the terser flags this requires, including why eval'd module files should not be name-mangled.

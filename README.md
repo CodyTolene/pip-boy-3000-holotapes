@@ -41,7 +41,7 @@
 - [Input handling](#input)
 - [Memory and Performance](#memory)
 - [Contributing](#contributing)
-- [License(s)](#licenses)
+- [License](#licenses)
 
 <!---------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------->
@@ -492,6 +492,12 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 4. Make the change. New Holotapes must include all files described in
    [Creating a new Holotape](#create).
 
+   > ![Warn][img-warn] Submissions must include the original, human-readable
+   > source code (`app.js`). Pull requests containing only minified code
+   > (`app.min.js`) will be rejected. This is an open source project, and
+   > readable source is essential so the community can review changes, maintain
+   > and update apps over time, fix bugs, and learn from each other's work.
+
 5. Run the repository build and test the Holotape on the device:
 
    ```sh
@@ -500,6 +506,8 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
    ```
 
 6. Before opening a pull request, verify:
+   - The original unminified source (`app.js`) is included; minified code alone
+     is not accepted.
    - `app.js` starts with `(function() {`, ends with `});`, and is not invoked.
    - The return object contains a literal uppercase alphanumeric `id` and a
      `remove` function.
@@ -533,17 +541,22 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 <!---------------------------------------------------------------------------->
 <!---------------------------------------------------------------------------->
 
-## License(s) <a name="licenses"></a>
+## License <a name="licenses"></a>
 
-This project is licensed under the MIT License.
+This repository is licensed under the MIT License.
 
-Some projects in this repository may have their own licenses. Check each app or
-game's individual files and README for license terms that apply to that specific
-project.
+All code, holotapes, apps, games, scripts, metadata, documentation, and other
+contributions submitted to this repository must be licensed under the MIT
+License unless explicitly stated otherwise by the repository maintainer in
+writing.
 
-See the [LICENSE-MIT](LICENSE-MIT) file for more details.
+By submitting a pull request or contribution, you agree that your contribution
+is provided under the MIT License. See [CONTRIBUTING.md](CONTRIBUTING.md) for
+details.
 
-`SPDX-License-Identifiers: MIT`
+See the [LICENSE](LICENSE) file for details.
+
+`SPDX-License-Identifier: MIT`
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
