@@ -509,6 +509,10 @@
         "url": "RadroachRaces/assets/MAPS.MIN.JS"
       },
       {
+        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
+        "url": "RadroachRaces/assets/ROACH.JSON"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/WINNER.WAV",
         "url": "RadroachRaces/assets/WINNER.WAV"
       },

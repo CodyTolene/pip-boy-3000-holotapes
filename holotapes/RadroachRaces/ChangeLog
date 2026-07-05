@@ -1,8 +1,11 @@
 1.1.0 (2026-07-04)
 - Split the app into scenes reducing memory usage.
-- Release the map data from memory as soon as the selected track's walls are
-  extracted, so only the active track is kept during a race.
-- 
+- Release the map data from memory as soon as the selected track's walls are extracted, so only the active track is kept during a race.
+- Add a roach sprite image (assets/ROACH.JSON) rotated so the head faces the direction of travel.
+- Speeds are now named constants at the top of RACE.JS for easy tuning.
+- Roach letter labels show beside the roaches during the countdown, on the side of the start lineup that faces the track center. 
+- While the roaches are traveling the labels are hidden. Every few seconds it displays again.
+- ROACH letters display again at the finish.
 
 1.0.0 (2026-07-04)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/43

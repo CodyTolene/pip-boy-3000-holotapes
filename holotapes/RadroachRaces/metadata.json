@@ -13,6 +13,7 @@
     { "name": "HOLO/RADROACH_RACES/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
     { "name": "HOLO/RADROACH_RACES/RACE.JS", "url": "assets/RACE.MIN.JS" },
     { "name": "HOLO/RADROACH_RACES/MAPS.JS", "url": "assets/MAPS.MIN.JS" },
+    { "name": "HOLO/RADROACH_RACES/ROACH.JSON", "url": "assets/ROACH.JSON" },
     { "name": "HOLO/RADROACH_RACES/WINNER.WAV", "url": "assets/WINNER.WAV" },
     { "name": "HOLO/RADROACH_RACES/BUGLE.WAV", "url": "assets/BUGLE.WAV" },
     { "name": "HOLO/RADROACH_RACES/FLAP.WAV", "url": "assets/FLAP.WAV" }

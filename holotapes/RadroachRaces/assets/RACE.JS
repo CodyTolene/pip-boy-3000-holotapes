@@ -14,6 +14,7 @@
   const drawLineCached = h.drawLine.bind(h);
   const fillRectCached = h.fillRect.bind(h);
   const drawStringCached = h.drawString.bind(h);
+  const drawImageCached = h.drawImage.bind(h);
 
   // Asset File Directories
   const SFX = {
@@ -29,6 +30,9 @@
   // Set to 0 for random map, or 1–10 to force a specific map for testing.
   const TEST_MAP = 0;
 
+  const ROACH_SPEED = 4.5; // Speed of roach in pixels per frame
+  const ROACH_WALL_SPEED = 3.5; // Speed of roach in pixels per frame after wall bounces
+
   // Game States: COUNTDOWN -> RACING -> GAMEOVER
   let gameState = 'COUNTDOWN';
   let winnerId = -1;
@@ -42,6 +46,15 @@
 
   let trackDirty = 1;
   let lastFlapTime = 0;
+  let roachImage = null;
+  let raceStartTime = 0;
+
+  // Rotate options
+  const rotOpts = { rotate: 0 };
+
+  // Potential label offset from each roach
+  let labelDX = 22;
+  let labelDY = 0;
 
   const ROACH_LETTERS = { 1: 'R', 2: 'O', 3: 'A', 4: 'C', 5: 'H' };
 
@@ -99,6 +112,18 @@
     // use vertical.
     const horizSpawn =
       currentMapId === 1 || currentMapId === 5 || currentMapId === 7;
+
+    // Countdown labels sit on the side of the lineup facing the track
+    // center, so they never leave the track or cover another roach:
+    // vertical lineups get labels left/right, horizontal ones above/below.
+    if (horizSpawn) {
+      labelDX = 0;
+      labelDY = startYBase < 158 ? 25 : -25;
+    } else {
+      labelDX = startX < 240 ? 22 : -22;
+      labelDY = 0;
+    }
+
     const slots = horizSpawn ? [0, 21, 42, 63, 84] : [0, 23, 44, 65, 86];
     for (let s = 4; s > 0; s--) {
       const sv = Math.randInt(s + 1);
@@ -116,7 +141,7 @@
         vx: 0,
         vy: 0,
       });
-      setRandomVelocity(radroaches[i], 4);
+      setRandomVelocity(radroaches[i], ROACH_SPEED);
     }
   }
 
@@ -127,7 +152,7 @@
 
     h.setColor(0).fillRect(0, 0, 480, 320);
     drawTrack();
-    drawAllRoaches();
+    drawAllRoaches(1);
 
     if (countdownValue > 0) {
       h.setFont('Monofonto96')
@@ -147,18 +172,42 @@
       clearInterval(countdownTimer);
       countdownTimer = null;
       gameState = 'RACING';
+      raceStartTime = getTime();
       trackDirty = 1;
     }
   }
 
   // ─── Drawing ──────────────────────────────────────────────────────────────
 
-  function drawAllRoaches() {
+  function drawAllRoaches(showLabels) {
     'ram';
-    h.setColor(3).setFont('Monofonto23').setFontAlign(0, 0);
+    h.setColor(3);
+
+    // Mode 2 (traveling blink / finish): hide the sprite and mark each roach
+    // with just its bright letter. Same drawing as the no-sprite fallback.
+    if (!roachImage || showLabels === 2) {
+      h.setFont('Monofonto23').setFontAlign(0, 0);
+      for (let i = 0; i < radroaches.length; i++) {
+        const r = radroaches[i];
+        drawStringCached(ROACH_LETTERS[r.id], r.cx, r.cy);
+      }
+      return;
+    }
+
     for (let i = 0; i < radroaches.length; i++) {
       const r = radroaches[i];
-      drawStringCached(ROACH_LETTERS[r.id], r.cx, r.cy);
+      // Head (top of image) points along the direction of travel.
+      rotOpts.rotate = Math.atan2(r.vy, r.vx) + 1.5707963267948966;
+      drawImageCached(roachImage, r.cx, r.cy, rotOpts);
+    }
+
+    if (!showLabels) return;
+
+    // Mode 1 (countdown): labels beside the lineup, facing the track center.
+    h.setFont('Monofonto23').setFontAlign(0, 0);
+    for (let i = 0; i < radroaches.length; i++) {
+      const r = radroaches[i];
+      drawStringCached(ROACH_LETTERS[r.id], r.cx + labelDX, r.cy + labelDY);
     }
   }
 
@@ -305,8 +354,8 @@
 
           const spd = Math.sqrt(r.vx * r.vx + r.vy * r.vy);
           if (spd > 0) {
-            r.vx = (r.vx / spd) * 3;
-            r.vy = (r.vy / spd) * 3;
+            r.vx = (r.vx / spd) * ROACH_WALL_SPEED;
+            r.vy = (r.vy / spd) * ROACH_WALL_SPEED;
           }
 
           jitterVelocity(r);
@@ -349,8 +398,8 @@
       if (fixed) {
         const spd = Math.sqrt(r.vx * r.vx + r.vy * r.vy);
         if (spd > 0) {
-          r.vx = (r.vx / spd) * 3;
-          r.vy = (r.vy / spd) * 3;
+          r.vx = (r.vx / spd) * ROACH_WALL_SPEED;
+          r.vy = (r.vy / spd) * ROACH_WALL_SPEED;
         }
       }
     }
@@ -392,13 +441,13 @@
 
           let sMag = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
           if (sMag > 0) {
-            a.vx = (a.vx / sMag) * 4;
-            a.vy = (a.vy / sMag) * 4;
+            a.vx = (a.vx / sMag) * ROACH_SPEED;
+            a.vy = (a.vy / sMag) * ROACH_SPEED;
           }
           sMag = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
           if (sMag > 0) {
-            b.vx = (b.vx / sMag) * 4;
-            b.vy = (b.vy / sMag) * 4;
+            b.vx = (b.vx / sMag) * ROACH_SPEED;
+            b.vy = (b.vy / sMag) * ROACH_SPEED;
           }
           jitterVelocity(a);
           jitterVelocity(b);
@@ -431,10 +480,10 @@
     const hr = ROACH_HIT_R;
     for (let i = 0; i < radroaches.length; i++) {
       const r = radroaches[i];
-      const dx1 = r.cx - hr - 2,
-        dy1 = r.cy - hr - 2;
-      const dx2 = r.cx + hr + 2,
-        dy2 = r.cy + hr + 2;
+      const dx1 = r.cx - hr - 4,
+        dy1 = r.cy - hr - 4;
+      const dx2 = r.cx + hr + 4,
+        dy2 = r.cy + hr + 4;
 
       fillRectCached(dx1, dy1, dx2, dy2);
 
@@ -485,7 +534,13 @@
       }
     }
 
-    drawAllRoaches();
+    // ROACH labels
+    // - Hidden while racing
+    // - Blinks on for 2s every 10s
+    // - Shown at game over
+    drawAllRoaches(
+      gameState === 'GAMEOVER' || (getTime() - raceStartTime) % 10 >= 8 ? 2 : 0,
+    );
 
     if (gameState === 'GAMEOVER') {
       displayWinner();
@@ -534,6 +589,21 @@
   // ─── Init ─────────────────────────────────────────────────────────────────
 
   loadTrack();
+
+  // Roach image
+  // Head (top of image) faces the direction of travel.
+  try {
+    const data = JSON.parse(fs.readFileSync('HOLO/RADROACH_RACES/ROACH.JSON'));
+    roachImage = {
+      bpp: data.bpp,
+      buffer: atob(data.buffer),
+      height: data.height,
+      transparent: data.transparent,
+      width: data.width,
+    };
+  } catch (e) {
+    roachImage = null;
+  }
 
   Pip.onExclusive('knob1', onKnob1);
 
