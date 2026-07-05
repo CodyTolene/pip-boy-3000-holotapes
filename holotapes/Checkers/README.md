@@ -1,10 +1,20 @@
 # Checkers
 
+### Info
+
+**Author(s):**
+
+- [@trekker87](https://github.com/trekker87)
+
+- [@CodyTolene](https://github.com/CodyTolene)
+
+### Description
+
 A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI
 opponent. Standard rules apply including forced jumps, multi-jumps, and king
 promotion. Boot it up to a title menu with a built-in "How to Play" screen.
 
-## Controls
+### Controls
 
 Main Menu:
 
@@ -21,7 +31,7 @@ Game:
 | Right knob scroll | Move cursor left/right                           |
 | Left knob press   | Select piece / Confirm move / Deselect / Restart |
 
-## Rules
+### Rules
 
 - Standard Checkers rules.
 - You play as the bright pieces, moving up the board.
@@ -35,14 +45,14 @@ Game:
 - Kings can move and jump diagonally in all four directions.
 - Win by capturing all opponent pieces or leaving them with no valid moves.
 
-## AI Behavior
+### AI Behavior
 
 - Prioritizes jumps over simple moves (forced, same as the player).
 - Prefers moves that promote a piece to king.
 - Otherwise selects randomly from available moves.
 - AI takes a short pause between moves so you can follow the board state.
 
-## Notes
+### Notes
 
 - The holotape is split into scenes (menu, game, help) that are loaded from the
   SD card on demand and released afterward to keep memory usage low.
@@ -51,7 +61,7 @@ Game:
   disorientation during navigation.
 - Valid destinations are highlighted when a piece is selected.
 
-## Installation
+### Installation
 
 Place the following files on your Pip-Boy 3000 SD card:
 
@@ -62,6 +72,6 @@ HOLO/CHECKERS/HELP.JS
 HOLO/CHECKERS/MENU.JS
 ```
 
-## License
+### License
 
 MIT

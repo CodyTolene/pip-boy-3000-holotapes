@@ -1,5 +1,5 @@
 1.1.0 (2026-07-05)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pulls
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/48
 - Full rewrite following best practices, scene manager with lazy module loading added, etc.
 - Fix player multi-jumps.
 - Fix AI multi-jumps stopping after the second jump.
