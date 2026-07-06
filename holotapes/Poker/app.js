@@ -1,5 +1,11 @@
-// Poker (Pip-Boy holotape)
+// 
 // 5 Card Draw / 7 Card Draw, single player vs. dealer.
+// =============================================================================
+//  Name: Poker (Pip-Boy holotape)
+//  Author: Theeohn Megistus
+//  License: MIT
+//  Repository: https://github.com/Theeohn/Poker-3000a-
+// =============================================================================
 (function() {
   const C = {
     START_CHIPS: 500,
