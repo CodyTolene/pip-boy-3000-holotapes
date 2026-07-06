@@ -477,10 +477,9 @@ ffmpeg -i "input.mp4" -vf "scale=480:-1,format=gray,format=rgb555le" \
 
 **Video playback:**
 
-- `Pip.videoStart(path, { x, y, repeat })` plays an AVI, non-blocking. For a full-screen 480×320 clip use `{ x: 0, y: 0 }` (the firmware's BOOT.avi uses `x: 40` only because that clip is narrower than the screen).
+- `Pip.videoStart(path, { x, y, repeat })` plays an AVI, non-blocking. For a full-screen 480×320 clip use `{ x: 0, y: 0 }`.
 - `Pip.on("videoStopped", cb)` fires when the clip finishes. Pair with `Pip.removeListener("videoStopped", cb)` in cleanup.
 - `Pip.videoStop()` stops playback early. When skipping, remove the `videoStopped` listener BEFORE calling `videoStop()` so a synchronous stop event cannot re-trigger your transition.
-- Audio is separate: start the matching WAV with `Pip.audioStart(path)` alongside `videoStart`, and stop both together.
 - Always provide a knob-press skip path. A clip that fails to decode may never fire `videoStopped`, so the user must be able to escape.
 - **Format gotcha:** only MS RLE AVI decodes on-device. An mpeg4/yuv420p AVI will NOT play.
 - **Size gotcha:** MS RLE is lossless run-length encoding, so detailed or noisy grayscale content produces huge files (a plain `pal8` palette can reach 256 colors and an 8 MB file for a few seconds of video). Constrain the palette to about 16 gray levels with no dithering (dithering breaks RLE runs and bloats size) to cut file size roughly 2.6x:
@@ -773,6 +772,7 @@ E.defrag();                                // Defragment memory
 Math.randInt(n);                           // Random int [0, n-1]
 Math.atan2(y, x);                          // Arc tangent
 fs.readFileSync(path);                     // Read file (fs is a global; require("fs") optional)
+fs.rename('OLD_NAME', 'NEW_NAME');         // Rename a file or folder
 fs.writeFileSync(path, data);              // Write file to storage
 fs.readdir(path);                          // List directory entries
 fs.statSync(path);                         // Stat; returns undefined if missing (does NOT throw)
@@ -784,8 +784,7 @@ JSON.stringify(value);                     // Serialize to JSON
 E.sum(array);                              // Optimized array sum
 E.variance(array);                         // Optimized array variance
 E.getSizeOf(value, depth);                 // Storage units used by object
-process.memory();                          // Free blocks and memory info
-process.memory(true);                      // Force a GC pass, then report memory
+process.memory();                          // Free blocks and memory info; Passing false retrieves memory usage without a GC pass.
 E.toFlatString(data);                      // Allocate flat contiguous string
 debug(msg);                                // Log debug message
 EMU;                                       // true if running in emulator
@@ -927,7 +926,7 @@ let mod = eval(fs.readFileSync("HOLO/MYAPP/SETTINGS.JS"))(api);
 // ... later, on close:
 mod.remove();
 mod = null;
-try { process.memory(true); } catch (e) {}  // force a GC pass to reclaim the code
+process.memory(true); // force a GC pass to reclaim the code
 ```
 
 Rules for this pattern:
