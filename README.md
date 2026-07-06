@@ -358,6 +358,20 @@ Pip.removeListener('knob1', onKnob1);
 clearWatch(buttonWatch);
 ```
 
+For text entry, firmware 1.1.4 and later provides a built-in on-screen keyboard:
+
+```js
+Pip.createKeyboard(initialText, description, callback);
+```
+
+The keyboard takes exclusive control of both knobs and the callback receives the
+current text when the user selects Enter. It does not close itself: the call
+returns an object with a `remove()` method, and you must call `.remove()` on it
+(typically inside the callback) before drawing your next screen. On older
+firmware there is no global keyboard API; see [agents.md](agents.md) for a
+`showTextEntry`-style implementation you can copy if you need to support
+pre-1.1.4 devices.
+
 </details>
 
 <p align="right">[ <a href="#index">Index</a> ]</p>

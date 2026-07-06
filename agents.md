@@ -401,7 +401,9 @@ function showMenu(items) {
 
 The `""` key holds options: `{ title, selected, rowHeight, wrapSelection, predraw }`. Menu items are functions (actions) or objects with `value` (booleans toggle, numbers edit inline with `min`/`max`/`step`/`onchange`). Confirmation dialogs are just a sub-menu: `{ "": { title: "Delete?", back: fn }, Yes: fn }`.
 
-**Text entry:** there is no global firmware keyboard API for holotapes to call; even the firmware's bundled holotapes ship their own. You can copy the firmware's `showTextEntry` design instead: a KEYMAP grid of 4 rows by 14 columns (lower/upper variants, with control characters `\b` backspace, `\x02` shift, `\x03` enter), where knob2 selects the column, knob1 selects the row and its press types the key, long press repeats, and a `setInterval` blinks the cursor (clear that interval on remove). The callback receives the final text on Enter.
+**Text entry:** since firmware 1.1.4 there is a global keyboard API: `Pip.createKeyboard(initialText, description, callback)`. It draws a full-screen QWERTY keyboard with the `description` string above the text box, takes exclusive control of both knobs (knob2 selects the column, knob1 selects the row and its press types the key; long press repeats, shift toggles upper/lower case), and returns an object with `draw()` and `remove()`. The callback receives the current text when the user selects Enter, but the keyboard does NOT close itself: call `.remove()` on the returned object inside the callback (or your cleanup path) before drawing the next screen, exactly like a menu. `remove()` detaches both knob listeners and clears the cursor-blink interval. Note the input line is capped at the visible width (~415 px); extra characters are silently dropped. On older firmware there is no global keyboard API (even the firmware's bundled holotapes shipped their own), so if you need to support pre-1.1.4 devices you can copy the firmware's `showTextEntry` design instead: a KEYMAP grid of 4 rows by 14 columns (lower/upper variants, with control characters `\b` backspace, `\x02` shift, `\x03` enter), same knob scheme as above, and a `setInterval` blinks the cursor (clear that interval on remove).
+
+Firmware 1.1.4 also adds a matching date/time picker: `Pip.createDateTimePicker(date, includeDate, title, callback)`. It edits the passed `Date` in place (knob2 moves between fields, knob1 turns to change a value and presses to advance; selecting SET fires `callback(date)`), and returns an object with `remove()`; like the keyboard, it does not close itself, so call `.remove()` in the callback.
 
 ### 3.17 Text Wrapping & Caching
 
@@ -747,6 +749,8 @@ Pip.audioStop();                           // Stop all audio
 Pip.shadeBox(x1, y1, x2, y2);             // Shaded highlight box
 Pip.blitOptions;                           // Object for .y1/.y2 partial flips
 Pip.typeText(txt, x, y, W, H, font);       // Typewriter text, returns Promise
+Pip.createKeyboard(txt, desc, cb);         // On-screen keyboard (fw 1.1.4+); cb(text) on Enter; returns {draw,remove}; caller must .remove()
+Pip.createDateTimePicker(d, date, t, cb);  // Date/time picker (fw 1.1.4+); edits Date d in place, date=include date fields, t=title; cb(d) on SET; returns {remove}
 Pip.screenGlitch();                        // Random CRT glitch effect + sound
 Pip.errorBox(err);                          // Standard error display
 Pip.log(txt, logFile);                     // Log to console + SD card LOGS/
