@@ -53,6 +53,7 @@
 
   const GAME_CONSTS = {
     STARTING_HEALTH: 3,
+    MAX_ACTIVE_ROACHES: 4,
 
     SPAWN_GAP_MIN_MULT: 3,
     SPAWN_GAP_MAX_MULT: 6,
@@ -83,7 +84,7 @@
     STOMP_WINDOW_FLOOR_MS: {
       EASY: 1500,
       MEDIUM: 1800,
-      HARD: 2000,
+      HARD: 1800,
     },
     STOMP_WINDOW_STEP_MS: {
       EASY: 72,
@@ -251,6 +252,14 @@
     }
   }
 
+  function countActiveRoaches() {
+    let count = 0;
+    for (let i = 0; i < lanes.length; i++) {
+      if (lanes[i]) count++;
+    }
+    return count;
+  }
+
   function spawnRoach(laneIndex) {
     lanes[laneIndex] = { row: 0, stompDeadline: undefined };
     dirtyLanes[laneIndex] = 1;
@@ -262,7 +271,12 @@
         // staleTimerFires++;
         return; // not in game, dont schedule a spawn
       }
-      if (!lanes[laneIndex]) spawnRoach(laneIndex);
+      if (
+        !lanes[laneIndex] &&
+        countActiveRoaches() < GAME_CONSTS.MAX_ACTIVE_ROACHES
+      ) {
+        spawnRoach(laneIndex);
+      }
       scheduleSpawn(laneIndex);
     }, spawnGapMs(laneIndex));
   }
@@ -409,7 +423,11 @@
 
     // do the initial spawn while the timers are still being scheduled
     for (let i = 0; i < lanes.length; i++) {
-      if (Math.randInt(2) === 0) spawnRoach(i);
+      if (
+        Math.randInt(2) === 0 &&
+        countActiveRoaches() < GAME_CONSTS.MAX_ACTIVE_ROACHES
+      )
+        spawnRoach(i);
     }
     // guarantee at least one roach on start
     let anySpawned = false;
@@ -540,26 +558,24 @@
   }
 
   function onClick_InGame(event) {
-    if (event.state) {
-      const roach = lanes[playerLaneIndexSelected];
-      dirtyLanes[playerLaneIndexSelected] = 1;
-      if (roach && roach.row === 2) {
-        lanes[playerLaneIndexSelected] = null;
-        Pip.audioStartVar(sfxSplat, sfxSplatRawInfo);
-        h.drawImage(
-          splat1Image,
-          gameBoard[2][playerLaneIndexSelected].x,
-          gameBoard[2][playerLaneIndexSelected].y,
-        );
-        updateScore(10);
-      } else {
-        Pip.audioStartVar(sfxWhoosh, sfxWhooshRawInfo);
-        h.drawImage(
-          boot1Image,
-          gameBoard[2][playerLaneIndexSelected].x,
-          gameBoard[2][playerLaneIndexSelected].y,
-        );
-      }
+    const roach = lanes[playerLaneIndexSelected];
+    dirtyLanes[playerLaneIndexSelected] = 1;
+    if (roach && roach.row === 2) {
+      lanes[playerLaneIndexSelected] = null;
+      Pip.audioStartVar(sfxSplat, sfxSplatRawInfo);
+      h.drawImage(
+        splat1Image,
+        gameBoard[2][playerLaneIndexSelected].x,
+        gameBoard[2][playerLaneIndexSelected].y,
+      );
+      updateScore(10);
+    } else {
+      Pip.audioStartVar(sfxWhoosh, sfxWhooshRawInfo);
+      h.drawImage(
+        boot1Image,
+        gameBoard[2][playerLaneIndexSelected].x,
+        gameBoard[2][playerLaneIndexSelected].y,
+      );
     }
   }
 
