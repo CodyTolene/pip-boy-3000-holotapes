@@ -624,6 +624,7 @@
 
   return {
     id: 'ROACHSTOMP',
+    notDefault: true,
     fullscreen: true,
     remove: function () {
       Pip.audioStop();
