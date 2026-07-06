@@ -20,14 +20,6 @@ A single-player poker game against a dealer CPU. 5 and 7 card draw game modes wi
 | Left scroll wheel press               | Deal / Confirm action / Continue after result |
 
 
-### Installation
-
-Place the following files on your Pip-Boy 3000 SD card:
-
-```
-APPS/POKER.JS
-APPINFO/POKER.info
-```
 
 ### Notes
 
