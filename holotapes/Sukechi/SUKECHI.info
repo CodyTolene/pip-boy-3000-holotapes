@@ -1,0 +1,8 @@
+{
+  "id": "sukechi",
+  "name": "Sukechi",
+  "version": "1.0.0",
+  "files": "HOLO/SUKECHI/APP.JS",
+  "src": "HOLO/SUKECHI/APP.JS",
+  "icon": "APPINFO/HOLO.IMG"
+}
