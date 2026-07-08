@@ -9,7 +9,7 @@
   "readme": "README.md",
   "storage": [
     { "name": "HOLO/ROACHSTOMP/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/ROACHSTOMP/BOOT2.JSON", "url": "assets/BOOT2.JSON" },
+    { "name": "HOLO/ROACHSTOMP/BOOT1.JSON", "url": "assets/BOOT1.JSON" },
     {
       "name": "HOLO/ROACHSTOMP/HEART_EMPTY.JSON",
       "url": "assets/HEART_EMPTY.JSON"
@@ -21,8 +21,12 @@
     { "name": "HOLO/ROACHSTOMP/ROACH1.JSON", "url": "assets/ROACH1.JSON" },
     { "name": "HOLO/ROACHSTOMP/ROACH2.JSON", "url": "assets/ROACH2.JSON" },
     { "name": "HOLO/ROACHSTOMP/SPLAT1.JSON", "url": "assets/SPLAT1.JSON" },
-    { "name": "HOLO/ROACHSTOMP/SPLAT.WAV", "url": "assets/SPLAT.WAV" },
     { "name": "HOLO/ROACHSTOMP/TITLE.IMG", "url": "assets/TITLE.IMG" },
-    { "name": "SETTINGS/ROACHSTOMP.JSON", "url": "assets/ROACHSTOMP.JSON" }
+    { "name": "SETTINGS/ROACHSTOMP.JSON", "url": "assets/ROACHSTOMP.JSON" },
+    { "name": "HOLO/ROACHSTOMP/SPLAT.WAV", "url": "assets/SPLAT.WAV" },
+    { "name": "HOLO/ROACHSTOMP/WHOOSH.WAV", "url": "assets/WHOOSH.WAV" },
+    { "name": "HOLO/ROACHSTOMP/GRUNT.WAV", "url": "assets/GRUNT.WAV" },
+    { "name": "HOLO/ROACHSTOMP/GAMEOVER.WAV", "url": "assets/GAMEOVER.WAV" },
+    { "name": "HOLO/ROACHSTOMP/TITLE.WAV", "url": "assets/TITLE.WAV" }
   ]
 }
