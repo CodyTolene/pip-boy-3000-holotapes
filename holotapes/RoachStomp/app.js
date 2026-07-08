@@ -24,8 +24,7 @@
     WHOOSH: '/HOLO/ROACHSTOMP/WHOOSH.WAV',
   };
 
-  const fpAPPINFO = '/APPINFO/ROACHSTOMP.info';
-  const MENU_MAIN_OPTIONS = ['EASY', 'MEDIUM', 'HARD'];
+  const MENU_MAIN_OPTIONS = ['EASY', 'MEDIUM', 'HARD', 'HIGH SCORES'];
 
   // prettier-ignore
   const GAME_BOARD_EASY = [
@@ -103,6 +102,7 @@
   let heartFullImage = undefined;
   let heartEmptyImage = undefined;
   let score = 0;
+  let isNewHighScore = false;
   let health = 0;
   let difficulty = undefined;
   let assetsLoaded = false;
@@ -116,7 +116,6 @@
   let marchTimeout = undefined;
   let frameInterval = undefined;
   let gameOverInputDelay = undefined;
-  // let staleTimerFires = 0; // diagnostic only — how often a timer fired after teardown
   let sfxWhooshRawInfo = {};
   let sfxSplatRawInfo = {};
   let sfxWhoosh = undefined;
@@ -126,7 +125,8 @@
   // HELPER FUNCTIONS
   function readAppVersion() {
     try {
-      return JSON.parse(require('fs').readFileSync(fpAPPINFO)).version;
+      return JSON.parse(require('fs').readFileSync('/APPINFO/ROACHSTOMP.info'))
+        .version;
     } catch (e) {
       return '0.0.0';
       // return e;
@@ -154,21 +154,39 @@
     drawTitleStartGame();
   }
 
-  function loadAssets() {
-    if (assetsLoaded === true) return;
+  function loadHighScores() {
+    try {
+      return JSON.parse(
+        require('fs').readFileSync('/SETTINGS/ROACHSTOMP.JSON'),
+      );
+    } catch (e) {
+      return [
+        { name: 'EASY', score: 0 },
+        { name: 'MEDIUM', score: 0 },
+        { name: 'HARD', score: 0 },
+      ];
+    }
+  }
 
-    process.memory(true);
-    E.defrag();
-    roach1Image = loadImage(IMG.ROACH1);
-    roach2Image = loadImage(IMG.ROACH2);
-    boot1Image = loadImage(IMG.BOOT1);
-    splat1Image = loadImage(IMG.SPLAT1);
-    heartFullImage = loadImage(IMG.HEARTFULL);
-    heartEmptyImage = loadImage(IMG.HEARTEMPTY);
-    sfxWhoosh = Pip.audioRead(SFX.WHOOSH, sfxWhooshRawInfo);
-    sfxSplat = Pip.audioRead(SFX.SPLAT, sfxSplatRawInfo);
-
-    assetsLoaded = true;
+  function saveHighScore() {
+    const scores = loadHighScores();
+    for (let i = 0; i < scores.length; i++) {
+      if (scores[i].name === difficulty) {
+        if (score > scores[i].score) {
+          scores[i].score = score;
+          try {
+            require('fs').writeFileSync(
+              '/SETTINGS/ROACHSTOMP.JSON',
+              JSON.stringify(scores),
+            );
+          } catch (e) {}
+          isNewHighScore = true;
+        } else {
+          isNewHighScore = false;
+        }
+        return;
+      }
+    }
   }
 
   // GAME FUNCTIONS
@@ -268,7 +286,6 @@
   function scheduleSpawn(laneIndex) {
     laneSpawnTimeouts[laneIndex] = setTimeout(function () {
       if (frameInterval == null) {
-        // staleTimerFires++;
         return; // not in game, dont schedule a spawn
       }
       if (
@@ -284,7 +301,6 @@
   function scheduleMarchTick() {
     marchTimeout = setTimeout(function () {
       if (frameInterval == null) {
-        // staleTimerFires++;
         return; // not in game, dont schedule a march
       }
       onMarchTick();
@@ -375,6 +391,7 @@
     }
     laneSpawnTimeouts = undefined;
 
+    saveHighScore();
     drawGameOverScreen();
     gameOverInputDelay = setTimeout(function () {
       Pip.onExclusive('knob1', onKnob1_GameOver);
@@ -401,6 +418,8 @@
       playerLaneIndexSelected = 3;
       playerLaneMaxIndex = 6;
     }
+
+    Pip.audioStop();
 
     h.clear(1);
     drawPlayer(playerLaneIndexSelected, playerLaneIndexSelected - 1);
@@ -447,11 +466,12 @@
       .setFontAlign(0, 0)
       .drawString('GAME OVER', 240, 120);
     h.setFontMonofonto28().drawString('Final Score: ' + score, 240, 180);
+    if (isNewHighScore) {
+      h.setFontMonofonto18().drawString('NEW HIGH SCORE!', 240, 230);
+    }
     h.setColor(1)
       .setFontMonofonto16()
       .drawString('Press left knob to return to title screen', 240, 300);
-    // h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1, 0)
-    // .drawString('staleTimerFires: ' + staleTimerFires, 20, 10);
   }
 
   function drawRoach(laneIndex) {
@@ -497,6 +517,27 @@
     h.drawImage(boot1Image, playerBoard[newIndex].x, playerBoard[newIndex].y);
   }
 
+  function drawHighScores() {
+    const scores = loadHighScores();
+    h.clear(1);
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(0, 0)
+      .drawString('HIGH SCORES', 240, 50);
+    const startY = 130;
+    const rowHeight = 60;
+    for (let i = 0; i < scores.length; i++) {
+      h.setFontMonofonto28().drawString(
+        scores[i].name + ': ' + scores[i].score,
+        240,
+        startY + i * rowHeight,
+      );
+    }
+    h.setColor(1)
+      .setFontMonofonto16()
+      .drawString('Press left knob to go back', 240, 310);
+  }
+
   function drawMenuMain() {
     const rowHeight = 60;
     h.setColor(3)
@@ -505,13 +546,13 @@
       .drawString('SELECT DIFFICULTY', 240, 50);
 
     MENU_MAIN_OPTIONS.forEach((option, index) => {
-      const y = 120 + index * rowHeight;
-      h.setColor(0).fillRect(180, y - 30, 300, y + 30);
+      const y = 105 + index * rowHeight;
+      h.setColor(0).fillRect(150, y - 30, 330, y + 30);
       h.setColor(3).setFontMonofonto28().drawString(option, 240, y);
     });
 
-    const selectedY = 120 + menuIndexSelected * rowHeight;
-    Pip.shadeBox(180, selectedY - 30, 300, selectedY + 30);
+    const selectedY = 105 + menuIndexSelected * rowHeight;
+    Pip.shadeBox(150, selectedY - 30, 330, selectedY + 30);
   }
 
   function drawTitleStartGame() {
@@ -550,7 +591,20 @@
       .drawString('Loading...', 240, 275);
 
     setTimeout(function () {
-      loadAssets();
+      if (assetsLoaded === true) return;
+
+      process.memory(true);
+      E.defrag();
+      roach1Image = loadImage(IMG.ROACH1);
+      roach2Image = loadImage(IMG.ROACH2);
+      boot1Image = loadImage(IMG.BOOT1);
+      splat1Image = loadImage(IMG.SPLAT1);
+      heartFullImage = loadImage(IMG.HEARTFULL);
+      heartEmptyImage = loadImage(IMG.HEARTEMPTY);
+      sfxWhoosh = Pip.audioRead(SFX.WHOOSH, sfxWhooshRawInfo);
+      sfxSplat = Pip.audioRead(SFX.SPLAT, sfxSplatRawInfo);
+
+      assetsLoaded = true;
     }, 0);
 
     fadeInterval = setInterval(gameStartFade, 1200);
@@ -590,11 +644,23 @@
     drawPlayer(playerLaneIndexSelected, prevIndex);
   }
 
+  function onKnob1_HighScores(dir) {
+    if (dir === 0) {
+      Pip.removeListener('knob1', onKnob1_HighScores);
+      h.clear(1);
+      drawMenuMain();
+      Pip.onExclusive('knob1', onKnob1_MenuMain);
+    }
+  }
+
   function onKnob1_MenuMain(dir) {
     if (dir === 0) {
       Pip.removeListener('knob1', onKnob1_MenuMain);
-      Pip.audioStop();
-      if (menuIndexSelected === 0) {
+      if (menuIndexSelected === 3) {
+        drawHighScores();
+        Pip.onExclusive('knob1', onKnob1_HighScores);
+        return;
+      } else if (menuIndexSelected === 0) {
         difficulty = 'EASY';
       } else if (menuIndexSelected === 1) {
         difficulty = 'MEDIUM';
@@ -669,6 +735,7 @@
 
       Pip.removeListener('knob1', onKnob1_TitleScreen);
       Pip.removeListener('knob1', onKnob1_MenuMain);
+      Pip.removeListener('knob1', onKnob1_HighScores);
       Pip.removeListener('knob2', onKnob2_InGame);
       Pip.removeListener('knob1', onKnob1_GameOver);
 

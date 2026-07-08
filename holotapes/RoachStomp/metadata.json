@@ -2,7 +2,7 @@
   "id": "ROACHSTOMP",
   "name": "Roach Stomp",
   "author": "@tylerjbartlett",
-  "version": "0.5.0",
+  "version": "0.8.0",
   "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
   "icon": "assets/roachstomp.png",
   "type": "game",
@@ -22,6 +22,7 @@
     { "name": "HOLO/ROACHSTOMP/ROACH2.JSON", "url": "assets/ROACH2.JSON" },
     { "name": "HOLO/ROACHSTOMP/SPLAT1.JSON", "url": "assets/SPLAT1.JSON" },
     { "name": "HOLO/ROACHSTOMP/SPLAT.WAV", "url": "assets/SPLAT.WAV" },
-    { "name": "HOLO/ROACHSTOMP/TITLE.IMG", "url": "assets/TITLE.IMG" }
+    { "name": "HOLO/ROACHSTOMP/TITLE.IMG", "url": "assets/TITLE.IMG" },
+    { "name": "SETTINGS/ROACHSTOMP.JSON", "url": "assets/ROACHSTOMP.JSON" }
   ]
 }
