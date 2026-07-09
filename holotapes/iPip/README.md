@@ -133,8 +133,6 @@ Convert audio, video, and images into the supported formats at
 3. Adjust sorting from A-Z or Z-A.
 4. Adjust screen brightness with the right knob.
 5. Adjust volume with the right knob.
-6. Close the settings menu with another long hold press of the left wheel
-   button.
 
 ### License(s)
 
