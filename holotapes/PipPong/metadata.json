@@ -1,0 +1,33 @@
+{
+  "id": "pong",
+  "name": "Pip Pong",
+  "author": "@Neiferr",
+  "version": "1.0.0",
+  "description": "Pong on the Pip-Boy 3000a.",
+  "icon": "assets/PipPong.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/PIPPONG/APP.JS", "url": "app.min.js" },
+    {
+      "name": "HOLO/PIPPONG/PADDLE1.wav",
+      "url": "assets/PADDLE1.wav"
+    },
+    { "name": "HOLO/PIPPONG/PADDLE2.wav", 
+	  "url": "assets/PADDLE2.wav" 
+	},
+    {
+      "name": "HOLO/PIPPONG/SCORE.wav",
+      "url": "assets/SCORE.wav"
+    },
+    {
+      "name": "HOLO/PIPPONG/WALL.wav",
+      "url": "assets/WALL.wav"
+    },
+    { "name": "HOLO/PIPPONG/WIN.wav", 
+	  "url": "assets/WIN.wav" 
+	}
+  ],
+  "storageOptional": []
+}
