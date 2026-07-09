@@ -1,3 +1,12 @@
+2.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/53
+- Turn iPip into a full media player with music, video, and image support.
+- Add a menu (MUSIC, VIDEOS, IMAGES).
+- Move the music player to its own screen.
+- Add a video player.
+- Add an image viewer.
+- Create the "VIDEOS" and "IMAGES" folders automatically on launch if missing.
+
 1.2.1
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/27
 - Create the "MUSIC" folder automatically on launch if it is missing so the app no longer fails to load.

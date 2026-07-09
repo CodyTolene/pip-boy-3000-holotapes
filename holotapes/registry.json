@@ -207,19 +207,76 @@
     "id": "iPip",
     "name": "iPip Media Player",
     "author": "@CodyTolene",
-    "version": "1.2.1",
-    "description": "iPip is a WAV media player that turns each folder inside `MUSIC/` into its own station playlist. Tune through your stations and keep the Vault-Tec approved broadcasts rolling in the wasteland.",
-    "icon": "iPip/assets/iPip.png",
+    "version": "2.0.0",
+    "description": "iPip is a full media player for the Pip-Boy 3000. Play WAV playlists from `MUSIC/`, watch AVI clips from `VIDEOS/`, and view images from `IMAGES/`, all from one Vault-Tec approved holotape.",
+    "icon": "iPip/assets/IPIP.PNG",
     "previews": [],
     "type": "app",
     "readme": "iPip/README.md",
     "storage": [
       {
         "name": "HOLO/IPIP/APP.JS",
-        "url": "iPip/app.min.js"
+        "url": "iPip/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/IMAGES.JS",
+        "url": "iPip/assets/IMAGES.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/IMG_IPIP.BIN",
+        "url": "iPip/assets/IMG_IPIP.BIN"
+      },
+      {
+        "name": "HOLO/IPIP/INTRO.JS",
+        "url": "iPip/assets/INTRO.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/MENU.JS",
+        "url": "iPip/assets/MENU.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/MUSIC.JS",
+        "url": "iPip/assets/MUSIC.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/SETTINGS.JS",
+        "url": "iPip/assets/SETTINGS.MIN.JS"
+      },
+      {
+        "name": "HOLO/IPIP/SND_INTRO.WAV",
+        "url": "iPip/assets/SND_INTRO.WAV"
+      },
+      {
+        "name": "HOLO/IPIP/VIDEO.JS",
+        "url": "iPip/assets/VIDEO.MIN.JS"
       }
     ],
-    "storageOptional": []
+    "storageOptional": [
+      {
+        "label": "Example JS Image",
+        "name": "IMAGES/IMG_IPIP_EXAMPLE.JS",
+        "sizeKB": 27,
+        "url": "iPip/assets/examples/IMG_IPIP_EXAMPLE.JS"
+      },
+      {
+        "label": "Example JSON Image",
+        "name": "IMAGES/IMG_IPIP_EXAMPLE.JSON",
+        "sizeKB": 9,
+        "url": "iPip/assets/examples/IMG_IPIP_EXAMPLE.JSON"
+      },
+      {
+        "label": "Example BIN Image",
+        "name": "IMAGES/IMG_IPIP_EXAMPLE_FULL_SCREEN.BIN",
+        "sizeKB": 38,
+        "url": "iPip/assets/examples/IMG_IPIP_EXAMPLE_FULL_SCREEN.BIN"
+      },
+      {
+        "label": "Example AVI Video",
+        "name": "VIDEOS/S.P.E.C.I.A.L..AVI",
+        "sizeKB": 616,
+        "url": "iPip/assets/examples/S.P.E.C.I.A.L..AVI"
+      }
+    ]
   },
   {
     "id": "killteamtracker",
