@@ -18,6 +18,11 @@ After the intro, iPip opens a media menu with three players:
 - **IMAGES** - View images from the `IMAGES/` folder centered on a black
   background.
 
+### Notice
+
+Try to keep your `.js` and `.json` images less than 30 KB or you will run into
+memory issues.
+
 ### SD Card Layout
 
 ```
