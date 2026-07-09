@@ -102,8 +102,8 @@
   {
     "id": "checkers",
     "name": "Checkers",
-    "author": "@trekker87",
-    "version": "1.0.0",
+    "author": "@trekker87 @CodyTolene",
+    "version": "1.1.0",
     "description": "A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI opponent. Standard rules apply including forced jumps, multi-jumps, and king promotion.",
     "icon": "Checkers/assets/checkers.png",
     "previews": [],
@@ -113,6 +113,18 @@
       {
         "name": "HOLO/CHECKERS/APP.JS",
         "url": "Checkers/app.min.js"
+      },
+      {
+        "name": "HOLO/CHECKERS/GAME.JS",
+        "url": "Checkers/assets/GAME.MIN.JS"
+      },
+      {
+        "name": "HOLO/CHECKERS/HELP.JS",
+        "url": "Checkers/assets/HELP.MIN.JS"
+      },
+      {
+        "name": "HOLO/CHECKERS/MENU.JS",
+        "url": "Checkers/assets/MENU.MIN.JS"
       }
     ],
     "storageOptional": []
@@ -352,7 +364,7 @@
     "author": "@OrionMissesRust",
     "version": "1.0.0",
     "description": "Chess on the Pip-Boy!",
-    "icon": "PipChess/assets/missing-icon.png",
+    "icon": "PipChess/assets/PipChess.png",
     "previews": [],
     "type": "game",
     "readme": "PipChess/README.md",
@@ -451,7 +463,7 @@
     "author": "@OrionMissesRust",
     "version": "1.0.0",
     "description": "Play videos using your pip-boy on your pc.",
-    "icon": "PipVideoController/assets/missing-icon.png",
+    "icon": "PipVideoController/assets/PipVideoController.png",
     "previews": [],
     "type": "app",
     "readme": "PipVideoController/README.md",
@@ -469,7 +481,7 @@
     "author": "@SukeMobile",
     "version": "1.0.0",
     "description": "RAD RUNNER is an endless three-lane wasteland runner for the Pip-Boy 3000. Bomb down a cracked desert highway: switch lanes to dodge wrecked cars, jump the radroaches, duck the busted signs, and shoot the ghouls. Score is distance survived, and it gets faster the longer you last.",
-    "icon": "RADRUNNER/assets/missing-icon.png",
+    "icon": "RADRUNNER/assets/RADRUNNER.png",
     "previews": [],
     "type": "game",
     "readme": "RADRUNNER/README.md",
@@ -477,6 +489,40 @@
       {
         "name": "HOLO/RADRUNNER/APP.JS",
         "url": "RADRUNNER/APP.MIN.JS"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "radroachraces",
+    "name": "Radroach Races",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "A version of the internet famous \"Horse Race Tests\" game now for your Pip-boy. Start the game up, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 10 seperate tracks, 5 shapes for your roaches. Endless hours of fun watching, betting, and forming your own headcanons!",
+    "icon": "RadroachRaces/assets/RACES.png",
+    "previews": [],
+    "type": "game",
+    "readme": "RadroachRaces/README.md",
+    "storage": [
+      {
+        "name": "HOLO/RADROACH_RACES/APP.JS",
+        "url": "RadroachRaces/app.min.js"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
+        "url": "RadroachRaces/assets/WINNER.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
+        "url": "RadroachRaces/assets/BUGLE.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/FLAP.WAV",
+        "url": "RadroachRaces/assets/FLAP.WAV"
       }
     ],
     "storageOptional": []
