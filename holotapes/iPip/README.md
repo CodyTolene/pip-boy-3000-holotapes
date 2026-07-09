@@ -141,4 +141,11 @@ International License. See
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
 information.
 
+This app uses a sound effect from pixabay.com. This sound effect uses a special
+license that allows for free use in personal and commercial projects. More
+information about this license can be found here:
+https://pixabay.com/service/license-summary/
+
+- [`SND_INTRO.WAV`](https://pixabay.com/sound-effects/film-special-effects-power-up-game-sound-effect-359227/)
+
 `SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`
