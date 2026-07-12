@@ -1,0 +1,65 @@
+{
+  "id": "rcet",
+  "name": "RobCo Entertainment Terminal",
+  "author": "@CodyTolene",
+  "version": "2.1.0",
+  "description": "RobCo Entertainment Terminal is a full media player for the Pip-Boy 3000. Play WAV playlists from `MUSIC/`, watch AVI clips from `VIDEOS/`, and view images from `IMAGES/`, all from one Vault-Tec approved holotape.",
+  "icon": "RCET.PNG",
+  "previews": [],
+  "type": "app",
+  "readme": "README.md",
+  "previousId": "iPip",
+  "storage": [
+    { "name": "HOLO/RCET/APP.JS", "url": "APP.MIN.JS" },
+    { "name": "HOLO/RCET/IMAGES.JS", "url": "assets/IMAGES.MIN.JS" },
+    { "name": "HOLO/RCET/INTRO.JS", "url": "assets/INTRO.MIN.JS" },
+    { "name": "HOLO/RCET/MENU.JS", "url": "assets/MENU.MIN.JS" },
+    { "name": "HOLO/RCET/MUSIC.JS", "url": "assets/MUSIC.MIN.JS" },
+    { "name": "HOLO/RCET/SETTINGS.JS", "url": "assets/SETTINGS.MIN.JS" },
+    { "name": "HOLO/RCET/VIDEO.JS", "url": "assets/VIDEO.MIN.JS" }
+  ],
+  "storageOptional": [
+    {
+      "label": "Startup Intro Image",
+      "name": "HOLO/RCET/IMG_RCET.BIN",
+      "sizeKB": 38,
+      "url": "assets/optional/IMG_RCET.BIN"
+    },
+    {
+      "label": "Startup Intro Sound",
+      "name": "HOLO/RCET/INTRO.WAV",
+      "sizeKB": 31,
+      "url": "assets/optional/INTRO.WAV"
+    },
+    {
+      "label": "Example BIN Image",
+      "name": "IMAGES/EXAMPLE FULL SCREEN.BIN",
+      "sizeKB": 38,
+      "url": "assets/optional/IMG_RCET_EXAMPLE_FS.BIN"
+    },
+    {
+      "label": "Example IMG Native",
+      "name": "IMAGES/Example IMG Image.img",
+      "sizeKB": 38,
+      "url": "assets/optional/IMG_RCET_EXAMPLE.IMG"
+    },
+    {
+      "label": "Example JS Image",
+      "name": "IMAGES/Example JS Image.js",
+      "sizeKB": 11,
+      "url": "assets/optional/IMG_RCET_EXAMPLE.JS"
+    },
+    {
+      "label": "Example JSON Image",
+      "name": "IMAGES/Example JSON Image.json",
+      "sizeKB": 15,
+      "url": "assets/optional/IMG_RCET_EXAMPLE.JSON"
+    },
+    {
+      "label": "Example AVI Video",
+      "name": "VIDEOS/Example Short AVI Video.AVI",
+      "sizeKB": 616,
+      "url": "assets/optional/VID_EXAMPLE_SHORT.AVI"
+    }
+  ]
+}

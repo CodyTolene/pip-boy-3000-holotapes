@@ -1,4 +1,4 @@
-# iPip Media Player
+# RobCo Entertainment Terminal (previously iPip Media Player)
 
 ### Info
 
@@ -10,7 +10,8 @@
 
 A full media player for the Pip-Boy 3000.
 
-After the intro, iPip opens a media menu with three players:
+After the intro, RobCo Entertainment Terminal opens a media menu with three
+players:
 
 - **MUSIC** - Play WAV playlists. Every folder in the `MUSIC/` folder is a
   "station" (playlist).
@@ -102,7 +103,7 @@ IMAGES/
 ### Instructions
 
 1. Install and reboot the Pip-Boy.
-2. Select **iPip** from Items -> Misc.
+2. Select **RobCo Entertainment Terminal** from Items -> Misc.
 3. After the intro, the media menu opens. Scroll with the left knob and press to
    open **MUSIC**, **VIDEOS**, or **IMAGES**.
 
@@ -146,11 +147,11 @@ International License. See
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
 information.
 
-This app uses a sound effect from pixabay.com. This sound effect uses a special
-license that allows for free use in personal and commercial projects. More
-information about this license can be found here:
-https://pixabay.com/service/license-summary/
+This app uses a sound effect from freesound.org. This sound effect uses a
+special license that allows for free use in personal and commercial projects.
+More information about this license can be found here:
+https://creativecommons.org/publicdomain/zero/1.0/
 
-- [`SND_INTRO.WAV`](https://pixabay.com/sound-effects/film-special-effects-power-up-game-sound-effect-359227/)
+- [`INTRO.WAV`](https://freesound.org/people/Sanderboah/sounds/838728/)
 
 `SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`

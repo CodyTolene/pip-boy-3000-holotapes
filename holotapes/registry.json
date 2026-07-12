@@ -204,85 +204,6 @@
     "storageOptional": []
   },
   {
-    "id": "iPip",
-    "name": "iPip Media Player",
-    "author": "@CodyTolene",
-    "version": "2.1.0",
-    "description": "iPip is a full media player for the Pip-Boy 3000. Play WAV playlists from `MUSIC/`, watch AVI clips from `VIDEOS/`, and view images from `IMAGES/`, all from one Vault-Tec approved holotape.",
-    "icon": "iPip/assets/IPIP.PNG",
-    "previews": [],
-    "type": "app",
-    "readme": "iPip/README.md",
-    "storage": [
-      {
-        "name": "HOLO/IPIP/APP.JS",
-        "url": "iPip/APP.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/IMAGES.JS",
-        "url": "iPip/assets/IMAGES.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/INTRO.JS",
-        "url": "iPip/assets/INTRO.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/MENU.JS",
-        "url": "iPip/assets/MENU.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/MUSIC.JS",
-        "url": "iPip/assets/MUSIC.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/SETTINGS.JS",
-        "url": "iPip/assets/SETTINGS.MIN.JS"
-      },
-      {
-        "name": "HOLO/IPIP/VIDEO.JS",
-        "url": "iPip/assets/VIDEO.MIN.JS"
-      }
-    ],
-    "storageOptional": [
-      {
-        "label": "Startup Image",
-        "name": "HOLO/IPIP/IMG_IPIP.BIN",
-        "sizeKB": 38,
-        "url": "iPip/assets/optional/IMG_IPIP.BIN"
-      },
-      {
-        "label": "Startup Sound",
-        "name": "HOLO/IPIP/SND_INTRO.WAV",
-        "sizeKB": 30,
-        "url": "iPip/assets/optional/SND_INTRO.WAV"
-      },
-      {
-        "label": "Example JS Image",
-        "name": "IMAGES/IMG_IPIP_EXAMPLE.JS",
-        "sizeKB": 12,
-        "url": "iPip/assets/optional/IMG_IPIP_EXAMPLE.JS"
-      },
-      {
-        "label": "Example JSON Image",
-        "name": "IMAGES/IMG_IPIP_EXAMPLE.JSON",
-        "sizeKB": 9,
-        "url": "iPip/assets/optional/IMG_IPIP_EXAMPLE.JSON"
-      },
-      {
-        "label": "Example BIN Image",
-        "name": "IMAGES/IMG_IPIP_EXAMPLE_FULL_SCREEN.BIN",
-        "sizeKB": 38,
-        "url": "iPip/assets/optional/IMG_IPIP_EXAMPLE_FULL_SCREEN.BIN"
-      },
-      {
-        "label": "Example AVI Video",
-        "name": "VIDEOS/S.P.E.C.I.A.L. SHORT.AVI",
-        "sizeKB": 616,
-        "url": "iPip/assets/optional/S.P.E.C.I.A.L._SHORT.AVI"
-      }
-    ]
-  },
-  {
     "id": "killteamtracker",
     "name": "Kill Team Tracker",
     "author": "@SethSanchez",
@@ -587,6 +508,92 @@
       }
     ],
     "storageOptional": []
+  },
+  {
+    "id": "rcet",
+    "name": "RobCo Entertainment Terminal",
+    "author": "@CodyTolene",
+    "version": "2.1.0",
+    "description": "RobCo Entertainment Terminal is a full media player for the Pip-Boy 3000. Play WAV playlists from `MUSIC/`, watch AVI clips from `VIDEOS/`, and view images from `IMAGES/`, all from one Vault-Tec approved holotape.",
+    "icon": "RobCoEntertainmentTerminal/RCET.PNG",
+    "previews": [],
+    "type": "app",
+    "readme": "RobCoEntertainmentTerminal/README.md",
+    "previousId": "iPip",
+    "storage": [
+      {
+        "name": "HOLO/RCET/APP.JS",
+        "url": "RobCoEntertainmentTerminal/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/IMAGES.JS",
+        "url": "RobCoEntertainmentTerminal/assets/IMAGES.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/INTRO.JS",
+        "url": "RobCoEntertainmentTerminal/assets/INTRO.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/MENU.JS",
+        "url": "RobCoEntertainmentTerminal/assets/MENU.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/MUSIC.JS",
+        "url": "RobCoEntertainmentTerminal/assets/MUSIC.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/SETTINGS.JS",
+        "url": "RobCoEntertainmentTerminal/assets/SETTINGS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/VIDEO.JS",
+        "url": "RobCoEntertainmentTerminal/assets/VIDEO.MIN.JS"
+      }
+    ],
+    "storageOptional": [
+      {
+        "label": "Startup Intro Image",
+        "name": "HOLO/RCET/IMG_RCET.BIN",
+        "sizeKB": 38,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET.BIN"
+      },
+      {
+        "label": "Startup Intro Sound",
+        "name": "HOLO/RCET/INTRO.WAV",
+        "sizeKB": 31,
+        "url": "RobCoEntertainmentTerminal/assets/optional/INTRO.WAV"
+      },
+      {
+        "label": "Example BIN Image",
+        "name": "IMAGES/EXAMPLE FULL SCREEN.BIN",
+        "sizeKB": 38,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE_FS.BIN"
+      },
+      {
+        "label": "Example IMG Native",
+        "name": "IMAGES/Example IMG Image.img",
+        "sizeKB": 38,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.IMG"
+      },
+      {
+        "label": "Example JS Image",
+        "name": "IMAGES/Example JS Image.js",
+        "sizeKB": 11,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.JS"
+      },
+      {
+        "label": "Example JSON Image",
+        "name": "IMAGES/Example JSON Image.json",
+        "sizeKB": 15,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.JSON"
+      },
+      {
+        "label": "Example AVI Video",
+        "name": "VIDEOS/Example Short AVI Video.AVI",
+        "sizeKB": 616,
+        "url": "RobCoEntertainmentTerminal/assets/optional/VID_EXAMPLE_SHORT.AVI"
+      }
+    ]
   },
   {
     "id": "vaulttimer",

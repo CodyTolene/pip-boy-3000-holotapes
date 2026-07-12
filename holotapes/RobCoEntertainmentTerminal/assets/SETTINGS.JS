@@ -1,13 +1,15 @@
 // =============================================================================
-//  Name: iPip Media Player
+//  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
 (function (app) {
-  const ROWS = ['sort', 'brightness', 'volume', 'back'];
+  const ROWS = ['sort', 'brightness', 'volume', 'timeout', 'back'];
   const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+  // Screen timeout in ms; 0 = OFF (screen stays on). Matches firmware idleTimeout.
+  const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
 
   let selected = 0;
 
@@ -15,7 +17,7 @@
     const row = ROWS[selected];
     if (row === 'sort') {
       app.sortDir = app.sortDir > 0 ? -1 : 1;
-      global.__iPipSort = app.sortDir;
+      global.__RCETSort = app.sortDir;
       sound('TAB');
     } else if (row === 'brightness') {
       stepBright(dir > 0 ? 1 : -1);
@@ -25,6 +27,9 @@
       try {
         Pip.setVol(app.currentVol);
       } catch (e) {}
+      sound('HIGHLIGHT');
+    } else if (row === 'timeout') {
+      stepTimeout(dir > 0 ? 1 : -1);
       sound('HIGHLIGHT');
     }
     draw();
@@ -49,7 +54,7 @@
     h.setColor(3)
       .setFontMonofonto16()
       .setFontAlign(-1, -1)
-      .drawString('iPip Settings Menu', 18, 52);
+      .drawString(app.names[2] + ' Settings Menu', 18, 52);
     h.setColor(1).drawLine(12, 74, app.W - 12, 74);
 
     for (let i = 0; i < ROWS.length; i++) drawRow(i);
@@ -59,7 +64,7 @@
   }
 
   function drawRow(i) {
-    const y = 88 + i * 44;
+    const y = 88 + i * 40;
     const row = ROWS[i];
     const on = i === selected;
     let val = '';
@@ -69,7 +74,10 @@
     if (row === 'sort') val = app.sortDir > 0 ? 'A-Z' : 'Z-A';
     else if (row === 'brightness') val = Math.round(readBright() * 100) + '%';
     else if (row === 'volume') val = '' + readVol();
-    else val = 'RETURN';
+    else if (row === 'timeout') {
+      const to = readTimeout();
+      val = to ? to / 60000 + ' MIN' : 'OFF';
+    } else val = 'RETURN';
 
     h.setColor(on ? 3 : 2)
       .setFontMonofonto14()
@@ -83,6 +91,7 @@
     if (row === 'sort') return 'SONG SORT ORDER';
     if (row === 'brightness') return 'SCREEN BRIGHTNESS';
     if (row === 'volume') return 'AUDIO VOLUME';
+    if (row === 'timeout') return 'SCREEN TIMEOUT';
     return 'BACK TO MUSIC';
   }
 
@@ -110,6 +119,14 @@
       if (typeof Pip.brightness === 'number') return Pip.brightness;
     } catch (e) {}
     return 1;
+  }
+
+  function readTimeout() {
+    try {
+      if (Pip.settings && typeof Pip.settings.idleTimeout === 'number')
+        return Pip.settings.idleTimeout;
+    } catch (e) {}
+    return 300000;
   }
 
   function readVol() {
@@ -146,6 +163,23 @@
     app.currentBright = BRIGHT_LEVELS[idx];
     try {
       Pip.setBrightness(app.currentBright);
+    } catch (e) {}
+  }
+
+  function stepTimeout(dir) {
+    let t = readTimeout(),
+      idx = 0,
+      diff = 1e12;
+    for (let i = 0; i < TIMEOUT_LEVELS.length; i++) {
+      if (Math.abs(TIMEOUT_LEVELS[i] - t) < diff) {
+        diff = Math.abs(TIMEOUT_LEVELS[i] - t);
+        idx = i;
+      }
+    }
+    idx = E.clip(idx + dir, 0, TIMEOUT_LEVELS.length - 1);
+    try {
+      Pip.settings.idleTimeout = TIMEOUT_LEVELS[idx];
+      if (Pip.kickIdleTimer) Pip.kickIdleTimer();
     } catch (e) {}
   }
 

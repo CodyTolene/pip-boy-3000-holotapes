@@ -1,13 +1,13 @@
 // =============================================================================
-//  Name: iPip Media Player
+//  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
 (function (app) {
-  const INTRO_IMAGE = 'HOLO/IPIP/IMG_IPIP.BIN';
-  const INTRO_SOUND = 'HOLO/IPIP/SND_INTRO.WAV';
+  const INTRO_IMAGE = 'HOLO/RCET/IMG_RCET.BIN';
+  const INTRO_SOUND = 'HOLO/RCET/INTRO.WAV';
   const INTRO_MS = 3000;
 
   let done = false;

@@ -1,12 +1,12 @@
 // =============================================================================
-//  Name: iPip Media Player
+//  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
 (function () {
-  const HOLOTAPE_DIR = 'HOLO/IPIP/';
+  const HOLOTAPE_DIR = 'HOLO/RCET/';
 
   let scene = null;
   let pending = null;
@@ -14,14 +14,20 @@
   let loadTimer = null;
 
   const app = {
-    version: '2.0.0',
-    H: h.getHeight(),
-    W: h.getWidth(),
+    H: 320,
+    W: 480,
     currentBright: null,
     currentVol: null,
     initialBright: null,
     initialVol: null,
-    sortDir: global.__iPipSort || 1,
+    names: [
+      'RobCo Entertainment Terminal',
+      'RobCo Image Terminal',
+      'RobCo Music Terminal',
+      'RobCo Video Terminal',
+    ],
+    sortDir: global.__RCETSort || 1,
+    version: '2.0.0',
 
     scenes: {
       INTRO: 'INTRO.JS',
@@ -97,7 +103,7 @@
   function logLoadError(msg, file, err) {
     try {
       console.log(
-        'iPip scene load: ' +
+        'RobCo Entertainment Terminal scene load: ' +
           msg +
           ' file=' +
           (file || 'undefined') +
@@ -176,7 +182,7 @@
   app.go(app.scenes.INTRO);
 
   return {
-    id: 'iPip',
+    id: 'rcet',
     notDefault: true,
     fullscreen: true,
     remove: remove,

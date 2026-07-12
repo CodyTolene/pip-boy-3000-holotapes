@@ -1,13 +1,11 @@
 // =============================================================================
-//  Name: iPip Media Player
+//  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
 (function (app) {
-  const APP_NAME = 'iPip Media Player';
-
   const C_BLACK = 0;
   const C_DIM = 1;
   const C_MED = 2;
@@ -224,11 +222,11 @@
     h.setColor(C_BRIGHT)
       .setFontMonofonto16()
       .setFontAlign(-1, -1)
-      .drawString(APP_NAME, LIST_X + 6, LIST_TITLE_Y);
+      .drawString(app.names[1], LIST_X + 6, LIST_TITLE_Y);
 
     const APP_VERSION = app.version;
     if (APP_VERSION) {
-      const versionX = LIST_X + 6 + h.stringWidth(APP_NAME) + 4;
+      const versionX = LIST_X + 6 + h.stringWidth(app.names[1]) + 4;
       h.setColor(C_BRIGHT)
         .setFont('6x8')
         .setFontAlign(-1, -1)
