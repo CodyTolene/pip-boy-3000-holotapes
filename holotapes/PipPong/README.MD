@@ -17,7 +17,8 @@ Pong, but on the Pip-Boy 3000a.
 
 #### General Controls
 
-- Click the left wheel to start the game, and control the right paddle with the right wheel.
+- Click the left wheel to start the game, and control the right paddle with the
+  right wheel.
 
 #### In Menus
 
@@ -27,11 +28,9 @@ Pong, but on the Pip-Boy 3000a.
 
 - Scroll the right wheel to control the right paddle.
 
-### License(s)
+### License
 
-This game is licensed under the Creative Commons Attribution-NonCommercial 4.0
-International License. See
-[CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
-information.
+This game is licensed under the MIT License. See
+[MIT](https://opensource.org/license/mit/) for more information.
 
-`SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`
+`SPDX-License-Identifier: MIT`
