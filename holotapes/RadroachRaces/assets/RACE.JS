@@ -115,8 +115,12 @@
     // Maps 3, 4, 6, 8, 12, 13 (0-based: 2, 3, 5, 7, 11, 12) use horizontal
     // spawn spread; all others use vertical.
     const horizSpawn =
-      currentMapId === 2 || currentMapId === 3 || currentMapId === 5 ||
-      currentMapId === 7 || currentMapId === 11 || currentMapId === 12;
+      currentMapId === 2 ||
+      currentMapId === 3 ||
+      currentMapId === 5 ||
+      currentMapId === 7 ||
+      currentMapId === 11 ||
+      currentMapId === 12;
     const slots = horizSpawn ? [0, 21, 42, 63, 84] : [0, 23, 44, 65, 86];
     for (let s = 4; s > 0; s--) {
       const sv = Math.randInt(s + 1);

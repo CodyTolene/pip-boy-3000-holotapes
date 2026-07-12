@@ -18,10 +18,10 @@
 ### Description
 
 A version of the internet famous Horse Race Tests game now for your Pip-boy.
-Start the game up, choose a map, 5 seconds to place your bets and they're
-off! Using logic similar to the DVD bouncing logo to race to the mutfruit
-at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of
-fun watching, betting, and forming your own headcanons!
+Start the game up, choose a map, 5 seconds to place your bets and they're off!
+Using logic similar to the DVD bouncing logo to race to the mutfruit at the end,
+who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching,
+betting, and forming your own headcanons!
 
 ### Controls
 
