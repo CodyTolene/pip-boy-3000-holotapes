@@ -1,8 +1,10 @@
 2.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/
 - Update name of app from "iPip Media Player" to "RobCo Entertainment Terminal"
-- Add new sleep timer option to SETTINGS.JS
-- Add native .IMG image support to the image viewer (IMAGES.JS)
+- Add new sleep timer option to the Music menu (SETTINGS.JS).
+- Add native `.IMG` image support to the image viewer (IMAGES.JS).
+- Make the startup image and sound optional.
+- Update app icon, and add preview mp3 and mp4 files for web previews.
 
 2.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/53
