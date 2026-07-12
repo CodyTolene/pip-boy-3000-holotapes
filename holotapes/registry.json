@@ -204,24 +204,6 @@
     "storageOptional": []
   },
   {
-    "id": "iPip",
-    "name": "iPip Media Player",
-    "author": "@CodyTolene",
-    "version": "1.2.1",
-    "description": "iPip is a WAV media player that turns each folder inside `MUSIC/` into its own station playlist. Tune through your stations and keep the Vault-Tec approved broadcasts rolling in the wasteland.",
-    "icon": "iPip/assets/iPip.png",
-    "previews": [],
-    "type": "app",
-    "readme": "iPip/README.md",
-    "storage": [
-      {
-        "name": "HOLO/IPIP/APP.JS",
-        "url": "iPip/app.min.js"
-      }
-    ],
-    "storageOptional": []
-  },
-  {
     "id": "killteamtracker",
     "name": "Kill Team Tracker",
     "author": "@SethSanchez",
@@ -269,6 +251,44 @@
       {
         "name": "HOLO/NUKE_SWEEPER/APP.JS",
         "url": "NukeSweeper/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "pong",
+    "name": "Pip Pong",
+    "author": "@Neiferr",
+    "version": "1.0.0",
+    "description": "Pong on the Pip-Boy 3000a.",
+    "icon": "PipPong/assets/PipPong.png",
+    "previews": [],
+    "type": "game",
+    "readme": "PipPong/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPPONG/APP.JS",
+        "url": "PipPong/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/PIPPONG/PADDLE1.wav",
+        "url": "PipPong/assets/PADDLE1.wav"
+      },
+      {
+        "name": "HOLO/PIPPONG/PADDLE2.wav",
+        "url": "PipPong/assets/PADDLE2.wav"
+      },
+      {
+        "name": "HOLO/PIPPONG/SCORE.wav",
+        "url": "PipPong/assets/SCORE.wav"
+      },
+      {
+        "name": "HOLO/PIPPONG/WALL.wav",
+        "url": "PipPong/assets/WALL.wav"
+      },
+      {
+        "name": "HOLO/PIPPONG/WIN.wav",
+        "url": "PipPong/assets/WIN.wav"
       }
     ],
     "storageOptional": []
@@ -496,9 +516,9 @@
   {
     "id": "radroachraces",
     "name": "Radroach Races",
-    "author": "@Theeohn",
-    "version": "1.0.0",
-    "description": "A version of the internet famous \"Horse Race Tests\" game now for your Pip-boy. Start the game up, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 10 seperate tracks, 5 shapes for your roaches. Endless hours of fun watching, betting, and forming your own headcanons!",
+    "author": "@Theeohn @CodyTolene",
+    "version": "2.0.1",
+    "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
     "icon": "RadroachRaces/assets/RACES.png",
     "previews": [],
     "type": "game",
@@ -509,8 +529,24 @@
         "url": "RadroachRaces/app.min.js"
       },
       {
+        "name": "HOLO/RADROACH_RACES/TITLE.JS",
+        "url": "RadroachRaces/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/RACE.JS",
+        "url": "RadroachRaces/assets/RACE.MIN.JS"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/MAPS.JS",
         "url": "RadroachRaces/assets/MAPS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
+        "url": "RadroachRaces/assets/TITLE.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
+        "url": "RadroachRaces/assets/ROACH.JSON"
       },
       {
         "name": "HOLO/RADROACH_RACES/WINNER.WAV",
@@ -526,6 +562,94 @@
       }
     ],
     "storageOptional": []
+  },
+  {
+    "id": "rcet",
+    "name": "RobCo Entertainment Terminal",
+    "author": "@CodyTolene",
+    "version": "2.1.0",
+    "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
+    "icon": "RobCoEntertainmentTerminal/RCET.PNG",
+    "previews": [],
+    "type": "app",
+    "readme": "RobCoEntertainmentTerminal/README.md",
+    "previousId": "iPip",
+    "storage": [
+      {
+        "name": "HOLO/RCET/APP.JS",
+        "url": "RobCoEntertainmentTerminal/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/IMAGES.JS",
+        "url": "RobCoEntertainmentTerminal/assets/IMAGES.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/INTRO.JS",
+        "url": "RobCoEntertainmentTerminal/assets/INTRO.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/MENU.JS",
+        "url": "RobCoEntertainmentTerminal/assets/MENU.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/MUSIC.JS",
+        "url": "RobCoEntertainmentTerminal/assets/MUSIC.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/SETTINGS.JS",
+        "url": "RobCoEntertainmentTerminal/assets/SETTINGS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/VIDEO.JS",
+        "url": "RobCoEntertainmentTerminal/assets/VIDEO.MIN.JS"
+      }
+    ],
+    "storageOptional": [
+      {
+        "label": "Startup Intro Sound",
+        "name": "HOLO/RCET/INTRO.WAV",
+        "previewMp3": "assets/optional/INTRO.MP3",
+        "sizeKB": 31,
+        "url": "RobCoEntertainmentTerminal/assets/optional/INTRO.WAV"
+      },
+      {
+        "label": "Startup Intro Image",
+        "name": "HOLO/RCET/IMG_RCET.BIN",
+        "sizeKB": 38,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET.BIN"
+      },
+      {
+        "label": "Example BIN Image",
+        "name": "IMAGES/Example Full Screen BIN Image.bin",
+        "sizeKB": 38,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE_FS.BIN"
+      },
+      {
+        "label": "Example IMG Native",
+        "name": "IMAGES/Example IMG Image.img",
+        "sizeKB": 11,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.IMG"
+      },
+      {
+        "label": "Example JS Image",
+        "name": "IMAGES/Example JS Image.js",
+        "sizeKB": 11,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.JS"
+      },
+      {
+        "label": "Example JSON Image",
+        "name": "IMAGES/Example JSON Image.json",
+        "sizeKB": 15,
+        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.JSON"
+      },
+      {
+        "label": "Example AVI Video",
+        "name": "VIDEOS/Example Short AVI Video.AVI",
+        "previewMp4": "assets/optional/VID_EXAMPLE_SHORT.MP4",
+        "sizeKB": 616,
+        "url": "RobCoEntertainmentTerminal/assets/optional/VID_EXAMPLE_SHORT.AVI"
+      }
+    ]
   },
   {
     "id": "ssukechi",
