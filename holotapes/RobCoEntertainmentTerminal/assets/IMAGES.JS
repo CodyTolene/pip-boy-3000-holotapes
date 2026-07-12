@@ -100,9 +100,9 @@
 
     h.setColor(C_MED).setFont('Monofonto14').setFontAlign(-1, -1);
     const lines = h.wrapString(
-      'Add .JSON, .JS (1/2 bpp), or full-screen .BIN images to the IMAGES ' +
-        'folder on the SD card. Keep image files under 30 KB or load will ' +
-        'fail. Convert images at https://pip-boy.com/tools',
+      'Add .IMG, .JSON, .JS (1/2 bpp), or full-screen .BIN images to the ' +
+        'IMAGES folder on the SD card. Keep image files under 30 KB or load ' +
+        'will fail. Convert images at https://pip-boy.com/tools',
       LIST_W - 8,
     );
     for (let i = 0; i < lines.length; i++) {
@@ -125,8 +125,7 @@
     Pip.lastFlip = getTime();
   }
 
-  function drawJsImage(path) {
-    const image = eval(fs.readFileSync(path));
+  function drawImageString(image) {
     const bpp = image.charCodeAt(2) & 0x1f;
     if (bpp !== 1 && bpp !== 2) {
       drawError('NEEDS 1 OR 2 BPP');
@@ -311,7 +310,8 @@
       if (
         lower.slice(-3) === '.js' ||
         lower.slice(-5) === '.json' ||
-        lower.slice(-4) === '.bin'
+        lower.slice(-4) === '.bin' ||
+        lower.slice(-4) === '.img'
       )
         images.push(name);
     }
@@ -355,8 +355,10 @@
         drawBinImage(path);
       } else if (lower.slice(-5) === '.json') {
         drawJsonImage(path);
+      } else if (lower.slice(-4) === '.img') {
+        drawImageString(fs.readFileSync(path));
       } else {
-        drawJsImage(path);
+        drawImageString(eval(fs.readFileSync(path)));
       }
     } catch (e) {
       drawError(label({ type: 'image', name: name }));

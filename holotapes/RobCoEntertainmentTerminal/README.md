@@ -39,6 +39,7 @@ VIDEOS/
 IMAGES/
   picture-01.json
   picture-02.js
+  picture-03.img
   fullscreen-01.bin
 ```
 
@@ -65,9 +66,13 @@ IMAGES/
   are parsed and drawn centered on a black background.
 - `.js` files are Espruino image strings at **1 or 2 bpp** (the JS string format
   from the converter). They are drawn centered on a black background.
+- `.img` files are raw Espruino image strings at **1 or 2 bpp** (the same binary
+  data a `.js` image contains, without the code wrapper). They are drawn
+  centered on a black background.
 - `.bin` files are treated as full-screen (480x320) raw framebuffers and are
   streamed straight to the display.
-- Only `.json`, `.js`, and `.bin` files are listed; other files are ignored.
+- Only `.json`, `.js`, `.img`, and `.bin` files are listed; other files are
+  ignored.
 - Keep image files small (roughly under 30 KB). Very large images can exhaust
   device memory and fail to load.
 

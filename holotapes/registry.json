@@ -514,7 +514,7 @@
     "name": "RobCo Entertainment Terminal",
     "author": "@CodyTolene",
     "version": "2.1.0",
-    "description": "RobCo Entertainment Terminal is a full media player for the Pip-Boy 3000. Play WAV playlists from `MUSIC/`, watch AVI clips from `VIDEOS/`, and view images from `IMAGES/`, all from one Vault-Tec approved holotape.",
+    "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
     "icon": "RobCoEntertainmentTerminal/RCET.PNG",
     "previews": [],
     "type": "app",
@@ -552,27 +552,28 @@
     ],
     "storageOptional": [
       {
+        "label": "Startup Intro Sound",
+        "name": "HOLO/RCET/INTRO.WAV",
+        "previewMp3": "assets/optional/INTRO.MP3",
+        "sizeKB": 31,
+        "url": "RobCoEntertainmentTerminal/assets/optional/INTRO.WAV"
+      },
+      {
         "label": "Startup Intro Image",
         "name": "HOLO/RCET/IMG_RCET.BIN",
         "sizeKB": 38,
         "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET.BIN"
       },
       {
-        "label": "Startup Intro Sound",
-        "name": "HOLO/RCET/INTRO.WAV",
-        "sizeKB": 31,
-        "url": "RobCoEntertainmentTerminal/assets/optional/INTRO.WAV"
-      },
-      {
         "label": "Example BIN Image",
-        "name": "IMAGES/EXAMPLE FULL SCREEN.BIN",
+        "name": "IMAGES/Example Full Screen BIN Image.bin",
         "sizeKB": 38,
         "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE_FS.BIN"
       },
       {
         "label": "Example IMG Native",
         "name": "IMAGES/Example IMG Image.img",
-        "sizeKB": 38,
+        "sizeKB": 11,
         "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET_EXAMPLE.IMG"
       },
       {
@@ -590,6 +591,7 @@
       {
         "label": "Example AVI Video",
         "name": "VIDEOS/Example Short AVI Video.AVI",
+        "previewMp4": "assets/optional/VID_EXAMPLE_SHORT.MP4",
         "sizeKB": 616,
         "url": "RobCoEntertainmentTerminal/assets/optional/VID_EXAMPLE_SHORT.AVI"
       }
