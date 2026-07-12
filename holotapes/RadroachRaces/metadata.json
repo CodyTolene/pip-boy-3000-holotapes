@@ -1,16 +1,20 @@
 {
   "id": "radroachraces",
   "name": "Radroach Races",
-  "author": "@Theeohn",
-  "version": "1.0.0",
-  "description": "A version of the internet famous \"Horse Race Tests\" game now for your Pip-boy. Start the game up, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 10 seperate tracks, 5 shapes for your roaches. Endless hours of fun watching, betting, and forming your own headcanons!",
+  "author": "@Theeohn @CodyTolene",
+  "version": "2.0.1",
+  "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
   "icon": "assets/RACES.png",
   "previews": [],
   "type": "game",
   "readme": "README.md",
   "storage": [
     { "name": "HOLO/RADROACH_RACES/APP.JS", "url": "app.min.js" },
+    { "name": "HOLO/RADROACH_RACES/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
+    { "name": "HOLO/RADROACH_RACES/RACE.JS", "url": "assets/RACE.MIN.JS" },
     { "name": "HOLO/RADROACH_RACES/MAPS.JS", "url": "assets/MAPS.MIN.JS" },
+    { "name": "HOLO/RADROACH_RACES/TITLE.JSON", "url": "assets/TITLE.JSON" },
+    { "name": "HOLO/RADROACH_RACES/ROACH.JSON", "url": "assets/ROACH.JSON" },
     { "name": "HOLO/RADROACH_RACES/WINNER.WAV", "url": "assets/WINNER.WAV" },
     { "name": "HOLO/RADROACH_RACES/BUGLE.WAV", "url": "assets/BUGLE.WAV" },
     { "name": "HOLO/RADROACH_RACES/FLAP.WAV", "url": "assets/FLAP.WAV" }
