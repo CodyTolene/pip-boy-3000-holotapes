@@ -261,7 +261,7 @@
     "author": "@Neiferr",
     "version": "1.0.0",
     "description": "Pong on the Pip-Boy 3000a.",
-    "icon": "PipPong/assets/PipPong.png",
+    "icon": "PipPong/assets/PipPong.PNG",
     "previews": [],
     "type": "game",
     "readme": "PipPong/README.md",
