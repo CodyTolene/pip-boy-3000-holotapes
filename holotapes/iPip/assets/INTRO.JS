@@ -8,26 +8,49 @@
 (function (app) {
   const INTRO_IMAGE = 'HOLO/IPIP/IMG_IPIP.BIN';
   const INTRO_SOUND = 'HOLO/IPIP/SND_INTRO.WAV';
-  const INTRO_MS = 2500;
+  const INTRO_MS = 3000;
 
   let done = false;
   let introTimer = null;
+  let loadFailed = false;
 
   function drawIntro() {
     try {
-      streamImageFile();
+      const file = E.openFile(INTRO_IMAGE, 'r');
+      const target = new Uint8Array(h.buffer);
+      let offset = target.length;
+      let chunk = file.read(256);
+
+      while (chunk) {
+        offset -= chunk.length;
+        target.set(chunk, offset);
+        chunk = file.read(256);
+      }
+
+      file.close();
       h.flip();
       Pip.lastFlip = getTime();
     } catch (e) {
-      try {
-        console.log('iPip intro draw failed: ' + ((e && e.message) || e));
-      } catch (e2) {}
+      // Silently fail, image is now optional.
+      // Draw loading text instead.
+      loadFailed = true;
+      h.clear()
+        .setColor(3)
+        .setFontAlign(0, 0)
+        .setFontMonofonto28()
+        .drawString('RobCo Entertainment Terminal', 240, 130)
+        .setFontMonofonto18()
+        .drawString('Vault-Tec Media Utility', 240, 180)
+        .drawString('Pip-Boy.com', 240, 210)
+        .setFontMonofonto14()
+        .drawString('Loading...', 240, 240)
+        .flip();
+      Pip.lastFlip = getTime();
     }
   }
 
   function finishIntro() {
     if (done) return;
-
     done = true;
     removeInputs();
     app.gc();
@@ -38,7 +61,9 @@
     if (!dir) finishIntro();
   }
 
-  function onKnob2() {}
+  function onKnob2() {
+    // noop
+  }
 
   function removeInputs() {
     if (introTimer) {
@@ -55,21 +80,6 @@
     Pip.audioStop();
   }
 
-  function streamImageFile() {
-    const file = E.openFile(INTRO_IMAGE, 'r');
-    const target = new Uint8Array(h.buffer);
-    let offset = target.length;
-    let chunk = file.read(256);
-
-    while (chunk) {
-      offset -= chunk.length;
-      target.set(chunk, offset);
-      chunk = file.read(256);
-    }
-
-    file.close();
-  }
-
   Pip.audioStop();
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
@@ -79,7 +89,7 @@
   } catch (e) {
     // Do nothing if the sound fails to play.
   }
-  introTimer = setTimeout(finishIntro, INTRO_MS);
+  introTimer = setTimeout(finishIntro, loadFailed ? 3000 : INTRO_MS);
 
   return {
     remove: removeScene,
