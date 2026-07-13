@@ -16,6 +16,14 @@
 Radroaches are swarming the vault and all you've got is your trusty boot. Stomp
 the roaches and save the vault!
 
+#### Optional Custom Firmware (CFW):
+
+WARNING: This will replace the stock firmware or any other CFW you may have
+installed for the STATS > GENERAL screen. MAKE A BACKUP OF THE JS/GENERAL.JS
+FILE PRIOR TO INSTALLING!
+
+Track your Roach Stomp high score in the STATS > GENERAL screen."
+
 ### Controls
 
 - Scroll the top-right wheel (knob2) left/right to move your boot from lane to
