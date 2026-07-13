@@ -56,4 +56,7 @@ Attribution 4.0
 [Stick-Swoosh Whoosh by Hitrison](https://freesound.org/s/216675/) -- License:
 Attribution 4.0
 
+[Madagascar_Cockroaches by Nawer](https://freesound.org/s/711785/) -- License:
+Attribution 4.0
+
 `SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`

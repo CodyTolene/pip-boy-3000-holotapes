@@ -22,6 +22,9 @@
     GAMEOVER: '/HOLO/ROACHSTOMP/GAMEOVER.WAV',
     GRUNT: '/HOLO/ROACHSTOMP/GRUNT.WAV',
     WHOOSH: '/HOLO/ROACHSTOMP/WHOOSH.WAV',
+    HISS1: '/HOLO/ROACHSTOMP/HISS-01.WAV',
+    HISS2: '/HOLO/ROACHSTOMP/HISS-02.WAV',
+    HISS3: '/HOLO/ROACHSTOMP/HISS-03.WAV',
   };
 
   const MENU_MAIN_OPTIONS = ['EASY', 'MEDIUM', 'HARD', 'HIGH SCORES'];
@@ -52,7 +55,7 @@
 
   const GAME_CONSTS = {
     STARTING_HEALTH: 3,
-    MAX_ACTIVE_ROACHES: 4,
+    MAX_ACTIVE_ROACHES: 5,
 
     SPAWN_GAP_MIN_MULT: 3,
     SPAWN_GAP_MAX_MULT: 6,
@@ -121,6 +124,9 @@
   let sfxWhoosh = undefined;
   let sfxSplat = undefined;
   let clickWatch = undefined;
+  let sfxHissRawInfo = [{}, {}, {}];
+  let sfxHiss = [undefined, undefined, undefined];
+  let hissTimeout = undefined;
 
   // HELPER FUNCTIONS
   function readAppVersion() {
@@ -245,6 +251,11 @@
     );
   }
 
+  function playRandomHiss() {
+    const i = Math.randInt(3);
+    Pip.audioStartVar(sfxHiss[i], sfxHissRawInfo[i]);
+  }
+
   function spawnGapMs(laneIndex) {
     const march = currentMarchIntervalMs();
     const base =
@@ -281,6 +292,7 @@
   function spawnRoach(laneIndex) {
     lanes[laneIndex] = { row: 0, stompDeadline: undefined };
     dirtyLanes[laneIndex] = 1;
+    if (Math.randInt(3) === 0) playRandomHiss();
   }
 
   function scheduleSpawn(laneIndex) {
@@ -367,6 +379,11 @@
   }
 
   function endGame() {
+    if (hissTimeout != null) {
+      clearTimeout(hissTimeout);
+    }
+    hissTimeout = undefined;
+
     Pip.audioStart(SFX.GAMEOVER);
     if (clickWatch) {
       clearWatch(clickWatch);
@@ -604,6 +621,10 @@
       sfxWhoosh = Pip.audioRead(SFX.WHOOSH, sfxWhooshRawInfo);
       sfxSplat = Pip.audioRead(SFX.SPLAT, sfxSplatRawInfo);
 
+      for (let i = 0; i < 3; i++) {
+        sfxHiss[i] = Pip.audioRead(SFX['HISS' + (i + 1)], sfxHissRawInfo[i]);
+      }
+
       assetsLoaded = true;
     }, 0);
 
@@ -701,6 +722,7 @@
     }
   }
 
+  Pip.audioStop();
   drawTitleScreen();
   Pip.onExclusive('knob1', onKnob1_TitleScreen);
 
@@ -709,6 +731,11 @@
     notDefault: true,
     fullscreen: true,
     remove: function () {
+      if (hissTimeout != null) {
+        clearTimeout(hissTimeout);
+      }
+      hissTimeout = undefined;
+
       Pip.audioStop();
 
       if (fadeInterval != null) {
@@ -731,7 +758,9 @@
         }
       }
 
-      if (clickWatch) clearWatch(clickWatch);
+      if (clickWatch) {
+        clearWatch(clickWatch);
+      }
 
       Pip.removeListener('knob1', onKnob1_TitleScreen);
       Pip.removeListener('knob1', onKnob1_MenuMain);
