@@ -5,6 +5,11 @@
   "version": "1.0.0",
   "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!\n\nOptional Custom Firmware (CFW):\nWARNING: This will replace any other CFW you may have installed for the STATS > GENERAL screen. MAKE A BACKUP OF THE JS/GENERAL.JS FILE PRIOR TO INSTALLING!\nTrack your Roach Stomp high score in the STATS > GENERAL screen.",
   "icon": "assets/roachstomp.png",
+  "previews": [
+    "assets/previews/previews01.png",
+    "assets/previews/previews02.png",
+    "assets/previews/cfw-general.png"
+  ],
   "type": "game",
   "readme": "README.md",
   "storage": [
