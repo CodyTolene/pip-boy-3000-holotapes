@@ -35,5 +35,11 @@
     { "name": "HOLO/ROACHSTOMP/HISS1.WAV", "url": "assets/HISS1.WAV" },
     { "name": "HOLO/ROACHSTOMP/HISS2.WAV", "url": "assets/HISS2.WAV" },
     { "name": "HOLO/ROACHSTOMP/HISS3.WAV", "url": "assets/HISS3.WAV" }
+  ],
+  "customFirmwareFiles": [
+    {
+      "name": "CFW/50_ROACH_STOMP_SCORE.JS",
+      "url": "assets/50_ROACH_STOMP_SCORE.MIN.JS"
+    }
   ]
 }

@@ -582,6 +582,96 @@
     "storageOptional": []
   },
   {
+    "id": "ROACHSTOMP",
+    "name": "Roach Stomp",
+    "author": "@tylerjbartlett",
+    "version": "1.0.0",
+    "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
+    "icon": "RoachStomp/assets/roachstomp.png",
+    "previews": [
+      "RoachStomp/assets/previews/previews01.png",
+      "RoachStomp/assets/previews/previews02.png"
+    ],
+    "type": "game",
+    "readme": "RoachStomp/README.md",
+    "storage": [
+      {
+        "name": "HOLO/ROACHSTOMP/APP.JS",
+        "url": "RoachStomp/app.min.js"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/BOOT1.JSON",
+        "url": "RoachStomp/assets/BOOT1.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/HEART_EMPTY.JSON",
+        "url": "RoachStomp/assets/HEART_EMPTY.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/HEART_FULL.JSON",
+        "url": "RoachStomp/assets/HEART_FULL.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/ROACH1.JSON",
+        "url": "RoachStomp/assets/ROACH1.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/ROACH2.JSON",
+        "url": "RoachStomp/assets/ROACH2.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/SPLAT1.JSON",
+        "url": "RoachStomp/assets/SPLAT1.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/TITLE.IMG",
+        "url": "RoachStomp/assets/TITLE.IMG"
+      },
+      {
+        "name": "SETTINGS/ROACHSTOMP.JSON",
+        "url": "RoachStomp/assets/ROACHSTOMP.JSON"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/SPLAT.WAV",
+        "url": "RoachStomp/assets/SPLAT.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/WHOOSH.WAV",
+        "url": "RoachStomp/assets/WHOOSH.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/GRUNT.WAV",
+        "url": "RoachStomp/assets/GRUNT.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/GAMEOVER.WAV",
+        "url": "RoachStomp/assets/GAMEOVER.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/TITLE.WAV",
+        "url": "RoachStomp/assets/TITLE.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/HISS1.WAV",
+        "url": "RoachStomp/assets/HISS1.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/HISS2.WAV",
+        "url": "RoachStomp/assets/HISS2.WAV"
+      },
+      {
+        "name": "HOLO/ROACHSTOMP/HISS3.WAV",
+        "url": "RoachStomp/assets/HISS3.WAV"
+      }
+    ],
+    "customFirmwareFiles": [
+      {
+        "name": "CFW/50_ROACH_STOMP_SCORE.JS",
+        "url": "assets/50_ROACH_STOMP_SCORE.MIN.JS"
+      }
+    ]
+  },
+  {
     "id": "rcet",
     "name": "RobCo Entertainment Terminal",
     "author": "@CodyTolene",
