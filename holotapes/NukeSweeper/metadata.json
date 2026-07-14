@@ -4,7 +4,7 @@
   "author": "@trekker87",
   "version": "1.0.0",
   "description": "A Minesweeper-style game for the Pip-Boy 3000. Navigate a 9x9 grid using the scroll wheels, reveal squares, and avoid the 10 hidden mines. Your first reveal is always safe.",
-  "icon": "assets/nukesweeper.png",
+  "icon": "previews/nukesweeper.png",
   "previews": [],
   "type": "game",
   "readme": "README.md",

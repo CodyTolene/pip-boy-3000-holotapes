@@ -4,8 +4,13 @@
   "author": "@CodyTolene",
   "version": "1.0.0",
   "description": "A Fallout RPG Character and Dice Terminal.",
-  "icon": "assets/VND.png",
-  "previews": [],
+  "icon": "previews/VND.png",
+  "previews": [
+    "previews/dice.bmp",
+    "previews/dice_roller.bmp",
+    "previews/edit.bmp",
+    "previews/list.bmp"
+  ],
   "type": "app",
   "readme": "README.md",
   "storage": [
