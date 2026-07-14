@@ -7,7 +7,8 @@
   "icon": "assets/roachstomp.png",
   "previews": [
     "assets/previews/previews01.png",
-    "assets/previews/previews02.png"
+    "assets/previews/previews02.png",
+    "assets/previews/cfw-general.png"
   ],
   "type": "game",
   "readme": "README.md",
