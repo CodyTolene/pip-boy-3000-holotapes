@@ -5,7 +5,7 @@
 // JS/GENERAL.JS is checked from the SD card each time the
 // STATS > GENERAL screen opens, and it fetches its data by calling the
 // firmware global loadJSONWithDefaults('SETTINGS/GENERAL.JSON', ...). This
-// patch adds a 'Roach Stomp Score' block next to the Atomic Command logic.
+// patch adds a 'Roach Stomp Score' row next to the Atomic Command score.
 //
 // Notes:
 // - This will not replace JS/GENERAL.JS.
