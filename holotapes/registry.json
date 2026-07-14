@@ -668,7 +668,7 @@
     "customFirmwareFiles": [
       {
         "name": "CFW/50_ROACH_STOMP_SCORE.JS",
-        "url": "assets/50_ROACH_STOMP_SCORE.JS"
+        "url": "assets/50_ROACH_STOMP_SCORE.MIN.JS"
       }
     ]
   },
