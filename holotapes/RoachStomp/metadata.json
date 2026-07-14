@@ -37,11 +37,10 @@
     { "name": "HOLO/ROACHSTOMP/HISS2.WAV", "url": "assets/HISS2.WAV" },
     { "name": "HOLO/ROACHSTOMP/HISS3.WAV", "url": "assets/HISS3.WAV" }
   ],
-  "storageOptional": [
+  "customFirmwareFiles": [
     {
-      "label": "[CFW] STATS > GENERAL Roach Stomp Score",
-      "name": "JS/GENERAL.JS",
-      "url": "cfw/GENERAL.JS"
+      "name": "CFW/50_ROACH_STOMP_SCORE.JS",
+      "url": "assets/50_ROACH_STOMP_SCORE.JS"
     }
   ]
 }
