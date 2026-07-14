@@ -3,12 +3,11 @@
   "name": "Roach Stomp",
   "author": "@tylerjbartlett",
   "version": "1.0.0",
-  "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!\n\nOptional Custom Firmware (CFW):\nWARNING: This will replace any other CFW you may have installed for the STATS > GENERAL screen. MAKE A BACKUP OF THE JS/GENERAL.JS FILE PRIOR TO INSTALLING!\nTrack your Roach Stomp high score in the STATS > GENERAL screen.",
+  "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
   "icon": "assets/roachstomp.png",
   "previews": [
     "assets/previews/previews01.png",
-    "assets/previews/previews02.png",
-    "assets/previews/cfw-general.png"
+    "assets/previews/previews02.png"
   ],
   "type": "game",
   "readme": "README.md",
@@ -36,12 +35,5 @@
     { "name": "HOLO/ROACHSTOMP/HISS1.WAV", "url": "assets/HISS1.WAV" },
     { "name": "HOLO/ROACHSTOMP/HISS2.WAV", "url": "assets/HISS2.WAV" },
     { "name": "HOLO/ROACHSTOMP/HISS3.WAV", "url": "assets/HISS3.WAV" }
-  ],
-  "storageOptional": [
-    {
-      "label": "[CFW] STATS > GENERAL Roach Stomp Score",
-      "name": "JS/GENERAL.JS",
-      "url": "cfw/GENERAL.JS"
-    }
   ]
 }
