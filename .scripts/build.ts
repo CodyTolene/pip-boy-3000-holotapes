@@ -21,6 +21,7 @@ type Metadata = {
   readme?: string;
   storage?: JsonValue[];
   storageOptional?: JsonValue[];
+  customFirmwareFiles?: JsonValue[];
   [key: string]: JsonValue | undefined;
 };
 
@@ -141,6 +142,10 @@ async function buildRegistry(): Promise<number> {
         readme: prefixAssetPath(metadata.readme, entryDir),
         storage: rewriteStorage(metadata.storage, entryDir),
         storageOptional: rewriteStorage(metadata.storageOptional, entryDir),
+        customFirmwareFiles: rewriteStorage(
+          metadata.customFirmwareFiles,
+          entryDir,
+        ),
       } as Metadata;
     }),
   );

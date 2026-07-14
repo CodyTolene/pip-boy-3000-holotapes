@@ -62,9 +62,7 @@
     "version": "2.0.0",
     "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
     "icon": "Bloodworm/assets/bloodworm.png",
-    "previews": [
-      "Bloodworm/assets/bloodworm.mp4"
-    ],
+    "previews": ["Bloodworm/assets/bloodworm.mp4"],
     "type": "game",
     "readme": "Bloodworm/README.md",
     "storage": [
@@ -423,9 +421,7 @@
     "version": "4.0.0",
     "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
     "icon": "Piptris/assets/piptris.png",
-    "previews": [
-      "Piptris/assets/piptris.mp4"
-    ],
+    "previews": ["Piptris/assets/piptris.mp4"],
     "type": "game",
     "readme": "Piptris/README.md",
     "storage": [
@@ -672,7 +668,7 @@
     "customFirmwareFiles": [
       {
         "name": "CFW/50_ROACH_STOMP_SCORE.JS",
-        "url": "assets/50_ROACH_STOMP_SCORE.JS"
+        "url": "RoachStomp/assets/50_ROACH_STOMP_SCORE.MIN.JS"
       }
     ]
   },
