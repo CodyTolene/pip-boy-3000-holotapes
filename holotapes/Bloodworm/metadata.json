@@ -4,8 +4,13 @@
   "author": "@CodyTolene",
   "version": "2.0.0",
   "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
-  "icon": "assets/bloodworm.png",
-  "previews": ["assets/bloodworm.mp4"],
+  "icon": "previews/bloodworm.png",
+  "previews": [
+    "previews/bloodworm.mp4",
+    "previews/menu.bmp",
+    "previews/one-player.bmp",
+    "previews/two-player.bmp"
+  ],
   "type": "game",
   "readme": "README.md",
   "storage": [

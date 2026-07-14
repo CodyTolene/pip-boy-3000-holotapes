@@ -4,8 +4,8 @@
   "author": "@CodyTolene",
   "version": "4.0.0",
   "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
-  "icon": "assets/piptris.png",
-  "previews": ["assets/piptris.mp4"],
+  "icon": "previews/piptris.png",
+  "previews": ["assets/piptris.mp4", "previews/gameplay.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [

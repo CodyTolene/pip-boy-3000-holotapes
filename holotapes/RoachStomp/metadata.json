@@ -4,11 +4,11 @@
   "author": "@tylerjbartlett",
   "version": "1.0.0",
   "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
-  "icon": "assets/roachstomp.png",
+  "icon": "previews/roachstomp.png",
   "previews": [
-    "assets/previews/preview01.png",
-    "assets/previews/preview02.png",
-    "assets/previews/cfw-general.png"
+    "previews/preview01.png",
+    "previews/preview02.png",
+    "previews/cfw-general.png"
   ],
   "type": "game",
   "readme": "README.md",

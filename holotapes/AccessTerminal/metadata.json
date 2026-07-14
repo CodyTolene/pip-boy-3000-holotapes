@@ -4,8 +4,8 @@
   "author": "@CodyTolene @pip-4111 @beaverboy-12",
   "version": "2.1.0",
   "description": "Crack locked RobCo terminals by guessing the correct password from a list of corrupted pre-war entries.",
-  "icon": "assets/access-terminal.png",
-  "previews": [],
+  "icon": "previews/access-terminal.png",
+  "previews": ["previews/game.bmp", "previews/menu.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [

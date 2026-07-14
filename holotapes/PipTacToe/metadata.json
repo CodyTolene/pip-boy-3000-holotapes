@@ -4,8 +4,8 @@
   "author": "@pip-4111 @JLDenson",
   "version": "1.0.0",
   "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
-  "icon": "assets/piptactoe.png",
-  "previews": [],
+  "icon": "previews/piptactoe.png",
+  "previews": ["previews/game.bmp", "previews/menu.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [

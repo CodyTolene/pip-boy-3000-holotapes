@@ -5,8 +5,11 @@
     "author": "@CodyTolene @pip-4111 @beaverboy-12",
     "version": "2.1.0",
     "description": "Crack locked RobCo terminals by guessing the correct password from a list of corrupted pre-war entries.",
-    "icon": "AccessTerminal/assets/access-terminal.png",
-    "previews": [],
+    "icon": "AccessTerminal/previews/access-terminal.png",
+    "previews": [
+      "AccessTerminal/previews/game.bmp",
+      "AccessTerminal/previews/menu.bmp"
+    ],
     "type": "game",
     "readme": "AccessTerminal/README.md",
     "storage": [
@@ -43,8 +46,8 @@
     "author": "@trekker87 @Theeohn",
     "version": "1.1.0",
     "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
-    "icon": "Blackjack/assets/blackjack.png",
-    "previews": [],
+    "icon": "Blackjack/previews/blackjack.png",
+    "previews": ["Blackjack/previews/game.bmp"],
     "type": "game",
     "readme": "Blackjack/README.md",
     "storage": [
@@ -61,8 +64,13 @@
     "author": "@CodyTolene",
     "version": "2.0.0",
     "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
-    "icon": "Bloodworm/assets/bloodworm.png",
-    "previews": ["Bloodworm/assets/bloodworm.mp4"],
+    "icon": "Bloodworm/previews/bloodworm.png",
+    "previews": [
+      "Bloodworm/previews/bloodworm.mp4",
+      "Bloodworm/previews/menu.bmp",
+      "Bloodworm/previews/one-player.bmp",
+      "Bloodworm/previews/two-player.bmp"
+    ],
     "type": "game",
     "readme": "Bloodworm/README.md",
     "storage": [
@@ -105,8 +113,8 @@
     "author": "@trekker87 @CodyTolene",
     "version": "1.1.0",
     "description": "A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI opponent. Standard rules apply including forced jumps, multi-jumps, and king promotion.",
-    "icon": "Checkers/assets/checkers.png",
-    "previews": [],
+    "icon": "Checkers/previews/checkers.png",
+    "previews": ["Checkers/previews/game.bmp", "Checkers/previews/menu.bmp"],
     "type": "game",
     "readme": "Checkers/README.md",
     "storage": [
@@ -135,8 +143,8 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
-    "icon": "Fanorona/assets/fanorona.png",
-    "previews": [],
+    "icon": "Fanorona/previews/fanorona.png",
+    "previews": ["Fanorona/previews/game.bmp", "Fanorona/previews/menu.bmp"],
     "type": "game",
     "readme": "Fanorona/README.md",
     "storage": [
@@ -153,8 +161,11 @@
     "author": "@JLDenson",
     "version": "1.0.1",
     "description": "A Fallout-themed take on the classic Flappy Bird. Guide a Radroach through the Wasteland, dodging every obstacle in its path.",
-    "icon": "FlappyRoach/assets/flappyroach.png",
-    "previews": [],
+    "icon": "FlappyRoach/previews/flappyroach.png",
+    "previews": [
+      "FlappyRoach/previews/game.bmp",
+      "FlappyRoach/previews/menu.bmp"
+    ],
     "type": "game",
     "readme": "FlappyRoach/README.md",
     "storage": [
@@ -191,8 +202,8 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "A text-based recreation of the Vault 101 Generalized Occupational Aptitude Test (G.O.A.T.) from Fallout 3. This holotape recreates all 10 original test questions and answers. Your answers are tallied by skill, and at the end of the test you're assigned a Vault job.",
-    "icon": "TheGOAT/assets/GOAT.png",
-    "previews": [],
+    "icon": "TheGOAT/previews/GOAT.png",
+    "previews": ["TheGOAT/previews/game.bmp", "TheGOAT/previews/menu.bmp"],
     "type": "game",
     "readme": "TheGOAT/README.md",
     "storage": [
@@ -209,7 +220,11 @@
     "author": "@SethSanchez",
     "version": "1.0.0",
     "description": "A Pip-powered counter for 40k Kill Team. Will track your VP, CP, and the TP.",
-    "icon": "KillTeamTracker/assets/killteam.png",
+    "icon": "KillTeamTracker/previews/killteam.png",
+    "previews": [
+      "KillTeamTracker/previews/menu.bmp",
+      "KillTeamTracker/previews/start.bmp"
+    ],
     "tags": "game,tool",
     "type": "game",
     "readme": "KillTeamTracker/README.md",
@@ -226,7 +241,11 @@
     "author": "@tylerjbartlett",
     "version": "1.0.1",
     "description": "A Pip-powered life counter for Magic the Gathering with standard 20 life games and 40/21 life Commander games for 1-4 players. 1-2 players recommended.",
-    "icon": "MTGLifeCounter/assets/mtgtracker.png",
+    "icon": "MTGLifeCounter/previews/mtgtracker.png",
+    "previews": [
+      "MTGLifeCounter/previews/menu.bmp",
+      "MTGLifeCounter/previews/start.bmp"
+    ],
     "tags": "game,tool",
     "type": "app",
     "readme": "MTGLifeCounter/README.md",
@@ -243,7 +262,7 @@
     "author": "@trekker87",
     "version": "1.0.0",
     "description": "A Minesweeper-style game for the Pip-Boy 3000. Navigate a 9x9 grid using the scroll wheels, reveal squares, and avoid the 10 hidden mines. Your first reveal is always safe.",
-    "icon": "NukeSweeper/assets/nukesweeper.png",
+    "icon": "NukeSweeper/previews/nukesweeper.png",
     "previews": [],
     "type": "game",
     "readme": "NukeSweeper/README.md",
@@ -261,8 +280,8 @@
     "author": "@Neiferr",
     "version": "1.0.0",
     "description": "Pong on the Pip-Boy 3000a.",
-    "icon": "PipPong/assets/PipPong.PNG",
-    "previews": [],
+    "icon": "PipPong/previews/PipPong.PNG",
+    "previews": ["PipPong/previews/game.bmp", "PipPong/previews/menu.bmp"],
     "type": "game",
     "readme": "PipPong/README.md",
     "storage": [
@@ -299,7 +318,8 @@
     "author": "@tylerjbartlett",
     "version": "1.0.0",
     "description": "A simple calculator app for the Pip-Boy 3000.",
-    "icon": "Pip-Calc/assets/pipcalc.png",
+    "icon": "Pip-Calc/previews/pipcalc.png",
+    "previews": ["Pip-Calc/previews/calculator.bmp"],
     "tags": "tool",
     "type": "app",
     "readme": "Pip-Calc/README.md",
@@ -316,8 +336,8 @@
     "author": "@pip-4111 @JLDenson",
     "version": "1.0.0",
     "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
-    "icon": "PipTacToe/assets/piptactoe.png",
-    "previews": [],
+    "icon": "PipTacToe/previews/piptactoe.png",
+    "previews": ["PipTacToe/previews/game.bmp", "PipTacToe/previews/menu.bmp"],
     "type": "game",
     "readme": "PipTacToe/README.md",
     "storage": [
@@ -362,7 +382,7 @@
     "author": "@amogus-67",
     "version": "1.0.0",
     "description": "A Wordle clone for the Pip-Boy 3000.",
-    "icon": "PipWordle/assets/wordle.png",
+    "icon": "PipWordle/previews/wordle.png",
     "previews": [],
     "type": "game",
     "readme": "PipWordle/README.md",
@@ -384,8 +404,8 @@
     "author": "@OrionMissesRust",
     "version": "1.0.0",
     "description": "Chess on the Pip-Boy!",
-    "icon": "PipChess/assets/PipChess.png",
-    "previews": [],
+    "icon": "PipChess/previews/PipChess.png",
+    "previews": ["PipChess/previews/game.bmp", "PipChess/previews/menu.bmp"],
     "type": "game",
     "readme": "PipChess/README.md",
     "storage": [
@@ -402,8 +422,8 @@
     "author": "@McBeefy34",
     "version": "1.0.1",
     "description": "PipMan is a Pac-Man inspired arcade game built for the Pip-Boy 3000, blending retro gaming nostalgia with the iconic wasteland aesthetic. Navigate the vault, dodge ghouls, and collect every bottle caps, all from the wrist-mounted terminal of the Commonwealth.",
-    "icon": "PipMan/assets/pipman_logo.png",
-    "previews": [],
+    "icon": "PipMan/previews/pipman_logo.png",
+    "previews": ["PipMan/previews/game.bmp", "PipMan/previews/menu.bmp"],
     "type": "game",
     "readme": "PipMan/README.md",
     "storage": [
@@ -420,8 +440,8 @@
     "author": "@CodyTolene",
     "version": "4.0.0",
     "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
-    "icon": "Piptris/assets/piptris.png",
-    "previews": ["Piptris/assets/piptris.mp4"],
+    "icon": "Piptris/previews/piptris.png",
+    "previews": ["Piptris/assets/piptris.mp4", "Piptris/previews/gameplay.bmp"],
     "type": "game",
     "readme": "Piptris/README.md",
     "storage": [
@@ -483,7 +503,7 @@
     "author": "@OrionMissesRust",
     "version": "1.0.0",
     "description": "Play videos using your pip-boy on your pc.",
-    "icon": "PipVideoController/assets/PipVideoController.png",
+    "icon": "PipVideoController/previews/PipVideoController.png",
     "previews": [],
     "type": "app",
     "readme": "PipVideoController/README.md",
@@ -501,8 +521,12 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "A single-player Poker game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and 4 rulesets, 5 card draw, 7 card draw, 5 card hold and 7 card hold.",
-    "icon": "Poker/assets/poker.png",
-    "previews": [],
+    "icon": "Poker/previews/poker.png",
+    "previews": [
+      "Poker/previews/game.bmp",
+      "Poker/previews/menu.bmp",
+      "Poker/previews/start.bmp"
+    ],
     "type": "game",
     "readme": "Poker/README.md",
     "storage": [
@@ -519,8 +543,12 @@
     "author": "@SukeMobile",
     "version": "1.0.0",
     "description": "RAD RUNNER is an endless three-lane wasteland runner for the Pip-Boy 3000. Bomb down a cracked desert highway: switch lanes to dodge wrecked cars, jump the radroaches, duck the busted signs, and shoot the ghouls. Score is distance survived, and it gets faster the longer you last.",
-    "icon": "RADRUNNER/assets/RADRUNNER.png",
-    "previews": [],
+    "icon": "RADRUNNER/previews/RADRUNNER.png",
+    "previews": [
+      "RADRUNNER/previews/game-second.bmp",
+      "RADRUNNER/previews/game.bmp",
+      "RADRUNNER/previews/start.bmp"
+    ],
     "type": "game",
     "readme": "RADRUNNER/README.md",
     "storage": [
@@ -537,8 +565,12 @@
     "author": "@Theeohn @CodyTolene",
     "version": "2.0.1",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
-    "icon": "RadroachRaces/assets/RACES.png",
-    "previews": [],
+    "icon": "RadroachRaces/previews/RACES.png",
+    "previews": [
+      "RadroachRaces/previews/game.bmp",
+      "RadroachRaces/previews/menu.bmp",
+      "RadroachRaces/previews/start.bmp"
+    ],
     "type": "game",
     "readme": "RadroachRaces/README.md",
     "storage": [
@@ -587,11 +619,11 @@
     "author": "@tylerjbartlett",
     "version": "1.0.0",
     "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
-    "icon": "RoachStomp/assets/roachstomp.png",
+    "icon": "RoachStomp/previews/roachstomp.png",
     "previews": [
-      "RoachStomp/assets/previews/preview01.png",
-      "RoachStomp/assets/previews/preview02.png",
-      "RoachStomp/assets/previews/cfw-general.png"
+      "RoachStomp/previews/preview01.png",
+      "RoachStomp/previews/preview02.png",
+      "RoachStomp/previews/cfw-general.png"
     ],
     "type": "game",
     "readme": "RoachStomp/README.md",
@@ -679,7 +711,13 @@
     "version": "2.1.0",
     "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
     "icon": "RobCoEntertainmentTerminal/RCET.PNG",
-    "previews": [],
+    "previews": [
+      "RobCoEntertainmentTerminal/previews/images.bmp",
+      "RobCoEntertainmentTerminal/previews/menu.bmp",
+      "RobCoEntertainmentTerminal/previews/music-menu.bmp",
+      "RobCoEntertainmentTerminal/previews/music.bmp",
+      "RobCoEntertainmentTerminal/previews/videos.bmp"
+    ],
     "type": "app",
     "readme": "RobCoEntertainmentTerminal/README.md",
     "previousId": "iPip",
@@ -766,8 +804,8 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser!",
-    "icon": "Sukechi/assets/sukechi.png",
-    "previews": [],
+    "icon": "Sukechi/previews/sukechi.png",
+    "previews": ["Sukechi/previews/game.bmp"],
     "type": "game",
     "readme": "Sukechi/README.md",
     "storage": [
@@ -784,8 +822,8 @@
     "author": "@trekker87",
     "version": "1.0.0",
     "description": "A countdown timer app for the Pip-Boy 3000. Set the number of minutes, choose your alert style, and press the knob to start. When the timer expires, the device will alert you with sound, flashing lights, or both — your choice.",
-    "icon": "VaultTecTimer/assets/vaulttectimer.png",
-    "previews": [],
+    "icon": "VaultTecTimer/previews/vaulttectimer.png",
+    "previews": ["VaultTecTimer/previews/menu.bmp"],
     "type": "app",
     "readme": "VaultTecTimer/README.md",
     "storage": [
@@ -802,8 +840,13 @@
     "author": "@CodyTolene",
     "version": "1.0.0",
     "description": "A Fallout RPG Character and Dice Terminal.",
-    "icon": "VaultsAndDeathclaws/assets/VND.png",
-    "previews": [],
+    "icon": "VaultsAndDeathclaws/previews/VND.png",
+    "previews": [
+      "VaultsAndDeathclaws/previews/dice.bmp",
+      "VaultsAndDeathclaws/previews/dice_roller.bmp",
+      "VaultsAndDeathclaws/previews/edit.bmp",
+      "VaultsAndDeathclaws/previews/list.bmp"
+    ],
     "type": "app",
     "readme": "VaultsAndDeathclaws/README.md",
     "storage": [

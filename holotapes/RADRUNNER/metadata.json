@@ -4,8 +4,12 @@
   "author": "@SukeMobile",
   "version": "1.0.0",
   "description": "RAD RUNNER is an endless three-lane wasteland runner for the Pip-Boy 3000. Bomb down a cracked desert highway: switch lanes to dodge wrecked cars, jump the radroaches, duck the busted signs, and shoot the ghouls. Score is distance survived, and it gets faster the longer you last.",
-  "icon": "assets/RADRUNNER.png",
-  "previews": [],
+  "icon": "previews/RADRUNNER.png",
+  "previews": [
+    "previews/game-second.bmp",
+    "previews/game.bmp",
+    "previews/start.bmp"
+  ],
   "type": "game",
   "readme": "README.md",
   "storage": [{ "name": "HOLO/RADRUNNER/APP.JS", "url": "APP.MIN.JS" }],
