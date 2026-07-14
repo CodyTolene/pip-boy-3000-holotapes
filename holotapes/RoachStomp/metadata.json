@@ -33,9 +33,9 @@
     { "name": "HOLO/ROACHSTOMP/GRUNT.WAV", "url": "assets/GRUNT.WAV" },
     { "name": "HOLO/ROACHSTOMP/GAMEOVER.WAV", "url": "assets/GAMEOVER.WAV" },
     { "name": "HOLO/ROACHSTOMP/TITLE.WAV", "url": "assets/TITLE.WAV" },
-    { "name": "HOLO/ROACHSTOMP/HISS1.WAV", "url": "assets/HISS1.WAV" },
-    { "name": "HOLO/ROACHSTOMP/HISS2.WAV", "url": "assets/HISS2.WAV" },
-    { "name": "HOLO/ROACHSTOMP/HISS3.WAV", "url": "assets/HISS3.WAV" }
+    { "name": "HOLO/ROACHSTOMP/HISS-01.WAV", "url": "assets/HISS-01.WAV" },
+    { "name": "HOLO/ROACHSTOMP/HISS-02.WAV", "url": "assets/HISS-02.WAV" },
+    { "name": "HOLO/ROACHSTOMP/HISS-03.WAV", "url": "assets/HISS-03.WAV" }
   ],
   "customFirmwareFiles": [
     {

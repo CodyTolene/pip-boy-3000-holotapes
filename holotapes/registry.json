@@ -653,16 +653,16 @@
         "url": "RoachStomp/assets/TITLE.WAV"
       },
       {
-        "name": "HOLO/ROACHSTOMP/HISS1.WAV",
-        "url": "RoachStomp/assets/HISS1.WAV"
+        "name": "HOLO/ROACHSTOMP/HISS-01.WAV",
+        "url": "RoachStomp/assets/HISS-01.WAV"
       },
       {
-        "name": "HOLO/ROACHSTOMP/HISS2.WAV",
-        "url": "RoachStomp/assets/HISS2.WAV"
+        "name": "HOLO/ROACHSTOMP/HISS-02.WAV",
+        "url": "RoachStomp/assets/HISS-02.WAV"
       },
       {
-        "name": "HOLO/ROACHSTOMP/HISS3.WAV",
-        "url": "RoachStomp/assets/HISS3.WAV"
+        "name": "HOLO/ROACHSTOMP/HISS-03.WAV",
+        "url": "RoachStomp/assets/HISS-03.WAV"
       }
     ],
     "customFirmwareFiles": [
