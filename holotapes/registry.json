@@ -589,8 +589,8 @@
     "description": "Radroaches are swarming the vault and all you've got is your trusty boot. Stomp the roaches and save the vault!",
     "icon": "RoachStomp/assets/roachstomp.png",
     "previews": [
-      "RoachStomp/assets/previews/previews01.png",
-      "RoachStomp/assets/previews/previews02.png",
+      "RoachStomp/assets/previews/preview01.png",
+      "RoachStomp/assets/previews/preview02.png",
       "RoachStomp/assets/previews/cfw-general.png"
     ],
     "type": "game",
