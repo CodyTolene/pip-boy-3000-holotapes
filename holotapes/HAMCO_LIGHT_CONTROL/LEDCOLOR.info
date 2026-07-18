@@ -1,0 +1,9 @@
+{
+  "id": "ledcolor",
+  "name": "HAMCo LED Control",
+  "version": "1.0.2",
+  "author": "@joemto20-tech",
+  "description": "Radiation RGB color control and safe LED hardware tester",
+  "src": "HOLO/LEDCOLOR/APP.JS",
+  "icon": "HOLO/LEDCOLOR/leds.IMG"
+}
