@@ -353,8 +353,12 @@
   function exitApp() {
     if (removed) return;
     remove();
-    try { if (Pip.changeMenu) Pip.changeMenu("HOLO"); }
-    catch (e) { try { if (Pip.changeMenu) Pip.changeMenu(); } catch (e2) {} }
+    try { if (Pip.CURRENT) Pip.CURRENT.fullscreen = false; } catch (e0) {}
+    try { if (Pip.stopTimers) Pip.stopTimers(); } catch (e1) {}
+    try { if (Pip.startTimers) Pip.startTimers(); } catch (e2) {}
+    try { if (Pip.setWatches) Pip.setWatches(); } catch (e3) {}
+    try { if (Pip.emit) Pip.emit("mode", 1); } catch (e4) {}
+    try { if (Pip.changeMenu) Pip.changeMenu(); } catch (e5) {}
   }
 
   function selectMain() {
