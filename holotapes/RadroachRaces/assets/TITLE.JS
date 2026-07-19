@@ -5,14 +5,15 @@
 //  Repository: https://github.com/Theeohn/Radroach-Races
 // =============================================================================
 //  File: TITLE.JS (scene)
-//  Description: Draws the title screen with a single map selector box.
-//  Knob1 and knob2 both scroll through Random Map + Maps 1-16, wrapping in
-//  both directions, and a press on either knob launches a race on the
-//  selected map.
+//  Description: Draws the title screen using the full-screen TITLEIMG.JSON
+//  bitmap as the backdrop, with a single map selector box on top. Knob1 and
+//  knob2 both scroll through Random Map + Maps 1-20, wrapping in both
+//  directions, and a press on either knob launches a race on the selected
+//  map.
 // =============================================================================
 
-(function (app) {
-  let selected = 0; // 0 = Random Map, 1-16 = Map 1-16
+(function(app) {
+  let selected = 0; // 0 = Random Map, 1-20 = Map 1-20
 
   /**
    * @returns {void}
@@ -50,53 +51,45 @@
       return;
     }
 
-    selected = (selected + dir + 17) % 17;
-    Pip.playSound('SCROLL');
+    selected = (selected + dir + 21) % 21;
+    Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
     drawSelector();
     h.flip();
     Pip.lastFlip = getTime();
   }
 
-  h.setColor(0).fillRect(0, 0, 480, 320).setColor(2).drawRect(18, 18, 465, 298);
+Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
+let file = E.openFile('HOLO/RADROACH_RACES/TITLEIMG.BIN', 'r');
+let target = new Uint8Array(h.buffer);
+let offset = target.length;
+let chunk = file.read(256);
 
-  h.setFont('Monofonto36')
-    .setFontAlign(0, -1)
-    .setColor(3)
-    .drawString('RADROACH RACES', 240, 52)
-    .setFont('Monofonto18')
+while (chunk) {
+  offset -= chunk.length;
+  target.set(chunk, offset);
+  chunk = file.read(256);
+}
+
+file.close();
+h.flip();
+
+  h.setFont('Monofonto14')
+    .setFontAlign(-1, 0)
+    .setColor(1)
+    .drawString('Art by', 10, 283)
+    .drawString('The Nuka Lounge', 12, 298);
+
+  h.setFont('Monofonto14')
     .setFontAlign(0, -1)
     .setColor(2)
-    .drawString('by Theeohn', 360, 94)
-    .setFont('Monofonto14')
-    .setFontAlign(0, -1)
-    .setColor(2)
-    .drawString('v2.0.1', 444, 282);
-
-  h.setColor(2).drawLine(55, 180, 425, 180).drawLine(55, 200, 425, 200);
-  for (let fx = 75; fx < 425; fx += 35) {
-    h.fillRect(fx, 150, fx + 15, 230);
-  }
-
-  for (let gx = 35; gx < 445; gx += 12) {
-    h.drawLine(gx, 230, gx - 4, 210).drawLine(gx + 3, 230, gx + 6, 205);
-  }
-
-  h.setColor(3)
-    .fillEllipse(200, 165, 280, 215)
-    .fillCircle(240, 150, 18)
-    .drawLine(236, 138, 205, 105)
-    .drawLine(244, 138, 275, 105)
-    .drawPoly([205, 165, 180, 175, 165, 200], false)
-    .drawPoly([200, 190, 175, 200, 160, 230], false)
-    .drawPoly([275, 165, 300, 175, 315, 200], false)
-    .drawPoly([280, 190, 305, 200, 320, 230], false);
+    .drawString('v2.2.1', 444, 20);
 
   drawSelector();
 
   h.setFont('Monofonto14')
     .setFontAlign(0, -1)
     .setColor(3)
-    .drawString('PRESS LEFT WHEEL TO RACE!', 241, 278);
+    .drawString('SELECT A MAP, PRESS LEFT WHEEL TO RACE!', 243, 290);
 
   h.flip();
   Pip.lastFlip = getTime();
@@ -105,7 +98,7 @@
   Pip.onExclusive('knob2', onKnob);
 
   return {
-    remove: function () {
+    remove: function() {
       Pip.removeListener('knob1', onKnob);
       Pip.removeListener('knob2', onKnob);
     },
