@@ -3,7 +3,7 @@
   "name": "Magic 8 Ball",
   "author": "@Theeohn",
   "version": "1.0.0",
-  "description": "The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or shake your pipboy to get a new response!",
+  "description": "The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel to get a new response!",
   "icon": "assets/8ball.png",
   "previews": [],
   "type": "game",
