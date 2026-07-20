@@ -11,9 +11,13 @@
 - [Pip-Boy](https://www.Pip-Boy.com)
 - [Pip-Boy Apps](https://github.com/CodyTolene/pip-boy-apps)
 
+**Contributor(s):**
+
+- [Alright Joe]
+
 ###Description ###
 
-The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel to get a new response!
+The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or shake your pipboy to get a new response!
 
 ### Controls ###
 
@@ -22,6 +26,7 @@ The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel to
 | Left wheel (rotate)  | Shuffles the ball for a new response                                  |
 | Left wheel (press)   |                                                                       |
 | Right wheel (rotate) |                                                                       |
+| Shake device         |                                                                       |
 
 ### Credits ###
 
