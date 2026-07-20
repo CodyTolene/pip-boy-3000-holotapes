@@ -13,7 +13,7 @@
 
 ###Description ###
 
-The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or shake your pipboy to get a new response!
+The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel to get a new response!
 
 ### Controls ###
 
