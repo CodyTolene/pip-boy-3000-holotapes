@@ -13,7 +13,7 @@
 
 ### Description ###
 
-The updated Magic 8 Ball, all 20 original and plenty new responses. Plus a few rare resonses if you keep asking! Spin/press either wheel or shake your pipboy to get a new answer!
+The updated Magic 8 Ball, all 20 original and plenty new responses. Plus a few rare resonses if you keep asking! Spin/press either wheel to get a new answer!
 
 ### Controls ###
 
