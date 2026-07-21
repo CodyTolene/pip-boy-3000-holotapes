@@ -1317,7 +1317,7 @@
   const bootTimer = setTimeout(init, 80);
 
   return {
-    id: 'CHEMWARS',
+    id: 'chem-wars',
     notDefault: true,
     fullscreen: true,
     remove: function () {
