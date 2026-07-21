@@ -24,7 +24,7 @@ Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an er
 |Left wheel (short press)| Change shade between setColors 0-3                                  |
 |Left wheel (long press) | Erases half the drawing, holding again clears the canvas            |
 
-### Credits ###
+### Credits
 
 - Claude threw most of this together, I'm no programmer but I edited a lot by
   hand.
