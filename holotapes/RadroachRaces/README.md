@@ -14,7 +14,11 @@
 **Contributor(s):**
 
 - [Cody Tolene](https://github.com/CodyTolene)
+**Contributor(s):**
 
+- [Cody Tolene](https://github.com/CodyTolene)
+
+- The Nuka Lounge (Artwork)
 ### Description
 
 A version of the internet famous Horse Race Tests game now for your Pip-boy.
