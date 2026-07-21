@@ -15,7 +15,7 @@
 
 Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser!    Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.
 
-### Controls ###
+### Controls
 
 | Input                | Action                                                                |
 | -------------------- | --------------------------------------------------------------------- |
