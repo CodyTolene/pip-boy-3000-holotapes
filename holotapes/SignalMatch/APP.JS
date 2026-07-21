@@ -1,211 +1,294 @@
 (function () {
-  const n = h.getWidth(),
-    t = h.getHeight(),
-    o = n / 2,
-    i = 178,
-    e = 70,
-    r = 52,
-    l = 20,
-    a = 5,
-    s = 5,
-    c = 16,
-    u = 8,
-    d = {};
+  // Pip-Boy 3000 screen is a fixed 480x320 pixel buffer.
+  const SCREEN_WIDTH = 480;
+  const SCREEN_HEIGHT = 320;
+  const CENTER_X = SCREEN_WIDTH / 2;
+  const CENTER_Y = 178;
+  const OUTER_RING_RADIUS = 70;
+  const RING_INNER_RADIUS = 52;
+  const INNER_HOLE_RADIUS = 20;
+  const WHEEL_POSITIONS = 16;
 
-  for (let n = 0; n < 8; n++) d[2 * n] = n;
-
-  function f(n) {
-    return -Math.PI / 2 + n * ((2 * Math.PI) / c);
+  // Maps wheel position index -> digit (0-7) shown there.
+  // Digits sit on every other position around the 16-position wheel.
+  const positionValues = {};
+  for (let digit = 0; digit < 8; digit++) {
+    positionValues[2 * digit] = digit;
   }
 
-  function L(n) {
-    const t = (2 * Math.PI) / c,
-      e = f(n),
-      r = 0.42 * t,
-      l = 0.22 * t,
-      a = 66,
-      s = 84;
+  function angleForPosition(index) {
+    return -Math.PI / 2 + index * ((2 * Math.PI) / WHEEL_POSITIONS);
+  }
+
+  // Computes the 4-point "gear tooth" polygon for one wheel position.
+  function wedgeGeometry(index) {
+    const angleStep = (2 * Math.PI) / WHEEL_POSITIONS;
+    const angle = angleForPosition(index);
+    const innerHalfAngle = 0.42 * angleStep;
+    const outerHalfAngle = 0.22 * angleStep;
+    const innerR = 66;
+    const outerR = 84;
     return {
-      a: e,
-      outerR: s,
-      x0: o + a * Math.cos(e - r),
-      y0: i + a * Math.sin(e - r),
-      x1: o + a * Math.cos(e + r),
-      y1: i + a * Math.sin(e + r),
-      x2: o + s * Math.cos(e + l),
-      y2: i + s * Math.sin(e + l),
-      x3: o + s * Math.cos(e - l),
-      y3: i + s * Math.sin(e - l),
+      angle: angle,
+      outerR: outerR,
+      x0: CENTER_X + innerR * Math.cos(angle - innerHalfAngle),
+      y0: CENTER_Y + innerR * Math.sin(angle - innerHalfAngle),
+      x1: CENTER_X + innerR * Math.cos(angle + innerHalfAngle),
+      y1: CENTER_Y + innerR * Math.sin(angle + innerHalfAngle),
+      x2: CENTER_X + outerR * Math.cos(angle + outerHalfAngle),
+      y2: CENTER_Y + outerR * Math.sin(angle + outerHalfAngle),
+      x3: CENTER_X + outerR * Math.cos(angle - outerHalfAngle),
+      y3: CENTER_Y + outerR * Math.sin(angle - outerHalfAngle),
     };
   }
 
-  function C(n) {
-    const t = 5 * -Math.sin(n),
-      e = 5 * Math.cos(n),
-      l = o + 18 * Math.cos(n),
-      a = i + 18 * Math.sin(n),
-      s = o + r * Math.cos(n),
-      c = i + r * Math.sin(n);
-    (h.setColor(1),
-      h.fillPoly([l + t, a + e, s + t, c + e, s - t, c - e, l - t, a - e]));
-    (h.setColor(2), h.fillCircle(l, a, 5), h.fillCircle(s, c, 5));
+  // Draws the small dumbbell-shaped marker at an active (numbered) position.
+  function drawPositionMarker(angle) {
+    const dx = 5 * -Math.sin(angle);
+    const dy = 5 * Math.cos(angle);
+    const x1 = CENTER_X + 18 * Math.cos(angle);
+    const y1 = CENTER_Y + 18 * Math.sin(angle);
+    const x2 = CENTER_X + RING_INNER_RADIUS * Math.cos(angle);
+    const y2 = CENTER_Y + RING_INNER_RADIUS * Math.sin(angle);
+    h.setColor(1);
+    h.fillPoly([
+      x1 + dx,
+      y1 + dy,
+      x2 + dx,
+      y2 + dy,
+      x2 - dx,
+      y2 - dy,
+      x1 - dx,
+      y1 - dy,
+    ]);
+    h.setColor(2);
+    h.fillCircle(x1, y1, 5);
+    h.fillCircle(x2, y2, 5);
   }
 
-  let M = 'idle',
-    T = [],
-    p = 0,
-    w = 0,
-    S = 0,
-    y = -1,
-    P = 'HOLD LEFT WHEEL TO START',
-    R = null;
+  // --- Game state ---
+  let gameState = 'idle'; // 'idle' | 'playback' | 'input' | 'gameover'
+  let sequence = [];
+  let round = 0;
+  let progress = 0;
+  let selectedValue = 0;
+  let highlightValue = -1;
+  let statusText = 'HOLD LEFT WHEEL TO START';
+  let pendingTimer = null;
 
-  function v() {
-    const o = 6,
-      i = 10;
-    (h.setColor(1),
-      h.drawLine(6, 6, n - 6, 6),
-      h.drawLine(n - 6, 6, n - 6, t - 6),
-      h.drawLine(n - 6, t - 6, 6, t - 6),
-      h.drawLine(6, t - 6, 6, 6),
-      h.drawLine(i, i, n - i, i),
-      h.drawLine(n - i, i, n - i, t - i),
-      h.drawLine(n - i, t - i, i, t - i),
-      h.drawLine(i, t - i, i, i));
-    const e = 14;
-    (h.drawLine(6, 20, 20, 6),
-      h.drawLine(n - 6, 20, n - 6 - e, 6),
-      h.drawLine(6, t - 6 - e, 20, t - 6),
-      h.drawLine(n - 6, t - 6 - e, n - 6 - e, t - 6),
-      h.drawLine(0.18 * n, 48, 0.82 * n, 48),
-      h.drawLine(0.18 * n, t - 22, 0.82 * n, t - 22));
+  function drawFrame() {
+    const innerMargin = 10;
+    const cornerNotch = 14;
+    h.setColor(1);
+    h.drawLine(6, 6, SCREEN_WIDTH - 6, 6);
+    h.drawLine(SCREEN_WIDTH - 6, 6, SCREEN_WIDTH - 6, SCREEN_HEIGHT - 6);
+    h.drawLine(SCREEN_WIDTH - 6, SCREEN_HEIGHT - 6, 6, SCREEN_HEIGHT - 6);
+    h.drawLine(6, SCREEN_HEIGHT - 6, 6, 6);
+    h.drawLine(
+      innerMargin,
+      innerMargin,
+      SCREEN_WIDTH - innerMargin,
+      innerMargin,
+    );
+    h.drawLine(
+      SCREEN_WIDTH - innerMargin,
+      innerMargin,
+      SCREEN_WIDTH - innerMargin,
+      SCREEN_HEIGHT - innerMargin,
+    );
+    h.drawLine(
+      SCREEN_WIDTH - innerMargin,
+      SCREEN_HEIGHT - innerMargin,
+      innerMargin,
+      SCREEN_HEIGHT - innerMargin,
+    );
+    h.drawLine(
+      innerMargin,
+      SCREEN_HEIGHT - innerMargin,
+      innerMargin,
+      innerMargin,
+    );
+    h.drawLine(6, 20, 20, 6);
+    h.drawLine(SCREEN_WIDTH - 6, 20, SCREEN_WIDTH - 6 - cornerNotch, 6);
+    h.drawLine(6, SCREEN_HEIGHT - 6 - cornerNotch, 20, SCREEN_HEIGHT - 6);
+    h.drawLine(
+      SCREEN_WIDTH - 6,
+      SCREEN_HEIGHT - 6 - cornerNotch,
+      SCREEN_WIDTH - 6 - cornerNotch,
+      SCREEN_HEIGHT - 6,
+    );
+    h.drawLine(0.18 * SCREEN_WIDTH, 48, 0.82 * SCREEN_WIDTH, 48);
+    h.drawLine(
+      0.18 * SCREEN_WIDTH,
+      SCREEN_HEIGHT - 22,
+      0.82 * SCREEN_WIDTH,
+      SCREEN_HEIGHT - 22,
+    );
   }
 
-  function A() {
-    (h.setColor(1).fillCircle(o, i, e), h.setColor(0).fillCircle(o, i, r));
-    for (const n in d) C(f(Number(n)));
-    for (let n = 0; n < c; n++) {
-      const t = d[n],
-        e = void 0 !== t,
-        r = void 0,
-        l = void 0,
-        a =
-          (e && 'playback' === M && y === t) || (e && 'input' === M && S === t),
-        s = L(n);
-      if (
-        (h.setColor(e ? (a ? 3 : 2) : 1),
-        h.fillPoly([s.x0, s.y0, s.x1, s.y1, s.x2, s.y2, s.x3, s.y3]),
-        e)
-      ) {
-        const n = o + 96 * Math.cos(s.a),
-          e = i + 96 * Math.sin(s.a);
-        h.setColor(a ? 3 : 2)
+  function drawWheel() {
+    h.setColor(1).fillCircle(CENTER_X, CENTER_Y, OUTER_RING_RADIUS);
+    h.setColor(0).fillCircle(CENTER_X, CENTER_Y, RING_INNER_RADIUS);
+
+    for (const key in positionValues) {
+      drawPositionMarker(angleForPosition(Number(key)));
+    }
+
+    for (let position = 0; position < WHEEL_POSITIONS; position++) {
+      const digit = positionValues[position];
+      const hasDigit = digit !== undefined;
+      const isHighlighted =
+        (hasDigit && gameState === 'playback' && highlightValue === digit) ||
+        (hasDigit && gameState === 'input' && selectedValue === digit);
+      const wedge = wedgeGeometry(position);
+
+      h.setColor(hasDigit ? (isHighlighted ? 3 : 2) : 1);
+      h.fillPoly([
+        wedge.x0,
+        wedge.y0,
+        wedge.x1,
+        wedge.y1,
+        wedge.x2,
+        wedge.y2,
+        wedge.x3,
+        wedge.y3,
+      ]);
+
+      if (hasDigit) {
+        const labelX = CENTER_X + 96 * Math.cos(wedge.angle);
+        const labelY = CENTER_Y + 96 * Math.sin(wedge.angle);
+        h.setColor(isHighlighted ? 3 : 2)
           .setFontMonofonto16()
           .setFontAlign(0, 0)
-          .drawString(String(t + 1), n, e);
+          .drawString(String(digit + 1), labelX, labelY);
       }
     }
-    h.setColor(1).fillCircle(o, i, l);
-    h.setColor(2).drawCircle(o, i, l);
+
+    h.setColor(1).fillCircle(CENTER_X, CENTER_Y, INNER_HOLE_RADIUS);
+    h.setColor(2).drawCircle(CENTER_X, CENTER_Y, INNER_HOLE_RADIUS);
     h.setColor(3)
       .setFontMonofonto16()
       .setFontAlign(0, 0)
-      .drawString('101', o, i);
+      .drawString('101', CENTER_X, CENTER_Y);
   }
 
-  function O() {
+  function render() {
     h.clear(0);
-    v();
+    drawFrame();
     h.setColor(3)
       .setFontMonofonto28()
       .setFontAlign(0, 0)
-      .drawString('SIGNAL MATCH', n / 2, 18)
+      .drawString('SIGNAL MATCH', SCREEN_WIDTH / 2, 18)
       .setFontMonofonto16()
-      .drawString('VAULT-TEC LOCK - ROUND ' + p, n / 2, 38)
-      .drawString(P, n / 2, t - 14);
-    A();
+      .drawString('VAULT-TEC LOCK - ROUND ' + round, SCREEN_WIDTH / 2, 38)
+      .drawString(statusText, SCREEN_WIDTH / 2, SCREEN_HEIGHT - 14);
+    drawWheel();
   }
 
-  function F() {
-    null !== R && (clearTimeout(R), (R = null));
+  function clearPendingTimer() {
+    if (pendingTimer !== null) {
+      clearTimeout(pendingTimer);
+      pendingTimer = null;
+    }
   }
 
-  function m(n) {
-    if (n >= T.length)
-      return (
-        (M = 'input'),
-        (w = 0),
-        (S = 0),
-        (P = 'TURN EITHER WHEEL, TAP LEFT TO CONFIRM'),
-        O(),
-        void 0
-      );
-    ((y = T[n]), Pip.playSound('SCROLL'), O());
-    R = setTimeout(function () {
-      ((y = -1), O());
-      R = setTimeout(function () {
-        m(n + 1);
+  function playbackStep(step) {
+    if (step >= sequence.length) {
+      gameState = 'input';
+      progress = 0;
+      selectedValue = 0;
+      statusText = 'TURN EITHER WHEEL, TAP LEFT TO CONFIRM';
+      render();
+      return;
+    }
+    highlightValue = sequence[step];
+    Pip.playSound('SCROLL');
+    render();
+    pendingTimer = setTimeout(function () {
+      highlightValue = -1;
+      render();
+      pendingTimer = setTimeout(function () {
+        playbackStep(step + 1);
       }, 180);
     }, 450);
   }
 
-  function x() {
-    p++;
-    T.push(Math.randInt(8));
-    ((M = 'playback'), (P = 'WATCH THE PATTERN'), O());
-    R = setTimeout(function () {
-      m(0);
+  function startRound() {
+    round++;
+    sequence.push(Math.randInt(8));
+    gameState = 'playback';
+    statusText = 'WATCH THE PATTERN';
+    render();
+    pendingTimer = setTimeout(function () {
+      playbackStep(0);
     }, 600);
   }
 
-  function H() {
-    F();
-    ((T = []), (p = 0), (w = 0), (S = 0), (y = -1));
-    M = 'playback';
-    x();
+  function startGame() {
+    clearPendingTimer();
+    sequence = [];
+    round = 0;
+    progress = 0;
+    selectedValue = 0;
+    highlightValue = -1;
+    gameState = 'playback';
+    startRound();
   }
 
-  function b(n) {
-    n === T[w]
-      ? (Pip.playSound('TAB'),
-        w++,
-        w === T.length
-          ? ((P = 'CORRECT!'), (M = 'idle'), O(), (R = setTimeout(x, 800)))
-          : O())
-      : ((M = 'gameover'),
-        (P = 'WRONG - SCORE ' + (p - 1) + ' - HOLD LEFT TO RETRY'),
-        O());
+  function confirmSelection(value) {
+    if (value === sequence[progress]) {
+      Pip.playSound('TAB');
+      progress++;
+      if (progress === sequence.length) {
+        statusText = 'CORRECT!';
+        gameState = 'idle';
+        render();
+        pendingTimer = setTimeout(startRound, 800);
+      } else {
+        render();
+      }
+    } else {
+      gameState = 'gameover';
+      statusText = 'WRONG - SCORE ' + (round - 1) + ' - HOLD LEFT TO RETRY';
+      render();
+    }
   }
 
-  function I(n) {
-    'input' === M && ((S = (S + n + 8) % 8), Pip.playSound('SCROLL'), O());
+  function rotateSelection(delta) {
+    if (gameState === 'input') {
+      selectedValue = (selectedValue + delta + 8) % 8;
+      Pip.playSound('SCROLL');
+      render();
+    }
   }
 
-  function N(n, t) {
-    return n
-      ? (I(n), void 0)
-      : t
-        ? (H(), void 0)
-        : ('input' === M && b(S), void 0);
+  function onLeftWheel(delta, held) {
+    if (delta) {
+      rotateSelection(delta);
+    } else if (held) {
+      startGame();
+    } else if (gameState === 'input') {
+      confirmSelection(selectedValue);
+    }
   }
 
-  function k(n) {
-    n && I(n);
+  function onRightWheel(delta) {
+    if (delta) rotateSelection(delta);
   }
 
   Pip.audioStop();
-  Pip.onExclusive('knob1', N);
-  Pip.onExclusive('knob2', k);
-  O();
+  Pip.onExclusive('knob1', onLeftWheel);
+  Pip.onExclusive('knob2', onRightWheel);
+  render();
 
   return {
-    id: 'SIGNALMATCH',
+    id: 'signal-match',
     notDefault: true,
     fullscreen: true,
     remove: function () {
-      F();
-      Pip.removeListener('knob1', N);
-      Pip.removeListener('knob2', k);
+      clearPendingTimer();
+      Pip.removeListener('knob1', onLeftWheel);
+      Pip.removeListener('knob2', onRightWheel);
       Pip.audioStop();
       h.clear();
     },
