@@ -6,6 +6,7 @@
   "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser! Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.",
   "icon": "sukechi.png",
   "previews": [],
+  "previousId": "ssukechi",
   "type": "game",
   "readme": "README.md",
   "storage": [{ "name": "HOLO/SUKECHI/APP.JS", "url": "app.min.js" }],
