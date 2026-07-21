@@ -799,6 +799,24 @@
     ]
   },
   {
+    "id": "signal-match",
+    "name": "Signal Match",
+    "author": "@Radiomaru7",
+    "version": "1.0.0",
+    "description": "Watch the sequence of numbered panels light up, then repeat it back.",
+    "icon": "",
+    "previews": [],
+    "type": "game",
+    "readme": "SignalMatch/README.md",
+    "storage": [
+      {
+        "name": "HOLO/SIGNAL_MATCH/APP.JS",
+        "url": "SignalMatch/APP.JS"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "ssukechi",
     "name": "Sukechi",
     "author": "@Theeohn",
