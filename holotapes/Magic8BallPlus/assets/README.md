@@ -13,7 +13,7 @@
 
 **Contributor(s):**
 
-- [Alright Joe]
+- Alright Joe
 
 ### Description ###
 
