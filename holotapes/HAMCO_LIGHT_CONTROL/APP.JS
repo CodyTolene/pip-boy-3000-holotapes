@@ -4,8 +4,8 @@
   var fs = require("fs");
   var ROOT = "HOLO/LEDCOLOR";
   var STATE_FILE = ROOT + "/LED.JSON";
-  var W = h.getWidth ? h.getWidth() : 480;
-  var H = h.getHeight ? h.getHeight() : 320;
+  var W = 480;
+  var H = 320;
   var removed = false;
   var screen = "main";
   var selected = 0;
