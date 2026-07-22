@@ -466,7 +466,7 @@
   drawMain();
 
   return {
-    id: "LEDCOLOR",
+    id: "ledcolor",
     notDefault: true,
     fullscreen: true,
     remove: remove
