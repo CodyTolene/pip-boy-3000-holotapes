@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Radiation RGB color control and safe LED hardware tester for the Pip-Boy 3000.",
   "icon": "assets/HAMCOLEDCONTROL.IMG",
-  "previews": [],
+  "previews": ["assets/PRVW01.png", "assets/PRVW02.png"],
   "type": "app",
   "readme": "README.txt",
   "storage": [
