@@ -1,0 +1,1 @@
+(ª(e){Pip.lastFlip=getTime();®i=E.openFile(ÑHOLO/PIPTRIS/GAME.RAW,Ñr);«Pip.blitFile(h,i,{width:e.W,height:e.H,dstx:Ó,dsty:Ó,x:Ó,y:Ó,srcWidth:e.W,srcHeight:e.H}),i.close(),h.flip(),e.go(e.scenes.GAME),{remove:()¢{}}});
