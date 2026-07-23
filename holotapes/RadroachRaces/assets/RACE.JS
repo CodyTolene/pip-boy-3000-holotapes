@@ -60,7 +60,7 @@
   let trackDirty = 1;
   let lastFlapTime = 0;
   let roachImage = null;
-  
+
   let gameOverTime = 0;
   let lastBlinkState = -1;
 
@@ -120,9 +120,14 @@
     // Maps 2, 4, 5, 7, 9, 12, 15, 16 (0-based: 1, 3, 4, 6, 8, 11, 14, 15) use horizontal
     // spawn spread; all others use vertical.
     const horizSpawn =
-      currentMapId === 1 || currentMapId === 3 || currentMapId === 4 ||
-      currentMapId === 6 || currentMapId === 8 || currentMapId === 11 ||
-      currentMapId === 14 || currentMapId === 15;
+      currentMapId === 1 ||
+      currentMapId === 3 ||
+      currentMapId === 4 ||
+      currentMapId === 6 ||
+      currentMapId === 8 ||
+      currentMapId === 11 ||
+      currentMapId === 14 ||
+      currentMapId === 15;
     const slots = horizSpawn ? [0, 21, 42, 63, 84] : [0, 23, 44, 65, 86];
     for (let s = 4; s > 0; s--) {
       const sv = Math.randInt(s + 1);
@@ -594,7 +599,7 @@
   function updateGameOverAnimation() {
     'ram';
     const elapsed = getTime() - gameOverTime;
-    
+
     const showWinner = Math.floor(elapsed / 2.3) % 2 === 0;
 
     if (showWinner !== lastBlinkState) {
@@ -628,12 +633,15 @@
     } catch (e) {}
 
     h.setColor(0)
-     .fillRect(128, 282, 351, 309)
-     .setColor(3)
-     .drawRect(130, 284, 349, 307);
+      .fillRect(128, 282, 351, 309)
+      .setColor(3)
+      .drawRect(130, 284, 349, 307);
 
-    h.setFont('Monofonto14')
-     .drawString('Press left wheel to race again!', 241, 289);
+    h.setFont('Monofonto14').drawString(
+      'Press left wheel to race again!',
+      241,
+      289,
+    );
 
     h.flip();
     Pip.lastFlip = getTime();

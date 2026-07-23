@@ -1,0 +1,30 @@
+2.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/63
+- Title screen image added
+- Title screen boot up and level selection sfx linked to flap.wav
+- 4 new maps to play, rearranged all by wall count again
+- Brighter shape defining each roach within each circular hitbox
+- Winner end card per roach added
+
+2.0.0-2.0.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/56
+- Added roach.json via Cody's contribution
+- Added shape indicator underneath roach image for all 5 roaches
+- Broke apart gamestates into seperate json files via Cody's contribution
+- Various other game physics updates and cleaning via Cody's contributions
+- Added 6 new maps and rearranged map order by complexity/wall count
+- Added level selector on title.js. 
+
+1.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/46
+- Split the app into scenes reducing memory usage.
+- Release the map data from memory as soon as the selected track's walls are extracted, so only the active track is kept during a race.
+- Add a roach sprite image (assets/ROACH.JSON) rotated so the head faces the direction of travel.
+- Speeds are now named constants at the top of RACE.JS for easy tuning.
+- Roach letter labels show beside the roaches during the countdown, on the side of the start lineup that faces the track center. 
+- While the roaches are traveling the labels are hidden. Every few seconds it displays again.
+- ROACH letters display again at the finish.
+
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/43
+- Initial release

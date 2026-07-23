@@ -12,7 +12,8 @@
 //  map.
 // =============================================================================
 
-(function(app) {
+(function (app) {
+  const VER = '2.1.0';
   let selected = 0; // 0 = Random Map, 1-20 = Map 1-20
 
   /**
@@ -58,20 +59,20 @@
     Pip.lastFlip = getTime();
   }
 
-Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
-let file = E.openFile('HOLO/RADROACH_RACES/TITLEIMG.BIN', 'r');
-let target = new Uint8Array(h.buffer);
-let offset = target.length;
-let chunk = file.read(256);
+  Pip.audioStart('HOLO/RADROACH_RACES/FLAP.WAV');
+  let file = E.openFile('HOLO/RADROACH_RACES/TITLEIMG.BIN', 'r');
+  let target = new Uint8Array(h.buffer);
+  let offset = target.length;
+  let chunk = file.read(256);
 
-while (chunk) {
-  offset -= chunk.length;
-  target.set(chunk, offset);
-  chunk = file.read(256);
-}
+  while (chunk) {
+    offset -= chunk.length;
+    target.set(chunk, offset);
+    chunk = file.read(256);
+  }
 
-file.close();
-h.flip();
+  file.close();
+  h.flip();
 
   h.setFont('Monofonto14')
     .setFontAlign(-1, 0)
@@ -82,7 +83,7 @@ h.flip();
   h.setFont('Monofonto14')
     .setFontAlign(0, -1)
     .setColor(2)
-    .drawString('v2.2.1', 444, 20);
+    .drawString('v' + VER, 444, 20);
 
   drawSelector();
 
@@ -98,7 +99,7 @@ h.flip();
   Pip.onExclusive('knob2', onKnob);
 
   return {
-    remove: function() {
+    remove: function () {
       Pip.removeListener('knob1', onKnob);
       Pip.removeListener('knob2', onKnob);
     },

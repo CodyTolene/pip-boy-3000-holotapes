@@ -609,7 +609,7 @@
     "id": "radroachraces",
     "name": "Radroach Races",
     "author": "@Theeohn @CodyTolene",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
     "icon": "RadroachRaces/previews/RACES.png",
     "previews": [
@@ -622,39 +622,63 @@
     "storage": [
       {
         "name": "HOLO/RADROACH_RACES/APP.JS",
-        "url": "RadroachRaces/app.min.js"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JS",
-        "url": "RadroachRaces/assets/TITLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/RACE.JS",
-        "url": "RadroachRaces/assets/RACE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/MAPS.JS",
-        "url": "RadroachRaces/assets/MAPS.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
-        "url": "RadroachRaces/assets/TITLE.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
-        "url": "RadroachRaces/assets/ROACH.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
-        "url": "RadroachRaces/assets/WINNER.WAV"
+        "url": "RadroachRaces/APP.MIN.JS"
       },
       {
         "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
         "url": "RadroachRaces/assets/BUGLE.WAV"
       },
       {
+        "name": "HOLO/RADROACH_RACES/CIRCLEW.BIN",
+        "url": "RadroachRaces/assets/CIRCLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DELTAW.BIN",
+        "url": "RadroachRaces/assets/DELTAW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DIAMONDW.BIN",
+        "url": "RadroachRaces/assets/DIAMONDW.BIN"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/FLAP.WAV",
         "url": "RadroachRaces/assets/FLAP.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/RACE.JS",
+        "url": "RadroachRaces/assets/RACE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
+        "url": "RadroachRaces/assets/ROACH.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/SQUAREW.BIN",
+        "url": "RadroachRaces/assets/SQUAREW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JS",
+        "url": "RadroachRaces/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
+        "url": "RadroachRaces/assets/TITLE.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
+        "url": "RadroachRaces/assets/TITLEIMG.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TRIANGLEW.BIN",
+        "url": "RadroachRaces/assets/TRIANGLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
+        "url": "RadroachRaces/assets/WINNER.WAV"
       }
     ],
     "storageOptional": []
