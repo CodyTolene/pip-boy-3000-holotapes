@@ -13,7 +13,5 @@
     { "name": "HOLO/LEDCOLOR/LED.JSON", "url": "LED.JSON" },
     { "name": "HOLO/LEDCOLOR/leds.IMG", "url": "leds.IMG" }
   ],
-  "storageOptional": [
-    { "name": "USER/LEDCOLOR.JS", "url": "LEDCOLOR.JS" }
-  ]
+  "storageOptional": [{ "name": "USER/LEDCOLOR.JS", "url": "LEDCOLOR.JS" }]
 }
