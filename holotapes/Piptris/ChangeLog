@@ -1,3 +1,15 @@
+4.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/
+- Add scene manager to reduce memory use.
+- Add new artwork for the intro, menu, gameplay, and game over screens.
+- Add a main menus: START GAME, SETTINGS, INSTRUCTIONS, and EXIT GAME.
+- Add settings for CRT effect, volume, sound FX, and music source, saved between sessions.
+- Shuffle-play music from the PIPTRIS/ folder or any MUSIC/ playlist folder.
+- Add an instructions scene covering gameplay, nukes, and controls.
+- Add random explosion sounds when a nuke detonates (while music is off).
+- Play system sounds when pieces rotate, move, and land.
+- Redesign the game over screen.
+
 4.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/1
 - Migrate Piptris from the old Pip-Boy 3000 Mk V to the new Pip-Boy 3000.
