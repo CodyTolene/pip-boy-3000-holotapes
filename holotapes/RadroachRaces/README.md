@@ -15,6 +15,8 @@
 
 - [Cody Tolene](https://github.com/CodyTolene)
 
+- Art by @The Nuka Lounge!
+
 ### Description
 
 A version of the internet famous Horse Race Tests game now for your Pip-boy.
