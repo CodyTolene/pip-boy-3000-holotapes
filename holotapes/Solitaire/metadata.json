@@ -1,0 +1,13 @@
+{
+  "id": "SOLITAIRE",
+  "name": "Solitaire",
+  "author": "@Theeohn",
+  "version": "1.0.0",
+  "description": "One of the most famous single-player card games, now playable on the Pip-Boy!",
+  "icon": "solitaire.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/SOLITAIRE/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}
