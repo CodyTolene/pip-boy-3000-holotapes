@@ -1,0 +1,10 @@
+1.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/65
+- Various cursor highlight changes, cursor size and movement input increased from 1px to 2px
+- Added shade indication flavortext to the footer
+- Added autosave text and autosaving text with different colors in the header which shows every 45 seconds, then changes back to "autosave" text
+- Every 45 seconds a .img and .json file are written to holo/sukechi/ and are called upong rebooting up the holotape to allow the user to continue drawing from where they left off from last
+
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/51
+- Initial release
