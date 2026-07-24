@@ -1,0 +1,13 @@
+{
+  "id": "magic8ball",
+  "name": "Magic 8 Ball",
+  "author": "@Theeohn @Alright Joe",
+  "version": "1.1.1",
+  "description": "The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or shake your pipboy to get a new response!",
+  "icon": "assets/8ball.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/MAGIC_8_BALL/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}
