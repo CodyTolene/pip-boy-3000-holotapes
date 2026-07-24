@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Magic 8 Ball
+//  Name: Magic 8 Ball+
 //  Author: Theeohn Megistus
 //  License: MIT
 //  Repository: https://github.com/Theeohn/Magic-8-Ball-3000a-
@@ -9,6 +9,7 @@
   const C = {
     ANSWERS: [
       'Yes',
+      'YES',
       'It is certain',
       'It is decidedly so',
       'Without a doubt',
@@ -18,16 +19,41 @@
       'Most likely',
       'Outlook good',
       'Signs point to yes',
+      'For sure',
+      'Absolutely',
+      '100% yes',
       'Reply hazy, try again',
       'Ask again later',
       'Better not tell you now',
       'Cannot predict now',
+      'Maybe',
+      'Possibly',
       'Concentrate and ask again',
       "Don't count on it",
+      'No',
+      'NO',
+      "Don't",
+      'Doutful',
+      'You should reconsider',
       'Very doubtful',
       'My reply is no',
       'My sources say no',
       'Outlook not so good',
+      'Absolutely not',
+    ],
+
+    SECRETS: [
+      'You sure ask a lot of questions',
+      "Well, it's possible",
+      'Be more realistic',
+      'Come again, this time in my ear?',
+      'Get good',
+      'Maybe?',
+      'Tooootally',
+      'Very improbable',
+      '404: Answer not found',
+      'Well yes, but actually no',
+      'Well no, but actually yes',
     ],
 
     GAPS: [60, 70, 90, 120, 160, 210, 270],
@@ -49,6 +75,7 @@
   let accelTimer;
   let idx = Math.randInt(C.ANSWERS.length);
   let cache = [];
+  let shakeCount = 0;
 
   let haveAccelSample = false;
   let lastX = 0;
@@ -61,7 +88,10 @@
   function getLines(i) {
     if (cache[i]) return cache[i];
 
-    cache[i] = h.setFontMonofonto28().wrapString(C.ANSWERS[i], 154);
+    const text =
+      i < C.ANSWERS.length ? C.ANSWERS[i] : C.SECRETS[i - C.ANSWERS.length];
+
+    cache[i] = h.setFontMonofonto28().wrapString(text, 154);
     return cache[i];
   }
 
@@ -90,7 +120,7 @@
 
     h.setColor(3).setFontMonofonto23().setFontAlign(-1, -1);
     h.drawString('Magic', 20, 18);
-    h.drawString('8 Ball', 20, 46);
+    h.drawString('8 Ball+', 20, 46);
 
     h.setColor(2).setFontMonofonto14().setFontAlign(-1, -1);
     h.drawString('by Theeohn', 26, 72);
@@ -105,12 +135,18 @@
 
   function finish() {
     shaking = 0;
+    shakeCount++;
     ignoreMotionUntil = getTime() * 1000 + C.SHAKE_COOLDOWN_MS;
     haveAccelSample = false;
     shakeHits = 0;
     hitWindowStarted = 0;
 
-    idx = Math.randInt(C.ANSWERS.length);
+    if (shakeCount % 12 === 0) {
+      idx = C.ANSWERS.length + Math.randInt(C.SECRETS.length);
+    } else {
+      idx = Math.randInt(C.ANSWERS.length);
+    }
+
     draw(0, 0, idx);
   }
 
@@ -128,6 +164,12 @@
     }
   }
 
+  // Starts or restarts the shake animation. Every new input event -
+  // a knob press/rotation or a detected physical shake - restarts the
+  // animation from the beginning, so continuous shaking (just like
+  // continuous wheel turning) keeps the ball "shaking" for as long as
+  // the input keeps coming. Once the input stops, whichever animation
+  // is currently in flight simply runs out on its own and reveals an answer.
   function shake() {
     if (timer) {
       clearTimeout(timer);
@@ -214,7 +256,7 @@
   draw(0, 0, idx);
 
   return {
-    id: 'magic8ball',
+    id: 'magic8ball+',
     notDefault: true,
     fullscreen: true,
 

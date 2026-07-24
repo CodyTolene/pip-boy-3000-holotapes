@@ -8,6 +8,8 @@
   "previews": [],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/MAGIC_8_BALL/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    { "name": "HOLO/MAGIC_8_BALL/APP.JS", "url": "assets/APP.MIN.JS" }
+  ],
   "storageOptional": []
 }

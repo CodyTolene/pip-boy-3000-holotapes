@@ -17,18 +17,19 @@
 
 ###Description ###
 
-The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or shake your pipboy to get a new response!
+The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or
+shake your pipboy to get a new response!
 
-### Controls ###
+### Controls
 
-| Input                | Action                                                                |
-| -------------------- | --------------------------------------------------------------------- |
-| Left wheel (rotate)  | Shuffles the ball for a new response                                  |
-| Left wheel (press)   |                                                                       |
-| Right wheel (rotate) |                                                                       |
-| Shake device         |                                                                       |
+| Input                | Action                               |
+| -------------------- | ------------------------------------ |
+| Left wheel (rotate)  | Shuffles the ball for a new response |
+| Left wheel (press)   |                                      |
+| Right wheel (rotate) |                                      |
+| Shake device         |                                      |
 
-### Credits ###
+### Credits
 
 - Claude threw most of this together, I'm no programmer but I edited a lot by
   hand.
