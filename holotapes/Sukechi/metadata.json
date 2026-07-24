@@ -3,7 +3,7 @@
   "name": "Sukechi",
   "author": "@Theeohn",
   "version": "1.1.0",
-  "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser! Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.",
+  "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, autosave, and an eraser!",
   "icon": "sukechi.png",
   "previews": ["previews/game.bmp"],
   "previousId": "ssukechi",
