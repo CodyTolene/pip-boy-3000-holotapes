@@ -1,666 +1,223 @@
-(function () {
-  'use strict';
+(function (params) {
+  "use strict";
 
-  var ROOT = 'HOLO/LEDCOLOR';
-  var STATE_FILE = ROOT + '/LED.JSON';
-  var W = 480;
-  var H = 320;
-  var removed = false;
-  var screen = 'main';
-  var selected = 0;
-  var testTimer = null;
-  var testTimeout = null;
+  var fs = require("fs");
+  var FILE = "HOLO/HAMCO_LIGHT_CONTROL/LED.JSON";
+  var W = h.getWidth ? h.getWidth() : 480;
+  var H = h.getHeight ? h.getHeight() : 320;
+  var dead = false;
+  var index = 0;
 
-  var COLORS = [
-    { name: 'DEFAULT', rgb: [1, 0.5, 0], note: 'PIP-OS CONTROL' },
-    { name: 'RED', rgb: [1, 0, 0], note: 'SOLID RED' },
-    { name: 'GREEN', rgb: [0, 1, 0], note: 'SOLID GREEN' },
-    { name: 'BLUE', rgb: [0, 0, 1], note: 'SOLID BLUE' },
-    { name: 'CYAN', rgb: [0, 1, 1], note: 'GREEN + BLUE' },
-    { name: 'PURPLE', rgb: [0.65, 0, 1], note: 'RED + BLUE' },
-    { name: 'AMBER', rgb: [1, 0.34, 0], note: 'WARM AMBER' },
-    { name: 'WHITE', rgb: [1, 1, 1], note: 'ALL CHANNELS' },
-    { name: 'OFF', rgb: [0, 0, 0], note: 'RADIATION LED OFF' },
+  var NAMES = ["DEFAULT", "RED", "GREEN", "BLUE", "CYAN", "PURPLE", "AMBER", "WHITE", "OFF", "DISCO", "SLOW FADE", "PULSE", "WARNING FLASH", "RANDOM SPARK", "POLICE", "CANDLE FLICKER", "HEARTBEAT", "STROBE", "SCANNER", "TOXIC FLICKER"];
+  var RGB = [
+    [1, 0.5, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 1, 1],
+    [0.65, 0, 1], [1, 0.34, 0], [1, 1, 1], [0, 0, 0]
   ];
 
-  var DOWN_NAMES = ['DEFAULT / CHARGE', 'FORCED ON', 'FORCED OFF'];
-
-  function pinSame(a, b) {
+  function readState() {
     try {
-      return a && b && a.toString() === b.toString();
-    } catch (e) {
-      return a === b;
-    }
+      var x = JSON.parse(fs.readFileSync(FILE));
+      return [
+        Math.max(0, Math.min(19, x.color | 0)),
+        Math.max(0.25, Math.min(1, Number(x.level) || 1)),
+        Math.max(0, Math.min(2, x.down | 0))
+      ];
+    } catch (e) { return [0, 1, 0]; }
   }
 
-  function copySpec(s) {
-    var o = {};
-    var k;
-    for (k in s) o[k] = s[k];
-    return o;
-  }
-
-  function loadState() {
+  function saveState() {
     try {
-      var d = JSON.parse(fs.readFileSync(STATE_FILE));
-      return {
-        color: Math.max(0, Math.min(COLORS.length - 1, d.color | 0)),
-        level: Math.max(0.1, Math.min(1, Number(d.level) || 1)),
-        down: Math.max(0, Math.min(2, d.down | 0)),
-      };
-    } catch (e) {
-      return { color: 0, level: 1, down: 0 };
-    }
-  }
-
-  function saveState(s) {
-    try {
-      fs.writeFileSync(
-        STATE_FILE,
-        JSON.stringify({
-          color: s.color,
-          level: s.level,
-          down: s.down,
-        }),
-      );
+      var s = global.HAM_LED_STATE;
+      fs.writeFileSync(FILE, JSON.stringify({ color: s[0], level: s[1], down: s[2] }));
     } catch (e) {}
   }
 
-  function makeService() {
-    var state = loadState();
-    var originalFadeTo = Pip.fadeTo;
-
-    var svc = {
-      version: 1,
-      state: state,
-      originalFadeTo: originalFadeTo,
-      active: true,
-
-      brightness: function () {
-        var b = 1;
-        try {
-          if (Pip.settings && typeof Pip.settings.brightness === 'number')
-            b = Pip.settings.brightness;
-          else if (typeof Pip.brightness === 'number') b = Pip.brightness;
-        } catch (e) {}
-        if (b < 0) b = 0;
-        if (b > 1) b = 1;
-        return b;
-      },
-
-      transform: function (input) {
-        var specs = input instanceof Array ? input : [input];
-        var out = [];
-        var rad = [];
-        var radTouched = false;
-        var downTouched = false;
-        var maxTarget = 0;
-        var i, s, t;
-
-        for (i = 0; i < specs.length; i++) {
-          s = copySpec(specs[i]);
-          if (
-            pinSame(s.pin, LED_RED) ||
-            pinSame(s.pin, LED_GREEN) ||
-            pinSame(s.pin, LED_BLUE)
-          ) {
-            radTouched = true;
-            t = Number(s.target);
-            if (!isNaN(t) && t > maxTarget) maxTarget = t;
-          } else if (pinSame(s.pin, LED_DOWNFIRE)) {
-            downTouched = true;
-            if (this.state.down === 0) out.push(s);
-          } else {
-            out.push(s);
-          }
-        }
-
-        if (radTouched) {
-          if (this.state.color === 0) {
-            for (i = 0; i < specs.length; i++) {
-              s = copySpec(specs[i]);
-              if (
-                pinSame(s.pin, LED_RED) ||
-                pinSame(s.pin, LED_GREEN) ||
-                pinSame(s.pin, LED_BLUE)
-              )
-                out.push(s);
-            }
-          } else {
-            rad = COLORS[this.state.color].rgb;
-            t = maxTarget * this.state.level;
-            out.push({ pin: LED_RED, target: t * rad[0], stepFactor: 1.1 });
-            out.push({ pin: LED_GREEN, target: t * rad[1], stepFactor: 1.1 });
-            out.push({ pin: LED_BLUE, target: t * rad[2], stepFactor: 1.1 });
-          }
-        }
-
-        if (downTouched && this.state.down !== 0) {
-          out.push({
-            pin: LED_DOWNFIRE,
-            target: this.state.down === 1 ? this.brightness() : 0,
-            stepFactor: 1.1,
-          });
-        }
-
-        return input instanceof Array ? out : out.length === 1 ? out[0] : out;
-      },
-
-      applyNow: function () {
-        var b = this.brightness() * this.state.level;
-        var c = COLORS[this.state.color].rgb;
-        if (this.state.color === 0) {
-          try {
-            Pip.setBrightness(this.brightness());
-          } catch (e0) {}
-        } else {
-          try {
-            this.originalFadeTo([
-              { pin: LED_RED, target: b * c[0], stepFactor: 1.1 },
-              { pin: LED_GREEN, target: b * c[1], stepFactor: 1.1 },
-              { pin: LED_BLUE, target: b * c[2], stepFactor: 1.1 },
-            ]);
-          } catch (e1) {}
-        }
-        if (this.state.down === 1) {
-          try {
-            this.originalFadeTo({
-              pin: LED_DOWNFIRE,
-              target: this.brightness(),
-              stepFactor: 1.1,
-            });
-          } catch (e2) {}
-        } else if (this.state.down === 2) {
-          try {
-            this.originalFadeTo({
-              pin: LED_DOWNFIRE,
-              target: 0,
-              stepFactor: 1.1,
-            });
-          } catch (e3) {}
-        } else {
-          try {
-            if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
-          } catch (e4) {}
-        }
-      },
-
-      save: function () {
-        saveState(this.state);
-      },
-
-      resetAndUninstall: function () {
-        this.state.color = 0;
-        this.state.level = 1;
-        this.state.down = 0;
-        this.save();
-        if (Pip.fadeTo === this.patchedFadeTo) Pip.fadeTo = this.originalFadeTo;
-        this.active = false;
-        try {
-          Pip.setBrightness(this.brightness());
-        } catch (e0) {}
-        try {
-          if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
-        } catch (e1) {}
-        try {
-          delete global.HAM_LED_SERVICE;
-        } catch (e2) {
-          global.HAM_LED_SERVICE = undefined;
-        }
-      },
-    };
-
-    svc.patchedFadeTo = function (specs) {
-      if (!svc.active || (svc.state.color === 0 && svc.state.down === 0))
-        return svc.originalFadeTo(specs);
-      return svc.originalFadeTo(svc.transform(specs));
-    };
-
-    Pip.fadeTo = svc.patchedFadeTo;
-    global.HAM_LED_SERVICE = svc;
-    svc.applyNow();
-    return svc;
-  }
-
-  var service;
-  if (
-    global.HAM_LED_SERVICE &&
-    global.HAM_LED_SERVICE.version === 1 &&
-    global.HAM_LED_SERVICE.active
-  ) {
-    service = global.HAM_LED_SERVICE;
-  } else {
-    service = makeService();
-  }
-
-  function sound(name) {
+  function brightness() {
+    var b = 1;
     try {
-      Pip.playSound(name);
-    } catch (e) {
-      try {
-        Pip.audioStartVar(Pip.audioBuiltin(name));
-      } catch (e2) {}
+      if (Pip.settings && typeof Pip.settings.brightness === "number") b = Pip.settings.brightness;
+      else if (typeof Pip.brightness === "number") b = Pip.brightness;
+    } catch (e) {}
+    return Math.max(0, Math.min(1, b));
+  }
+
+  function installPatch() {
+    if (global.HAM_LED_PATCHED && global.HAM_LED_OLD_FADE) return;
+    global.HAM_LED_OLD_FADE = Pip.fadeTo;
+    global.HAM_LED_PATCHED = 1;
+
+    var body = [
+      "var G=global,S=G.HAM_LED_STATE,O=G.HAM_LED_OLD_FADE;",
+      "if(!S||!O||(S[0]===0&&S[2]===0))return O(specs);",
+      "var A=specs instanceof Array?specs:[specs],R=[],T=0,D=0,M=0,i,x,p;",
+      "for(i=0;i<A.length;i++){x=A[i];p=x.pin;",
+      "if(p===LED_RED||p===LED_GREEN||p===LED_BLUE){T=1;if(+x.target>M)M=+x.target;}",
+      "else if(p===LED_DOWNFIRE){D=1;if(S[2]===0)R.push(x);}",
+      "else R.push(x);}",
+      "if(T){if(S[0]===0){for(i=0;i<A.length;i++){x=A[i];p=x.pin;if(p===LED_RED||p===LED_GREEN||p===LED_BLUE)R.push(x);}}",
+      "else{var C=S[0]>=9?(G.HAM_LED_EFFECT_RGB||[1,0,0]):[[1,0.5,0],[1,0,0],[0,1,0],[0,0,1],[0,1,1],[.65,0,1],[1,.34,0],[1,1,1],[0,0,0]][S[0]],V=M*S[1];",
+      "R.push({pin:LED_RED,target:V*C[0],stepFactor:1.1},{pin:LED_GREEN,target:V*C[1],stepFactor:1.1},{pin:LED_BLUE,target:V*C[2],stepFactor:1.1});}}",
+      "if(D&&S[2])R.push({pin:LED_DOWNFIRE,target:S[2]===1?1:0,stepFactor:1.1});",
+      "return O(specs instanceof Array?R:(R.length===1?R[0]:R));"
+    ].join("");
+
+    try { Pip.fadeTo = new Function("specs", body); }
+    catch (e) {
+      Pip.fadeTo = function (specs) { return global.HAM_LED_OLD_FADE(specs); };
+      global.HAM_LED_PATCHED = 0;
     }
   }
 
-  function font(size) {
-    try {
-      if (size >= 23) h.setFontMonofonto23();
-      else if (size >= 18) h.setFontMonofonto18();
-      else if (size >= 16) h.setFontMonofonto16();
-      else h.setFont('6x8', 2);
-    } catch (e) {
-      h.setFont('6x8', 2);
+  function stopEffect() {
+    if (global.HAM_LED_EFFECT_TIMER) {
+      try { clearInterval(global.HAM_LED_EFFECT_TIMER); } catch (e0) {}
+      try { delete global.HAM_LED_EFFECT_TIMER; } catch (e1) { global.HAM_LED_EFFECT_TIMER = undefined; }
     }
+    try {
+      delete global.HAM_LED_EFFECT_RGB;
+      delete global.HAM_LED_EFFECT_STEP;
+      delete global.HAM_LED_EFFECT_PHASE;
+    } catch (e2) {}
+  }
+
+  function startEffect(mode) {
+    stopEffect();
+    global.HAM_LED_EFFECT_STEP = 0;
+    global.HAM_LED_EFFECT_PHASE = 0;
+    global.HAM_LED_EFFECT_RGB = [1, 0, 0];
+
+    var delay = mode === 10 ? 120 :
+      (mode === 11 ? 80 :
+      (mode === 12 ? 420 :
+      (mode === 13 ? 180 :
+      (mode === 14 ? 260 :
+      (mode === 15 ? 110 :
+      (mode === 16 ? 150 :
+      (mode === 17 ? 70 :
+      (mode === 18 ? 90 :
+      (mode === 19 ? 140 : 280)))))))));
+    var body = [
+      "var G=global,S=G.HAM_LED_STATE,M=", String(mode), ";",
+      "if(!S||S[0]!==M){if(G.HAM_LED_EFFECT_TIMER){clearInterval(G.HAM_LED_EFFECT_TIMER);G.HAM_LED_EFFECT_TIMER=undefined;}return;}",
+      "var i=G.HAM_LED_EFFECT_STEP||0,p=G.HAM_LED_EFFECT_PHASE||0,C=[1,0,0],v=S[1],q;",
+      "if(M===9){var A=[[1,0,0],[1,.35,0],[0,1,0],[0,1,1],[0,0,1],[.65,0,1],[1,0,.35]];C=A[i%A.length];i++;}",
+      "else if(M===10){p=(p+.035)%6;var z=p|0,f=p-z;var A=[[1,f,0],[1-f,1,0],[0,1,f],[0,1-f,1],[f,0,1],[1,0,1-f]];C=A[z];}",
+      "else if(M===11){p=(p+.12)%(Math.PI*2);q=.12+.88*((Math.sin(p)+1)/2);C=[0,q,1];}",
+      "else if(M===12){q=(i%2)?0:1;C=[q,0,0];i++;}",
+      "else if(M===13){q=Math.random();C=q<.33?[1,0,0]:(q<.66?[0,1,0]:[0,0,1]);v*=.35+Math.random()*.65;i++;}",
+      "else if(M===14){C=(i%2)?[0,0,1]:[1,0,0];i++;}",
+      "else if(M===15){q=.45+Math.random()*.55;C=[1,q*.45,0];v*=q;i++;}",
+      "else if(M===16){var H=[1,.15,0,.75,.1,0,0,0];q=H[i%H.length];C=[1,0,0];v*=q;i++;}",
+      "else if(M===17){q=(i%2)?0:1;C=[1,1,1];v*=q;i++;}",
+      "else if(M===18){p=(p+.18)%(Math.PI*2);q=(Math.sin(p)+1)/2;C=[0,q,1-q*.65];v*=.2+.8*q;}",
+      "else{q=.2+Math.random()*.8;C=[.15,1,.05];v*=q;i++;}",
+      "G.HAM_LED_EFFECT_STEP=i;G.HAM_LED_EFFECT_PHASE=p;G.HAM_LED_EFFECT_RGB=C;",
+      "var r=Math.max(0,Math.min(1,v*C[0])),g=Math.max(0,Math.min(1,v*C[1])),b=Math.max(0,Math.min(1,v*C[2]));",
+      "try{analogWrite(LED_RED,r);analogWrite(LED_GREEN,g);analogWrite(LED_BLUE,b);}",
+      "catch(e){try{LED_RED.write(r>.01);LED_GREEN.write(g>.01);LED_BLUE.write(b>.01);}catch(e2){}}"
+    ].join("");
+    try { global.HAM_LED_EFFECT_TIMER = setInterval(new Function(body), delay); } catch (e) {}
+  }
+
+  function applyNow() {
+    var s = global.HAM_LED_STATE, c = s[0] >= 9 ? (global.HAM_LED_EFFECT_RGB || [1, 0, 0]) : RGB[s[0]], b = brightness() * s[1], f = global.HAM_LED_OLD_FADE || Pip.fadeTo;
+    if (s[0] >= 9) startEffect(s[0]); else stopEffect();
+    try {
+      if (s[0] === 0) Pip.setBrightness(brightness());
+      else f([
+        { pin: LED_RED, target: b * c[0], stepFactor: 1.1 },
+        { pin: LED_GREEN, target: b * c[1], stepFactor: 1.1 },
+        { pin: LED_BLUE, target: b * c[2], stepFactor: 1.1 }
+      ]);
+    } catch (e0) {}
+    try {
+      if (s[2] === 0 && Pip.checkChargeStatus) Pip.checkChargeStatus(true);
+      else f({ pin: LED_DOWNFIRE, target: s[2] === 1 ? brightness() : 0, stepFactor: 1.1 });
+    } catch (e1) {}
+  }
+
+  function resetDefault() {
+    stopEffect();
+    global.HAM_LED_STATE = [0, 1, 0];
+    saveState();
+    try { if (global.HAM_LED_OLD_FADE) Pip.fadeTo = global.HAM_LED_OLD_FADE; } catch (e0) {}
+    try { delete global.HAM_LED_OLD_FADE; delete global.HAM_LED_PATCHED; } catch (e1) {}
+    try { Pip.setBrightness(brightness()); } catch (e2) {}
+    try { if (Pip.checkChargeStatus) Pip.checkChargeStatus(true); } catch (e3) {}
+  }
+
+  global.HAM_LED_STATE = readState();
+  installPatch();
+  applyNow();
+
+  var ITEMS = NAMES.concat(["BRIGHTNESS", "DOWNLIGHT", "RESET DEFAULT + EXIT", "EXIT / KEEP COLOR"]);
+
+  function font(n) {
+    try { if (n > 18) h.setFontMonofonto23(); else h.setFontMonofonto16(); }
+    catch (e) { h.setFont("6x8", 2); }
     return h;
   }
 
-  function clearScreen() {
+  function draw() {
+    var s = global.HAM_LED_STATE, start = Math.max(0, Math.min(ITEMS.length - 8, index - 3));
+    var i, n, y, label;
     h.clear(1).setColor(3).setBgColor(0);
-  }
-
-  function drawHeader(title, sub) {
-    clearScreen();
-    font(23)
-      .setFontAlign(0, -1)
-      .drawString(title, W / 2, 10);
-    h.drawLine(20, 40, W - 20, 40);
-    font(16)
-      .setFontAlign(0, -1)
-      .drawString(sub, W / 2, 47);
-  }
-
-  function drawFooter(text) {
-    h.drawLine(12, H - 31, W - 12, H - 31);
-    font(16)
-      .setFontAlign(0, -1)
-      .drawString(text, W / 2, H - 24);
-  }
-
-  function mainItems() {
-    var a = [];
-    var i;
-    for (i = 0; i < COLORS.length; i++) a.push(COLORS[i].name);
-    a.push('BRIGHTNESS');
-    a.push('DOWNLIGHT');
-    a.push('TEST OTHER LEDS');
-    a.push('RESET DEFAULT + EXIT');
-    a.push('EXIT / KEEP COLOR');
-    return a;
-  }
-
-  function drawMain() {
-    var items = mainItems();
-    var rows = 8;
-    var start = selected - 3;
-    var i, idx, y, label, active;
-    if (start < 0) start = 0;
-    if (start > items.length - rows) start = Math.max(0, items.length - rows);
-
-    drawHeader('HAMCo LED CONTROL', 'RADIATION LIGHT COLOR');
-    for (i = 0; i < rows && start + i < items.length; i++) {
-      idx = start + i;
-      y = 72 + i * 25;
-      active = idx === selected;
-      if (active)
-        h.setColor(3)
-          .fillRect(20, y - 2, W - 20, y + 20)
-          .setColor(0);
-      else h.setColor(3);
-      label = items[idx];
-      font(18).setFontAlign(-1, -1).drawString(label, 34, y);
-
-      if (idx < COLORS.length && idx === service.state.color) {
-        font(16)
-          .setFontAlign(1, -1)
-          .drawString('ACTIVE', W - 32, y + 1);
-      } else if (idx === COLORS.length) {
-        font(16)
-          .setFontAlign(1, -1)
-          .drawString(
-            Math.round(service.state.level * 100) + '%',
-            W - 32,
-            y + 1,
-          );
-      } else if (idx === COLORS.length + 1) {
-        font(16)
-          .setFontAlign(1, -1)
-          .drawString(DOWN_NAMES[service.state.down], W - 32, y + 1);
-      }
+    font(23).setFontAlign(0, -1).drawString("HAMCo LIGHT CONTROL", W / 2, 10);
+    h.drawLine(16, 40, W - 16, 40);
+    for (i = 0; i < 8 && start + i < ITEMS.length; i++) {
+      n = start + i; y = 57 + i * 27; label = ITEMS[n];
+      if (n === index) h.fillRect(18, y - 2, W - 18, y + 21).setColor(0);
+      font(16).setFontAlign(-1, -1).drawString(label, 30, y);
+      if (n < NAMES.length && n === s[0]) h.setFontAlign(1, -1).drawString("ACTIVE", W - 28, y);
+      else if (n === NAMES.length) h.setFontAlign(1, -1).drawString(Math.round(s[1] * 100) + "%", W - 28, y);
+      else if (n === NAMES.length + 1) h.setFontAlign(1, -1).drawString(["DEFAULT", "ON", "OFF"][s[2]], W - 28, y);
       h.setColor(3).setBgColor(0);
     }
-
-    font(16)
-      .setFontAlign(-1, -1)
-      .drawString('COLOR: ' + COLORS[service.state.color].note, 22, H - 52);
-    drawFooter('EITHER KNOB MOVE  |  LEFT PRESS SELECT');
+    h.drawLine(12, H - 30, W - 12, H - 30);
+    font(16).setFontAlign(0, -1).drawString("RIGHT MOVE  |  LEFT PRESS SELECT", W / 2, H - 23);
     h.flip();
   }
 
-  var TESTS = [
-    {
-      name: 'RADIATION RED',
-      pin: function () {
-        return LED_RED;
-      },
-    },
-    {
-      name: 'RADIATION GREEN',
-      pin: function () {
-        return LED_GREEN;
-      },
-    },
-    {
-      name: 'RADIATION BLUE',
-      pin: function () {
-        return LED_BLUE;
-      },
-    },
-    {
-      name: 'STATS BUTTON LED',
-      pin: function () {
-        return LED_STATS;
-      },
-    },
-    {
-      name: 'ITEMS BUTTON LED',
-      pin: function () {
-        return LED_ITEMS;
-      },
-    },
-    {
-      name: 'DATA BUTTON LED',
-      pin: function () {
-        return LED_DATA;
-      },
-    },
-    {
-      name: 'TORCH LED',
-      pin: function () {
-        return LED_TORCH;
-      },
-    },
-    {
-      name: 'DOWNLIGHT (FIXED COLOR)',
-      pin: function () {
-        return LED_DOWNFIRE;
-      },
-    },
-    { name: 'RUN ALL', all: true },
-    { name: '< BACK', back: true },
-  ];
+  function sound(n) { try { Pip.playSound(n); } catch (e) {} }
 
-  function drawTests() {
-    var rows = 8;
-    var start = selected - 3;
-    var i, idx, y, active;
-    if (start < 0) start = 0;
-    if (start > TESTS.length - rows) start = Math.max(0, TESTS.length - rows);
-    drawHeader('LED HARDWARE TEST', 'TEMPORARY - NORMAL STATE RESTORES');
-    for (i = 0; i < rows && start + i < TESTS.length; i++) {
-      idx = start + i;
-      y = 72 + i * 25;
-      active = idx === selected;
-      if (active)
-        h.setColor(3)
-          .fillRect(20, y - 2, W - 20, y + 20)
-          .setColor(0);
-      else h.setColor(3);
-      font(18).setFontAlign(-1, -1).drawString(TESTS[idx].name, 34, y);
-      h.setColor(3).setBgColor(0);
-    }
-    font(16)
-      .setFontAlign(-1, -1)
-      .drawString('DOWNLIGHT IS SINGLE-COLOR HARDWARE', 22, H - 52);
-    drawFooter('EITHER KNOB MOVE  |  LEFT PRESS TEST');
-    h.flip();
+  function move(d) {
+    if (dead || !d) return;
+    index = (index + (d > 0 ? 1 : -1) + ITEMS.length) % ITEMS.length;
+    sound("NEXT"); draw();
   }
 
-  function allTestPins() {
-    return [
-      LED_RED,
-      LED_GREEN,
-      LED_BLUE,
-      LED_STATS,
-      LED_ITEMS,
-      LED_DATA,
-      LED_TORCH,
-      LED_DOWNFIRE,
-    ];
+  function choose(d) {
+    if (dead || d !== 0) return;
+    var s = global.HAM_LED_STATE;
+    if (index < NAMES.length) s[0] = index;
+    else if (index === NAMES.length) { s[1] += 0.25; if (s[1] > 1) s[1] = 0.25; }
+    else if (index === NAMES.length + 1) s[2] = (s[2] + 1) % 3;
+    else if (index === NAMES.length + 2) { sound("OK"); resetDefault(); return exit(); }
+    else { sound("OK"); saveState(); applyNow(); return exit(); }
+    saveState(); applyNow(); sound("OK"); draw();
   }
 
-  function stopTests() {
-    if (testTimer) {
-      try {
-        clearInterval(testTimer);
-      } catch (e0) {}
-      testTimer = null;
-    }
-    if (testTimeout) {
-      try {
-        clearTimeout(testTimeout);
-      } catch (e1) {}
-      testTimeout = null;
-    }
-    var pins = allTestPins();
-    var i;
-    for (i = 0; i < pins.length; i++) {
-      try {
-        pins[i].write(0);
-      } catch (e2) {}
-    }
+  function cleanup() {
+    if (dead) return;
+    dead = true;
+    try { Pip.removeListener("knob1", choose); } catch (e0) {}
+    try { Pip.removeListener("knob2", move); } catch (e1) {}
+    try { h.setClipRect(0, 0, W - 1, H - 1); } catch (e2) {}
     try {
-      Pip.setBrightness(service.brightness());
-    } catch (e3) {
-      service.applyNow();
-    }
-    try {
-      Pip.setTorch(!!Pip.torchOn);
-    } catch (e4) {}
-    if (service.state.down === 0) {
-      try {
-        if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
-      } catch (e5) {}
-    } else service.applyNow();
+      if (global.HAM_LED_UI_CLEANUP === cleanup) delete global.HAM_LED_UI_CLEANUP;
+    } catch (e3) { global.HAM_LED_UI_CLEANUP = undefined; }
   }
 
-  function testOne(pin) {
-    stopTests();
-    try {
-      pin.write(1);
-    } catch (e) {}
-    testTimeout = setTimeout(function () {
-      testTimeout = null;
-      stopTests();
-      if (!removed) drawTests();
-    }, 900);
+  function exit() {
+    cleanup();
+    try { Pip.changeMenu(); } catch (e) {}
   }
 
-  function runAll() {
-    stopTests();
-    var pins = allTestPins();
-    var n = 0;
-    testTimer = setInterval(function () {
-      var i;
-      for (i = 0; i < pins.length; i++) {
-        try {
-          pins[i].write(i === n ? 1 : 0);
-        } catch (e) {}
-      }
-      n++;
-      if (n >= pins.length) {
-        clearInterval(testTimer);
-        testTimer = null;
-        testTimeout = setTimeout(function () {
-          testTimeout = null;
-          stopTests();
-          if (!removed) drawTests();
-        }, 500);
-      }
-    }, 500);
-  }
+  try { if (global.HAM_LED_UI_CLEANUP) global.HAM_LED_UI_CLEANUP(); } catch (eOld) {}
+  global.HAM_LED_UI_CLEANUP = cleanup;
+  try { Pip.onExclusive("knob1", choose); } catch (e0) { try { Pip.on("knob1", choose); } catch (e1) {} }
+  try { Pip.onExclusive("knob2", move); } catch (e2) { try { Pip.on("knob2", move); } catch (e3) {} }
+  draw();
 
-  function exitApp() {
-    if (removed) return;
-    remove();
-    try {
-      if (Pip.CURRENT) Pip.CURRENT.fullscreen = false;
-    } catch (e0) {}
-    try {
-      if (Pip.stopTimers) Pip.stopTimers();
-    } catch (e1) {}
-    try {
-      if (Pip.startTimers) Pip.startTimers();
-    } catch (e2) {}
-    try {
-      if (Pip.setWatches) Pip.setWatches();
-    } catch (e3) {}
-    try {
-      if (Pip.emit) Pip.emit('mode', 1);
-    } catch (e4) {}
-    try {
-      if (Pip.changeMenu) Pip.changeMenu();
-    } catch (e5) {}
-  }
-
-  function selectMain() {
-    var colorCount = COLORS.length;
-    if (selected < colorCount) {
-      service.state.color = selected;
-      service.save();
-      service.applyNow();
-      sound('OK');
-      drawMain();
-      return;
-    }
-    if (selected === colorCount) {
-      service.state.level += 0.25;
-      if (service.state.level > 1.01) service.state.level = 0.25;
-      service.save();
-      service.applyNow();
-      sound('OK2');
-      drawMain();
-      return;
-    }
-    if (selected === colorCount + 1) {
-      service.state.down = (service.state.down + 1) % 3;
-      service.save();
-      service.applyNow();
-      sound('OK2');
-      drawMain();
-      return;
-    }
-    if (selected === colorCount + 2) {
-      screen = 'tests';
-      selected = 0;
-      sound('OK');
-      drawTests();
-      return;
-    }
-    if (selected === colorCount + 3) {
-      sound('OK');
-      service.resetAndUninstall();
-      exitApp();
-      return;
-    }
-    if (selected === colorCount + 4) {
-      sound('OK');
-      service.save();
-      service.applyNow();
-      exitApp();
-    }
-  }
-
-  function selectTest() {
-    var t = TESTS[selected];
-    if (t.back) {
-      stopTests();
-      screen = 'main';
-      selected = 0;
-      drawMain();
-    } else if (t.all) {
-      sound('OK');
-      runAll();
-    } else {
-      sound('CLICK');
-      testOne(t.pin());
-    }
-  }
-
-  function moveSelection(dir) {
-    var len = screen === 'main' ? mainItems().length : TESTS.length;
-    selected = (selected + (dir > 0 ? 1 : -1) + len) % len;
-    sound('NEXT');
-    if (screen === 'main') drawMain();
-    else drawTests();
-  }
-
-  function onKnob2(dir) {
-    if (!dir || removed) return;
-    moveSelection(dir);
-  }
-
-  function onKnob1(dir) {
-    if (removed) return;
-    if (dir !== 0) {
-      moveSelection(dir);
-      return;
-    }
-    if (screen === 'main') selectMain();
-    else selectTest();
-  }
-
-  function remove() {
-    // Cleanup must be repeatable. Some Pip-Boy firmware builds cache the app
-    // object and reuse it on the next launch. Never leave this instance locked
-    // in a permanently removed state.
-    removed = true;
-    stopTests();
-    try {
-      Pip.removeListener('knob1', onKnob1);
-    } catch (e0) {}
-    try {
-      Pip.removeListener('knob2', onKnob2);
-    } catch (e1) {}
-    try {
-      h.setClipRect(0, 0, W - 1, H - 1);
-    } catch (e2) {}
-    service.save();
-    service.applyNow();
-    screen = 'main';
-    selected = service.state.color;
-    removed = false;
-  }
-
-  // Always restore a full drawable screen before the first frame.
-  try {
-    h.setClipRect(0, 0, W - 1, H - 1);
-  } catch (eClip) {}
-  try {
-    h.setColor(3).setBgColor(0);
-  } catch (eColor) {}
-
-  try {
-    Pip.onExclusive('knob1', onKnob1);
-  } catch (e0) {
-    try {
-      Pip.on('knob1', onKnob1);
-    } catch (e1) {}
-  }
-  try {
-    Pip.onExclusive('knob2', onKnob2);
-  } catch (e2) {
-    try {
-      Pip.on('knob2', onKnob2);
-    } catch (e3) {}
-  }
-
-  drawMain();
-
-  return {
-    id: 'ledcolor',
-    notDefault: true,
-    fullscreen: true,
-    remove: remove,
-  };
-});
+  return { id: "HAMCO_LIGHT_CONTROL", notDefault: true, fullscreen: true, remove: cleanup };
+})
