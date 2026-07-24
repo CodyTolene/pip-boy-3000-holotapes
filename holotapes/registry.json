@@ -812,7 +812,7 @@
     "storage": [
       {
         "name": "HOLO/SUKECHI/APP.JS",
-        "url": "Sukechi/APP.MIN.JS"
+        "url": "Sukechi/assets/APP.MIN.JS"
       }
     ],
     "storageOptional": []

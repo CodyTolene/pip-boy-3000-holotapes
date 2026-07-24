@@ -9,6 +9,6 @@
   "previousId": "ssukechi",
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/SUKECHI/APP.JS", "url": "APP.MIN.JS" }],
+  "storage": [{ "name": "HOLO/SUKECHI/APP.JS", "url": "assets/APP.MIN.JS" }],
   "storageOptional": []
 }
