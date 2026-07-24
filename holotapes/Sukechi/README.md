@@ -13,16 +13,17 @@
 
 ### Description
 
-Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser!    Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.
+Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an
+eraser! Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.
 
 ### Controls
 
-| Input                | Action                                                                |
-| -------------------- | --------------------------------------------------------------------- |
-|Right wheel (rotate)  | Left/right movement                                                   |
-|Left wheel (rotate)   | Up/down movement                                                      |
-|Left wheel (short press)| Change shade between setColors 0-3                                  |
-|Left wheel (long press) | Erases half the drawing, holding again clears the canvas            |
+| Input                    | Action                                                   |
+| ------------------------ | -------------------------------------------------------- |
+| Right wheel (rotate)     | Left/right movement                                      |
+| Left wheel (rotate)      | Up/down movement                                         |
+| Left wheel (short press) | Change shade between setColors 0-3                       |
+| Left wheel (long press)  | Erases half the drawing, holding again clears the canvas |
 
 ### Credits
 
