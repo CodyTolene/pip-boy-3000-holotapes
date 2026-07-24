@@ -4,7 +4,7 @@
   "author": "@phaldaros",
   "version": "1.0.0",
   "description": "A Drug Wars-style trading game set in the Mojave. You lost a shipment belonging to the Omertas and have 30 days to raise 50,000 caps before they collect your kneecaps. Buy low, sell high across six locations while dodging Officer NARC-9, one of Mr. House's police Securitrons on chem-interdiction patrol, along with other wasteland woes.",
-  "icon": "previews/chem-wars.png",
+  "icon": "chem-wars.png",
   "previews": ["previews/title.png", "previews/game.png"],
   "type": "game",
   "readme": "README.md",
