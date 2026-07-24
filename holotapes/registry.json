@@ -138,6 +138,28 @@
     "storageOptional": []
   },
   {
+    "id": "chem-wars",
+    "name": "Chem Wars",
+    "author": "@phaldaros",
+    "version": "1.0.0",
+    "description": "A Drug Wars-style trading game set in the Mojave. You lost a shipment belonging to the Omertas and have 30 days to raise 50,000 caps before they collect your kneecaps. Buy low, sell high across six locations while dodging Officer NARC-9, one of Mr. House's police Securitrons on chem-interdiction patrol, along with other wasteland woes.",
+    "icon": "ChemWars/chem-wars.png",
+    "previews": ["ChemWars/previews/title.png", "ChemWars/previews/game.png"],
+    "type": "game",
+    "readme": "ChemWars/README.md",
+    "storage": [
+      {
+        "name": "HOLO/CHEM_WARS/APP.JS",
+        "url": "ChemWars/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/CHEM_WARS/TEXT.TXT",
+        "url": "ChemWars/assets/TEXT.TXT"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "fanorona",
     "name": "Fanorona",
     "author": "@Theeohn",
