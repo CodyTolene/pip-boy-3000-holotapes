@@ -2,50 +2,57 @@
   "id": "piptris",
   "name": "Piptris",
   "author": "@CodyTolene",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
-  "icon": "previews/piptris.png",
-  "previews": ["assets/piptris.mp4", "previews/gameplay.bmp"],
+  "icon": "piptris.png",
+  "previews": [
+    "previews/intro.bmp",
+    "previews/menu.bmp",
+    "previews/instructions.bmp",
+    "previews/game.bmp"
+  ],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/PIPTRIS/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/PIPTRIS/piptris.json", "url": "assets/piptris.json" },
-    { "name": "HOLO/PIPTRIS/block.json", "url": "assets/block.json" },
-    { "name": "HOLO/PIPTRIS/nuke.json", "url": "assets/nuke.json" },
-    {
-      "name": "HOLO/PIPTRIS/radioactive.json",
-      "url": "assets/radioactive.json"
-    }
+    { "name": "HOLO/PIPTRIS/APP.JS", "url": "scripts/APP.JS" },
+    { "name": "HOLO/PIPTRIS/BLOCK.JSON", "url": "images/BLOCK.JSON" },
+    { "name": "HOLO/PIPTRIS/EXPL_01.WAV", "url": "sfx/EXPL_01.WAV" },
+    { "name": "HOLO/PIPTRIS/EXPL_02.WAV", "url": "sfx/EXPL_02.WAV" },
+    { "name": "HOLO/PIPTRIS/EXPL_03.WAV", "url": "sfx/EXPL_03.WAV" },
+    { "name": "HOLO/PIPTRIS/EXPL_04.WAV", "url": "sfx/EXPL_04.WAV" },
+    { "name": "HOLO/PIPTRIS/GAME.JS", "url": "scripts/GAME.JS" },
+    { "name": "HOLO/PIPTRIS/GAME.RAW", "url": "images/GAME.RAW" },
+    { "name": "HOLO/PIPTRIS/GAME_OVER.JS", "url": "scripts/GAME_OVER.JS" },
+    { "name": "HOLO/PIPTRIS/INST.JS", "url": "scripts/INST.JS" },
+    { "name": "HOLO/PIPTRIS/INTRO.JS", "url": "scripts/INTRO.JS" },
+    { "name": "HOLO/PIPTRIS/INTRO.RAW", "url": "images/INTRO.RAW" },
+    { "name": "HOLO/PIPTRIS/MENU.JS", "url": "scripts/MENU.JS" },
+    { "name": "HOLO/PIPTRIS/MENU.RAW", "url": "images/MENU.RAW" },
+    { "name": "HOLO/PIPTRIS/NUKE.JSON", "url": "images/NUKE.JSON" },
+    { "name": "HOLO/PIPTRIS/PRELOAD.JS", "url": "scripts/PRELOAD.JS" },
+    { "name": "HOLO/PIPTRIS/SETTINGS.JS", "url": "scripts/SETTINGS.JS" }
   ],
   "storageOptional": [
     {
-      "label": "Big Band Swing (Music)",
-      "name": "HOLO/PIPTRIS/piptris-big-band-swing.wav",
-      "previewMp3": "assets/piptris-big-band-swing.mp3",
-      "sizeKB": 826,
-      "url": "assets/piptris-big-band-swing.wav"
-    },
-    {
       "label": "Electro Swing (Music)",
-      "name": "HOLO/PIPTRIS/piptris-electro-swing.wav",
-      "previewMp3": "assets/piptris-electro-swing.mp3",
+      "name": "PIPTRIS/piptris-electro-swing.wav",
+      "previewMp3": "previews/piptris-electro-swing.mp3",
       "sizeKB": 1150,
-      "url": "assets/piptris-electro-swing.wav"
+      "url": "music/piptris-electro-swing.wav"
     },
     {
       "label": "Symphony (Music)",
-      "name": "HOLO/PIPTRIS/piptris-symphony.wav",
-      "previewMp3": "assets/piptris-symphony.mp3",
+      "name": "PIPTRIS/piptris-symphony.wav",
+      "previewMp3": "previews/piptris-symphony.mp3",
       "sizeKB": 1614,
-      "url": "assets/piptris-symphony.wav"
+      "url": "music/piptris-symphony.wav"
     },
     {
       "label": "Whimsical (Music)",
-      "name": "HOLO/PIPTRIS/piptris-whimsical.wav",
-      "previewMp3": "assets/piptris-whimsical.mp3",
+      "name": "PIPTRIS/piptris-whimsical.wav",
+      "previewMp3": "previews/piptris-whimsical.mp3",
       "sizeKB": 1635,
-      "url": "assets/piptris-whimsical.wav"
+      "url": "music/piptris-whimsical.wav"
     }
   ]
 }
