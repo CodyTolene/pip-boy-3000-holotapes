@@ -1,5 +1,13 @@
 # Chem Wars
 
+## Info
+
+**Author(s):**
+
+- [@phaldaros](https://github.com/phaldaros)
+
+## Description
+
 A 30-day trading game in the spirit of the classic _Drug Wars_, set in the
 Mojave Wasteland of Fallout: New Vegas.
 

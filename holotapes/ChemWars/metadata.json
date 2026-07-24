@@ -9,8 +9,8 @@
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/CHEM_WARS/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/CHEM_WARS/TEXT.TXT", "url": "TEXT.TXT" }
+    { "name": "HOLO/CHEM_WARS/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/CHEM_WARS/TEXT.TXT", "url": "assets/TEXT.TXT" }
   ],
   "storageOptional": []
 }

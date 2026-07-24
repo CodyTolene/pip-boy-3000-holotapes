@@ -150,11 +150,11 @@
     "storage": [
       {
         "name": "HOLO/CHEM_WARS/APP.JS",
-        "url": "ChemWars/app.min.js"
+        "url": "ChemWars/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/CHEM_WARS/TEXT.TXT",
-        "url": "ChemWars/TEXT.TXT"
+        "url": "ChemWars/assets/TEXT.TXT"
       }
     ],
     "storageOptional": []
