@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "Watch the sequence of numbered panels light up, then repeat it back.",
   "icon": "",
-  "previews": [],
+  "previews": ["previews/game01.bmp", "previews/game02.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [{ "name": "HOLO/SIGNAL_MATCH/APP.JS", "url": "APP.JS" }],

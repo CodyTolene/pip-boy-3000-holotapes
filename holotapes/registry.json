@@ -138,6 +138,28 @@
     "storageOptional": []
   },
   {
+    "id": "chem-wars",
+    "name": "Chem Wars",
+    "author": "@phaldaros",
+    "version": "1.0.0",
+    "description": "A Drug Wars-style trading game set in the Mojave. You lost a shipment belonging to the Omertas and have 30 days to raise 50,000 caps before they collect your kneecaps. Buy low, sell high across six locations while dodging Officer NARC-9, one of Mr. House's police Securitrons on chem-interdiction patrol, along with other wasteland woes.",
+    "icon": "ChemWars/chem-wars.png",
+    "previews": ["ChemWars/previews/title.png", "ChemWars/previews/game.png"],
+    "type": "game",
+    "readme": "ChemWars/README.md",
+    "storage": [
+      {
+        "name": "HOLO/CHEM_WARS/APP.JS",
+        "url": "ChemWars/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/CHEM_WARS/TEXT.TXT",
+        "url": "ChemWars/assets/TEXT.TXT"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "fanorona",
     "name": "Fanorona",
     "author": "@Theeohn",
@@ -210,6 +232,31 @@
       {
         "name": "HOLO/THEGOAT/APP.JS",
         "url": "TheGOAT/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "ledcolor",
+    "name": "HAMCo LED Control",
+    "author": "@joemto20-tech",
+    "version": "1.0.0",
+    "description": "Radiation RGB color control and safe LED hardware tester for the Pip-Boy 3000.",
+    "icon": "HAMCoLEDControl/assets/HAMCOLEDCONTROL.IMG",
+    "previews": [
+      "HAMCoLEDControl/assets/PRVW01.bmp",
+      "HAMCoLEDControl/assets/PRVW02.bmp"
+    ],
+    "type": "app",
+    "readme": "HAMCoLEDControl/README.txt",
+    "storage": [
+      {
+        "name": "HOLO/LEDCOLOR/APP.JS",
+        "url": "HAMCoLEDControl/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/LEDCOLOR/LED.JSON",
+        "url": "HAMCoLEDControl/assets/LED.JSON"
       }
     ],
     "storageOptional": []
@@ -438,62 +485,108 @@
     "id": "piptris",
     "name": "Piptris",
     "author": "@CodyTolene",
-    "version": "4.0.0",
+    "version": "4.1.0",
     "description": "Stack, rotate, and clear falling blocks in this Tetris inspired mini-game. Simple, addictive, and perfect for idle moments between scavenging runs or stimpak breaks.",
-    "icon": "Piptris/previews/piptris.png",
-    "previews": ["Piptris/assets/piptris.mp4", "Piptris/previews/gameplay.bmp"],
+    "icon": "Piptris/piptris.png",
+    "previews": [
+      "Piptris/previews/intro.bmp",
+      "Piptris/previews/menu.bmp",
+      "Piptris/previews/instructions.bmp",
+      "Piptris/previews/game.bmp"
+    ],
     "type": "game",
     "readme": "Piptris/README.md",
     "storage": [
       {
         "name": "HOLO/PIPTRIS/APP.JS",
-        "url": "Piptris/app.min.js"
+        "url": "Piptris/scripts/APP.JS"
       },
       {
-        "name": "HOLO/PIPTRIS/piptris.json",
-        "url": "Piptris/assets/piptris.json"
+        "name": "HOLO/PIPTRIS/BLOCK.JSON",
+        "url": "Piptris/images/BLOCK.JSON"
       },
       {
-        "name": "HOLO/PIPTRIS/block.json",
-        "url": "Piptris/assets/block.json"
+        "name": "HOLO/PIPTRIS/EXPL_01.WAV",
+        "url": "Piptris/sfx/EXPL_01.WAV"
       },
       {
-        "name": "HOLO/PIPTRIS/nuke.json",
-        "url": "Piptris/assets/nuke.json"
+        "name": "HOLO/PIPTRIS/EXPL_02.WAV",
+        "url": "Piptris/sfx/EXPL_02.WAV"
       },
       {
-        "name": "HOLO/PIPTRIS/radioactive.json",
-        "url": "Piptris/assets/radioactive.json"
+        "name": "HOLO/PIPTRIS/EXPL_03.WAV",
+        "url": "Piptris/sfx/EXPL_03.WAV"
+      },
+      {
+        "name": "HOLO/PIPTRIS/EXPL_04.WAV",
+        "url": "Piptris/sfx/EXPL_04.WAV"
+      },
+      {
+        "name": "HOLO/PIPTRIS/GAME.JS",
+        "url": "Piptris/scripts/GAME.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/GAME.RAW",
+        "url": "Piptris/images/GAME.RAW"
+      },
+      {
+        "name": "HOLO/PIPTRIS/GAME_OVER.JS",
+        "url": "Piptris/scripts/GAME_OVER.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/INST.JS",
+        "url": "Piptris/scripts/INST.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/INTRO.JS",
+        "url": "Piptris/scripts/INTRO.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/INTRO.RAW",
+        "url": "Piptris/images/INTRO.RAW"
+      },
+      {
+        "name": "HOLO/PIPTRIS/MENU.JS",
+        "url": "Piptris/scripts/MENU.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/MENU.RAW",
+        "url": "Piptris/images/MENU.RAW"
+      },
+      {
+        "name": "HOLO/PIPTRIS/NUKE.JSON",
+        "url": "Piptris/images/NUKE.JSON"
+      },
+      {
+        "name": "HOLO/PIPTRIS/PRELOAD.JS",
+        "url": "Piptris/scripts/PRELOAD.JS"
+      },
+      {
+        "name": "HOLO/PIPTRIS/SETTINGS.JS",
+        "url": "Piptris/scripts/SETTINGS.JS"
       }
     ],
     "storageOptional": [
       {
-        "label": "Big Band Swing (Music)",
-        "name": "HOLO/PIPTRIS/piptris-big-band-swing.wav",
-        "previewMp3": "assets/piptris-big-band-swing.mp3",
-        "sizeKB": 826,
-        "url": "Piptris/assets/piptris-big-band-swing.wav"
-      },
-      {
         "label": "Electro Swing (Music)",
-        "name": "HOLO/PIPTRIS/piptris-electro-swing.wav",
-        "previewMp3": "assets/piptris-electro-swing.mp3",
+        "name": "PIPTRIS/piptris-electro-swing.wav",
+        "previewMp3": "previews/piptris-electro-swing.mp3",
         "sizeKB": 1150,
-        "url": "Piptris/assets/piptris-electro-swing.wav"
+        "url": "Piptris/music/piptris-electro-swing.wav"
       },
       {
         "label": "Symphony (Music)",
-        "name": "HOLO/PIPTRIS/piptris-symphony.wav",
-        "previewMp3": "assets/piptris-symphony.mp3",
+        "name": "PIPTRIS/piptris-symphony.wav",
+        "previewMp3": "previews/piptris-symphony.mp3",
         "sizeKB": 1614,
-        "url": "Piptris/assets/piptris-symphony.wav"
+        "url": "Piptris/music/piptris-symphony.wav"
       },
       {
         "label": "Whimsical (Music)",
-        "name": "HOLO/PIPTRIS/piptris-whimsical.wav",
-        "previewMp3": "assets/piptris-whimsical.mp3",
+        "name": "PIPTRIS/piptris-whimsical.wav",
+        "previewMp3": "previews/piptris-whimsical.mp3",
         "sizeKB": 1635,
-        "url": "Piptris/assets/piptris-whimsical.wav"
+        "url": "Piptris/music/piptris-whimsical.wav"
       }
     ]
   },
@@ -563,7 +656,7 @@
     "id": "radroachraces",
     "name": "Radroach Races",
     "author": "@Theeohn @CodyTolene",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
     "icon": "RadroachRaces/previews/RACES.png",
     "previews": [
@@ -576,39 +669,63 @@
     "storage": [
       {
         "name": "HOLO/RADROACH_RACES/APP.JS",
-        "url": "RadroachRaces/app.min.js"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JS",
-        "url": "RadroachRaces/assets/TITLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/RACE.JS",
-        "url": "RadroachRaces/assets/RACE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/MAPS.JS",
-        "url": "RadroachRaces/assets/MAPS.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
-        "url": "RadroachRaces/assets/TITLE.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
-        "url": "RadroachRaces/assets/ROACH.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
-        "url": "RadroachRaces/assets/WINNER.WAV"
+        "url": "RadroachRaces/APP.MIN.JS"
       },
       {
         "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
         "url": "RadroachRaces/assets/BUGLE.WAV"
       },
       {
+        "name": "HOLO/RADROACH_RACES/CIRCLEW.BIN",
+        "url": "RadroachRaces/assets/CIRCLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DELTAW.BIN",
+        "url": "RadroachRaces/assets/DELTAW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DIAMONDW.BIN",
+        "url": "RadroachRaces/assets/DIAMONDW.BIN"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/FLAP.WAV",
         "url": "RadroachRaces/assets/FLAP.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/RACE.JS",
+        "url": "RadroachRaces/assets/RACE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
+        "url": "RadroachRaces/assets/ROACH.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/SQUAREW.BIN",
+        "url": "RadroachRaces/assets/SQUAREW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JS",
+        "url": "RadroachRaces/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
+        "url": "RadroachRaces/assets/TITLE.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
+        "url": "RadroachRaces/assets/TITLEIMG.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TRIANGLEW.BIN",
+        "url": "RadroachRaces/assets/TRIANGLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
+        "url": "RadroachRaces/assets/WINNER.WAV"
       }
     ],
     "storageOptional": []
@@ -805,7 +922,10 @@
     "version": "1.0.0",
     "description": "Watch the sequence of numbered panels light up, then repeat it back.",
     "icon": "",
-    "previews": [],
+    "previews": [
+      "SignalMatch/previews/game01.bmp",
+      "SignalMatch/previews/game02.bmp"
+    ],
     "type": "game",
     "readme": "SignalMatch/README.md",
     "storage": [
@@ -817,19 +937,86 @@
     "storageOptional": []
   },
   {
-    "id": "ssukechi",
-    "name": "Sukechi",
+    "id": "SOLITAIRE",
+    "name": "Solitaire",
     "author": "@Theeohn",
     "version": "1.0.0",
-    "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser!",
-    "icon": "Sukechi/previews/sukechi.png",
+    "description": "One of the most famous single-player card games, now playable on the Pip-Boy!",
+    "icon": "Solitaire/solitaire.png",
+    "previews": ["Solitaire/previews/menu.bmp", "Solitaire/previews/game.bmp"],
+    "type": "game",
+    "readme": "Solitaire/README.md",
+    "storage": [
+      {
+        "name": "HOLO/SOLITAIRE/APP.JS",
+        "url": "Solitaire/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/13.JSON",
+        "url": "Solitaire/assets/13.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/ATOMIC.JSON",
+        "url": "Solitaire/assets/ATOMIC.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/BISON.JSON",
+        "url": "Solitaire/assets/BISON.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/GOMORRAH.JSON",
+        "url": "Solitaire/assets/GOMORRAH.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/LUCKY.JSON",
+        "url": "Solitaire/assets/LUCKY.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/PEBBLES.JSON",
+        "url": "Solitaire/assets/PEBBLES.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/SIERRA.JSON",
+        "url": "Solitaire/assets/SIERRA.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/SILVER.JSON",
+        "url": "Solitaire/assets/SILVER.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/TOPS.JSON",
+        "url": "Solitaire/assets/TOPS.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/ULTRA.JSON",
+        "url": "Solitaire/assets/ULTRA.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/VAULTB.JSON",
+        "url": "Solitaire/assets/VAULTB.JSON"
+      },
+      {
+        "name": "HOLO/SOLITAIRE/WILD.JSON",
+        "url": "Solitaire/assets/WILD.JSON"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "sukechi",
+    "name": "Sukechi",
+    "author": "@Theeohn",
+    "version": "1.1.0",
+    "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, autosave, and an eraser!",
+    "icon": "Sukechi/sukechi.png",
     "previews": ["Sukechi/previews/game.bmp"],
+    "previousId": "ssukechi",
     "type": "game",
     "readme": "Sukechi/README.md",
     "storage": [
       {
         "name": "HOLO/SUKECHI/APP.JS",
-        "url": "Sukechi/app.min.js"
+        "url": "Sukechi/assets/APP.MIN.JS"
       }
     ],
     "storageOptional": []
