@@ -11,10 +11,10 @@
 - [Pip-Boy](https://www.Pip-Boy.com)
 - [Pip-Boy Apps](https://github.com/CodyTolene/pip-boy-apps)
 
-###Description ###
+### Description
 
 Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an
-eraser!
+eraser! Autosaves .img and .json to HOLO/SUKECHI/ directory every 45 seconds.
 
 ### Controls
 

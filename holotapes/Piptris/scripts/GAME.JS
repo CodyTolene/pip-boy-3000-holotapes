@@ -8,7 +8,7 @@
 (function (app) {
   // Config
   const C = {
-    debug: true,
+    debug: false,
     colors: [0, 1, 2, 3], // black, low, mid, high
     blockSize: 15,
     startSpeed: 800,

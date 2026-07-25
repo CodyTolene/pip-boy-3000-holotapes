@@ -138,6 +138,28 @@
     "storageOptional": []
   },
   {
+    "id": "chem-wars",
+    "name": "Chem Wars",
+    "author": "@phaldaros",
+    "version": "1.0.0",
+    "description": "A Drug Wars-style trading game set in the Mojave. You lost a shipment belonging to the Omertas and have 30 days to raise 50,000 caps before they collect your kneecaps. Buy low, sell high across six locations while dodging Officer NARC-9, one of Mr. House's police Securitrons on chem-interdiction patrol, along with other wasteland woes.",
+    "icon": "ChemWars/chem-wars.png",
+    "previews": ["ChemWars/previews/title.png", "ChemWars/previews/game.png"],
+    "type": "game",
+    "readme": "ChemWars/README.md",
+    "storage": [
+      {
+        "name": "HOLO/CHEM_WARS/APP.JS",
+        "url": "ChemWars/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/CHEM_WARS/TEXT.TXT",
+        "url": "ChemWars/assets/TEXT.TXT"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "fanorona",
     "name": "Fanorona",
     "author": "@Theeohn",
@@ -210,6 +232,31 @@
       {
         "name": "HOLO/THEGOAT/APP.JS",
         "url": "TheGOAT/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "ledcolor",
+    "name": "HAMCo LED Control",
+    "author": "@joemto20-tech",
+    "version": "1.0.0",
+    "description": "Radiation RGB color control and safe LED hardware tester for the Pip-Boy 3000.",
+    "icon": "HAMCoLEDControl/assets/HAMCOLEDCONTROL.IMG",
+    "previews": [
+      "HAMCoLEDControl/assets/PRVW01.bmp",
+      "HAMCoLEDControl/assets/PRVW02.bmp"
+    ],
+    "type": "app",
+    "readme": "HAMCoLEDControl/README.txt",
+    "storage": [
+      {
+        "name": "HOLO/LEDCOLOR/APP.JS",
+        "url": "HAMCoLEDControl/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/LEDCOLOR/LED.JSON",
+        "url": "HAMCoLEDControl/assets/LED.JSON"
       }
     ],
     "storageOptional": []
@@ -452,7 +499,7 @@
     "storage": [
       {
         "name": "HOLO/PIPTRIS/APP.JS",
-        "url": "Piptris/scripts/APP.MIN.JS"
+        "url": "Piptris/scripts/APP.JS"
       },
       {
         "name": "HOLO/PIPTRIS/BLOCK.JSON",
@@ -476,7 +523,7 @@
       },
       {
         "name": "HOLO/PIPTRIS/GAME.JS",
-        "url": "Piptris/scripts/GAME.MIN.JS"
+        "url": "Piptris/scripts/GAME.JS"
       },
       {
         "name": "HOLO/PIPTRIS/GAME.RAW",
@@ -484,15 +531,15 @@
       },
       {
         "name": "HOLO/PIPTRIS/GAME_OVER.JS",
-        "url": "Piptris/scripts/GAME_OVER.MIN.JS"
+        "url": "Piptris/scripts/GAME_OVER.JS"
       },
       {
         "name": "HOLO/PIPTRIS/INST.JS",
-        "url": "Piptris/scripts/INST.MIN.JS"
+        "url": "Piptris/scripts/INST.JS"
       },
       {
         "name": "HOLO/PIPTRIS/INTRO.JS",
-        "url": "Piptris/scripts/INTRO.MIN.JS"
+        "url": "Piptris/scripts/INTRO.JS"
       },
       {
         "name": "HOLO/PIPTRIS/INTRO.RAW",
@@ -500,7 +547,7 @@
       },
       {
         "name": "HOLO/PIPTRIS/MENU.JS",
-        "url": "Piptris/scripts/MENU.MIN.JS"
+        "url": "Piptris/scripts/MENU.JS"
       },
       {
         "name": "HOLO/PIPTRIS/MENU.RAW",
@@ -512,11 +559,11 @@
       },
       {
         "name": "HOLO/PIPTRIS/PRELOAD.JS",
-        "url": "Piptris/scripts/PRELOAD.MIN.JS"
+        "url": "Piptris/scripts/PRELOAD.JS"
       },
       {
         "name": "HOLO/PIPTRIS/SETTINGS.JS",
-        "url": "Piptris/scripts/SETTINGS.MIN.JS"
+        "url": "Piptris/scripts/SETTINGS.JS"
       }
     ],
     "storageOptional": [
@@ -609,7 +656,7 @@
     "id": "radroachraces",
     "name": "Radroach Races",
     "author": "@Theeohn @CodyTolene",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
     "icon": "RadroachRaces/previews/RACES.png",
     "previews": [
@@ -622,39 +669,63 @@
     "storage": [
       {
         "name": "HOLO/RADROACH_RACES/APP.JS",
-        "url": "RadroachRaces/app.min.js"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JS",
-        "url": "RadroachRaces/assets/TITLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/RACE.JS",
-        "url": "RadroachRaces/assets/RACE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/MAPS.JS",
-        "url": "RadroachRaces/assets/MAPS.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
-        "url": "RadroachRaces/assets/TITLE.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
-        "url": "RadroachRaces/assets/ROACH.JSON"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
-        "url": "RadroachRaces/assets/WINNER.WAV"
+        "url": "RadroachRaces/APP.MIN.JS"
       },
       {
         "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
         "url": "RadroachRaces/assets/BUGLE.WAV"
       },
       {
+        "name": "HOLO/RADROACH_RACES/CIRCLEW.BIN",
+        "url": "RadroachRaces/assets/CIRCLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DELTAW.BIN",
+        "url": "RadroachRaces/assets/DELTAW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/DIAMONDW.BIN",
+        "url": "RadroachRaces/assets/DIAMONDW.BIN"
+      },
+      {
         "name": "HOLO/RADROACH_RACES/FLAP.WAV",
         "url": "RadroachRaces/assets/FLAP.WAV"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/MAPS.JS",
+        "url": "RadroachRaces/assets/MAPS.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/RACE.JS",
+        "url": "RadroachRaces/assets/RACE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/ROACH.JSON",
+        "url": "RadroachRaces/assets/ROACH.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/SQUAREW.BIN",
+        "url": "RadroachRaces/assets/SQUAREW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JS",
+        "url": "RadroachRaces/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
+        "url": "RadroachRaces/assets/TITLE.JSON"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
+        "url": "RadroachRaces/assets/TITLEIMG.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/TRIANGLEW.BIN",
+        "url": "RadroachRaces/assets/TRIANGLEW.BIN"
+      },
+      {
+        "name": "HOLO/RADROACH_RACES/WINNER.WAV",
+        "url": "RadroachRaces/assets/WINNER.WAV"
       }
     ],
     "storageOptional": []
@@ -911,19 +982,20 @@
     "storageOptional": []
   },
   {
-    "id": "ssukechi",
+    "id": "sukechi",
     "name": "Sukechi",
     "author": "@Theeohn",
-    "version": "1.0.0",
-    "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, plus an eraser!",
-    "icon": "Sukechi/previews/sukechi.png",
+    "version": "1.1.0",
+    "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, autosave, and an eraser!",
+    "icon": "Sukechi/sukechi.png",
     "previews": ["Sukechi/previews/game.bmp"],
+    "previousId": "ssukechi",
     "type": "game",
     "readme": "Sukechi/README.md",
     "storage": [
       {
         "name": "HOLO/SUKECHI/APP.JS",
-        "url": "Sukechi/app.min.js"
+        "url": "Sukechi/assets/APP.MIN.JS"
       }
     ],
     "storageOptional": []
