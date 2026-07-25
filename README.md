@@ -311,9 +311,6 @@ Any asset timeout must be cleared in `remove()`. Very large backgrounds can be
 streamed into `h.buffer` with `E.openFile()` and `Uint8Array` instead of being
 held as another complete image in memory.
 
-Metadata icons must be PNG files. Preview files may be PNG, GIF, or MP4, and
-their paths must be relative to the Holotape directory.
-
 </details>
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
