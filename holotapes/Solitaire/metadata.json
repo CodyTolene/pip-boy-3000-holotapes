@@ -5,9 +5,23 @@
   "version": "1.0.0",
   "description": "One of the most famous single-player card games, now playable on the Pip-Boy!",
   "icon": "solitaire.png",
-  "previews": [],
+  "previews": ["previews/menu.bmp", "previews/game.bmp"],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/SOLITAIRE/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    { "name": "HOLO/SOLITAIRE/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/SOLITAIRE/13.JSON", "url": "assets/13.JSON" },
+    { "name": "HOLO/SOLITAIRE/ATOMIC.JSON", "url": "assets/ATMOIC.JSON" },
+    { "name": "HOLO/SOLITAIRE/BISON.JSON", "url": "assets/BISON.JSON" },
+    { "name": "HOLO/SOLITAIRE/GOMORRAH.JSON", "url": "assets/GOMORRAH.JSON" },
+    { "name": "HOLO/SOLITAIRE/LUCKY.JSON", "url": "assets/LUCKY.JSON" },
+    { "name": "HOLO/SOLITAIRE/PEBBLES.JSON", "url": "assets/PEBBLES.JSON" },
+    { "name": "HOLO/SOLITAIRE/SIERRA.JSON", "url": "assets/SIERRA.JSON" },
+    { "name": "HOLO/SOLITAIRE/SILVER.JSON", "url": "assets/SILVER.JSON" },
+    { "name": "HOLO/SOLITAIRE/TOPS.JSON", "url": "assets/TOPS.JSON" },
+    { "name": "HOLO/SOLITAIRE/ULTRA.JSON", "url": "assets/ULTRA.JSON" },
+    { "name": "HOLO/SOLITAIRE/VAULTB.JSON", "url": "assets/VAULTB.JSON" },
+    { "name": "HOLO/SOLITAIRE/WILD.JSON", "url": "assets/WILD.JSON" }
+  ],
   "storageOptional": []
 }
