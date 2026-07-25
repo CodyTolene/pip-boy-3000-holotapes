@@ -240,12 +240,12 @@
     "id": "ledcolor",
     "name": "HAMCo LED Control",
     "author": "@joemto20-tech",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Radiation RGB color control and safe LED hardware tester for the Pip-Boy 3000.",
     "icon": "HAMCoLEDControl/assets/HAMCOLEDCONTROL.IMG",
     "previews": [
-      "HAMCoLEDControl/assets/PRVW01.bmp",
-      "HAMCoLEDControl/assets/PRVW02.bmp"
+      "HAMCoLEDControl/previews/preview01.bmp",
+      "HAMCoLEDControl/previews/preview02.bmp"
     ],
     "type": "app",
     "readme": "HAMCoLEDControl/README.txt",
