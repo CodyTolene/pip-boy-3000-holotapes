@@ -921,7 +921,7 @@
     "author": "@Radiomaru7",
     "version": "1.0.0",
     "description": "Watch the sequence of numbered panels light up, then repeat it back.",
-    "icon": "",
+    "icon": "SignalMatch/assets/SIGNAL-MATCH.IMG",
     "previews": [
       "SignalMatch/previews/game01.bmp",
       "SignalMatch/previews/game02.bmp"

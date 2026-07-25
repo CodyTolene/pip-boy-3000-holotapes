@@ -4,7 +4,7 @@
   "author": "@Radiomaru7",
   "version": "1.0.0",
   "description": "Watch the sequence of numbered panels light up, then repeat it back.",
-  "icon": "",
+  "icon": "assets/SIGNAL-MATCH.IMG",
   "previews": ["previews/game01.bmp", "previews/game02.bmp"],
   "type": "game",
   "readme": "README.md",
