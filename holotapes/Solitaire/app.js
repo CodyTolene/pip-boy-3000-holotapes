@@ -76,7 +76,7 @@ const DECK_OPTS = [
  function loadSelectedDeck() {
     let chosenIdx = deckIdx;
     if (chosenIdx === 0) {
-      chosenIdx = Math.randInt(13) + 1;
+      chosenIdx = Math.randInt(DECK_OPTS.length - 1) + 1;
     }
     let filename = DECK_OPTS[chosenIdx].file;
     try {
