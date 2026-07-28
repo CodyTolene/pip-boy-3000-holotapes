@@ -1,0 +1,13 @@
+{
+  "id": "BATTLEPIP",
+  "name": "Battle-Pip",
+  "author": "@Theeohn",
+  "version": "1.0.0",
+  "description": "Place your airships, and blow up the enemies with the fog of war hiding them from you!",
+  "icon": "assets/airship.png",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "name": "HOLO/BATTLEPIP/APP.JS", "url": "app.min.js" }],
+  "storageOptional": []
+}
