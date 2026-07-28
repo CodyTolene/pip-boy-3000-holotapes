@@ -322,7 +322,7 @@
   }, 0);
 
   return {
-    id: "MAGIC8BALL",
+    id: "MAGIC8BALL+",
     notDefault: true,
     fullscreen: true,
 
