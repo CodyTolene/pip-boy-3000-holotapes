@@ -8,6 +8,6 @@
   "previews": [],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/BATTLEPIP/APP.JS", "url": "app.min.js" }],
+  "storage": [{ "name": "HOLO/BATTLEPIP/app.js", "url": "app.min.js" }],
   "storageOptional": []
 }
