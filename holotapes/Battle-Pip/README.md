@@ -21,7 +21,7 @@
 | -------------------- | --------------------------------------------------------------------- |
 | Left wheel (rotate)  | Move the selector up and down on board                                |
 | Left wheel (press)   | Confirm the title screen, set ships, select attack location, or       |
-                       | restart after game is over                                            |
+|                      | restart after game is over                                            |
 | Right wheel (rotate) | Move the selector left and right on board                             |
 
 ### Credits
