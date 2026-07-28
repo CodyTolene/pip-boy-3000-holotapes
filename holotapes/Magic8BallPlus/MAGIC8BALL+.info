@@ -1,0 +1,8 @@
+{
+  "id": "magic8ball+",
+  "name": "Magic 8 Ball+",
+  "version": "1.1.0",
+  "files": "HOLO/MAGIC_8_BALL+/APP.JS",
+  "src": "HOLO/MAGIC_8_BALL+/APP.JS",
+  "icon": "APPINFO/HOLO.IMG"
+}

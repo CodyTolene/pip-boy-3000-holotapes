@@ -1,4 +1,4 @@
-# Magic 8 Ball
+# Magic 8 Ball+
 
 ### Info
 
@@ -13,26 +13,25 @@
 
 **Contributor(s):**
 
-- [Alright Joe](https://github.com/joemto20-tech)
+- [Alright Joe]
 
-### Description
+### Description ###
 
-The classic Magic 8 Ball and all 20 of its responses. Spin/click either wheel or
-shake your pipboy to get a new response!
+A classic and an updated Magic 8 Ball, all 20 original and plenty new responses. Plus a few rare resonses if you keep asking! Shake your pipboy or spin/press a wheel to get a new answer!
 
-### Controls
+### Controls ###
 
-| Input                | Action                               |
-| -------------------- | ------------------------------------ |
-| Left wheel (rotate)  | Shuffles the ball for a new response |
-| Left wheel (press)   |                                      |
-| Right wheel (rotate) |                                      |
-| Shake device         |                                      |
+| Input                | Action                                                                |
+| -------------------- | --------------------------------------------------------------------- |
+| Left wheel (rotate)  | Shuffles the ball for a new response                                  |
+| Left wheel (press)   |                                                                       |
+| Right wheel (rotate) |                                                                       |
+| Shake device         |                                                                       |
 
-### Credits
+### Credits ###
 
 - Claude threw most of this together, I'm no programmer but I edited a lot by
-  hand.
+  hand. Shake implementation done by @Alright Joe.
 
 ### License(s)
 
