@@ -254,7 +254,7 @@
     }
 
     h.setFontMonofonto14().setFontAlign(0, 0).setColor(2);
-    h.drawString("Page " + (curPage + 1) + " / " + (isEOF ? pageOffs.length : pageOffs.length), 240, 310);
+    h.drawString("Page " + (curPage + 1), 240, 310);
 
     h.flip();
     Pip.lastFlip = getTime();
