@@ -265,63 +265,56 @@
     else drawReader();
   }
 
+  function browserMove(dir) {  "ram";
+    if (dir) {
+      listIdx += dir;
+      if (listIdx < 0) listIdx = 0;
+      if (listIdx >= listItems.length) listIdx = Math.max(0, listItems.length - 1);
+
+      if (listIdx < scrollOff) scrollOff = listIdx;
+      if (listIdx >= scrollOff + 8) scrollOff = listIdx - 7;
+      draw();
+      if (Pip.playSound) Pip.playSound("HIGHLIGHT");
+    } else {
+      if (listItems.length > 0) {
+        let item = listItems[listIdx];
+        if (item.type === 'back') {
+          currentFolder = null;
+          loadBrowser();
+          listIdx = 0;
+          scrollOff = 0;
+          draw();
+          if (Pip.playSound) Pip.playSound("TAB");
+        } else if (item.type === 'folder') {
+          currentFolder = item.name;
+          loadBrowser();
+          listIdx = 0;
+          scrollOff = 0;
+          draw();
+          if (Pip.playSound) Pip.playSound("SELECT");
+        } else if (item.type === 'file') {
+          curFile = currentFolder ? pathJoin(currentFolder, item.name) : item.name;
+          loadSave();
+          fetchPage(curPage);
+          state = 1;
+          draw();
+          if (Pip.playSound) Pip.playSound("SELECT");
+        }
+      }
+    }
+  }
+
   function onKnob1(dir, long) {  "ram";
     let now = getTime();
     if (now - lastKnob < 0.03) return; 
     lastKnob = now;
 
     if (state === 0) {
-      if (dir) {
-        listIdx += dir;
-        if (listIdx < 0) listIdx = 0;
-        if (listIdx >= listItems.length) listIdx = Math.max(0, listItems.length - 1);
-
-        if (listIdx < scrollOff) scrollOff = listIdx;
-        if (listIdx >= scrollOff + 8) scrollOff = listIdx - 7;
-        draw();
-        if (Pip.playSound) Pip.playSound("HIGHLIGHT");
-      } else {
-        if (listItems.length > 0) {
-          let item = listItems[listIdx];
-          if (item.type === 'back') {
-            currentFolder = null;
-            loadBrowser();
-            listIdx = 0;
-            scrollOff = 0;
-            draw();
-            if (Pip.playSound) Pip.playSound("TAB");
-          } else if (item.type === 'folder') {
-            currentFolder = item.name;
-            loadBrowser();
-            listIdx = 0;
-            scrollOff = 0;
-            draw();
-            if (Pip.playSound) Pip.playSound("SELECT");
-          } else if (item.type === 'file') {
-            curFile = currentFolder ? pathJoin(currentFolder, item.name) : item.name;
-            loadSave();
-            fetchPage(curPage);
-            state = 1;
-            draw();
-            if (Pip.playSound) Pip.playSound("SELECT");
-          }
-        }
-      }
+      browserMove(dir);
     } else {
       if (dir) {
-        let oldPage = curPage;
-        if (dir > 0 && !isEOF) {
-          curPage++;
-        } else if (dir < 0 && curPage > 0) {
-          curPage--;
-        }
-        
-        if (curPage !== oldPage) {
-          fetchPage(curPage);
-          writeSave();
-          draw();
-          if (Pip.playSound) Pip.playSound("SCROLL");
-        }
+        brightness = E.clip(brightness + (dir > 0 ? -0.05 : 0.05), 0.1, 1.0);
+        if (Pip.setBrightness) Pip.setBrightness(brightness);
       } else {
         state = 0;
         curSubtitle = subtitles[Math.randInt(subtitles.length)];
@@ -339,10 +332,21 @@
     lastKnob = now;
 
     if (state === 0) {
-      onKnob1(dir, false);
+      browserMove(dir);
     } else {
-      brightness = E.clip(brightness + (dir > 0 ? 0.05 : -0.05), 0.1, 1.0);
-      if (Pip.setBrightness) Pip.setBrightness(brightness);
+      let oldPage = curPage;
+      if (dir > 0 && !isEOF) {
+        curPage++;
+      } else if (dir < 0 && curPage > 0) {
+        curPage--;
+      }
+
+      if (curPage !== oldPage) {
+        fetchPage(curPage);
+        writeSave();
+        draw();
+        if (Pip.playSound) Pip.playSound("SCROLL");
+      }
     }
   }
 

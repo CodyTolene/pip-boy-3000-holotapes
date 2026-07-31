@@ -19,9 +19,9 @@
 
 | Input                | Action                                                                |
 | -------------------- | --------------------------------------------------------------------- |
-| Left wheel (rotate)  | Scroll file browser and change pages                                  |
+| Left wheel (rotate)  | Scrolls .txt files in browser and change brightness while reading     |
 | Left wheel (press)   | Select .txt file in browser, returns to browser if in reader          |
-| Right wheel (rotate) | Select .txt file in browser, changes brightness if in reader          |
+| Right wheel (rotate) | Scrolls .txt files in browser, changes page while reading             |
 
 ### Credits
 
