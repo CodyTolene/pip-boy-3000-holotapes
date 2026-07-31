@@ -41,6 +41,64 @@
     "storageOptional": []
   },
   {
+    "id": "BATTLEPIP",
+    "name": "Battle-Pip",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "Place your airships, and blow up the enemies with the fog of war hiding them from you!",
+    "icon": "BattlePip/assets/AIRSHIP.IMG",
+    "previews": [],
+    "type": "game",
+    "readme": "BattlePip/README.md",
+    "storage": [
+      {
+        "name": "HOLO/BATTLEPIP/APP.JS",
+        "url": "BattlePip/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/GOLOSE.WAV",
+        "url": "BattlePip/assets/GOLOSE.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/GOWIN.WAV",
+        "url": "BattlePip/assets/GOWIN.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/HIT.WAV",
+        "url": "BattlePip/assets/HIT.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/LOSE.WAV",
+        "url": "BattlePip/assets/LOSE.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/MISS.WAV",
+        "url": "BattlePip/assets/MISS.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/SONAR1.WAV",
+        "url": "BattlePip/assets/SONAR1.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/SONAR2.WAV",
+        "url": "BattlePip/assets/SONAR2.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/TITLE.BIN",
+        "url": "BattlePip/assets/TITLE.BIN"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/TITLE.WAV",
+        "url": "BattlePip/assets/TITLE.WAV"
+      },
+      {
+        "name": "HOLO/BATTLEPIP/WIN.WAV",
+        "url": "BattlePip/assets/WIN.WAV"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "blackjack",
     "name": "Blackjack",
     "author": "@trekker87 @Theeohn",
