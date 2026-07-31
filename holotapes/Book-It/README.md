@@ -13,7 +13,7 @@
 
 ###Description
 
-- A .txt file reader for your Pip-Boy. Supports subfolders to help organize, and brightness control with the right wheel while reading. Auto-bookmarking per page change, creates a .sav file in same folder as the .txt file you read.  Loads flavor text from the subs.js file located in assets, goes in same folder as app.js when installed.
+- A .txt file reader for your Pip-Boy. Supports subfolders to help organize, and brightness control with the left wheel while reading. Auto-bookmarking per page change, creates a .sav file in same folder as the .txt file you read.  Loads flavor text from the subs.js file located in assets, goes in same folder as app.js when installed.
 
 ### Controls
 
