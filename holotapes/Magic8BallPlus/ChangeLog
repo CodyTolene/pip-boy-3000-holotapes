@@ -1,5 +1,9 @@
 1.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/71
+- Merged missing Plus version with Classic version by adding a title screen and mode selector
+- Several new responses in all three types of answers wtih Plus version
+- Random sercret answer will show every 13th "shake"
+
+1.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/66
-- merged missing Plus version with Classic version by adding a title screen and mode selector
-- several new responses in all three types of answers wtih Plus version
-- random sercret answer will show every 13th "shake"
+- Initial release
