@@ -22,7 +22,7 @@
   let brightness = 1.0;
   let lastKnob = 0;
 
-  const subtitles = eval(require('fs').readFileSync('HOLO/BOOK_IT/subs.js'));
+  const subtitles = eval(require('fs').readFileSync('HOLO/BOOK_IT/SUBS.JS'));
   let curSubtitle = subtitles[0];
 
   function pathJoin(a, b) {

@@ -171,14 +171,18 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "A .txt file reader for your Pip-Boy. Auto-bookmarking per page change, supports subfolders to help organize, and brightness control with the left wheel while reading.",
-    "icon": "Book-It/assets/book.png",
+    "icon": "BookIt/assets/BOOKIT.IMG",
     "previews": [],
     "type": "app",
-    "readme": "Book-It/README.md",
+    "readme": "BookIt/README.md",
     "storage": [
       {
-        "name": "HOLO/BOOK_IT/app.js",
-        "url": "Book-It/app.min.js"
+        "name": "HOLO/BOOK_IT/APP.JS",
+        "url": "BookIt/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/BOOK_IT/SUBS.JS",
+        "url": "BookIt/assets/SUBS.MIN.JS"
       }
     ],
     "storageOptional": []
