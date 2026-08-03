@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   var dead = false;
@@ -11,10 +11,19 @@
   var step = 0;
   var preview = false;
   var kept = false;
-  var FX = 'SOLID|BREATHE|DOUBLE PULSE|SCANNER|GEIGER TICKS|POWER SURGE|WARNING BEACON|MELTDOWN|SIGNAL LOCK|LOW POWER|OVERCHARGE|SIREN FADE|IDLE GLOW'.split('|');
-  var PAL = 'AMBER|RED|TOXIC|VAULT BLUE|CYAN|PURPLE|WHITE|WARM WHITE|POLICE|WARNING|RAD MIX|RAINBOW'.split('|');
+  var FX =
+    'SOLID|BREATHE|DOUBLE PULSE|SCANNER|GEIGER TICKS|POWER SURGE|WARNING BEACON|MELTDOWN|SIGNAL LOCK|LOW POWER|OVERCHARGE|SIREN FADE|IDLE GLOW'.split(
+      '|',
+    );
+  var PAL =
+    'AMBER|RED|TOXIC|VAULT BLUE|CYAN|PURPLE|WHITE|WARM WHITE|POLICE|WARNING|RAD MIX|RAINBOW'.split(
+      '|',
+    );
   var SPD = 'SLOW|MED|FAST'.split('|');
-  var MENU = 'EFFECT|COLOR|SPEED|BRIGHTNESS|KEEP EFFECT + EXIT|RESTORE PIP-OS + EXIT|EXIT RESTORE'.split('|');
+  var MENU =
+    'EFFECT|COLOR|SPEED|BRIGHTNESS|KEEP EFFECT + EXIT|RESTORE PIP-OS + EXIT|EXIT RESTORE'.split(
+      '|',
+    );
 
   function clamp(v) {
     v = Number(v);
@@ -38,7 +47,11 @@
   function out(r, g, b, i) {
     var v = bright() * clamp(i);
     try {
-      Pip.fadeTo([{ pin: LED_RED, target: r * v }, { pin: LED_GREEN, target: g * v }, { pin: LED_BLUE, target: b * v }]);
+      Pip.fadeTo([
+        { pin: LED_RED, target: r * v },
+        { pin: LED_GREEN, target: g * v },
+        { pin: LED_BLUE, target: b * v },
+      ]);
     } catch (e) {}
   }
 
@@ -77,7 +90,11 @@
   function restoreColor() {
     var v = baseBright();
     try {
-      Pip.fadeTo([{ pin: LED_RED, target: v }, { pin: LED_GREEN, target: v * 0.5 }, { pin: LED_BLUE, target: 0 }]);
+      Pip.fadeTo([
+        { pin: LED_RED, target: v },
+        { pin: LED_GREEN, target: v * 0.5 },
+        { pin: LED_BLUE, target: 0 },
+      ]);
     } catch (e) {}
   }
 
@@ -90,7 +107,8 @@
 
   function stopSessionOnly() {
     try {
-      if (global.HAM_LED_SESSION && global.HAM_LED_SESSION.stop) global.HAM_LED_SESSION.stop();
+      if (global.HAM_LED_SESSION && global.HAM_LED_SESSION.stop)
+        global.HAM_LED_SESSION.stop();
     } catch (e) {}
   }
 
@@ -103,7 +121,8 @@
       }
     } catch (e0) {}
     try {
-      if (Pip.setBrightness && typeof Pip.brightness === 'number') Pip.setBrightness(Pip.brightness);
+      if (Pip.setBrightness && typeof Pip.brightness === 'number')
+        Pip.setBrightness(Pip.brightness);
     } catch (e1) {}
     try {
       if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
@@ -121,7 +140,7 @@
       paint(0.12 + q / 23, step, 0);
     } else if (fx === 2) {
       q = step % 18;
-      paint(q < 2 || q > 4 && q < 7 ? 1 : 0.08, step, q > 4);
+      paint(q < 2 || (q > 4 && q < 7) ? 1 : 0.08, step, q > 4);
     } else if (fx === 3) {
       q = step % 24;
       if (q > 12) q = 24 - q;
@@ -131,7 +150,11 @@
       paint(q < 4 ? 1 : 0.06, step * 3, q < 2);
     } else if (fx === 5) {
       q = step % 28;
-      paint(q < 8 ? q / 8 : q < 11 ? 1 : q < 17 ? 0.35 + ((q * 3) % 5) / 10 : 0.7, step, q % 2);
+      paint(
+        q < 8 ? q / 8 : q < 11 ? 1 : q < 17 ? 0.35 + ((q * 3) % 5) / 10 : 0.7,
+        step,
+        q % 2,
+      );
     } else if (fx === 6) {
       q = step % 10;
       paint(q < 4 ? 1 : 0.1, step, q % 2);
@@ -142,7 +165,11 @@
       else out(1, 0, 0, 0.55 + (q - 24) / 24);
     } else if (fx === 8) {
       q = step % 22;
-      paint(q < 2 || q > 4 && q < 7 || q > 9 && q < 16 ? 1 : 0.08, step, q > 9);
+      paint(
+        q < 2 || (q > 4 && q < 7) || (q > 9 && q < 16) ? 1 : 0.08,
+        step,
+        q > 9,
+      );
     } else if (fx === 9) {
       q = (step * 13) % 19;
       paint(q < 3 ? 0 : 0.12 + q / 90, step, q > 10);
@@ -216,7 +243,9 @@
       h.setColor(3).setBgColor(0);
     }
     h.drawLine(12, 290, 468, 290);
-    font(16).setFontAlign(0, -1).drawString('KEEP IS SESSION-ONLY; REBOOT CLEARS IT', 240, 297);
+    font(16)
+      .setFontAlign(0, -1)
+      .drawString('KEEP IS SESSION-ONLY; REBOOT CLEARS IT', 240, 297);
     try {
       h.flip();
       Pip.lastFlip = getTime();
@@ -324,9 +353,9 @@
     id: 'LEDCOLOR',
     notDefault: true,
     fullscreen: true,
-    remove: function() {
+    remove: function () {
       if (!kept && preview) restore();
       close(false);
-    }
+    },
   };
 });
