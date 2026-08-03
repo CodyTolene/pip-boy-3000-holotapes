@@ -1,3 +1,17 @@
+1.0.2
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/76
+- Remove the old persistent/default-light approach that patched LED behavior across reboots. The new version has no boot loader, no saved startup state, no icon/image assets, and no LED.JSON, so reboot returns the Pip-Boy to normal as if the app was never running.
+- RESTORE PIP-OS + EXIT now explicitly clears the session runner, removes the temporary Pip.fadeTo wrapper, clears the effect interval, restores normal Pip-OS amber/charge lighting, and exits cleanly. This fixed the earlier issue where LED behavior stayed active or broke normal lighting after exit/reboot.
+- KEEP EFFECT + EXIT starts a small in-memory session runner only for the current powered session. It keeps the selected effect running after the app closes, but does not persist through reboot. It also watches for firmware LED-off fades during power-down and shuts itself down so the Pip-Boy can power off normally.
+- The UI was updated from a long list of hardcoded modes into separate controls:
+  - Effect
+  - Color
+  - Speed
+  - Brightness
+  - Keep Effect + Exit
+  - Restore Pip-OS + Exit
+- Added selectable effects and color switching on effects.
+
 1.0.1
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/70
 - Brought back effects and correct removal
