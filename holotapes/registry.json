@@ -337,6 +337,10 @@
       {
         "name": "HOLO/LEDCOLOR/LED.JSON",
         "url": "HAMCoLEDControl/assets/LED.JSON"
+      },
+      {
+        "name": "HOLO/LEDCOLOR/SESSION.JS",
+        "url": "HAMCoLEDControl/assets/SESSION.MIN.JS"
       }
     ],
     "storageOptional": []
