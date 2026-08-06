@@ -1,0 +1,48 @@
+{
+  "id": "zero-escape-vault-9",
+  "name": "Zero Escape Vault 9",
+  "author": "@Johnnyjoestar987",
+  "version": "1.0.0",
+  "description": "A Nonary-style ALLY/BETRAY voting game where you and seven CPU rivals bargain, betray and race to escape Vault 9.",
+  "icon": "assets/icon.png",
+  "previews": [
+    "previews/menu.png",
+    "previews/vault.png",
+    "previews/results.png",
+    "previews/gameover.png"
+  ],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/APP.JS",
+      "url": "app.min.js"
+    },
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/DATA.JSON",
+      "url": "assets/DATA.JSON"
+    }
+  ],
+  "storageOptional": [
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINSCREEN.BIN",
+      "url": "assets/MAINSCREEN.BIN"
+    },
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/DOOROPENS.BIN",
+      "url": "assets/DOOROPENS.BIN"
+    },
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINTHEME.WAV",
+      "url": "assets/MAINTHEME.WAV"
+    },
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/BACKGROUND.WAV",
+      "url": "assets/BACKGROUND.WAV"
+    },
+    {
+      "name": "HOLO/ZERO_ESCAPE_VAULT_9/CRT_ON.WAV",
+      "url": "assets/CRT_ON.WAV"
+    }
+  ]
+}

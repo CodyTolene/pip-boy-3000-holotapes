@@ -1254,5 +1254,53 @@
         "url": "VaultsAndDeathclaws/assets/DICE_THROW.WAV"
       }
     ]
+  },
+  {
+    "id": "zero-escape-vault-9",
+    "name": "Zero Escape Vault 9",
+    "author": "@Johnnyjoestar987",
+    "version": "1.0.0",
+    "description": "A Nonary-style ALLY/BETRAY voting game where you and seven CPU rivals bargain, betray and race to escape Vault 9.",
+    "icon": "ZeroEscapeVault9/assets/icon.png",
+    "previews": [
+      "ZeroEscapeVault9/previews/menu.png",
+      "ZeroEscapeVault9/previews/vault.png",
+      "ZeroEscapeVault9/previews/results.png",
+      "ZeroEscapeVault9/previews/gameover.png"
+    ],
+    "type": "game",
+    "readme": "ZeroEscapeVault9/README.md",
+    "storage": [
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/APP.JS",
+        "url": "ZeroEscapeVault9/app.min.js"
+      },
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/DATA.JSON",
+        "url": "ZeroEscapeVault9/assets/DATA.JSON"
+      }
+    ],
+    "storageOptional": [
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINSCREEN.BIN",
+        "url": "ZeroEscapeVault9/assets/MAINSCREEN.BIN"
+      },
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/DOOROPENS.BIN",
+        "url": "ZeroEscapeVault9/assets/DOOROPENS.BIN"
+      },
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINTHEME.WAV",
+        "url": "ZeroEscapeVault9/assets/MAINTHEME.WAV"
+      },
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/BACKGROUND.WAV",
+        "url": "ZeroEscapeVault9/assets/BACKGROUND.WAV"
+      },
+      {
+        "name": "HOLO/ZERO_ESCAPE_VAULT_9/CRT_ON.WAV",
+        "url": "ZeroEscapeVault9/assets/CRT_ON.WAV"
+      }
+    ]
   }
 ]

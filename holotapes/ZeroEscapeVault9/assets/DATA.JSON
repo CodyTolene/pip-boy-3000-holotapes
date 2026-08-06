@@ -1,0 +1,31 @@
+{
+  "c": [
+    "You wake on a cold, dark floor, your head pounding. Your own name is the only thing you can remember.",
+    "",
+    "Seven others share the room with you - strangers, frightened, breathing.",
+    "",
+    "By the dim ceiling lights you make out a heavy metal door marked 9, and four small rooms along the walls, each signed 'Voting Room'.",
+    "",
+    "A megaphone shrieks to life. A calm voice welcomes you to Vault 9 and says none of you will leave until the Nonary Game has been played.",
+    "",
+    "Then, patiently, the voice begins to explain the rules..."
+  ],
+  "r": [
+    "- Everyone begins the game with 3 points.",
+    "- Each round you are paired with another prisoner. In secret you each vote to ALLY or BETRAY, and the votes are revealed together.",
+    "- Reach a minimum of 9 points to open the Number 9 Door; everyone with 9 or more escapes when it opens.",
+    "- The door opens only once. Anyone below 9 points is sealed inside the vault forever.",
+    "- If you fall to 0 points, you are executed.",
+    "- There is no limit to the rounds; the game ends the moment the door opens."
+  ],
+  "b": [
+    "Cold calculator. Blocks your escape and seizes wins; rarely emotional.",
+    "Out for himself. Betrays often and loves stealing points.",
+    "Deeply suspicious. Cross him once and he stops trusting you.",
+    "Wants to trust everyone, but is easily swayed and erratic.",
+    "Gentle to a fault. Allies almost always, even at a cost.",
+    "Runs on nerves. Safe = ally; cornered or wronged = anything.",
+    "Fair but firm. Trust for trust, betrayal for betrayal.",
+    "Principled. Never betrays first, but answers in kind."
+  ]
+}
