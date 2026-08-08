@@ -476,15 +476,15 @@
     "author": "@tylerjbartlett",
     "version": "1.0.0",
     "description": "A simple calculator app for the Pip-Boy 3000.",
-    "icon": "Pip-Calc/previews/pipcalc.png",
-    "previews": ["Pip-Calc/previews/calculator.bmp"],
+    "icon": "PipCalc/previews/pipcalc.png",
+    "previews": ["PipCalc/previews/calculator.bmp"],
     "tags": "tool",
     "type": "app",
-    "readme": "Pip-Calc/README.md",
+    "readme": "PipCalc/README.md",
     "storage": [
       {
         "name": "HOLO/PIPCALC/APP.js",
-        "url": "Pip-Calc/app.min.js"
+        "url": "PipCalc/app.min.js"
       }
     ]
   },
