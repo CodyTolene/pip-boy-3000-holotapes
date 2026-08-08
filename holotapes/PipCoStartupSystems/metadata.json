@@ -1,0 +1,50 @@
+{
+  "id": "startup-animations",
+  "name": "PIP-CO Startup Systems",
+  "author": "@LlamaYeYe",
+  "version": "1.0.0",
+  "description": "Select a custom Pip-Boy startup animation and matching audio, or restore the default boot sequence.",
+  "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
+  "previews": ["previews/menu.bmp"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
+      "url": "assets/APP.MIN.JS"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
+      "url": "assets/DEATHCLAW.AVI"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
+      "url": "assets/DEATHCLAW.WAV"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
+      "url": "assets/MISTER.AVI"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
+      "url": "assets/MISTER.WAV"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
+      "url": "assets/SELECT.JSON"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS",
+      "url": "assets/TITLE_IMG.JS"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
+      "url": "assets/VAULTGIRL.AVI"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.WAV",
+      "url": "assets/VAULTGIRL.WAV"
+    }
+  ],
+  "storageOptional": []
+}
