@@ -32,10 +32,6 @@ Runtime files are installed under:
 
 Tested on The Wand Company Pip-Boy 3000 hardware.
 
-The exact firmware version used for the final device test was not recorded in
-the supplied final package and should be added here before submitting the pull
-request.
-
 ## Notes
 
 This Holotape modifies the live startup behavior so the selected animation can
