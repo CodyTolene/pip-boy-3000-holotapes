@@ -1080,7 +1080,7 @@
   }, 0);
 
   const api = {
-    id: 'ZEROESCAPEVAULT9',
+    id: 'zero-escape-vault-9',
     notDefault: true,
     fullscreen: true,
     remove: function () {

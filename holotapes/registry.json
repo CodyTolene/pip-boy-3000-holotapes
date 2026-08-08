@@ -1261,7 +1261,7 @@
     "author": "@Johnnyjoestar987",
     "version": "1.0.0",
     "description": "A Nonary-style ALLY/BETRAY voting game where you and seven CPU rivals bargain, betray and race to escape Vault 9.",
-    "icon": "ZeroEscapeVault9/assets/icon.png",
+    "icon": "ZeroEscapeVault9/assets/ZERO_ESCAPE_VAULT_9.IMG",
     "previews": [
       "ZeroEscapeVault9/previews/menu.png",
       "ZeroEscapeVault9/previews/vault.png",
@@ -1273,7 +1273,7 @@
     "storage": [
       {
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/APP.JS",
-        "url": "ZeroEscapeVault9/app.min.js"
+        "url": "ZeroEscapeVault9/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/DATA.JSON",
@@ -1282,23 +1282,36 @@
     ],
     "storageOptional": [
       {
+        "label": "Intro Image",
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINSCREEN.BIN",
+        "sizeKB": "38",
         "url": "ZeroEscapeVault9/assets/MAINSCREEN.BIN"
       },
       {
+        "label": "Door Opens Image",
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/DOOROPENS.BIN",
+        "sizeKB": "38",
         "url": "ZeroEscapeVault9/assets/DOOROPENS.BIN"
       },
       {
+        "label": "Main Theme Music",
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/MAINTHEME.WAV",
+        "previewMp3": "assets/MAINTHEME.mp3",
+        "sizeKB": "1367",
         "url": "ZeroEscapeVault9/assets/MAINTHEME.WAV"
       },
       {
+        "label": "Background Music",
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/BACKGROUND.WAV",
+        "previewMp3": "assets/BACKGROUND.mp3",
+        "sizeKB": "1099",
         "url": "ZeroEscapeVault9/assets/BACKGROUND.WAV"
       },
       {
+        "label": "CRT On SFX",
         "name": "HOLO/ZERO_ESCAPE_VAULT_9/CRT_ON.WAV",
+        "previewMp3": "assets/CRT_ON.mp3",
+        "sizeKB": "28",
         "url": "ZeroEscapeVault9/assets/CRT_ON.WAV"
       }
     ]

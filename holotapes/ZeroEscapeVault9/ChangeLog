@@ -1,6 +1,5 @@
-1.0.0 (2026-08-06)
-<!-- TODO: replace with the pull request URL once opened -->
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/XXXX
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/78
 - Initial release.
 - Nonary-style ALLY/BETRAY voting game: SIGMA plus 7 CPU rivals, 7 of 8
   characters drawn per game, each with distinct decision-making weights
