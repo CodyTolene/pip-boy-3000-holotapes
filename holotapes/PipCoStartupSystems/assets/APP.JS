@@ -318,15 +318,6 @@
     };
   }
 
-  function reg() {
-    try {
-      fs.writeFileSync(
-        'APPINFO/STARTUP_ANIMATIONS.info',
-        '{"id":"startup-animations","name":"PIP-CO Startup Systems","version":"1.0.0","src":"HOLO/STARTUP_ANIMATIONS/APP.JS","icon":"APPINFO/HOLO.IMG"}',
-      );
-    } catch (e) {}
-  }
-
   function draw() {
     let y = 80,
       n;
@@ -410,7 +401,6 @@
   s = sel();
   c = 0;
   active = s === -2 ? -1 : s + 1;
-  reg();
 
   Pip.onExclusive('knob1', knob);
   draw();
