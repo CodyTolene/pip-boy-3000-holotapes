@@ -1,0 +1,13 @@
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/78
+- Initial release.
+- Nonary-style ALLY/BETRAY voting game: SIGMA plus 7 CPU rivals, 7 of 8
+  characters drawn per game, each with distinct decision-making weights
+  (block, greed, reach, trust, survival, volatility).
+- Results screen reveals the paired outcomes one at a time, with a sting as
+  each pair appears; press once to reveal them all, again to continue.
+- Optional streamed assets: two 480x320 raw-framebuffer splash images, a menu
+  theme, a background bed during rounds, and a reveal sting. All optional; the
+  game falls back to text screens and silence when they are absent.
+- Display text is loaded on demand from DATA.JSON and released on exit, so it
+  is not resident in RAM during play.
