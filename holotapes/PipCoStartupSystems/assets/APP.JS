@@ -322,7 +322,7 @@
     try {
       fs.writeFileSync(
         'APPINFO/STARTUP_ANIMATIONS.info',
-        '{"id":"startup-animations","name":"PIP-CO Startup Systems","version":"3.8.0","src":"HOLO/STARTUP_ANIMATIONS/APP.JS","icon":"APPINFO/HOLO.IMG"}',
+        '{"id":"startup-animations","name":"PIP-CO Startup Systems","version":"1.0.0","src":"HOLO/STARTUP_ANIMATIONS/APP.JS","icon":"APPINFO/HOLO.IMG"}',
       );
     } catch (e) {}
   }
@@ -426,7 +426,7 @@
   }
 
   return {
-    id: 'STARTUPANIMATIONS',
+    id: 'startup-animations',
     notDefault: true,
     fullscreen: true,
     remove: function () {

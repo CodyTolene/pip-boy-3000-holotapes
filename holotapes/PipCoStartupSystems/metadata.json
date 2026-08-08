@@ -2,15 +2,16 @@
   "id": "startup-animations",
   "name": "PIP-CO Startup Systems",
   "author": "@LlamaYeYe",
-  "version": "3.8.0",
+  "version": "1.0.0",
   "description": "Select a custom Pip-Boy startup animation and matching audio, or restore the default boot sequence.",
-  "previews": [],
+  "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
+  "previews": ["previews/menu.bmp"],
   "type": "app",
   "readme": "README.md",
   "storage": [
     {
       "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
-      "url": "app.min.js"
+      "url": "assets/APP.MIN.JS"
     },
     {
       "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
