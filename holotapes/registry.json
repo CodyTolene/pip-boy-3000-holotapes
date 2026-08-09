@@ -492,7 +492,7 @@
     "id": "startup-animations",
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",
-    "version": "2.0.0",
+    "version": "1.1.0",
     "description": "Modular Pip-Boy startup selector. Install only the custom startup animation and audio options you want, or use the default boot sequence.",
     "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.IMG",
     "previews": ["PipCoStartupSystems/previews/menu.bmp"],
