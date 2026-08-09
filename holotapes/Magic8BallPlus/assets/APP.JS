@@ -33,7 +33,7 @@
       'No',
       'NO',
       "Don't",
-      'Doutful',
+      'Doubtful',
       'You should reconsider',
       'Very doubtful',
       'My reply is no',
