@@ -1,5 +1,18 @@
+2.0.0
+
+- Converts PIP-CO Startup Systems to a modular optional-startup system.
+- Adds dynamic category and startup detection based on installed AVI/WAV pairs.
+- Adds NPC Bootups with YES MAN.
+- Adds Faction Bootups with The Enclave and The Brotherhood of Steel.
+- Renames the Deathclaw entry to Deathclaw Vault Experiment.
+- Adds safe fallback to Default Bootup when a selected optional pack is removed.
+- Adds startup playback reliability improvements for intermittent audio-only / black-screen boots.
+- Keeps the Core mandatory while startup media is exposed through storageOptional.
+
 1.0.0
+
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/79
+
 - Initial public submission of PIP-CO Startup Systems.
 - Adds Default Bootup, Mister Handy, Vault Girl, and Deathclaw Ripped Suit startup selections.
 - Includes persistent selection and custom startup animation/audio assets.

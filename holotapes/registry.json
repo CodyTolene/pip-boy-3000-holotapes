@@ -492,8 +492,8 @@
     "id": "startup-animations",
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",
-    "version": "1.0.0",
-    "description": "Select a custom Pip-Boy startup animation and matching audio, or restore the default boot sequence.",
+    "version": "2.0.0",
+    "description": "Modular Pip-Boy startup selector. Install only the custom startup animation and audio options you want, or use the default boot sequence.",
     "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.IMG",
     "previews": ["PipCoStartupSystems/previews/menu.bmp"],
     "type": "app",
@@ -504,39 +504,88 @@
         "url": "PipCoStartupSystems/assets/APP.MIN.JS"
       },
       {
-        "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-        "url": "PipCoStartupSystems/assets/DEATHCLAW.AVI"
-      },
-      {
-        "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
-        "url": "PipCoStartupSystems/assets/DEATHCLAW.WAV"
-      },
-      {
-        "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
-        "url": "PipCoStartupSystems/assets/MISTER.AVI"
-      },
-      {
-        "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
-        "url": "PipCoStartupSystems/assets/MISTER.WAV"
-      },
-      {
         "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
         "url": "PipCoStartupSystems/assets/SELECT.JSON"
       },
       {
         "name": "HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS",
         "url": "PipCoStartupSystems/assets/TITLE_IMG.JS"
+      }
+    ],
+    "storageOptional": [
+      {
+        "label": "Mister Handy - Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
+        "sizeKB": 942,
+        "url": "PipCoStartupSystems/assets/MISTER.AVI"
       },
       {
+        "label": "Mister Handy - Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
+        "sizeKB": 180,
+        "url": "PipCoStartupSystems/assets/MISTER.WAV"
+      },
+      {
+        "label": "Vault Girl - Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
+        "sizeKB": 454,
         "url": "PipCoStartupSystems/assets/VAULTGIRL.AVI"
       },
       {
+        "label": "Vault Girl - Audio",
         "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.WAV",
+        "sizeKB": 92,
         "url": "PipCoStartupSystems/assets/VAULTGIRL.WAV"
+      },
+      {
+        "label": "Deathclaw Vault Experiment - Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
+        "sizeKB": 746,
+        "url": "PipCoStartupSystems/assets/DEATHCLAW.AVI"
+      },
+      {
+        "label": "Deathclaw Vault Experiment - Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
+        "sizeKB": 92,
+        "url": "PipCoStartupSystems/assets/DEATHCLAW.WAV"
+      },
+      {
+        "label": "YES MAN - Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
+        "sizeKB": 178,
+        "url": "PipCoStartupSystems/assets/YESMAN.AVI"
+      },
+      {
+        "label": "YES MAN - Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/YES MAN.WAV",
+        "sizeKB": 138,
+        "url": "PipCoStartupSystems/assets/YES MAN.WAV"
+      },
+      {
+        "label": "The Enclave - Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
+        "sizeKB": 114,
+        "url": "PipCoStartupSystems/assets/ENCLAVE.AVI"
+      },
+      {
+        "label": "The Enclave - Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/THE ENCLAVE.WAV",
+        "sizeKB": 159,
+        "url": "PipCoStartupSystems/assets/THE ENCLAVE.WAV"
+      },
+      {
+        "label": "The Brotherhood of Steel - Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
+        "sizeKB": 870,
+        "url": "PipCoStartupSystems/assets/BOS.AVI"
+      },
+      {
+        "label": "The Brotherhood of Steel - Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/BOS.WAV",
+        "sizeKB": 157,
+        "url": "PipCoStartupSystems/assets/BOS.WAV"
       }
-    ],
-    "storageOptional": []
+    ]
   },
   {
     "id": "piptactoe",
