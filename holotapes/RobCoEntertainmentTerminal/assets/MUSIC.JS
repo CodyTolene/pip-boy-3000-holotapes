@@ -85,7 +85,7 @@
       Pip._rcetSleepWrapped = 1;
       Pip._rcetSleepOrig = Pip.goToSleep;
       Pip.goToSleep = new Function(
-        "try{if(Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(e){}return Pip._rcetSleepOrig.apply(Pip,arguments)",
+        "var o=Pip._rcetSleepOrig;try{if(Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(e){}if(typeof o=='function')return o.apply(Pip,arguments)",
       );
     }
   }
