@@ -489,6 +489,45 @@
     ]
   },
   {
+    "id": "FALLOUT_SCREENSAVER",
+    "name": "PIP-CO Idle Frameworks",
+    "author": "PIP-CO",
+    "version": "1.4.5.4",
+    "description": "PIP-CO Idle Frameworks with built-in Pip-Boy screensaver support and optional Mesmetron idle-provider integration.",
+    "type": "app",
+    "readme": "PipCoIdleFrameworks/README.md",
+    "storage": [
+      {
+        "url": "PipCoIdleFrameworks/assets/APP.JS",
+        "name": "HOLO/FALLOUT_SCREENSAVER/APP.JS"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/BOMB.JS",
+        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.JS"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/CONFIG.JSON",
+        "name": "HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/FALLOUT.WAV",
+        "name": "HOLO/FALLOUT_SCREENSAVER/FALLOUT.WAV"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/LOGO.BIN",
+        "name": "HOLO/FALLOUT_SCREENSAVER/LOGO.BIN"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/MESIDLE.JS",
+        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS"
+      },
+      {
+        "url": "PipCoIdleFrameworks/assets/TITLE.BIN",
+        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN"
+      }
+    ]
+  },
+  {
     "id": "startup-animations",
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",

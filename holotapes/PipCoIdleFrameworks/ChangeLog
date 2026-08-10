@@ -1,0 +1,5 @@
+1.4.5.4 (2026-08-10)
+- V23.54 Clean Native Page Reload Wake Fix
+- Prevents native Radio/STAT/ITEM/DATA screens from showing through Mesmetron idles.
+- Avoids restoring an already-removed native page object on wake.
+- Preserves the V23.49 lazy-loaded MESIDLE.JS memory architecture.
