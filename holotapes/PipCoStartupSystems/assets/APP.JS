@@ -5,8 +5,39 @@
   let c = 0,
     s = 0,
     t,
-    active = -1;
-  const TI = eval(fs.readFileSync(B + 'TITLE_IMG.JS'));
+    page = 0,
+    ic = [0, 0, 0, 0, 0, 0, 0];
+  /* V64 coexistence hardening: only restore/stop resources this holotape owns. */
+  let ownVideo = 0,
+    ownAudio = 0,
+    aHook,
+    bHook;
+  let TI;
+  try {
+    TI = {
+      title: {
+        width: 176,
+        height: 98,
+        bpp: 1,
+        transparent: 0,
+        buffer: fs.readFileSync(B + 'TITLE.BIN'),
+      },
+    };
+  } catch (e) {
+    TI = eval(fs.readFileSync(B + 'TITLE_IMG.JS'));
+  }
+
+  /* startup ids:
+     -1 Default Bootup
+      0 Mister Handy
+      1 Vault Girl
+      2 Deathclaw Vault Experiment
+      3 YES MAN
+      4 The Enclave
+     5 The Brotherhood of Steel
+      6 Mothman
+      7 The Minutemen
+  */
 
   function customHookAlive() {
     return (
@@ -24,8 +55,6 @@
     );
   }
 
-  /* If FW.JS is currently clean (for example after a real reset), save the
-     ACTUAL firmware functions before installing any custom hook. */
   if (!customHookAlive()) {
     try {
       if (!Pip.__SA22CleanBoot)
@@ -53,7 +82,7 @@
   function sel() {
     try {
       let n = JSON.parse(fs.readFileSync(S)).startup | 0;
-      return n >= -2 && n < 3 ? n : -2;
+      return n >= -2 && n < 8 ? n : -2;
     } catch (e) {
       return -2;
     }
@@ -61,23 +90,67 @@
 
   function vf(n) {
     return (
-      B + (n === 0 ? 'MISTER.AVI' : n === 1 ? 'VAULTGIRL.AVI' : 'DEATHCLAW.AVI')
+      B +
+      (n === 0
+        ? 'MISTER.AVI'
+        : n === 1
+          ? 'VAULTGIRL.AVI'
+          : n === 2
+            ? 'DEATHCLAW.AVI'
+            : n === 3
+              ? 'YESMAN.AVI'
+              : n === 4
+                ? 'ENCLAVE.AVI'
+                : n === 5
+                  ? 'BOS.AVI'
+                  : n === 6
+                    ? 'MOTHMAN.AVI'
+                    : 'MINUTEMEN.AVI')
     );
   }
   function af(n) {
     return (
-      B + (n === 0 ? 'MISTER.WAV' : n === 1 ? 'VAULTGIRL.WAV' : 'DEATHCLAW.WAV')
+      B +
+      (n === 0
+        ? 'MISTER.WAV'
+        : n === 1
+          ? 'VAULTGIRL.WAV'
+          : n === 2
+            ? 'DEATHCLAW.WAV'
+            : n === 3
+              ? 'YES MAN.WAV'
+              : n === 4
+                ? 'THE ENCLAVE.WAV'
+                : n === 5
+                  ? 'BOS.WAV'
+                  : n === 6
+                    ? 'MOTHMAN.WAV'
+                    : 'MINUTEMEN.WAV')
     );
   }
   function fm(n) {
-    return n === 0 ? 5930 : 3180;
+    return n === 0
+      ? 5930
+      : n === 3
+        ? 4597
+        : n === 4 || n === 5 || n === 6 || n === 7
+          ? 5263
+          : 3180;
   }
   function hm(n) {
-    return n === 0 ? 9445 : 6695;
+    return n === 0
+      ? 9445
+      : n === 3
+        ? 8112
+        : n === 4 || n === 5 || n === 6 || n === 7
+          ? 8778
+          : 6695;
   }
 
   function valid(n) {
-    return ex(B + 'APP.JS') && ex(S) && ex(vf(n)) && ex(af(n));
+    return (
+      n >= 0 && n < 8 && ex(B + 'APP.JS') && ex(S) && ex(vf(n)) && ex(af(n))
+    );
   }
 
   function stockBoot() {
@@ -179,15 +252,25 @@
       clearTimeout(t);
       t = undefined;
     }
-    try {
-      Pip.videoStop();
-    } catch (e) {}
-    try {
-      Pip.audioStop();
-    } catch (e) {}
+    /* Do not stop unrelated radio/screensaver audio or video. */
+    if (ownVideo) {
+      try {
+        Pip.videoStop();
+      } catch (e) {}
+      ownVideo = 0;
+    }
+    if (ownAudio) {
+      try {
+        Pip.audioStop();
+      } catch (e) {}
+      ownAudio = 0;
+    }
     clearFlags();
-    if (q) Pip.audioStart = q;
-    Pip.bootAnimation = b;
+    /* Restore only hooks that are still ours; never overwrite another app's wrapper. */
+    if (aHook && Pip.audioStart === aHook && q) Pip.audioStart = q;
+    if (bHook && Pip.bootAnimation === bHook) Pip.bootAnimation = b;
+    aHook = undefined;
+    bHook = undefined;
   }
 
   function hook() {
@@ -198,7 +281,7 @@
     global.__SA22 = 1;
     global.__SA18CRT = 0;
 
-    Pip.audioStart = function (p) {
+    aHook = function (p) {
       let n = sel();
 
       if (!valid(n)) {
@@ -213,8 +296,9 @@
 
       return q.apply(Pip, arguments);
     };
+    Pip.audioStart = aHook;
 
-    Pip.bootAnimation = function () {
+    bHook = function () {
       let n = sel();
 
       if (!valid(n)) {
@@ -226,6 +310,7 @@
         let a,
           b,
           d,
+          e,
           x = 0;
 
         function end() {
@@ -234,21 +319,34 @@
           if (a) clearTimeout(a);
           if (b) clearTimeout(b);
           if (d) clearTimeout(d);
+          if (e) clearTimeout(e);
 
           /* Stop video and restore normal graphics state BEFORE handing
              control back to FW.JS. Do not clear/flip and do not force a
              second mode redraw. */
+          if (ownVideo) {
+            try {
+              Pip.videoStop();
+            } catch (e) {}
+            ownVideo = 0;
+          }
+          if (ownAudio) {
+            try {
+              Pip.audioStop();
+            } catch (e) {}
+            ownAudio = 0;
+          }
           try {
-            Pip.videoStop();
+            process.memory(true);
+          } catch (e) {}
+          try {
+            E.defrag();
           } catch (e) {}
           try {
             h.reset();
           } catch (e) {}
           try {
             h.setClipRect(0, 0, 479, 319);
-          } catch (e) {}
-          try {
-            delete Pip.blitOptions.disable;
           } catch (e) {}
 
           global.__SA18CRT = 1;
@@ -282,9 +380,13 @@
             h.clear();
             h.flip();
           } catch (e) {}
+          try {
+            E.defrag();
+          } catch (e) {}
 
           try {
             Pip.videoStart(vf(n), { x: 0, y: 0 });
+            ownVideo = 1;
           } catch (e) {
             restore();
             x = 1;
@@ -296,11 +398,24 @@
             return;
           }
 
-          try {
-            Pip.audioStart(af(n));
-          } catch (e) {}
+          /* Reliability fix:
+             Give the AVI decoder a short head start before starting audio.
+             This reduces intermittent audio-only / black-screen boots on
+             larger animations such as Vault Girl and Deathclaw. */
+          e = setTimeout(function () {
+            e = undefined;
+            if (x) return;
+            try {
+              Pip.audioStart(af(n));
+              ownAudio = 1;
+            } catch (z) {
+              ownAudio = 0;
+            }
+          }, 180);
 
-          b = setTimeout(end, fm(n));
+          /* Keep the original playback window plus the same audio delay so
+             the WAV is not cut short by cleanup. */
+          b = setTimeout(end, fm(n) + 180);
         }
 
         try {
@@ -316,44 +431,131 @@
         }
       });
     };
+    Pip.bootAnimation = bHook;
+  }
+
+  function reg() {
+    try {
+      fs.writeFileSync(
+        'APPINFO/STARTUP_ANIMATIONS.info',
+        '{"id":"startup-animations","name":"PIP-CO Startup Systems","version":"4.3.1","src":"HOLO/STARTUP_ANIMATIONS/APP.JS","icon":"APPINFO/HOLO.IMG"}',
+      );
+    } catch (e) {}
+  }
+
+  function header() {
+    h.clear().setColor(3).setFontMonofonto16().setFontAlign(0, -1);
+    h.drawImage(TI.title, (480 - TI.title.width) >> 1, 6);
+  }
+
+  function row(y, label, isActive) {
+    if (c === arguments[3]) Pip.shadeBox(24, y - 4, 456, y + 22);
+    h.setColor(3).setFontAlign(-1, -1).drawString(label, 38, y);
+    if (isActive) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+  }
+
+  /* Build menus from a one-time installed-pack cache.
+     This avoids repeated SD-card opens every time the wheel moves.
+     Playback validation still uses valid(n), so startup safety is unchanged. */
+  function scanInstalled() {
+    let n;
+    for (n = 0; n < 8; n++) ic[n] = valid(n) ? 1 : 0;
+  }
+  function installed(n) {
+    return n >= 0 && n < 8 && ic[n];
+  }
+
+  function specialEntries() {
+    let a = [];
+    if (installed(0)) a.push(['Mister Handy', 0]);
+    if (installed(1)) a.push(['Vault Girl', 1]);
+    if (installed(2)) a.push(['Deathclaw Vault Experiment', 2]);
+    return a;
+  }
+
+  function factionEntries() {
+    let a = [];
+    if (installed(4)) a.push(['The Enclave', 4]);
+    if (installed(5)) a.push(['The Brotherhood of Steel', 5]);
+    if (installed(7)) a.push(['The Minutemen', 7]);
+    if (installed(6)) a.push(['Mothman', 6]);
+    return a;
+  }
+
+  function npcEntries() {
+    let a = [];
+    if (installed(3)) a.push(['YES MAN', 3]);
+    return a;
+  }
+
+  function mainEntries() {
+    let a = [['Default Bootup', -1, 0]];
+    if (specialEntries().length) a.push(['Special Bootups', -10, 1]);
+    if (factionEntries().length) a.push(['Faction Bootups', -11, 2]);
+    if (npcEntries().length) a.push(['NPC Bootups', -12, 3]);
+    a.push(['< Back', -99, -1]);
+    return a;
+  }
+
+  function pageEntries() {
+    if (page === 1) return specialEntries();
+    if (page === 2) return factionEntries();
+    if (page === 3) return npcEntries();
+    return mainEntries();
   }
 
   function draw() {
-    let y = 80,
-      n;
-    h.clear().setColor(3).setFontMonofonto23().setFontAlign(0, -1);
-    h.drawString('PIP-CO', 240, 6);
-    h.drawImage(TI.title, 131, 30);
-    h.drawLine(24, 70, 456, 70).setFontMonofonto16();
+    let y = 112,
+      n,
+      a = pageEntries();
+    header();
 
-    for (n = 0; n < 5; n++) {
-      if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
-      h.setColor(3)
-        .setFontAlign(-1, -1)
-        .drawString(
-          n === 0
-            ? 'Default Bootup'
-            : n === 1
-              ? 'Mister Handy'
-              : n === 2
-                ? 'Vault Girl'
-                : n === 3
-                  ? 'Deathclaw Ripped Suit'
-                  : '< Back',
-          38,
-          y,
-        );
-      if (n < 4 && active === n)
-        h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
-      y += 36;
+    if (page === 0) {
+      for (n = 0; n < a.length; n++) {
+        if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
+        h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
+        if (a[n][1] === -1 && s === -1)
+          h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+        y += 36;
+      }
+    } else {
+      for (n = 0; n < a.length; n++) {
+        if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
+        h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
+        if (s === a[n][1]) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+        y += 36;
+      }
+
+      /* Every submenu always gets its own Back row. */
+      if (c === a.length) Pip.shadeBox(24, y - 4, 456, y + 22);
+      h.setColor(3).setFontAlign(-1, -1).drawString('< Back', 38, y);
     }
+  }
+
+  function maxRow() {
+    let a = pageEntries();
+    return page === 0 ? a.length - 1 : a.length;
+  }
+
+  function activateStartup(id) {
+    try {
+      fs.writeFileSync(S, '{"startup":' + id + '}');
+      s = id;
+    } catch (e) {}
+    if (t) clearTimeout(t);
+    t = setTimeout(function () {
+      t = undefined;
+      hook();
+    }, 0);
+    draw();
   }
 
   function knob(d) {
     if (d) {
       c += d > 0 ? 1 : -1;
-      if (c < 0) c = 4;
-      if (c > 4) c = 0;
+      let m = maxRow();
+      if (c < 0) c = m;
+      if (c > m) c = 0;
       try {
         Pip.playSound('SCROLL');
       } catch (e) {}
@@ -365,42 +567,71 @@
       Pip.playSound('SELECT');
     } catch (e) {}
 
-    if (c === 4) {
-      try {
-        Pip.changeMenu('MISC.JS');
-      } catch (e) {}
-      return;
-    }
+    if (page === 0) {
+      let a = mainEntries(),
+        e = a[c];
 
-    if (c === 0) {
-      try {
-        fs.writeFileSync(S, '{"startup":-1}');
-      } catch (e) {}
-      active = 0;
-      restore();
-      E.defrag();
+      if (e[1] === -99) {
+        try {
+          Pip.changeMenu('MISC.JS');
+        } catch (x) {}
+        return;
+      }
+
+      if (e[1] === -1) {
+        try {
+          fs.writeFileSync(S, '{"startup":-1}');
+        } catch (x) {}
+        s = -1;
+        restore();
+        try {
+          E.defrag();
+        } catch (x) {}
+        draw();
+        return;
+      }
+
+      page = e[2];
+      c = 0;
       draw();
       return;
     }
 
-    try {
-      fs.writeFileSync(S, '{"startup":' + (c - 1) + '}');
-      active = c;
-    } catch (e) {}
+    let a = pageEntries();
 
-    if (t) clearTimeout(t);
-    t = setTimeout(function () {
-      t = undefined;
-      E.defrag();
-      hook();
-    }, 0);
+    if (c === a.length) {
+      let old = page;
+      page = 0;
+      c = 0;
+      let m = mainEntries(),
+        i;
+      for (i = 0; i < m.length; i++)
+        if (m[i][2] === old) {
+          c = i;
+          break;
+        }
+      draw();
+      return;
+    }
 
-    draw();
+    if (c < a.length) activateStartup(a[c][1]);
   }
 
   s = sel();
+  scanInstalled();
+
+  /* If a previously selected optional pack is no longer installed,
+     clear the stale selection and safely return to Default Bootup. */
+  if (s >= 0 && !valid(s)) {
+    try {
+      fs.writeFileSync(S, '{"startup":-1}');
+    } catch (e) {}
+    s = -1;
+  }
+  if (s === -2) s = -1;
+
   c = 0;
-  active = s === -2 ? -1 : s + 1;
+  reg();
 
   Pip.onExclusive('knob1', knob);
   draw();
@@ -410,21 +641,30 @@
   } else {
     t = setTimeout(function () {
       t = undefined;
-      E.defrag();
       hook();
     }, 0);
   }
 
   return {
-    id: 'startup-animations',
+    id: 'STARTUPANIMATIONS',
     notDefault: true,
     fullscreen: true,
     remove: function () {
       if (t) clearTimeout(t);
       Pip.removeListener('knob1', knob);
-      try {
-        Pip.audioStop();
-      } catch (e) {}
+      /* Menu exit must not stop radio or another holotape's audio. */
+      if (ownVideo) {
+        try {
+          Pip.videoStop();
+        } catch (e) {}
+        ownVideo = 0;
+      }
+      if (ownAudio) {
+        try {
+          Pip.audioStop();
+        } catch (e) {}
+        ownAudio = 0;
+      }
       h.clear();
     },
   };

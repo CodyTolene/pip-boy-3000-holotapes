@@ -1,44 +1,44 @@
 # PIP-CO Startup Systems
 
-A custom Holotape for The Wand Company Pip-Boy 3000 that lets the user choose
-which startup sequence plays when the Pip-Boy wakes.
+A modular custom-startup holotape for The Wand Company Pip-Boy 3000.
 
-## Startup choices
+## Modular website installation
 
-- Default Bootup
+The core is always installed. Startup media is optional, so users can install
+only the startup sequences they want.
+
+For each startup, select **both its Animation and Audio** option on Pip-Boy.com.
+The holotape scans the installed files and only shows categories/startups whose
+required media is present.
+
+## Core files
+
+- `HOLO/STARTUP_ANIMATIONS/APP.JS`
+- `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
+- `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
+- `HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS`
+
+## Optional startup packs
+
 - Mister Handy
 - Vault Girl
-- Deathclaw Ripped Suit
+- Deathclaw Vault Experiment
+- YES MAN
+- The Enclave
+- The Brotherhood of Steel
+- Mothman
+- The Minutemen
 
-The selected custom startup uses a matching AVI animation and WAV audio file.
-The selection is stored in `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`.
+Each startup uses one AVI animation and one WAV audio file.
 
 ## Controls
 
-- Left wheel: move through the menu
+- Left wheel: navigate
 - Left wheel press: select
 - `< Back`: return to MISC
 
-## Installation
-
-Install through the Pip-Boy Holotape installer/registry after the repository
-build generates the registry entry.
-
-Runtime files are installed under:
-
-`HOLO/STARTUP_ANIMATIONS/`
-
-## Hardware / firmware testing
-
-Tested on The Wand Company Pip-Boy 3000 hardware.
-
 ## Notes
 
-This Holotape modifies the live startup behavior so the selected animation can
-persist after leaving the Holotape and play on the next wake.
-
-## Credits
-
-Created by @LlamaYeYe.
-
-Pip-Boy 3000 is a product of The Wand Company / Bethesda.
+This package is built from the hardware-tested V70 baseline. Vault Girl is
+preserved unchanged from V70, and YES MAN uses the accepted flat bright
+background version.

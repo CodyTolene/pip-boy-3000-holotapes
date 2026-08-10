@@ -2,8 +2,8 @@
   "id": "startup-animations",
   "name": "PIP-CO Startup Systems",
   "author": "@LlamaYeYe",
-  "version": "1.0.0",
-  "description": "Select a custom Pip-Boy startup animation and matching audio, or restore the default boot sequence.",
+  "version": "1.2.0",
+  "description": "Choose custom startup animations and audio for the Wand Company Pip-Boy 3000. Install only the startup packs you want; the holotape automatically shows only the media currently installed.",
   "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
   "previews": ["previews/menu.bmp"],
   "type": "app",
@@ -14,37 +14,114 @@
       "url": "assets/APP.MIN.JS"
     },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-      "url": "assets/DEATHCLAW.AVI"
-    },
-    {
-      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
-      "url": "assets/DEATHCLAW.WAV"
-    },
-    {
-      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
-      "url": "assets/MISTER.AVI"
-    },
-    {
-      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
-      "url": "assets/MISTER.WAV"
-    },
-    {
       "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
       "url": "assets/SELECT.JSON"
     },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS",
-      "url": "assets/TITLE_IMG.JS"
+      "name": "HOLO/STARTUP_ANIMATIONS/TITLE.BIN",
+      "url": "assets/TITLE.BIN"
     },
     {
+      "name": "HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS",
+      "url": "assets/TITLE_IMG.JS"
+    }
+  ],
+  "storageOptional": [
+    {
+      "label": "Mister Handy \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
+      "sizeKB": 942,
+      "url": "assets/MISTER.AVI"
+    },
+    {
+      "label": "Mister Handy \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
+      "sizeKB": 180,
+      "url": "assets/MISTER.WAV"
+    },
+    {
+      "label": "Vault Girl \u2014 Animation",
       "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
+      "sizeKB": 454,
       "url": "assets/VAULTGIRL.AVI"
     },
     {
+      "label": "Vault Girl \u2014 Audio",
       "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.WAV",
+      "sizeKB": 92,
       "url": "assets/VAULTGIRL.WAV"
+    },
+    {
+      "label": "Deathclaw Vault Experiment \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
+      "sizeKB": 746,
+      "url": "assets/DEATHCLAW.AVI"
+    },
+    {
+      "label": "Deathclaw Vault Experiment \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
+      "sizeKB": 92,
+      "url": "assets/DEATHCLAW.WAV"
+    },
+    {
+      "label": "YES MAN \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
+      "sizeKB": 52,
+      "url": "assets/YESMAN.AVI"
+    },
+    {
+      "label": "YES MAN \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/YES MAN.WAV",
+      "sizeKB": 138,
+      "url": "assets/YES MAN.WAV"
+    },
+    {
+      "label": "The Enclave \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
+      "sizeKB": 114,
+      "url": "assets/ENCLAVE.AVI"
+    },
+    {
+      "label": "The Enclave \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/THE ENCLAVE.WAV",
+      "sizeKB": 159,
+      "url": "assets/THE ENCLAVE.WAV"
+    },
+    {
+      "label": "The Brotherhood of Steel \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
+      "sizeKB": 870,
+      "url": "assets/BOS.AVI"
+    },
+    {
+      "label": "The Brotherhood of Steel \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/BOS.WAV",
+      "sizeKB": 157,
+      "url": "assets/BOS.WAV"
+    },
+    {
+      "label": "Mothman \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
+      "sizeKB": 774,
+      "url": "assets/MOTHMAN.AVI"
+    },
+    {
+      "label": "Mothman \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.WAV",
+      "sizeKB": 159,
+      "url": "assets/MOTHMAN.WAV"
+    },
+    {
+      "label": "The Minutemen \u2014 Animation",
+      "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
+      "sizeKB": 35,
+      "url": "assets/MINUTEMEN.AVI"
+    },
+    {
+      "label": "The Minutemen \u2014 Audio",
+      "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.WAV",
+      "sizeKB": 159,
+      "url": "assets/MINUTEMEN.WAV"
     }
-  ],
-  "storageOptional": []
+  ]
 }
