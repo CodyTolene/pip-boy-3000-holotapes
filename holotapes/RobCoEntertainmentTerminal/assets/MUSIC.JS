@@ -87,10 +87,8 @@
     drawHeader();
     drawTitle();
     drawWaveBorder();
-    drawList();
-    drawInfo();
-    h.flip();
-    Pip.lastFlip = getTime();
+    drawList(false);
+    drawInfo(true);
   }
 
   function drawHeader() {
@@ -104,7 +102,7 @@
     }
   }
 
-  function drawInfo() {
+  function drawInfo(flip) {
     h.setColor(C_BLACK).fillRect(WAVE_X, INFO_Y, app.W - 1, INFO_Y + 56);
     const stn = playingStationName();
     if (stn) {
@@ -130,9 +128,13 @@
       .setFont('6x8')
       .setFontAlign(-1, -1)
       .drawString('VOL ' + currentVol, WAVE_X, INFO_Y + 38);
+    if (flip) {
+      h.flip();
+      Pip.lastFlip = getTime();
+    }
   }
 
-  function drawList() {
+  function drawList(flip) {
     'ram';
     h.setColor(C_BLACK).fillRect(
       LIST_X,
@@ -165,8 +167,10 @@
         .setFont('Monofonto14')
         .drawString('NO STATIONS IN MUSIC/', LIST_X + 6, LIST_START_Y + ROW_H);
     }
-    h.flip();
-    Pip.lastFlip = getTime();
+    if (flip) {
+      h.flip();
+      Pip.lastFlip = getTime();
+    }
   }
 
   function drawTitle() {
@@ -199,8 +203,8 @@
     const key = playingStationName() + '|' + playingTrackName();
     if (key !== lastTrackKey) {
       lastTrackKey = key;
-      drawInfo();
-      if (view === 'songs') drawList();
+      drawInfo(false);
+      if (view === 'songs') drawList(false);
     }
     const x = WAVE_X;
     const y = WAVE_Y;
@@ -383,7 +387,7 @@
       if (sel < 0) sel = 0;
       if (sel >= items.length) sel = items.length - 1;
       clampScroll();
-      drawList();
+      drawList(true);
       sound('HIGHLIGHT');
       return;
     }
@@ -411,10 +415,8 @@
       if (isPlayingRow(item)) stopMusic();
       else play(curStation, item.name, false);
     }
-    drawList();
-    drawInfo();
-    h.flip();
-    Pip.lastFlip = getTime();
+    drawList(false);
+    drawInfo(true);
   }
 
   function onKnob2(dir) {
@@ -428,9 +430,7 @@
     try {
       Pip.setVol(currentVol);
     } catch (e) {}
-    drawInfo();
-    h.flip();
-    Pip.lastFlip = getTime();
+    drawInfo(true);
   }
 
   function openStation(station) {
