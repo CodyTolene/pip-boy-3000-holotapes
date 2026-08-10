@@ -1005,6 +1005,10 @@
         "url": "RobCoEntertainmentTerminal/APP.MIN.JS"
       },
       {
+        "name": "HOLO/RCET/ENGINE.JS",
+        "url": "RobCoEntertainmentTerminal/assets/ENGINE.MIN.JS"
+      },
+      {
         "name": "HOLO/RCET/IMAGES.JS",
         "url": "RobCoEntertainmentTerminal/assets/IMAGES.MIN.JS"
       },

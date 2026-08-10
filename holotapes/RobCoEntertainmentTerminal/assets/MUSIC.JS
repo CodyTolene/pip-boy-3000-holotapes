@@ -12,11 +12,9 @@
 //  SD card and advances on track-end - nothing is preloaded. PLAY ALL / SHUFFLE
 //  just set where to start; the engine advances after each song.
 //
-//  Persistence engine = closure-free new Function() bodies on Pip / Pip.radio
-//  (survive this scene's teardown). installWrappers() overrides the OS audio
-//  globals ONLY in persistent mode; Pip.rcetStop restores them. The watchdog
-//  re-asserts Pip.setDACMode('out') + the playing volume so leaving the app
-//  can't mute the output.
+//  The persistent engine is lazy-loaded from ENGINE.JS. Its closure-free
+//  functions stay on Pip / Pip.radio while playing; the temporary installer
+//  and source strings are collected immediately after installation.
 //
 //  MONKEY PATCH NOTE (intentional, requested): wrapping Pip.audioStart /
 //  Pip.audioStop / Pip.goToSleep is a deliberate exception to agents.md R13.
@@ -284,43 +282,18 @@
   }
 
   function installEngine() {
-    rd.mjNext = new Function(
-      "var r=Pip.radio,S=r.mjStations||[],si=r.mjStationIndex||0,st=S[si],n=st&&st.t,pre=st&&st.p,i;if(!n||!n.length){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;return}i=(r.mjTrackIndex==undefined?-1:r.mjTrackIndex)+1;if(i>=n.length)i=0;r.mjStationIndex=si;r.mjTrackIndex=i;r.mojaveCurrent=pre+n[i];r.mjOn=1;r.mojaveStation=1;Pip.radioClipPlaying=1;try{r.setPower(false)}catch(e){}r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}try{Pip.audioStart(r.mojaveCurrent)}catch(e){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mojaveError=''+e}r.mjAllow=0;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)",
-    );
-    if (rd.mjHandler)
-      try {
-        Pip.removeListener('audioStopped', rd.mjHandler);
-      } catch (e) {}
-    rd.mjHandler = new Function(
-      'var r=Pip.radio;if(!r||!r.mjOn||r.mjNoNext)return;setTimeout(function(){var r=Pip.radio;if(!r||!r.mjOn||r.mjNoNext)return;try{if(Pip.audioIsPlaying&&Pip.audioIsPlaying())return}catch(e){}if(r.mjNext)r.mjNext()},30)',
-    );
-    Pip.on('audioStopped', rd.mjHandler);
-    Pip.rcetStop = new Function(
-      "var r=Pip.radio;r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}r.mjAllow=0;r.mojaveError=0;if(r.mjTimer)clearTimeout(r.mjTimer);if(r.mjWatch)clearInterval(r.mjWatch);r.mjTimer=0;r.mjWatch=0;if(r.mjHandler){try{Pip.removeListener('audioStopped',r.mjHandler)}catch(e){}}r.mjHandler=0;r.mjNext=0;if(Pip._mjStart){Pip.audioStart=Pip._mjStart;Pip._mjStart=0}if(Pip._mjStop){Pip.audioStop=Pip._mjStop;Pip._mjStop=0}if(Pip._rcetSleepOrig){Pip.goToSleep=Pip._rcetSleepOrig;Pip._rcetSleepOrig=0;Pip._rcetSleepWrapped=0}",
-    );
-  }
-
-  function installWrappers() {
-    if (!Pip._mjStart && Pip.audioStart) {
-      Pip._mjStart = Pip.audioStart;
-      Pip.audioStart = new Function(
-        'p',
-        'var r=Pip.radio;if(r&&r.mjOn&&!r.mjAllow)return 0;if(r&&r.mjOn){r.mjNoNext=1;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)}return Pip._mjStart.apply(Pip,arguments)',
-      );
-    }
-    if (!Pip._mjStop && Pip.audioStop) {
-      Pip._mjStop = Pip.audioStop;
-      Pip.audioStop = new Function(
-        'var r=Pip.radio;if(r&&r.mjOn&&!r.mjAllow)return 0;if(r&&r.mjOn){r.mjNoNext=1;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)}return Pip._mjStop.apply(Pip,arguments)',
-      );
-    }
-    if (!Pip._rcetSleepWrapped && typeof Pip.goToSleep === 'function') {
-      Pip._rcetSleepWrapped = 1;
-      Pip._rcetSleepOrig = Pip.goToSleep;
-      Pip.goToSleep = new Function(
-        "var o=Pip._rcetSleepOrig;try{if(Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(e){}if(typeof o=='function')return o.apply(Pip,arguments)",
-      );
-    }
+    if (
+      rd.mjNext &&
+      rd.mjHandler &&
+      rd.mjWatch &&
+      Pip.rcetStop &&
+      (!app.persist || (Pip._mjStart && Pip._mjStop && Pip._rcetSleepWrapped))
+    )
+      return;
+    process.memory(true);
+    E.defrag();
+    eval(fs.readFileSync('HOLO/RCET/ENGINE.JS'))(app.persist);
+    process.memory(true);
   }
 
   function isDir(p) {
@@ -488,9 +461,7 @@
     rd.mojaveError = 0;
     rd.mjVol = currentVol;
     installEngine();
-    if (app.persist) installWrappers();
     if (rd.mjNext) rd.mjNext();
-    if (rd.mjOn) watch();
     return true;
   }
 
@@ -592,16 +563,6 @@
     return ('/' + base + '/' + name).length > MAX_PATH;
   }
 
-  function watch() {
-    if (rd.mjWatch) clearInterval(rd.mjWatch);
-    rd.mjWatch = setInterval(
-      new Function(
-        "var r=Pip.radio;if(!r||!r.mjOn){if(r&&r.mjWatch){clearInterval(r.mjWatch);r.mjWatch=0}return}try{if(Pip.setDACMode)Pip.setDACMode('out')}catch(e){}try{if(Pip.setVol&&typeof r.mjVol=='number')Pip.setVol(r.mjVol)}catch(e){}if(r.mjNoNext)return;try{if(!Pip.audioIsPlaying||Pip.audioIsPlaying())return}catch(e){return}if(r.mjNext)r.mjNext()",
-      ),
-      1000,
-    );
-  }
-
   currentVol = readVol();
   try {
     Pip.setVol(currentVol);
@@ -614,8 +575,6 @@
   // Re-entering while a station is playing: re-arm and drop into its song list.
   if (rd.mjOn) {
     installEngine();
-    if (app.persist) installWrappers();
-    watch();
     const pn = playingStationName();
     let found = null;
     for (let i = 0; i < stations.length; i++)
