@@ -4,330 +4,363 @@
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
+//
+//  MUSIC.JS - Two-level station/song player with persistent audio.
+//
+//  Lazy by design: the stations list is just folder names; a station's songs
+//  are only read when you open that folder. Playback streams each song from the
+//  SD card and advances on track-end - nothing is preloaded. PLAY ALL / SHUFFLE
+//  just set where to start; the engine advances after each song.
+//
+//  Persistence engine = closure-free new Function() bodies on Pip / Pip.radio
+//  (survive this scene's teardown). installWrappers() overrides the OS audio
+//  globals ONLY in persistent mode; Pip.rcetStop restores them. The watchdog
+//  re-asserts Pip.setDACMode('out') + the playing volume so leaving the app
+//  can't mute the output.
+//
+//  MONKEY PATCH NOTE (intentional, requested): wrapping Pip.audioStart /
+//  Pip.audioStop / Pip.goToSleep is a deliberate exception to agents.md R13.
+// =============================================================================
 
 (function (app) {
-  const PAGE_SIZE = 8;
-  const VISIBLE_ROWS = 10;
+  const MUSIC_DIR = 'MUSIC';
+  const MAX_PATH = 56;
 
   const C_BLACK = 0;
   const C_DIM = 1;
   const C_MED = 2;
   const C_BRIGHT = 3;
 
-  const ROW_H = 21;
+  const ROW_H = 22;
   const LIST_X = 12;
   const LIST_W = 222;
   const LIST_TITLE_Y = 52;
-  const LIST_START_Y = 76;
+  const LIST_START_Y = 78;
+  const VISIBLE_ROWS = 9;
+
   const WAVE_X = 244;
   const WAVE_Y = 44;
   const WAVE_W = 210;
   const WAVE_H = 162;
   const INFO_Y = WAVE_Y + WAVE_H + 22;
 
-  const MUSIC_DIR = 'MUSIC';
-  const MAX_PATH = 56;
+  const VOL_MIN = 0;
+  const VOL_MAX = 27;
+  const KNOB_MS = 30;
 
-  const WAVEFORM_MS = 50;
-  const KNOB_DEBOUNCE_MS = 30;
-
-  const SYM = {
-    random: '~ ',
-    playall: '> ',
-    station: '> ',
-    menu: '< ',
-    back: '< ',
-    prev: '<< ',
-    next: '>> ',
-  };
+  const rd = Pip.radio;
 
   let removed = false;
   let view = 'stations'; // 'stations' | 'songs'
-  let currentStation = null;
-  let stations = [];
-  let allSongs = [];
-  let listItems = [];
-  let selectedIdx = 0;
+  let stations = []; // [{ n, p }]
+  let songs = []; // wav filenames in the open station
+  let curStation = null; // { n, p } currently browsed
+  let items = []; // current list rows
+  let sel = 0;
   let scrollOffset = 0;
-  let songPage = 0;
+  let waveTimer = 0;
+  let wave = 0;
+  let currentVol = 20;
+  let lastKnob = 0;
+  let lastVol = 0;
 
-  let playingPath = null;
-  let playingName = null;
-  let playingStation = null;
-  let lastPlayedName = null;
-  let isAudioPlaying = false;
-
-  let isRandom = false;
-  let randomQueue = [];
-  let randomQueueIdx = 0;
-
-  let isPlayAll = false;
-  let playAllIdx = 0;
-  let sortDir = app.sortDir || global.__RCETSort || 1; // 1 = A-Z, -1 = Z-A
-
-  let suppressAudioStopped = false;
-
-  let waveInterval = null;
-  let wavePoly = null;
-
-  let lastKnobTime = 0;
-  let lastVolKnobTime = 0;
-  let lastSelectTime = 0;
-  const POST_SELECT_IGNORE_MS = 150;
-
-  // Volume
-  const VOL_MIN = 0;
-  const VOL_MAX = 27;
-  const VOL_DEFAULT = 20;
-  const VOL_HUD_MS = 1500;
-  let currentVol = VOL_DEFAULT;
-  let volHudTimeout = null;
-
-  // Fixed header rows in the song list, currently:
-  // - SHUFFLE
-  // - PLAY ALL
-  // - BACK
-  const SONG_HEADER_COUNT = 3;
-
-  function buildRandomPool(stationName) {
-    const base = pathJoin(MUSIC_DIR, stationName);
-    return allSongs.filter(function (s) {
-      return !isPathTooLong(base, s.name);
-    });
+  // ---------------------------------------------------------------------------
+  //  Persistent engine (closure-free - survives this scene's teardown)
+  // ---------------------------------------------------------------------------
+  function installWrappers() {
+    if (!Pip._mjStart && Pip.audioStart) {
+      Pip._mjStart = Pip.audioStart;
+      Pip.audioStart = new Function(
+        'p',
+        "var r=Pip.radio;if(r&&r.mjOn&&!r.mjAllow)return 0;if(r&&r.mjOn){r.mjNoNext=1;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)}return Pip._mjStart.apply(Pip,arguments)",
+      );
+    }
+    if (!Pip._mjStop && Pip.audioStop) {
+      Pip._mjStop = Pip.audioStop;
+      Pip.audioStop = new Function(
+        "var r=Pip.radio;if(r&&r.mjOn&&!r.mjAllow)return 0;if(r&&r.mjOn){r.mjNoNext=1;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)}return Pip._mjStop.apply(Pip,arguments)",
+      );
+    }
+    if (!Pip._rcetSleepWrapped && typeof Pip.goToSleep === 'function') {
+      Pip._rcetSleepWrapped = 1;
+      Pip._rcetSleepOrig = Pip.goToSleep;
+      Pip.goToSleep = new Function(
+        "try{if(Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(e){}return Pip._rcetSleepOrig.apply(Pip,arguments)",
+      );
+    }
   }
 
-  function buildSongItems() {
-    const items = [
-      { type: 'random', label: 'SHUFFLE PLAY ALL' },
-      { type: 'playall', label: 'PLAY ALL (TOP-DOWN)' },
-      { type: 'back', label: 'BACK TO PLAYLISTS' },
-    ];
-    const start = songPage * PAGE_SIZE;
-    const end = Math.min(start + PAGE_SIZE, allSongs.length);
-    const base = pathJoin(MUSIC_DIR, currentStation);
-    for (let i = start; i < end; i++) {
-      const song = allSongs[i];
-      items.push({
-        type: 'song',
-        name: song.name,
-        tooLong: isPathTooLong(base, song.name),
-      });
-    }
-    if (songPage > 0) {
-      items.push({ type: 'prev', label: 'PREV PAGE' });
-    }
-    const maxPage = Math.floor(Math.max(0, allSongs.length - 1) / PAGE_SIZE);
-    if (songPage < maxPage) {
-      items.push({ type: 'next', label: 'NEXT PAGE' });
-    }
-    return items;
+  function installEngine() {
+    rd.mjNext = new Function(
+      "var r=Pip.radio,S=r.mjStations||[],si=r.mjStationIndex||0,st=S[si],n=st&&st.t,pre=st&&st.p,i;if(!n||!n.length){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;return}i=(r.mjTrackIndex==undefined?-1:r.mjTrackIndex)+1;if(i>=n.length)i=0;r.mjStationIndex=si;r.mjTrackIndex=i;r.mojaveCurrent=pre+n[i];r.mjOn=1;r.mojaveStation=1;Pip.radioClipPlaying=1;try{r.setPower(false)}catch(e){}r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}try{Pip.audioStart(r.mojaveCurrent)}catch(e){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mojaveError=''+e}r.mjAllow=0;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)",
+    );
+    if (rd.mjHandler)
+      try {
+        Pip.removeListener('audioStopped', rd.mjHandler);
+      } catch (e) {}
+    rd.mjHandler = new Function(
+      "var r=Pip.radio;if(!r||!r.mjOn||r.mjNoNext)return;setTimeout(function(){var r=Pip.radio;if(!r||!r.mjOn||r.mjNoNext)return;try{if(Pip.audioIsPlaying&&Pip.audioIsPlaying())return}catch(e){}if(r.mjNext)r.mjNext()},30)",
+    );
+    Pip.on('audioStopped', rd.mjHandler);
+    Pip.rcetStop = new Function(
+      "var r=Pip.radio;r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}r.mjAllow=0;r.mojaveError=0;if(r.mjTimer)clearTimeout(r.mjTimer);if(r.mjWatch)clearInterval(r.mjWatch);r.mjTimer=0;r.mjWatch=0;if(r.mjHandler){try{Pip.removeListener('audioStopped',r.mjHandler)}catch(e){}}r.mjHandler=0;r.mjNext=0;if(Pip._mjStart){Pip.audioStart=Pip._mjStart;Pip._mjStart=0}if(Pip._mjStop){Pip.audioStop=Pip._mjStop;Pip._mjStop=0}if(Pip._rcetSleepOrig){Pip.goToSleep=Pip._rcetSleepOrig;Pip._rcetSleepOrig=0;Pip._rcetSleepWrapped=0}",
+    );
   }
 
-  function buildStationItems() {
-    const items = [{ type: 'menu', label: 'BACK TO MENU' }];
-    for (let i = 0; i < stations.length; i++) {
-      items.push({ type: 'station', name: stations[i] });
+  function watch() {
+    if (rd.mjWatch) clearInterval(rd.mjWatch);
+    rd.mjWatch = setInterval(
+      new Function(
+        "var r=Pip.radio;if(!r||!r.mjOn){if(r&&r.mjWatch){clearInterval(r.mjWatch);r.mjWatch=0}return}try{if(Pip.setDACMode)Pip.setDACMode('out')}catch(e){}try{if(Pip.setVol&&typeof r.mjVol=='number')Pip.setVol(r.mjVol)}catch(e){}if(r.mjNoNext)return;try{if(!Pip.audioIsPlaying||Pip.audioIsPlaying())return}catch(e){return}if(r.mjNext)r.mjNext()",
+      ),
+      1000,
+    );
+  }
+
+  function stopMusic() {
+    if (Pip.rcetStop) {
+      try {
+        Pip.rcetStop();
+      } catch (e) {}
+    } else {
+      rd.mjOn = 0;
+      Pip.radioClipPlaying = 0;
+      try {
+        Pip.audioStop();
+      } catch (e) {}
     }
-    return items;
+  }
+
+  // ---------------------------------------------------------------------------
+  //  Filesystem helpers
+  // ---------------------------------------------------------------------------
+  function isDir(p) {
+    try {
+      return !!fs.statSync(p).dir;
+    } catch (e) {
+      try {
+        return !!fs.statSync('/' + p).dir;
+      } catch (e2) {
+        return false;
+      }
+    }
+  }
+
+  function readDir(p) {
+    try {
+      return fs.readdir(p);
+    } catch (e) {
+      try {
+        return fs.readdir('/' + p);
+      } catch (e2) {
+        return [];
+      }
+    }
+  }
+
+  function songLabel(name) {
+    return ('' + name).replace(/\.(wav|wave)$/i, '');
+  }
+
+  function tooLong(base, name) {
+    return ('/' + base + '/' + name).length > MAX_PATH;
+  }
+
+  function hwRandInt(n) {
+    if (typeof E !== 'undefined' && E.hwRand) return (E.hwRand() >>> 0) % n;
+    return Math.randInt(n);
+  }
+
+  function ensureMusicDir() {
+    if (!isDir(MUSIC_DIR)) {
+      try {
+        fs.mkdir('/' + MUSIC_DIR);
+      } catch (e) {}
+    }
+  }
+
+  // Only folder names + a root pseudo-station. Songs are NOT read here.
+  function loadStations() {
+    let root = MUSIC_DIR;
+    let x = readDir(root);
+    if (!x.length && isDir('/' + MUSIC_DIR)) {
+      root = '/' + MUSIC_DIR;
+      x = readDir(root);
+    }
+    x = x.slice().sort();
+    stations = [];
+    let hasRootWav = false;
+    for (let i = 0; i < x.length; i++) {
+      const n = '' + x[i];
+      if (n === '.' || n === '..') continue;
+      if (isDir(root + '/' + n)) stations.push({ n: n, p: root + '/' + n });
+      else if (/\.(wav|wave)$/i.test(n)) hasRootWav = true;
+    }
+    if (hasRootWav) stations.push({ n: 'MUSIC', p: root });
+  }
+
+  // Read one station's wav files (on demand).
+  function loadSongs(station) {
+    songs = [];
+    const x = readDir(station.p).slice().sort();
+    for (let i = 0; i < x.length; i++) {
+      const s = '' + x[i];
+      if (/\.(wav|wave)$/i.test(s)) songs.push(s);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  //  Playback (per-station; streams + advances, never preloads)
+  // ---------------------------------------------------------------------------
+  function play(station, startSong, shuffle) {
+    if (!station) return false;
+    const base = station.p;
+    const tracks = [];
+    for (let i = 0; i < songs.length; i++) {
+      if (!tooLong(base, songs[i])) tracks.push(songs[i]);
+    }
+    if (!tracks.length) return false;
+
+    let idx = 0;
+    for (let i = 0; i < tracks.length; i++) {
+      if (tracks[i] === startSong) {
+        idx = i;
+        break;
+      }
+    }
+    if (shuffle) {
+      for (let i = tracks.length - 1; i > 0; i--) {
+        const j = hwRandInt(i + 1);
+        const t = tracks[i];
+        tracks[i] = tracks[j];
+        tracks[j] = t;
+      }
+      if (startSong) {
+        for (let i = 0; i < tracks.length; i++) {
+          if (tracks[i] === startSong) {
+            const t0 = tracks[0];
+            tracks[0] = tracks[i];
+            tracks[i] = t0;
+            break;
+          }
+        }
+      }
+      idx = 0;
+    }
+
+    rd.mjStations = [{ n: station.n, p: base + '/', t: tracks }];
+    rd.mjStationIndex = 0;
+    rd.mjTrackIndex = idx - 1; // mjNext advances +1
+    rd.mjOn = 1;
+    rd.mojaveStation = 1;
+    rd.mojaveError = 0;
+    rd.mjVol = currentVol;
+    installEngine();
+    if (app.persist) installWrappers();
+    if (rd.mjNext) rd.mjNext();
+    if (rd.mjOn) watch();
+    return true;
+  }
+
+  function firstPlayable(station) {
+    for (let i = 0; i < songs.length; i++) {
+      if (!tooLong(station.p, songs[i])) return songs[i];
+    }
+    return null;
+  }
+
+  // The station/track currently playing (from the engine).
+  function playingStationName() {
+    return rd.mjOn && rd.mjStations && rd.mjStations[0]
+      ? rd.mjStations[0].n
+      : null;
+  }
+  function playingTrackName() {
+    if (!rd.mjOn || !rd.mjStations || !rd.mjStations[0]) return null;
+    const t = rd.mjStations[0].t;
+    return t ? t[rd.mjTrackIndex || 0] : null;
+  }
+
+  // ---------------------------------------------------------------------------
+  //  List model
+  // ---------------------------------------------------------------------------
+  function rebuildItems() {
+    items = [];
+    if (view === 'stations') {
+      items.push({ t: 'menu', l: '< BACK TO MENU' });
+      for (let i = 0; i < stations.length; i++) {
+        items.push({ t: 'station', l: stations[i].n, s: stations[i] });
+      }
+    } else {
+      items.push({ t: 'back', l: '< BACK TO PLAYLISTS' });
+      items.push({ t: 'shuffle', l: '~ SHUFFLE PLAY ALL' });
+      items.push({ t: 'playall', l: '> PLAY ALL' });
+      for (let i = 0; i < songs.length; i++) {
+        items.push({ t: 'song', l: songLabel(songs[i]), name: songs[i] });
+      }
+    }
+    if (sel >= items.length) sel = items.length - 1;
+    if (sel < 0) sel = 0;
+    clampScroll();
+  }
+
+  function isPlayingRow(item) {
+    if (!rd.mjOn) return false;
+    if (item.t === 'station') return item.s.n === playingStationName();
+    if (item.t === 'song')
+      return (
+        curStation &&
+        curStation.n === playingStationName() &&
+        item.name === playingTrackName()
+      );
+    return false;
   }
 
   function clampScroll() {
-    if (selectedIdx < scrollOffset) scrollOffset = selectedIdx;
-    if (selectedIdx >= scrollOffset + VISIBLE_ROWS)
-      scrollOffset = selectedIdx - VISIBLE_ROWS + 1;
+    if (sel < scrollOffset) scrollOffset = sel;
+    if (sel >= scrollOffset + VISIBLE_ROWS)
+      scrollOffset = sel - VISIBLE_ROWS + 1;
     if (scrollOffset < 0) scrollOffset = 0;
   }
 
-  function drawAll() {
-    h.clear(1);
-    drawHeader();
-    drawFooter();
-    drawTitleBar();
-    drawWaveformBorder();
-    drawNowPlaying(playingName, false);
-    drawList();
-    startWaveform();
-  }
-
-  function drawEmptyState() {
-    const x = LIST_X + 4;
-    let y = LIST_START_Y + ROW_H + 8;
-
-    h.setColor(C_BRIGHT)
-      .setFont('Monofonto16')
-      .setFontAlign(-1, -1)
-      .drawString('NO PLAYLISTS FOUND', x, y);
-    y += 34;
-
-    h.setColor(C_MED).setFont('Monofonto14').setFontAlign(-1, -1);
-    const lines = h.wrapString(
-      'Add station playlists to the MUSIC folder on the SD card. Convert ' +
-        'audio at https://pip-boy.com/tools',
-      LIST_W - 8,
-    );
-    for (let i = 0; i < lines.length; i++) {
-      h.drawString(lines[i], x, y);
-      y += 16;
-    }
-  }
-
-  function drawFooter() {
+  function readVol() {
+    if (typeof app.currentVol === 'number') return app.currentVol;
     try {
-      Pip.renderFooter();
-    } catch (e) {
-      h.setColor(C_DIM).drawLine(0, app.H - 30, app.W - 1, app.H - 30);
-    }
+      if (Pip.settings && typeof Pip.settings.volume === 'number')
+        return Pip.settings.volume;
+    } catch (e) {}
+    return 20;
   }
 
+  // ---------------------------------------------------------------------------
+  //  Drawing
+  // ---------------------------------------------------------------------------
   function drawHeader() {
     try {
       Pip.renderHeader();
+      Pip.renderFooter();
     } catch (e) {
-      h.setColor(C_DIM).drawLine(0, 39, app.W - 1, 39);
+      h.setColor(C_DIM)
+        .drawLine(0, 39, app.W - 1, 39)
+        .drawLine(0, app.H - 30, app.W - 1, app.H - 30);
     }
   }
 
-  function drawList() {
-    'ram';
-    const startY = LIST_START_Y;
-    const baseX = LIST_X + 4;
-    const stationBase = pathJoin(MUSIC_DIR, currentStation);
-
-    h.setColor(C_BLACK).fillRect(
-      LIST_X,
-      startY,
-      LIST_X + LIST_W,
-      startY + VISIBLE_ROWS * ROW_H,
-    );
-
-    h.setFont('Monofonto14').setFontAlign(-1, -1);
-
-    const last = Math.min(scrollOffset + VISIBLE_ROWS, listItems.length);
-    for (let absIdx = scrollOffset; absIdx < last; absIdx++) {
-      const item = listItems[absIdx];
-      const isSelected = absIdx === selectedIdx;
-      const y = startY + (absIdx - scrollOffset) * ROW_H;
-
-      let color;
-      if (item.type === 'song' && item.tooLong) {
-        color = isSelected ? C_MED : C_DIM;
-      } else {
-        color = isSelected ? C_BRIGHT : C_MED;
-      }
-
-      if (isSelected) {
-        h.setColor(C_DIM).fillRect(LIST_X, y, LIST_X + LIST_W, y + ROW_H - 2);
-      }
-
-      if (
-        (item.type === 'random' && isRandom) ||
-        (item.type === 'playall' && isPlayAll)
-      ) {
-        h.setColor(C_BRIGHT).fillRect(
-          LIST_X + LIST_W - 5,
-          y + 7,
-          LIST_X + LIST_W - 2,
-          y + ROW_H - 9,
-        );
-      }
-
-      h.setColor(color);
-
-      if (item.type === 'song') {
-        let labelX = baseX;
-        if (
-          !item.tooLong &&
-          playingPath &&
-          pathJoin(stationBase, item.name) === playingPath
-        ) {
-          const sqY = y + Math.floor((ROW_H - 4) / 2);
-          h.setColor(C_BRIGHT).fillRect(baseX, sqY, baseX + 3, sqY + 3);
-          h.setColor(color);
-          labelX = baseX + 7;
-        }
-        h.drawString(
-          ellipsize(songLabel(item.name), LIST_X + LIST_W - labelX - 8),
-          labelX,
-          y + 5,
-        );
-      } else {
-        h.drawString(
-          ellipsize(
-            (SYM[item.type] || '') + (item.label || item.name || ''),
-            LIST_X + LIST_W - baseX - 8,
-          ),
-          baseX,
-          y + 5,
-        );
-      }
-    }
-
-    if (view === 'stations' && !stations.length) drawEmptyState();
-
-    h.flip();
-    Pip.lastFlip = getTime();
-  }
-
-  function drawNowPlaying(name, isError) {
-    const clearY = INFO_Y;
-    h.setColor(C_BLACK).fillRect(WAVE_X, clearY, app.W - 1, clearY + 55);
-
-    if (!name) return;
-
-    const color = isError ? C_DIM : C_BRIGHT;
-    const display = isError
-      ? name
-      : name.length > 19
-        ? name.slice(0, 16) + '...'
-        : name;
-
-    h.setColor(color)
-      .setFont('6x8', 2)
-      .setFontAlign(-1, -1)
-      .drawString(display, WAVE_X, clearY + 2);
-
-    if (!isError) {
-      const station = playingStation || currentStation;
-      if (station) {
-        h.setColor(C_MED)
-          .setFont('6x8')
-          .setFontAlign(-1, -1)
-          .drawString(station, WAVE_X, clearY + 24);
-      }
-      if (isRandom) {
-        h.setColor(C_BRIGHT)
-          .setFont('6x8')
-          .setFontAlign(-1, -1)
-          .drawString('(shuffle)', WAVE_X, clearY + 38);
-      } else if (isPlayAll) {
-        h.setColor(C_BRIGHT)
-          .setFont('6x8')
-          .setFontAlign(-1, -1)
-          .drawString('(play all)', WAVE_X, clearY + 38);
-      }
-    }
-
-    h.flip();
-    Pip.lastFlip = getTime();
-  }
-
-  function drawTitleBar() {
-    const titleX = LIST_X + 6;
+  function drawTitle() {
     h.setColor(C_BRIGHT)
       .setFontMonofonto16()
       .setFontAlign(-1, -1)
-      .drawString(app.names[2], titleX, LIST_TITLE_Y);
-
-    const APP_VERSION = app.version;
-
-    if (APP_VERSION) {
-      const versionX = titleX + h.stringWidth(app.names[2]) + 4;
+      .drawString(app.names[2], LIST_X + 6, LIST_TITLE_Y);
+    if (app.version) {
       h.setColor(C_BRIGHT)
         .setFont('6x8')
         .setFontAlign(-1, -1)
-        .drawString('v' + APP_VERSION, versionX, LIST_TITLE_Y + 8);
+        .drawString(
+          'v' + app.version,
+          LIST_X + 6 + h.stringWidth(app.names[2]) + 4,
+          LIST_TITLE_Y + 8,
+        );
     }
-
     h.setColor(C_DIM).drawLine(
       LIST_X,
       LIST_START_Y - 2,
@@ -336,92 +369,92 @@
     );
   }
 
-  function drawVolHud() {
+  function ellipsize(text, maxPx) {
+    if (h.stringWidth(text) <= maxPx) return text;
+    let s = text;
+    while (s.length && h.stringWidth(s + '...') > maxPx) s = s.slice(0, -1);
+    return s + '...';
+  }
+
+  function drawList() {
     'ram';
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      waveInterval = null;
-    }
-
-    const hudY = WAVE_Y + WAVE_H - 18;
-    const labelX = WAVE_X + 6;
-    const barX = labelX + 46;
-    const barEndX = WAVE_X + WAVE_W - 6;
-    const barH = 10;
-
-    h.setClipRect(WAVE_X, hudY - 2, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
     h.setColor(C_BLACK).fillRect(
-      WAVE_X,
-      hudY - 2,
-      WAVE_X + WAVE_W - 1,
-      WAVE_Y + WAVE_H,
+      LIST_X,
+      LIST_START_Y,
+      LIST_X + LIST_W,
+      LIST_START_Y + VISIBLE_ROWS * ROW_H,
     );
+    h.setFont('Monofonto14').setFontAlign(-1, -1);
+    const last = Math.min(scrollOffset + VISIBLE_ROWS, items.length);
+    for (let i = scrollOffset; i < last; i++) {
+      const item = items[i];
+      const y = LIST_START_Y + (i - scrollOffset) * ROW_H;
+      const on = i === sel;
+      if (on) h.setColor(C_DIM).fillRect(LIST_X, y, LIST_X + LIST_W, y + ROW_H - 2);
+      let x = LIST_X + 6;
+      if (isPlayingRow(item)) {
+        const sq = y + Math.floor((ROW_H - 4) / 2);
+        h.setColor(C_BRIGHT).fillRect(x, sq, x + 3, sq + 3);
+        x += 8;
+      }
+      h.setColor(on ? C_BRIGHT : C_MED).drawString(
+        ellipsize(item.l, LIST_X + LIST_W - x - 8),
+        x,
+        y + 4,
+      );
+    }
+    if (view === 'stations' && !stations.length) {
+      h.setColor(C_MED)
+        .setFont('Monofonto14')
+        .drawString('NO STATIONS IN MUSIC/', LIST_X + 6, LIST_START_Y + ROW_H);
+    }
+    h.flip();
+    Pip.lastFlip = getTime();
+  }
 
-    const filled = Math.round((currentVol / VOL_MAX) * (barEndX - barX));
-    h.setColor(C_DIM).fillRect(barX, hudY, barEndX, hudY + barH);
-    h.setColor(C_BRIGHT).fillRect(barX, hudY, barX + filled, hudY + barH);
-
+  function drawInfo() {
+    h.setColor(C_BLACK).fillRect(WAVE_X, INFO_Y, app.W - 1, INFO_Y + 56);
+    const stn = playingStationName();
+    if (stn) {
+      h.setColor(C_BRIGHT)
+        .setFont('6x8', 2)
+        .setFontAlign(-1, -1)
+        .drawString(('' + stn).slice(0, 19), WAVE_X, INFO_Y + 2);
+      h.setColor(C_MED)
+        .setFont('6x8')
+        .setFontAlign(-1, -1)
+        .drawString(
+          songLabel(playingTrackName() || '').slice(0, 30),
+          WAVE_X,
+          INFO_Y + 24,
+        );
+    } else {
+      h.setColor(C_MED)
+        .setFont('6x8', 2)
+        .setFontAlign(-1, -1)
+        .drawString('STOPPED', WAVE_X, INFO_Y + 2);
+    }
     h.setColor(C_MED)
       .setFont('6x8')
       .setFontAlign(-1, -1)
-      .drawString('VOL ' + currentVol, labelX, hudY + 1);
-
-    h.setClipRect(0, 0, app.W - 1, app.H - 1);
-    h.flip();
-    Pip.lastFlip = getTime();
-
-    if (volHudTimeout) clearTimeout(volHudTimeout);
-    volHudTimeout = setTimeout(function () {
-      volHudTimeout = null;
-      h.setColor(C_BLACK).fillRect(
-        WAVE_X,
-        WAVE_Y,
-        WAVE_X + WAVE_W - 1,
-        WAVE_Y + WAVE_H,
-      );
-      h.flip();
-      Pip.lastFlip = getTime();
-      startWaveform();
-    }, VOL_HUD_MS);
+      .drawString('VOL ' + currentVol, WAVE_X, INFO_Y + 38);
   }
 
-  function drawWaveform() {
-    'ram';
-    if (!wavePoly) return;
-    const ym = WAVE_Y + WAVE_H / 2;
-    const waveBottom = WAVE_Y + WAVE_H - 10;
-    h.setClipRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
-    h.clearRect(WAVE_X, WAVE_Y, WAVE_X + WAVE_W - 1, waveBottom);
-    if (isAudioPlaying) {
-      Pip.getAudioWaveform(wavePoly, WAVE_Y, waveBottom);
-    } else {
-      let t = getTime();
-      for (let i = 1; i < 60; i += 2) {
-        wavePoly[i] = ym + 45 * Math.sin(t) * Math.sin(0.13 * (t += 0.6));
-      }
-    }
-    h.setColor(C_BRIGHT).drawPolyAA(wavePoly);
-    h.setClipRect(0, 0, app.W - 1, app.H - 1);
-  }
-
-  function drawWaveformBorder() {
+  function drawWaveBorder() {
     const x = WAVE_X;
     const y = WAVE_Y;
     const bw = WAVE_W + 10;
     const bh = WAVE_H + 15;
     let bx = x;
     let by = y + 2;
-
     h.setColor(C_MED);
     h.fillRect(x + bw, y, x + bw + 2, y + bh);
     h.fillRect(x, y + bh, x + bw, y + bh + 2);
-
     for (let i = 5; bx < x + bw; i++) {
       bx += 5;
       const th = i % 6 === 0 ? 14 : i % 2 === 1 ? 4 : 7;
       h.fillRect(bx, y + bh, bx + 1, y + bh - th);
     }
-
     for (let i = 5; by < y + bh; i++) {
       by += 5;
       const tw = i % 6 === 0 ? 14 : i % 2 === 1 ? 4 : 7;
@@ -429,611 +462,198 @@
     }
   }
 
-  function ellipsize(text, maxPx) {
+  let lastTrackKey = '';
+  function drawWave() {
     'ram';
-    if (h.stringWidth(text) <= maxPx) return text;
-    const dots = '...';
-    const dotsW = h.stringWidth(dots);
-    let lo = 0,
-      hi = text.length,
-      best = 0;
-    while (lo <= hi) {
-      const mid = (lo + hi) >> 1;
-      if (h.stringWidth(text.slice(0, mid)) + dotsW <= maxPx) {
-        best = mid;
-        lo = mid + 1;
-      } else {
-        hi = mid - 1;
-      }
-    }
-    return text.slice(0, best) + dots;
-  }
-
-  function ensureMusicDir() {
-    if (isDirectory(MUSIC_DIR)) return;
-    try {
-      fs.mkdir('/' + MUSIC_DIR);
-    } catch (e) {}
-  }
-
-  function fileExists(path) {
-    try {
-      const st = fs.statSync('/' + path);
-      return !!st && !st.dir;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function handlePlayAllSelect() {
-    if (view === 'stations') return;
-
-    if (isPlayAll && isAudioPlaying) {
-      stopSong();
-      return;
-    }
-
-    if (!allSongs.length) return;
-
-    if (isAudioPlaying) suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    playingPath = null;
-
-    isRandom = false;
-    randomQueue = [];
-    isPlayAll = true;
-    playAllIdx = songPage * PAGE_SIZE;
-    if (playAllIdx >= allSongs.length) playAllIdx = 0;
-    playNextPlayAll();
-    drawList();
-    uiSound('SELECT');
-  }
-
-  function handleRandomSelect() {
-    if (view === 'stations') return;
-
-    if (isRandom && isAudioPlaying) {
-      stopSong();
-      return;
-    }
-
-    if (isAudioPlaying) suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    playingPath = null;
-
-    startRandom(currentStation);
-    drawList();
-    uiSound('SELECT');
-  }
-
-  function handleSelect() {
     if (removed) return;
-    lastSelectTime = Date.now();
-    const item = listItems[selectedIdx];
-    if (!item) return;
-
-    if (item.type === 'menu') {
-      openMenu();
-      return;
+    // Follow the engine's auto-advance in the now-playing area + song highlight.
+    const key = playingStationName() + '|' + playingTrackName();
+    if (key !== lastTrackKey) {
+      lastTrackKey = key;
+      drawInfo();
+      if (view === 'songs') drawList();
     }
-
-    if (item.type === 'random') {
-      handleRandomSelect();
-      return;
+    const x = WAVE_X;
+    const y = WAVE_Y;
+    const mid = y + (WAVE_H >> 1);
+    if (!wave) {
+      wave = new Uint16Array(60);
+      for (let i = 0; i < 60; i += 2) wave[i] = x + (i * WAVE_W) / 60;
     }
-
-    if (item.type === 'playall') {
-      handlePlayAllSelect();
-      return;
+    h.setClipRect(x, y, x + WAVE_W - 1, y + WAVE_H).clearRect(
+      x,
+      y,
+      x + WAVE_W - 1,
+      y + WAVE_H,
+    );
+    if (Pip.radioClipPlaying && Pip.getAudioWaveform) {
+      try {
+        Pip.getAudioWaveform(wave, y, y + WAVE_H);
+      } catch (e) {}
+    } else {
+      let t = getTime();
+      for (let i = 1; i < 60; i += 2)
+        wave[i] = mid + 28 * Math.sin(t) * Math.sin(0.13 * (t += 0.6));
     }
-
-    if (item.type === 'back') {
-      navigateToStations();
-      return;
-    }
-
-    if (item.type === 'station') {
-      navigateToSongs(item.name);
-      return;
-    }
-
-    if (item.type === 'prev') {
-      if (songPage > 0) {
-        songPage--;
-        selectedIdx = SONG_HEADER_COUNT;
-        scrollOffset = 0;
-        rebuildList();
-        drawList();
-        uiSound('TAB');
-      }
-      return;
-    }
-
-    if (item.type === 'next') {
-      const maxPage = Math.floor(Math.max(0, allSongs.length - 1) / PAGE_SIZE);
-      if (songPage < maxPage) {
-        songPage++;
-        selectedIdx = SONG_HEADER_COUNT;
-        scrollOffset = 0;
-        rebuildList();
-        drawList();
-        uiSound('TAB');
-      }
-      return;
-    }
-
-    if (item.type === 'song') {
-      if (item.tooLong) {
-        drawNowPlaying('FILE NAME TOO LONG', true);
-        return;
-      }
-      handleSongSelect(item);
-    }
+    h.setColor(C_BRIGHT).drawPolyAA(wave);
+    h.setClipRect(0, 0, app.W - 1, app.H - 1);
+    h.flip();
+    Pip.lastFlip = getTime();
   }
 
-  function handleSongSelect(item) {
-    const full = pathJoin(pathJoin(MUSIC_DIR, currentStation), item.name);
-
-    if (playingPath === full) {
-      stopSong();
-      isRandom = false;
-      return;
-    }
-
-    isRandom = false;
-    isPlayAll = false;
-    randomQueue = [];
-    playSong(currentStation, item.name);
-    uiSound('SELECT');
+  function drawAll() {
+    h.clear(1);
+    drawHeader();
+    drawTitle();
+    drawWaveBorder();
+    drawList();
+    drawInfo();
+    h.flip();
+    Pip.lastFlip = getTime();
   }
 
-  function hwRandInt(n) {
-    if (typeof E !== 'undefined' && E.hwRand) {
-      return (E.hwRand() >>> 0) % n;
-    }
-    return Math.randInt(n);
-  }
-
-  function initWaveform() {
-    wavePoly = new Uint16Array(60);
-    for (let i = 0; i < 60; i += 2) {
-      wavePoly[i] = WAVE_X + 5 + ((i >> 1) * WAVE_W) / 30;
-    }
-  }
-
-  function isDirectory(path) {
-    try {
-      const st = fs.statSync('/' + path);
-      return !!st && !!st.dir;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function isPathTooLong(base, name) {
-    return ('/' + pathJoin(base, name)).length > MAX_PATH;
-  }
-
-  function loadSongs(stationName) {
-    const dir = pathJoin(MUSIC_DIR, stationName);
-    const entries = readDir(dir);
-    allSongs = [];
-    for (let i = 0; i < entries.length; i++) {
-      const name = entries[i];
-      if (/\.wav$/i.test(name)) {
-        allSongs.push({ name: name });
-      }
-    }
-    sortSongs();
-  }
-
-  function loadStations() {
-    const entries = readDir(MUSIC_DIR);
-    stations = [];
-    for (let i = 0; i < entries.length; i++) {
-      const name = entries[i];
-      if (isDirectory(pathJoin(MUSIC_DIR, name))) {
-        stations.push(name);
-      }
-    }
-  }
-
-  function navigateToSongs(stationName) {
-    if (isAudioPlaying) suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    playingPath = null;
-    playingName = null;
-    playingStation = null;
-    isRandom = false;
-    isPlayAll = false;
-    randomQueue = [];
-
+  // ---------------------------------------------------------------------------
+  //  Input
+  // ---------------------------------------------------------------------------
+  function openStation(station) {
+    curStation = station;
+    loadSongs(station);
     view = 'songs';
-    currentStation = stationName;
-    songPage = 0;
-    selectedIdx = 0;
+    sel = 0;
     scrollOffset = 0;
-    loadSongs(stationName);
-    rebuildList();
+    rebuildItems();
     drawAll();
-    uiSound('TAB');
+    sound('TAB');
   }
 
-  function navigateToStations() {
+  function backToStations() {
     view = 'stations';
-    currentStation = null;
-    allSongs = [];
-    songPage = 0;
-    selectedIdx = 0;
-    scrollOffset = 0;
     loadStations();
-    rebuildList();
+    sel = 0;
+    scrollOffset = 0;
+    rebuildItems();
     drawAll();
-    uiSound('TAB');
+    sound('TAB');
   }
 
-  function onAudioStopped() {
-    if (suppressAudioStopped) {
-      suppressAudioStopped = false;
+  function onKnob1(dir) {
+    if (removed) return;
+    if (dir) {
+      const now = Date.now();
+      if (now - lastKnob < KNOB_MS) return;
+      lastKnob = now;
+      sel += dir > 0 ? 1 : -1;
+      if (sel < 0) sel = 0;
+      if (sel >= items.length) sel = items.length - 1;
+      clampScroll();
+      drawList();
+      sound('HIGHLIGHT');
       return;
     }
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    playingPath = null;
-    if (isRandom) {
-      playNextRandom();
+    const item = items[sel];
+    if (!item) return;
+    if (item.t === 'menu') {
+      sound('SELECT');
+      app.go(app.scenes.MENU || 'MENU.JS');
       return;
     }
-    if (isPlayAll) {
-      playNextPlayAll();
+    if (item.t === 'station') {
+      openStation(item.s);
       return;
     }
-    playingName = null;
-    drawNowPlaying(null, false);
+    if (item.t === 'back') {
+      backToStations();
+      return;
+    }
+    sound('SELECT');
+    if (item.t === 'shuffle') {
+      play(curStation, null, true);
+    } else if (item.t === 'playall') {
+      play(curStation, firstPlayable(curStation), false);
+    } else if (item.t === 'song') {
+      if (isPlayingRow(item)) stopMusic();
+      else play(curStation, item.name, false);
+    }
     drawList();
-  }
-
-  function onKnob1(dir, long) {
-    if (!dir) {
-      if (long) openSettings();
-      else handleSelect();
-      return;
-    }
-    const now = Date.now();
-    if (now - lastKnobTime < KNOB_DEBOUNCE_MS) return;
-    if (now - lastSelectTime < POST_SELECT_IGNORE_MS) return;
-    lastKnobTime = now;
-
-    selectedIdx += dir > 0 ? 1 : -1;
-    if (selectedIdx < 0) selectedIdx = 0;
-    if (selectedIdx >= listItems.length) selectedIdx = listItems.length - 1;
-    clampScroll();
-    drawList();
-    uiSound('HIGHLIGHT');
+    drawInfo();
+    h.flip();
+    Pip.lastFlip = getTime();
   }
 
   function onKnob2(dir) {
-    if (!dir) return;
+    if (removed || !dir) return;
     const now = Date.now();
-    if (now - lastVolKnobTime < KNOB_DEBOUNCE_MS) return;
-    lastVolKnobTime = now;
-
-    currentVol = Math.max(
-      VOL_MIN,
-      Math.min(VOL_MAX, currentVol + (dir > 0 ? 1 : -1)),
-    );
+    if (now - lastVol < KNOB_MS) return;
+    lastVol = now;
+    currentVol = E.clip(currentVol + (dir > 0 ? 1 : -1), VOL_MIN, VOL_MAX);
+    app.currentVol = currentVol;
+    rd.mjVol = currentVol;
     try {
       Pip.setVol(currentVol);
     } catch (e) {}
-    app.currentVol = currentVol;
-
-    drawVolHud();
-  }
-
-  function openMenu() {
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      waveInterval = null;
-    }
-    if (volHudTimeout) {
-      clearTimeout(volHudTimeout);
-      volHudTimeout = null;
-    }
-    suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    uiSound('TAB');
-    app.go(app.scenes.MENU || 'MENU.JS');
-  }
-
-  function openSettings() {
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      waveInterval = null;
-    }
-    if (volHudTimeout) {
-      clearTimeout(volHudTimeout);
-      volHudTimeout = null;
-    }
-    uiSound('TAB');
-    stopSong();
-    app.go(app.scenes.SETTINGS || 'SETTINGS.JS');
-  }
-
-  function pathJoin(a, b) {
-    if (!a) return b;
-    if (!b) return a;
-    return a + '/' + b;
-  }
-
-  function playNextPlayAll() {
-    if (!isPlayAll) return;
-    const st = playingStation || currentStation;
-    const base = pathJoin(MUSIC_DIR, st);
-
-    // Find next song, wrap to first song if needed.
-    let scanned = 0;
-    while (scanned < allSongs.length) {
-      if (playAllIdx >= allSongs.length) playAllIdx = 0;
-      if (!isPathTooLong(base, allSongs[playAllIdx].name)) break;
-      playAllIdx++;
-      scanned++;
-    }
-    if (scanned >= allSongs.length) {
-      isPlayAll = false;
-      playingName = null;
-      drawNowPlaying(null, false);
-      drawList();
-      return;
-    }
-
-    const idx = playAllIdx++;
-    // Update page to follow new song if needed.
-    const page = Math.floor(idx / PAGE_SIZE);
-    if (page !== songPage) {
-      songPage = page;
-      rebuildList();
-    }
-    playSong(st, allSongs[idx].name);
-  }
-
-  function playNextRandom() {
-    if (!isRandom || !randomQueue.length) {
-      isRandom = false;
-      drawNowPlaying(null, false);
-      drawList();
-      return;
-    }
-    if (randomQueueIdx >= randomQueue.length) {
-      shuffle(randomQueue);
-      if (randomQueue.length > 1 && randomQueue[0].name === lastPlayedName) {
-        const t = randomQueue[0];
-        randomQueue[0] = randomQueue[1];
-        randomQueue[1] = t;
-      }
-      randomQueueIdx = 0;
-    }
-    const next = randomQueue[randomQueueIdx++];
-    playSong(playingStation || currentStation, next.name);
-  }
-
-  function playSong(stationName, songName) {
-    const base = pathJoin(MUSIC_DIR, stationName);
-    const full = pathJoin(base, songName);
-
-    if (isAudioPlaying) suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-
-    if (!fileExists(full)) {
-      drawNowPlaying('File not found', true);
-      return;
-    }
-
-    try {
-      Pip.audioStart(full);
-    } catch (e) {
-      drawNowPlaying('Play error', true);
-      return;
-    }
-
-    playingPath = full;
-    playingName = songLabel(songName);
-    playingStation = stationName;
-    lastPlayedName = songName;
-    isAudioPlaying = true;
-    Pip.radioClipPlaying = true;
-
-    drawNowPlaying(playingName, false);
-    drawList();
-  }
-
-  function readDir(path) {
-    try {
-      return fs
-        .readdir('/' + path)
-        .filter(function (n) {
-          return n !== '.' && n !== '..';
-        })
-        .sort();
-    } catch (e) {
-      try {
-        E.defrag();
-        return fs
-          .readdir('/' + path)
-          .filter(function (n) {
-            return n !== '.' && n !== '..';
-          })
-          .sort();
-      } catch (e2) {
-        return [];
-      }
-    }
-  }
-
-  function readSystemVolume() {
-    let v = VOL_DEFAULT;
-    if (typeof app.currentVol === 'number') {
-      v = app.currentVol;
-    } else {
-      try {
-        if (
-          typeof Pip !== 'undefined' &&
-          Pip.settings &&
-          typeof Pip.settings.volume === 'number'
-        ) {
-          app.initialVol = Pip.settings.volume;
-          v = app.initialVol;
-        }
-      } catch (e) {}
-    }
-    if (v < VOL_MIN) v = VOL_MIN;
-    if (v > VOL_MAX) v = VOL_MAX;
-    return v;
-  }
-
-  function rebuildList() {
-    listItems = view === 'stations' ? buildStationItems() : buildSongItems();
-    if (selectedIdx >= listItems.length) selectedIdx = listItems.length - 1;
-    if (selectedIdx < 0) selectedIdx = 0;
-    clampScroll();
-  }
-
-  function remove() {
-    if (removed) return;
-    removed = true;
-
-    if (waveInterval) {
-      clearInterval(waveInterval);
-      waveInterval = null;
-    }
-    if (volHudTimeout) {
-      clearTimeout(volHudTimeout);
-      volHudTimeout = null;
-    }
-    Pip.removeListener('knob1', onKnob1);
-    Pip.removeListener('knob2', onKnob2);
-    Pip.removeListener('audioStopped', onAudioStopped);
-
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    Pip.audioStop();
-
-    h.clear();
+    drawInfo();
     h.flip();
+    Pip.lastFlip = getTime();
   }
 
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = hwRandInt(i + 1);
-      const t = arr[i];
-      arr[i] = arr[j];
-      arr[j] = t;
-    }
-  }
-
-  function songLabel(name) {
-    return name.replace(/\.wav$/i, '');
-  }
-
-  function sortSongs() {
-    allSongs.sort(function (a, b) {
-      const an = a.name.toLowerCase();
-      const bn = b.name.toLowerCase();
-      return an < bn ? -sortDir : an > bn ? sortDir : 0;
-    });
-  }
-
-  function start() {
-    h.clear();
-    Pip.audioStop();
-
-    currentVol = readSystemVolume();
-    try {
-      Pip.setVol(currentVol);
-    } catch (e) {}
-    app.currentVol = currentVol;
-
-    Pip.onExclusive('knob1', onKnob1);
-    Pip.onExclusive('knob2', onKnob2);
-
-    Pip.on('audioStopped', onAudioStopped);
-
-    initWaveform();
-    ensureMusicDir();
-    loadStations();
-    rebuildList();
-    drawAll();
-  }
-
-  function startRandom(stationName) {
-    isRandom = true;
-    isPlayAll = false;
-    randomQueue = buildRandomPool(stationName).slice();
-    if (!randomQueue.length) {
-      isRandom = false;
-      return;
-    }
-    shuffle(randomQueue);
-    if (
-      lastPlayedName &&
-      randomQueue.length > 1 &&
-      randomQueue[0].name === lastPlayedName
-    ) {
-      const t = randomQueue[0];
-      randomQueue[0] = randomQueue[1];
-      randomQueue[1] = t;
-    }
-    randomQueueIdx = 0;
-    playSong(stationName, randomQueue[randomQueueIdx++].name);
-  }
-
-  function startWaveform() {
-    if (waveInterval) return;
-    waveInterval = setInterval(drawWaveform, WAVEFORM_MS);
-  }
-
-  function stopSong() {
-    suppressAudioStopped = true;
-    isAudioPlaying = false;
-    Pip.radioClipPlaying = false;
-    try {
-      Pip.audioStop();
-    } catch (e) {}
-    playingPath = null;
-    playingName = null;
-    isRandom = false;
-    isPlayAll = false;
-    randomQueue = [];
-    drawNowPlaying(null, false);
-    drawList();
-  }
-
-  function uiSound(name) {
+  function sound(name) {
     try {
       if (Pip.playSound) Pip.playSound(name);
     } catch (e) {}
   }
 
-  start();
+  function remove() {
+    if (removed) return;
+    removed = true;
+    if (waveTimer) {
+      clearInterval(waveTimer);
+      waveTimer = 0;
+    }
+    Pip.removeListener('knob1', onKnob1);
+    Pip.removeListener('knob2', onKnob2);
+    // Persistent mode + playing: leave the engine running (survives on
+    // Pip.radio). Otherwise stop and restore any overridden globals.
+    if (!(app.persist && rd.mjOn)) stopMusic();
+    h.clear();
+    h.flip();
+  }
+
+  // ---------------------------------------------------------------------------
+  //  Init
+  // ---------------------------------------------------------------------------
+  currentVol = readVol();
+  try {
+    Pip.setVol(currentVol);
+  } catch (e) {}
+  app.currentVol = currentVol;
+
+  ensureMusicDir();
+  loadStations();
+
+  // Re-entering while a station is playing: re-arm and drop into its song list.
+  if (rd.mjOn) {
+    installEngine();
+    if (app.persist) installWrappers();
+    watch();
+    const pn = playingStationName();
+    let found = null;
+    for (let i = 0; i < stations.length; i++)
+      if (stations[i].n === pn) {
+        found = stations[i];
+        break;
+      }
+    if (found) {
+      curStation = found;
+      loadSongs(found);
+      view = 'songs';
+    }
+  }
+  rebuildItems();
+
+  Pip.onExclusive('knob1', onKnob1);
+  Pip.onExclusive('knob2', onKnob2);
+  drawAll();
+  waveTimer = setInterval(drawWave, 160);
 
   return {
     remove: remove,

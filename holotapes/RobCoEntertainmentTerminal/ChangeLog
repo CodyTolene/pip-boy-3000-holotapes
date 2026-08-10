@@ -1,3 +1,24 @@
+2.2.0
+DIRECT-MONKEYPATCH
+- Rebuild the MUSIC tab as a lean, station-based persistent player modeled on
+  the device's proven custom RADIO ("mojave") tab. Pick a station folder from
+  MUSIC/ and it keeps playing across the whole Pip-Boy OS (STATS / INV / DATA /
+  MAP / RADIO) and the terminal's own screens - like the built-in radio.
+- Persistence engine is installed as closure-free new Function() wrappers on
+  Pip / Pip.radio, so it survives the scene being torn down. While playing,
+  Pip.audioStart / Pip.audioStop ignore foreign (OS) calls so the per-screen
+  CRT static can't cut the music; an audioStopped handler + a watchdog advance
+  tracks. State is RAM-only, so a reboot / power-off stops it like any app.
+- Wrap Pip.goToSleep so audio stops cleanly before the device sleeps.
+- Stop playback by pressing the playing station again, via STOP RADIO on the
+  media menu, or it stops on sleep / power-off.
+- Relaunching the terminal while music is playing skips the intro and returns to
+  the media selection menu with the music still going.
+- Add SETTINGS to the first-page media menu.
+- Kept the MUSIC scene small (~9 KB vs ~19 KB) so the resident + peak RAM stays
+  close to the mojave tab, which the device runs without LOW_MEMORY. Video and
+  image viewers stay as their own separate scenes.
+
 2.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/58
 - Update name of app from "iPip Media Player" to "RobCo Entertainment Terminal"

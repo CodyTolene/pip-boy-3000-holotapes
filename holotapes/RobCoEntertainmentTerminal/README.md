@@ -19,6 +19,34 @@ players:
 - **IMAGES** - View images from the `IMAGES/` folder centered on a black
   background.
 
+### Music Player
+
+The **MUSIC** tab is a two-level player:
+
+- Open a **station** (any folder in `MUSIC/`) to see its songs.
+- Pick a **song** to start playing from there, or use **SHUFFLE PLAY ALL** /
+  **PLAY ALL** to play the whole station. Press the playing song again to stop.
+- When a song ends the next one plays automatically (shuffle order is kept when
+  SHUFFLE is on).
+- The right knob adjusts volume.
+
+### Persistent Audio (background playback)
+
+Turn on **PERSISTENT AUDIO** in the music settings menu (long-press the left
+knob; it also appears on the first-page **SETTINGS** entry). It is **off by
+default**.
+
+While it is on, the station keeps playing across the terminal's own screens
+**and** after you leave the holotape — the music continues while you browse the
+rest of the Pip-Boy OS, just like the built-in radio.
+
+- A **STOP RADIO** row appears on the media selection menu while music is
+  playing — select it to stop. Turning the toggle off also stops it.
+- Relaunching the terminal while it is playing takes you straight to the media
+  menu with the music still going.
+- The volume you set is kept while it plays in the background.
+- It lives in RAM only, so a reboot or power-off stops it like every other app.
+
 ### Notice
 
 Try to keep your `.js` and `.json` images less than 30 KB or you will run into
