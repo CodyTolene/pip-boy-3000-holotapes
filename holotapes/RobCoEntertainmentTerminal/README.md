@@ -42,6 +42,8 @@ rest of the Pip-Boy OS, just like the built-in radio.
 
 - A **STOP RADIO** row appears on the media selection menu while music is
   playing — select it to stop. Turning the toggle off also stops it.
+- Opening the Pip-Boy's built-in **Radio** tab stops it automatically so the
+  FM tuner has the audio to itself and plays normally.
 - Relaunching the terminal while it is playing takes you straight to the media
   menu with the music still going.
 - The volume you set is kept while it plays in the background.
