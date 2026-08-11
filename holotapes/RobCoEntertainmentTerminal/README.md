@@ -33,8 +33,7 @@ The **MUSIC** tab is a two-level player:
 ### Persistent Audio (background playback)
 
 Turn on **PERSISTENT AUDIO** in the music settings menu (long-press the left
-knob; it also appears on the first-page **SETTINGS** entry). It is **off by
-default**.
+knob). It is **off by default**.
 
 While it is on, the station keeps playing across the terminal's own screens
 **and** after you leave the holotape — the music continues while you browse the
@@ -116,7 +115,7 @@ IMAGES/
 - Left knob scroll: Move selection up / down in list
 - Left knob press: Open station / play or stop song / navigate pages
 - Right knob scroll: Adjust volume
-- Left knob long press: Open settings menu (close with another long press)
+- Left knob long press: Open settings menu
 - Select **BACK TO MENU** (top of the station list) to return to the media menu.
 
 **Video player**

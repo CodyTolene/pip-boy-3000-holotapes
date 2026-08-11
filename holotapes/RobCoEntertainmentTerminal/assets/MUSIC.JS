@@ -350,8 +350,12 @@
     if (hasRootWav) stations.push({ n: 'MUSIC', p: root });
   }
 
-  function onKnob1(dir) {
+  function onKnob1(dir, long) {
     if (removed) return;
+    if (!dir && long) {
+      openSettings();
+      return;
+    }
     if (dir) {
       const now = Date.now();
       if (now - lastKnob < KNOB_MS) return;
@@ -404,6 +408,11 @@
       Pip.setVol(currentVol);
     } catch (e) {}
     drawInfo(true);
+  }
+
+  function openSettings() {
+    sound('TAB');
+    app.go(app.scenes.SETTINGS || 'SETTINGS.JS');
   }
 
   function openStation(station) {

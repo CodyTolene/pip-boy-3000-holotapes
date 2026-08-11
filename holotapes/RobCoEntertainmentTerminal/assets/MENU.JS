@@ -14,11 +14,6 @@
     { label: 'MUSIC', desc: 'Play WAV playlists from MUSIC/', scene: 'MUSIC' },
     { label: 'VIDEOS', desc: 'Watch AVI clips from VIDEOS/', scene: 'VIDEO' },
     { label: 'IMAGES', desc: 'View images from IMAGES/', scene: 'IMAGES' },
-    {
-      label: 'SETTINGS',
-      desc: 'Persistent audio, sort, brightness, volume',
-      scene: 'SETTINGS',
-    },
   ];
 
   const ROW_H = 42;
@@ -130,17 +125,14 @@
     }
 
     sound('TAB');
-    // Music persists across MUSIC/IMAGES/SETTINGS; only VIDEO (its own audio)
+    // Music persists across MUSIC/IMAGES; only VIDEO (its own audio)
     // stops the background music.
     if (Pip.radio && Pip.radio.mjOn && Pip.rcetStop && it.scene === 'VIDEO') {
       try {
         Pip.rcetStop();
       } catch (e) {}
     }
-    app.go(
-      app.scenes[it.scene],
-      it.scene === 'SETTINGS' ? { from: 'MENU' } : undefined,
-    );
+    app.go(app.scenes[it.scene]);
   }
 
   function sound(name) {
