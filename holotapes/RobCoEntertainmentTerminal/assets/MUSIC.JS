@@ -4,21 +4,6 @@
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
-//
-//  MUSIC.JS - Two-level station/song player with persistent audio.
-//
-//  Lazy by design: the stations list is just folder names; a station's songs
-//  are only read when you open that folder. Playback streams each song from the
-//  SD card and advances on track-end - nothing is preloaded. PLAY ALL / SHUFFLE
-//  just set where to start; the engine advances after each song.
-//
-//  The persistent engine is lazy-loaded from ENGINE.JS. Its closure-free
-//  functions stay on Pip / Pip.radio while playing; the temporary installer
-//  and source strings are collected immediately after installation.
-//
-//  MONKEY PATCH NOTE (intentional, requested): wrapping Pip.audioStart /
-//  Pip.audioStop / Pip.goToSleep is a deliberate exception to agents.md R13.
-// =============================================================================
 
 (function (app) {
   const MUSIC_DIR = 'MUSIC';
@@ -287,7 +272,11 @@
       rd.mjHandler &&
       rd.mjWatch &&
       Pip.rcetStop &&
-      (!app.persist || (Pip._mjStart && Pip._mjStop && Pip._rcetSleepWrapped))
+      (!app.persist ||
+        (Pip._mjStart &&
+          Pip._mjStop &&
+          Pip._rcetSleepWrapped &&
+          rd.mjTabHandler))
     )
       return;
     process.memory(true);

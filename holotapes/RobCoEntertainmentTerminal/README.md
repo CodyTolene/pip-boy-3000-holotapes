@@ -37,7 +37,9 @@ knob). It is **off by default**.
 
 While it is on, the station keeps playing across the terminal's own screens
 **and** after you leave the holotape — the music continues while you browse the
-rest of the Pip-Boy OS, just like the built-in radio.
+rest of the Pip-Boy OS, just like the built-in radio. Persistent playback stops
+automatically when you visit the firmware's **Radio** tab, leaving the built-in
+FM radio unaffected.
 
 - A **STOP RADIO** row appears on the media selection menu while music is
   playing — select it to stop. Turning the toggle off also stops it.
