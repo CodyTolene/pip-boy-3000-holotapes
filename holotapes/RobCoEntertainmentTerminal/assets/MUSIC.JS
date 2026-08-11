@@ -30,15 +30,16 @@
 
   const VOL_MIN = 0;
   const VOL_MAX = 27;
+  const VOL_HUD_MS = 1500;
   const KNOB_MS = 30;
 
   const rd = Pip.radio;
 
   let removed = false;
   let view = 'stations'; // 'stations' | 'songs'
-  let stations = []; // [{ n, p }]
+  let stations = []; // [{ name , path }]
   let songs = []; // wav filenames in the open station
-  let curStation = null; // { n, p } currently browsed
+  let curStation = null; // { name, path } currently browsed
   let items = []; // current list rows
   let sel = 0;
   let scrollOffset = 0;
@@ -48,6 +49,7 @@
   let lastKnob = 0;
   let lastVol = 0;
   let lastTrackKey = '';
+  let volHudTimer = 0;
 
   function backToStations() {
     view = 'stations';
@@ -88,30 +90,27 @@
 
   function drawInfo(flip) {
     h.setColor(C_BLACK).fillRect(WAVE_X, INFO_Y, app.W - 1, INFO_Y + 56);
+    const track = playingTrackName();
     const stn = playingStationName();
-    if (stn) {
+    if (track) {
       h.setColor(C_BRIGHT)
         .setFont('6x8', 2)
         .setFontAlign(-1, -1)
-        .drawString(('' + stn).slice(0, 19), WAVE_X, INFO_Y + 2);
-      h.setColor(C_MED)
-        .setFont('6x8')
-        .setFontAlign(-1, -1)
         .drawString(
-          songLabel(playingTrackName() || '').slice(0, 30),
+          ellipsize(songLabel(track), app.W - WAVE_X - 4),
           WAVE_X,
-          INFO_Y + 24,
+          INFO_Y + 2,
         );
-    } else {
-      h.setColor(C_MED)
-        .setFont('6x8', 2)
-        .setFontAlign(-1, -1)
-        .drawString('STOPPED', WAVE_X, INFO_Y + 2);
+      if (stn)
+        h.setColor(C_MED)
+          .setFont('6x8')
+          .setFontAlign(-1, -1)
+          .drawString(
+            ellipsize('' + stn, app.W - WAVE_X - 4),
+            WAVE_X,
+            INFO_Y + 24,
+          );
     }
-    h.setColor(C_MED)
-      .setFont('6x8')
-      .setFontAlign(-1, -1)
-      .drawString('VOL ' + currentVol, WAVE_X, INFO_Y + 38);
     if (flip) {
       h.flip();
       Pip.lastFlip = getTime();
@@ -180,6 +179,49 @@
     );
   }
 
+  function drawVolHud() {
+    'ram';
+    if (waveTimer) {
+      clearInterval(waveTimer);
+      waveTimer = 0;
+    }
+    const hudY = WAVE_Y + WAVE_H - 18;
+    const labelX = WAVE_X + 6;
+    const barX = labelX + 46;
+    const barEndX = WAVE_X + WAVE_W - 6;
+    const barH = 10;
+    h.setClipRect(WAVE_X, hudY - 2, WAVE_X + WAVE_W - 1, WAVE_Y + WAVE_H);
+    h.setColor(C_BLACK).fillRect(
+      WAVE_X,
+      hudY - 2,
+      WAVE_X + WAVE_W - 1,
+      WAVE_Y + WAVE_H,
+    );
+    const filled = Math.round((currentVol / VOL_MAX) * (barEndX - barX));
+    h.setColor(C_DIM).fillRect(barX, hudY, barEndX, hudY + barH);
+    h.setColor(C_BRIGHT).fillRect(barX, hudY, barX + filled, hudY + barH);
+    h.setColor(C_MED)
+      .setFont('6x8')
+      .setFontAlign(-1, -1)
+      .drawString('VOL ' + currentVol, labelX, hudY + 1);
+    h.setClipRect(0, 0, app.W - 1, app.H - 1);
+    h.flip();
+    Pip.lastFlip = getTime();
+    if (volHudTimer) clearTimeout(volHudTimer);
+    volHudTimer = setTimeout(function () {
+      volHudTimer = 0;
+      h.setColor(C_BLACK).fillRect(
+        WAVE_X,
+        WAVE_Y,
+        WAVE_X + WAVE_W - 1,
+        WAVE_Y + WAVE_H,
+      );
+      h.flip();
+      Pip.lastFlip = getTime();
+      startWave();
+    }, VOL_HUD_MS);
+  }
+
   function drawWave() {
     'ram';
     if (removed) return;
@@ -241,10 +283,23 @@
   }
 
   function ellipsize(text, maxPx) {
+    'ram';
     if (h.stringWidth(text) <= maxPx) return text;
-    let s = text;
-    while (s.length && h.stringWidth(s + '...') > maxPx) s = s.slice(0, -1);
-    return s + '...';
+    const dots = '...';
+    const dotsW = h.stringWidth(dots);
+    let lo = 0,
+      hi = text.length,
+      best = 0;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (h.stringWidth(text.slice(0, mid)) + dotsW <= maxPx) {
+        best = mid;
+        lo = mid + 1;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return text.slice(0, best) + dots;
   }
 
   function ensureMusicDir() {
@@ -397,7 +452,7 @@
     try {
       Pip.setVol(currentVol);
     } catch (e) {}
-    drawInfo(true);
+    drawVolHud();
   }
 
   function openSettings() {
@@ -525,6 +580,10 @@
       clearInterval(waveTimer);
       waveTimer = 0;
     }
+    if (volHudTimer) {
+      clearTimeout(volHudTimer);
+      volHudTimer = 0;
+    }
     Pip.removeListener('knob1', onKnob1);
     Pip.removeListener('knob2', onKnob2);
     // Persistent mode + playing: leave the engine running (survives on
@@ -542,6 +601,10 @@
     try {
       if (Pip.playSound) Pip.playSound(name);
     } catch (e) {}
+  }
+
+  function startWave() {
+    if (!removed && !waveTimer) waveTimer = setInterval(drawWave, 160);
   }
 
   function stopMusic() {
@@ -592,7 +655,7 @@
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
   drawAll();
-  waveTimer = setInterval(drawWave, 160);
+  startWave();
 
   return {
     remove: remove,

@@ -29,7 +29,7 @@
     ],
     sortDir: global.__RCETSort || 1,
     persist: global.__RCETPersist || false,
-    version: '2.2.0',
+    version: '2.2.1',
 
     scenes: {
       INTRO: 'INTRO.JS',
