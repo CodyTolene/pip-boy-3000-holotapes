@@ -14,7 +14,7 @@
   const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
   const PERSIST_SUPPORTED = (() => {
     try {
-      return fs.readFileSync('VERSION') === '1.1.5';
+      return fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
     } catch (e) {
       return false;
     }
@@ -96,7 +96,12 @@
       h.setColor(on ? 3 : 2)
         .setFontMonofonto14()
         .setFontAlign(-1, -1)
-        .drawString('Persistent play is only available on v1.1.5', 24, y + 8);
+        .drawString(
+          'Persistent play is only available on v' +
+            app.supportedFirmwareVersion,
+          24,
+          y + 8,
+        );
       return;
     }
 

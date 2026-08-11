@@ -6,17 +6,17 @@
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
-(function (persist) {
+(function (app) {
   const rd = Pip.radio;
 
   // Make sure we're applying the monkey patches to a supported firmware version. If not, disable persistence.
   try {
-    rd.rcetPersistSupported = fs.readFileSync('VERSION') === '1.1.5';
+    rd.rcetPersistSupported =
+      fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
   } catch (e) {
     rd.rcetPersistSupported = false;
   }
   if (!rd.rcetPersistSupported) global.__RCETPersist = false;
-  persist = persist && rd.rcetPersistSupported;
 
   // Goes to the next track & starts it.
   rd.mjNext = new Function(
@@ -51,7 +51,7 @@
     "var r=Pip.radio;r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}r.mjAllow=0;r.mojaveError=0;if(r.mjTimer)clearTimeout(r.mjTimer);if(r.mjWatch)clearInterval(r.mjWatch);r.mjTimer=0;r.mjWatch=0;if(r.mjHandler){try{Pip.removeListener('audioStopped',r.mjHandler)}catch(e){}}if(r.mjTabHandler){try{Pip.removeListener('mode',r.mjTabHandler)}catch(e){}try{Pip.removeListener('menuX',r.mjTabHandler)}catch(e){}}r.mjHandler=0;r.mjTabHandler=0;r.mjNext=0;r.mjStations=0;r.mjStationIndex=0;r.mjTrackIndex=0;r.mojaveCurrent=0;r.mjVol=0;if(Pip._mjStart){Pip.audioStart=Pip._mjStart;Pip._mjStart=0}if(Pip._mjStop){Pip.audioStop=Pip._mjStop;Pip._mjStop=0}if(Pip._rcetSleepOrig){Pip.goToSleep=Pip._rcetSleepOrig;Pip._rcetSleepOrig=0;Pip._rcetSleepWrapped=0}Pip.rcetStop=0;setTimeout(new Function('process.memory(true)'),0)",
   );
 
-  if (persist) {
+  if (app.persist && rd.rcetPersistSupported) {
     // Block other audio starts
     if (!Pip._mjStart && Pip.audioStart) {
       Pip._mjStart = Pip.audioStart;

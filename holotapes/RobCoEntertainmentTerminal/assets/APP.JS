@@ -29,7 +29,10 @@
     ],
     sortDir: global.__RCETSort || 1,
     persist: global.__RCETPersist || false,
+    // Current app version
     version: '2.2.1',
+    // CFW Persistent Audio Support
+    supportedFirmwareVersion: '1.1.5', // Pip-Boy Version
 
     scenes: {
       INTRO: 'INTRO.JS',

@@ -373,7 +373,7 @@
       return;
     process.memory(true);
     E.defrag();
-    eval(fs.readFileSync('HOLO/RCET/ENGINE.JS'))(app.persist);
+    eval(fs.readFileSync('HOLO/RCET/ENGINE.JS'))(app);
     process.memory(true);
   }
 
