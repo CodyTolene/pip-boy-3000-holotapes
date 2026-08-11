@@ -256,8 +256,6 @@
     }
     h.setColor(C_BRIGHT).drawPolyAA(wave);
     h.setClipRect(0, 0, app.W - 1, app.H - 1);
-    h.flip();
-    Pip.lastFlip = getTime();
   }
 
   function drawWaveBorder() {
@@ -604,7 +602,7 @@
   }
 
   function startWave() {
-    if (!removed && !waveTimer) waveTimer = setInterval(drawWave, 160);
+    if (!removed && !waveTimer) waveTimer = setInterval(drawWave, 50);
   }
 
   function stopMusic() {
