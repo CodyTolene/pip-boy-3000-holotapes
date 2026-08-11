@@ -27,19 +27,6 @@
   ],
   "storageOptional": [
     {
-      "label": "Startup Intro Sound",
-      "name": "HOLO/RCET/INTRO.WAV",
-      "previewMp3": "assets/optional/INTRO.mp3",
-      "sizeKB": 31,
-      "url": "assets/optional/INTRO.WAV"
-    },
-    {
-      "label": "Startup Intro Image",
-      "name": "HOLO/RCET/IMG_RCET.BIN",
-      "sizeKB": 38,
-      "url": "assets/optional/IMG_RCET.BIN"
-    },
-    {
       "label": "Example BIN Image",
       "name": "IMAGES/Example Full Screen BIN Image.bin",
       "sizeKB": 38,
