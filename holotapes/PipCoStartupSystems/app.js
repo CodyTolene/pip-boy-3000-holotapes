@@ -10,7 +10,8 @@
   let ownVideo = 0,
     ownAudio = 0,
     aHook,
-    bHook;
+    bHook,
+    suppressCRT = 0;
   let TI = {
     title: {
       width: 176,
@@ -20,25 +21,8 @@
       buffer: fs.readFileSync(B + 'TITLE.BIN'),
     },
   };
-  function customHookAlive() {
-    return (
-      global.__startupAnimationsHoloLiveV5 ||
-      global.__startupAnimationsHoloLiveV6 ||
-      global.__startupAnimationsHoloLiveV7 ||
-      global.__startupAnimationsHoloLiveV8 ||
-      global.__startupAnimationsHoloLiveV9 ||
-      global.__startupAnimationsHoloLiveV12 ||
-      global.__startupAnimationsHoloLiveV14 ||
-      global.__SA16 ||
-      global.__SA17 ||
-      global.__SA18 ||
-      global.__SA22
-    );
-  }
-  if (!customHookAlive()) {
-    if (!Pip.__SA22CleanBoot) Pip.__SA22CleanBoot = Pip.bootAnimation.bind(Pip);
-    if (!Pip.__SA22CleanAudio) Pip.__SA22CleanAudio = Pip.audioStart.bind(Pip);
-  }
+  if (!Pip.__SA22CleanBoot) Pip.__SA22CleanBoot = Pip.bootAnimation.bind(Pip);
+  if (!Pip.__SA22CleanAudio) Pip.__SA22CleanAudio = Pip.audioStart.bind(Pip);
   function ex(p) {
     return !!fs.statSync(p);
   }
@@ -160,23 +144,6 @@
   function originalBoot() {
     return Pip.__SA22CleanBoot || stockBoot;
   }
-  function clearFlags() {
-    delete global.__startupAnimationsHoloLiveV5;
-    delete global.__startupAnimationsHoloLiveV6;
-    delete global.__startupAnimationsHoloLiveV7;
-    delete global.__startupAnimationsHoloLiveV8;
-    delete global.__startupAnimationsHoloLiveV9;
-    delete global.__startupAnimationsHoloLiveV12;
-    delete global.__startupAnimationsHoloLiveV14;
-    delete global.__SA16;
-    delete global.__SA17;
-    delete global.__SA18;
-    delete global.__SA22;
-    delete global.__SA18CRT;
-    delete global.__SA16C;
-    delete global.__startupAnimationsSuppressCRT12;
-    delete global.__startupAnimationsSuppressCRT14;
-  }
   function restore() {
     let q = originalAudio(),
       b = originalBoot();
@@ -192,26 +159,22 @@
       Pip.audioStop();
       ownAudio = 0;
     }
-    clearFlags();
     if (aHook && Pip.audioStart === aHook && q) Pip.audioStart = q;
     if (bHook && Pip.bootAnimation === bHook) Pip.bootAnimation = b;
     aHook = undefined;
     bHook = undefined;
   }
   function hook() {
-    clearFlags();
     let q = originalAudio();
-    Pip.__SA18A = q;
-    global.__SA22 = 1;
-    global.__SA18CRT = 0;
+    suppressCRT = 0;
     aHook = function (p) {
       let n = sel();
       if (!valid(n)) {
         restore();
         return q.apply(Pip, arguments);
       }
-      if (global.__SA18CRT && p === 'SOUND/FX/CRT_ON2.WAV') {
-        global.__SA18CRT = 0;
+      if (suppressCRT && p === 'SOUND/FX/CRT_ON2.WAV') {
+        suppressCRT = 0;
         return;
       }
       return q.apply(Pip, arguments);
@@ -245,7 +208,7 @@
             ownAudio = 0;
           }
           h.reset();
-          global.__SA18CRT = 1;
+          suppressCRT = 1;
           setTimeout(done, 160);
         }
         function play() {
