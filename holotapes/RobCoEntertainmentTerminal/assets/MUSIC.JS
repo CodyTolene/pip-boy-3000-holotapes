@@ -88,6 +88,22 @@
         "var o=Pip._rcetSleepOrig;try{if(Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(e){}if(typeof o=='function')return o.apply(Pip,arguments)",
       );
     }
+    // Entering the built-in FM RADIO tab powers the tuner on via
+    // Pip.radio.setPower(true). Stop our background WAV first so the radio has
+    // the audio path to itself. mjNext calls setPower(false) (falsy) to mute the
+    // tuner before a track, which must NOT trigger a stop - hence the `e` guard.
+    if (
+      !Pip._rcetPowerWrapped &&
+      Pip.radio &&
+      typeof Pip.radio.setPower === 'function'
+    ) {
+      Pip._rcetPowerWrapped = 1;
+      Pip._rcetPowerOrig = Pip.radio.setPower;
+      Pip.radio.setPower = new Function(
+        'e',
+        "var o=Pip._rcetPowerOrig;try{if(e&&Pip.rcetStop&&Pip.radio&&Pip.radio.mjOn)Pip.rcetStop()}catch(err){}if(typeof o=='function')return o.apply(Pip.radio,arguments)",
+      );
+    }
   }
 
   function installEngine() {
@@ -103,7 +119,7 @@
     );
     Pip.on('audioStopped', rd.mjHandler);
     Pip.rcetStop = new Function(
-      "var r=Pip.radio;r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}r.mjAllow=0;r.mojaveError=0;if(r.mjTimer)clearTimeout(r.mjTimer);if(r.mjWatch)clearInterval(r.mjWatch);r.mjTimer=0;r.mjWatch=0;if(r.mjHandler){try{Pip.removeListener('audioStopped',r.mjHandler)}catch(e){}}r.mjHandler=0;r.mjNext=0;if(Pip._mjStart){Pip.audioStart=Pip._mjStart;Pip._mjStart=0}if(Pip._mjStop){Pip.audioStop=Pip._mjStop;Pip._mjStop=0}if(Pip._rcetSleepOrig){Pip.goToSleep=Pip._rcetSleepOrig;Pip._rcetSleepOrig=0;Pip._rcetSleepWrapped=0}",
+      "var r=Pip.radio;r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}r.mjAllow=0;r.mojaveError=0;if(r.mjTimer)clearTimeout(r.mjTimer);if(r.mjWatch)clearInterval(r.mjWatch);r.mjTimer=0;r.mjWatch=0;if(r.mjHandler){try{Pip.removeListener('audioStopped',r.mjHandler)}catch(e){}}r.mjHandler=0;r.mjNext=0;if(Pip._mjStart){Pip.audioStart=Pip._mjStart;Pip._mjStart=0}if(Pip._mjStop){Pip.audioStop=Pip._mjStop;Pip._mjStop=0}if(Pip._rcetSleepOrig){Pip.goToSleep=Pip._rcetSleepOrig;Pip._rcetSleepOrig=0;Pip._rcetSleepWrapped=0}if(Pip._rcetPowerWrapped){if(Pip.radio&&Pip._rcetPowerOrig)Pip.radio.setPower=Pip._rcetPowerOrig;Pip._rcetPowerOrig=0;Pip._rcetPowerWrapped=0}",
     );
   }
 
