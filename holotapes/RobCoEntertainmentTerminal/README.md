@@ -2,9 +2,13 @@
 
 ### Info
 
-**Author(s):**
+**Author:**
 
 - [@CodyTolene](https://github.com/CodyTolene)
+
+**Contributors:**
+
+- [@joemto20-tech](https://github.com/joemto20-tech)
 
 ### Description
 
