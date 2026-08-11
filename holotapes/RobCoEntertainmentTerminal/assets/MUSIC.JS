@@ -77,6 +77,26 @@
     drawInfo(true);
   }
 
+  function drawEmptyState() {
+    const x = LIST_X + 4;
+    let y = LIST_START_Y + ROW_H + 8;
+    h.setColor(C_BRIGHT)
+      .setFont('Monofonto16')
+      .setFontAlign(-1, -1)
+      .drawString('NO PLAYLISTS FOUND', x, y);
+    y += 34;
+    h.setColor(C_MED).setFont('Monofonto14').setFontAlign(-1, -1);
+    const lines = h.wrapString(
+      'Add station playlists to the MUSIC folder on the SD card. Convert ' +
+        'audio at https://pip-boy.com/tools',
+      LIST_W - 8,
+    );
+    for (let i = 0; i < lines.length; i++) {
+      h.drawString(lines[i], x, y);
+      y += 16;
+    }
+  }
+
   function drawHeader() {
     try {
       Pip.renderHeader();
@@ -110,6 +130,16 @@
             WAVE_X,
             INFO_Y + 24,
           );
+      if (rd.mjMode === 1)
+        h.setColor(C_BRIGHT)
+          .setFont('6x8')
+          .setFontAlign(-1, -1)
+          .drawString('(shuffle)', WAVE_X, INFO_Y + 38);
+      else if (rd.mjMode === 2)
+        h.setColor(C_BRIGHT)
+          .setFont('6x8')
+          .setFontAlign(-1, -1)
+          .drawString('(play all)', WAVE_X, INFO_Y + 38);
     }
     if (flip) {
       h.flip();
@@ -133,6 +163,17 @@
       const on = i === sel;
       if (on)
         h.setColor(C_DIM).fillRect(LIST_X, y, LIST_X + LIST_W, y + ROW_H - 2);
+      if (
+        rd.mjOn &&
+        ((item.t === 'shuffle' && rd.mjMode === 1) ||
+          (item.t === 'playall' && rd.mjMode === 2))
+      )
+        h.setColor(C_BRIGHT).fillRect(
+          LIST_X + LIST_W - 5,
+          y + 7,
+          LIST_X + LIST_W - 2,
+          y + ROW_H - 9,
+        );
       let x = LIST_X + 6;
       if (isPlayingRow(item)) {
         const sq = y + Math.floor((ROW_H - 4) / 2);
@@ -145,11 +186,7 @@
         y + 4,
       );
     }
-    if (view === 'stations' && !stations.length) {
-      h.setColor(C_MED)
-        .setFont('Monofonto14')
-        .drawString('NO STATIONS IN MUSIC/', LIST_X + 6, LIST_START_Y + ROW_H);
-    }
+    if (view === 'stations' && !stations.length) drawEmptyState();
     if (flip) {
       h.flip();
       Pip.lastFlip = getTime();
@@ -428,12 +465,12 @@
     }
     sound('SELECT');
     if (item.t === 'shuffle') {
-      play(curStation, null, true);
+      play(curStation, null, 1);
     } else if (item.t === 'playall') {
-      play(curStation, firstPlayable(curStation), false);
+      play(curStation, firstPlayable(curStation), 2);
     } else if (item.t === 'song') {
       if (isPlayingRow(item)) stopMusic();
-      else play(curStation, item.name, false);
+      else play(curStation, item.name, 0);
     }
     drawList(false);
     drawInfo(true);
@@ -469,7 +506,7 @@
     sound('TAB');
   }
 
-  function play(station, startSong, shuffle) {
+  function play(station, startSong, mode) {
     if (!station) return false;
     const base = station.p;
     const tracks = [];
@@ -485,7 +522,7 @@
         break;
       }
     }
-    if (shuffle) {
+    if (mode === 1) {
       for (let i = tracks.length - 1; i > 0; i--) {
         const j = hwRandInt(i + 1);
         const t = tracks[i];
@@ -508,6 +545,7 @@
     rd.mjStations = [{ n: station.n, p: base + '/', t: tracks }];
     rd.mjStationIndex = 0;
     rd.mjTrackIndex = idx - 1; // mjNext advances +1
+    rd.mjMode = mode;
     rd.mjOn = 1;
     rd.mojaveStation = 1;
     rd.mojaveError = 0;
@@ -556,7 +594,7 @@
     if (view === 'stations') {
       items.push({ t: 'menu', l: '< BACK TO MENU' });
       for (let i = 0; i < stations.length; i++) {
-        items.push({ t: 'station', l: stations[i].n, s: stations[i] });
+        items.push({ t: 'station', l: '> ' + stations[i].n, s: stations[i] });
       }
     } else {
       items.push({ t: 'back', l: '< BACK TO PLAYLISTS' });
@@ -617,6 +655,7 @@
         Pip.audioStop();
       } catch (e) {}
     }
+    rd.mjMode = 0;
   }
 
   function tooLong(base, name) {
