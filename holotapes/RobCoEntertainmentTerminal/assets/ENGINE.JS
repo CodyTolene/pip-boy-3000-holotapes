@@ -9,6 +9,15 @@
 (function (persist) {
   const rd = Pip.radio;
 
+  // Make sure we're applying the monkey patches to a supported firmware version. If not, disable persistence.
+  try {
+    rd.rcetPersistSupported = fs.readFileSync('VERSION') === '1.1.5';
+  } catch (e) {
+    rd.rcetPersistSupported = false;
+  }
+  if (!rd.rcetPersistSupported) global.__RCETPersist = false;
+  persist = persist && rd.rcetPersistSupported;
+
   // Goes to the next track & starts it.
   rd.mjNext = new Function(
     "var r=Pip.radio,S=r.mjStations||[],si=r.mjStationIndex||0,st=S[si],n=st&&st.t,pre=st&&st.p,i;if(!n||!n.length){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;return}i=(r.mjTrackIndex==undefined?-1:r.mjTrackIndex)+1;if(i>=n.length)i=0;r.mjStationIndex=si;r.mjTrackIndex=i;r.mojaveCurrent=pre+n[i];r.mjOn=1;r.mojaveStation=1;Pip.radioClipPlaying=1;try{r.setPower(false)}catch(e){}r.mjNoNext=1;r.mjAllow=1;try{Pip.audioStop()}catch(e){}try{Pip.audioStart(r.mojaveCurrent)}catch(e){r.mjOn=0;r.mojaveStation=0;Pip.radioClipPlaying=0;r.mojaveError=''+e}r.mjAllow=0;if(r.mjTimer)clearTimeout(r.mjTimer);r.mjTimer=setTimeout(function(){var r=Pip.radio;r.mjNoNext=0;r.mjTimer=0},700)",

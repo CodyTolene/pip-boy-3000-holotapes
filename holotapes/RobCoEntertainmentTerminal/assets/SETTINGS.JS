@@ -12,12 +12,20 @@
   const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   // Screen timeout in ms; 0 = OFF (screen stays on). Matches firmware idleTimeout.
   const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
+  const PERSIST_SUPPORTED = (() => {
+    try {
+      return fs.readFileSync('VERSION') === '1.1.5';
+    } catch (e) {
+      return false;
+    }
+  })();
 
   let selected = 0;
 
   function adjust(dir) {
     const row = ROWS[selected];
     if (row === 'persist') {
+      if (!PERSIST_SUPPORTED) return;
       app.persist = !app.persist;
       global.__RCETPersist = app.persist;
       // Turning it off restores the OS audio globals and stops background music.
@@ -84,6 +92,14 @@
 
     if (on) h.setColor(1).fillRect(14, y, app.W - 14, y + 30);
 
+    if (row === 'persist' && !PERSIST_SUPPORTED) {
+      h.setColor(on ? 3 : 2)
+        .setFontMonofonto14()
+        .setFontAlign(-1, -1)
+        .drawString('Persistent play is only available on v1.1.5', 24, y + 8);
+      return;
+    }
+
     if (row === 'persist') val = app.persist ? 'ON' : 'OFF';
     else if (row === 'sort') val = app.sortDir > 0 ? 'A-Z' : 'Z-A';
     else if (row === 'brightness') val = Math.round(readBright() * 100) + '%';
@@ -102,8 +118,9 @@
   }
 
   function label(row) {
-    if (row === 'persist') return 'PERSISTENT AUDIO';
-    if (row === 'sort') return 'STATION SORT ORDER';
+    if (row === 'persist')
+      return 'PERSISTENT AUDIO (CONTINUE MUSIC AFTER EXIT)';
+    if (row === 'sort') return 'SONG SORT ORDER';
     if (row === 'brightness') return 'SCREEN BRIGHTNESS';
     if (row === 'volume') return 'AUDIO VOLUME';
     if (row === 'timeout') return 'SCREEN TIMEOUT';
@@ -196,6 +213,11 @@
       Pip.settings.idleTimeout = TIMEOUT_LEVELS[idx];
       if (Pip.kickIdleTimer) Pip.kickIdleTimer();
     } catch (e) {}
+  }
+
+  if (!PERSIST_SUPPORTED) {
+    app.persist = false;
+    global.__RCETPersist = false;
   }
 
   Pip.onExclusive('knob1', onKnob1);

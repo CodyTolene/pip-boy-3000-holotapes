@@ -364,6 +364,7 @@
       rd.mjWatch &&
       Pip.rcetStop &&
       (!app.persist ||
+        rd.rcetPersistSupported === false ||
         (Pip._mjStart &&
           Pip._mjStop &&
           Pip._rcetSleepWrapped &&
@@ -403,7 +404,13 @@
   // Read one station's wav files (on demand).
   function loadSongs(station) {
     songs = [];
-    const x = readDir(station.p).slice().sort();
+    const x = readDir(station.p)
+      .slice()
+      .sort(function (a, b) {
+        a = ('' + a).toLowerCase();
+        b = ('' + b).toLowerCase();
+        return a < b ? -app.sortDir : a > b ? app.sortDir : 0;
+      });
     for (let i = 0; i < x.length; i++) {
       const s = '' + x[i];
       if (/\.(wav|wave)$/i.test(s)) songs.push(s);
@@ -624,7 +631,7 @@
     Pip.removeListener('knob2', onKnob2);
     // Persistent mode + playing: leave the engine running (survives on
     // Pip.radio). Otherwise stop and restore any overridden globals.
-    if (!(app.persist && rd.mjOn)) stopMusic();
+    if (!(app.persist && rd.rcetPersistSupported && rd.mjOn)) stopMusic();
     h.clear();
     h.flip();
   }
