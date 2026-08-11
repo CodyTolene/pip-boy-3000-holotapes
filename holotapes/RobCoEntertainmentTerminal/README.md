@@ -2,9 +2,13 @@
 
 ### Info
 
-**Author(s):**
+**Author:**
 
 - [@CodyTolene](https://github.com/CodyTolene)
+
+**Contributors:**
+
+- [@joemto20-tech](https://github.com/joemto20-tech)
 
 ### Description
 
@@ -33,17 +37,18 @@ The **MUSIC** tab is a two-level player:
 ### Persistent Audio (background playback)
 
 Turn on **PERSISTENT AUDIO** in the music settings menu (long-press the left
-knob; it also appears on the first-page **SETTINGS** entry). It is **off by
-default**.
+knob). It is **off by default**.
 
 While it is on, the station keeps playing across the terminal's own screens
 **and** after you leave the holotape — the music continues while you browse the
-rest of the Pip-Boy OS, just like the built-in radio.
+rest of the Pip-Boy OS, just like the built-in radio. Persistent playback stops
+automatically when you visit the firmware's **Radio** tab, leaving the built-in
+FM radio unaffected.
 
 - A **STOP RADIO** row appears on the media selection menu while music is
   playing — select it to stop. Turning the toggle off also stops it.
-- Opening the Pip-Boy's built-in **Radio** tab stops it automatically so the
-  FM tuner has the audio to itself and plays normally.
+- Opening the Pip-Boy's built-in **Radio** tab stops it automatically so the FM
+  tuner has the audio to itself and plays normally.
 - Relaunching the terminal while it is playing takes you straight to the media
   menu with the music still going.
 - The volume you set is kept while it plays in the background.
@@ -118,7 +123,7 @@ IMAGES/
 - Left knob scroll: Move selection up / down in list
 - Left knob press: Open station / play or stop song / navigate pages
 - Right knob scroll: Adjust volume
-- Left knob long press: Open settings menu (close with another long press)
+- Left knob long press: Open settings menu
 - Select **BACK TO MENU** (top of the station list) to return to the media menu.
 
 **Video player**
