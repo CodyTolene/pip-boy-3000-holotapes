@@ -3,7 +3,7 @@
   "previousId": "magic8ball",
   "name": "Magic 8 Ball+",
   "author": "@Theeohn @joemto20-tech",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A classic and an updated Magic 8 Ball, all 20 original and plenty new responses. Plus a few rare resonses if you keep asking! Shake your pipboy or spin/press a wheel to get a new answer!",
   "icon": "assets/MAGIC8BALLPLUS.IMG",
   "previews": [

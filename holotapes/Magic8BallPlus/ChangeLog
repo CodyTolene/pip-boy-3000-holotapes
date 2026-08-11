@@ -1,3 +1,7 @@
+1.1.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/81
+- Fix spelling issue "Doutful" > "Doubtful".
+
 1.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/71
 - Merged missing Plus version with Classic version by adding a title screen and mode selector
