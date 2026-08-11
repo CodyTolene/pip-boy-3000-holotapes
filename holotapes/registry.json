@@ -492,16 +492,16 @@
     "id": "startup-animations",
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",
-    "version": "1.2.0",
+    "version": "1.1.0",
     "description": "Choose custom startup animations and audio for the Wand Company Pip-Boy 3000. Install only the startup packs you want; the holotape automatically shows only the media currently installed.",
-    "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.IMG",
+    "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.png",
     "previews": ["PipCoStartupSystems/previews/menu.bmp"],
     "type": "app",
     "readme": "PipCoStartupSystems/README.md",
     "storage": [
       {
         "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
-        "url": "PipCoStartupSystems/assets/APP.MIN.JS"
+        "url": "PipCoStartupSystems/app.min.js"
       },
       {
         "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
@@ -510,10 +510,6 @@
       {
         "name": "HOLO/STARTUP_ANIMATIONS/TITLE.BIN",
         "url": "PipCoStartupSystems/assets/TITLE.BIN"
-      },
-      {
-        "name": "HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS",
-        "url": "PipCoStartupSystems/assets/TITLE_IMG.JS"
       }
     ],
     "storageOptional": [
@@ -532,7 +528,7 @@
       {
         "label": "Vault Girl — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
-        "sizeKB": 454,
+        "sizeKB": 453,
         "url": "PipCoStartupSystems/assets/VAULTGIRL.AVI"
       },
       {
@@ -544,7 +540,7 @@
       {
         "label": "Deathclaw Vault Experiment — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-        "sizeKB": 746,
+        "sizeKB": 745,
         "url": "PipCoStartupSystems/assets/DEATHCLAW.AVI"
       },
       {
@@ -556,31 +552,31 @@
       {
         "label": "YES MAN — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
-        "sizeKB": 52,
+        "sizeKB": 51,
         "url": "PipCoStartupSystems/assets/YESMAN.AVI"
       },
       {
         "label": "YES MAN — Audio",
         "name": "HOLO/STARTUP_ANIMATIONS/YES MAN.WAV",
-        "sizeKB": 138,
+        "sizeKB": 137,
         "url": "PipCoStartupSystems/assets/YES MAN.WAV"
       },
       {
         "label": "The Enclave — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
-        "sizeKB": 114,
+        "sizeKB": 113,
         "url": "PipCoStartupSystems/assets/ENCLAVE.AVI"
       },
       {
         "label": "The Enclave — Audio",
         "name": "HOLO/STARTUP_ANIMATIONS/THE ENCLAVE.WAV",
-        "sizeKB": 159,
+        "sizeKB": 158,
         "url": "PipCoStartupSystems/assets/THE ENCLAVE.WAV"
       },
       {
         "label": "The Brotherhood of Steel — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
-        "sizeKB": 870,
+        "sizeKB": 869,
         "url": "PipCoStartupSystems/assets/BOS.AVI"
       },
       {
@@ -598,20 +594,32 @@
       {
         "label": "Mothman — Audio",
         "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.WAV",
-        "sizeKB": 159,
+        "sizeKB": 158,
         "url": "PipCoStartupSystems/assets/MOTHMAN.WAV"
       },
       {
         "label": "The Minutemen — Animation",
         "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
-        "sizeKB": 35,
+        "sizeKB": 34,
         "url": "PipCoStartupSystems/assets/MINUTEMEN.AVI"
       },
       {
         "label": "The Minutemen — Audio",
         "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.WAV",
-        "sizeKB": 159,
+        "sizeKB": 158,
         "url": "PipCoStartupSystems/assets/MINUTEMEN.WAV"
+      },
+      {
+        "label": "Enclave PIP-BOY — Animation",
+        "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
+        "sizeKB": 5350,
+        "url": "PipCoStartupSystems/assets/ENCLAVE_PIPBOY.AVI"
+      },
+      {
+        "label": "Enclave PIP-BOY — Audio",
+        "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.WAV",
+        "sizeKB": 797,
+        "url": "PipCoStartupSystems/assets/ENCLAVE_PIPBOY.WAV"
       }
     ]
   },

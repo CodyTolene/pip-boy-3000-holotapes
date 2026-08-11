@@ -1,4 +1,8 @@
-1.2.0 (2026-08-10)
-- Rebuilt the current V70 hardware-tested baseline into the Pip-Boy.com modular assets format.
-- Core files install automatically; each startup animation/audio file is optional.
-- Preserves V70 Vault Girl unchanged and the accepted YES MAN flat bright background.
+1.1.0 (2026-08-11)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
+- Added modular optional startup media support.
+- Added YES MAN, The Enclave, The Brotherhood of Steel, Mothman, The Minutemen, and Enclave PIP-BOY.
+- Added TITLE.BIN as the single title-image format.
+- Cleaned startup selection and playback code following review feedback.
+- Removed runtime APPINFO self-registration; pip-boy.com creates registration from metadata.json.
+- Preserved the hardware-tested startup animation/audio behavior.

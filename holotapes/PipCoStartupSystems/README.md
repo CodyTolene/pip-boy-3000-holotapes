@@ -1,44 +1,68 @@
 # PIP-CO Startup Systems
 
-A modular custom-startup holotape for The Wand Company Pip-Boy 3000.
+A startup selector for The Wand Company Pip-Boy 3000.
 
-## Modular website installation
+This public modular build preserves the hardware-tested V79
+startup/menu/playback behavior while moving MISC registration back to the normal
+pip-boy.com metadata installation path.
 
-The core is always installed. Startup media is optional, so users can install
-only the startup sequences they want.
+## Installation
 
-For each startup, select **both its Animation and Audio** option on Pip-Boy.com.
-The holotape scans the installed files and only shows categories/startups whose
-required media is present.
+Install through pip-boy.com / the holotape registry. The website creates the
+device-side `.info` registration from `metadata.json`, so the holotape appears
+under Items > MISC.
 
-## Core files
+The required **Core** installs:
 
 - `HOLO/STARTUP_ANIMATIONS/APP.JS`
-- `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
 - `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
-- `HOLO/STARTUP_ANIMATIONS/TITLE_IMG.JS`
+- `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
 
-## Optional startup packs
+Startup media is optional. Each startup requires its matching **AVI + WAV
+pair**. The app scans installed files and only shows a startup when both
+required files are present.
+
+The website/installer is responsible for creating the device `.info`
+registration from `metadata.json`. `APP.JS` does not create or overwrite
+`APPINFO/*.info`.
+
+## Startup choices
+
+### Special Bootups
 
 - Mister Handy
 - Vault Girl
 - Deathclaw Vault Experiment
-- YES MAN
+- Enclave PIP-BOY
+
+### Faction Bootups
+
 - The Enclave
 - The Brotherhood of Steel
-- Mothman
 - The Minutemen
+- Mothman
 
-Each startup uses one AVI animation and one WAV audio file.
+### NPC Bootups
+
+- YES MAN
+
+### Default Bootup
+
+Restores the stock startup sequence.
 
 ## Controls
 
-- Left wheel: navigate
+- Left wheel: move
 - Left wheel press: select
-- `< Back`: return to MISC
+- `< Back`: return
 
 ## Notes
 
-This package is built from the hardware-tested V70 baseline. Vault Girl is
-preserved unchanged from V70, and YES MAN uses the accepted flat bright
-background version.
+The selected startup is stored in `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`.
+
+For a custom startup to appear in the menu, both its AVI and WAV must be
+installed.
+
+## Credits
+
+Created by @LlamaYeYe.
