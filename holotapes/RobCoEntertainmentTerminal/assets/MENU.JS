@@ -16,10 +16,26 @@
     { label: 'IMAGES', desc: 'View images from IMAGES/', scene: 'IMAGES' },
   ];
 
-  const ROW_H = 52;
-  const LIST_Y = 96;
+  const ROW_H = 42;
+  const LIST_Y = 86;
 
   let selected = 0;
+  let items = ITEMS;
+
+  function buildItems() {
+    // Append a STOP RADIO row only while background audio is held, so the user
+    // has an explicit way to fully stop it.
+    if (Pip.radio && Pip.radio.mjOn) {
+      return ITEMS.concat([
+        {
+          label: 'STOP RADIO',
+          desc: 'Stop background music',
+          stop: true,
+        },
+      ]);
+    }
+    return ITEMS;
+  }
 
   function draw() {
     h.clear(1);
@@ -49,7 +65,7 @@
 
     h.setColor(C_DIM).drawLine(12, 76, app.W - 12, 76);
 
-    for (let i = 0; i < ITEMS.length; i++) drawRow(i);
+    for (let i = 0; i < items.length; i++) drawRow(i);
 
     h.flip();
     Pip.lastFlip = getTime();
@@ -59,23 +75,23 @@
     const y = LIST_Y + i * ROW_H;
     const on = i === selected;
 
-    if (on) h.setColor(C_DIM).fillRect(14, y, app.W - 14, y + ROW_H - 8);
+    if (on) h.setColor(C_DIM).fillRect(14, y, app.W - 14, y + ROW_H - 6);
 
     h.setColor(on ? C_BRIGHT : C_MED)
-      .setFontMonofonto23()
+      .setFontMonofonto18()
       .setFontAlign(-1, -1)
-      .drawString(ITEMS[i].label, 26, y + 4);
+      .drawString(items[i].label, 26, y + 3);
 
     h.setColor(on ? C_BRIGHT : C_MED)
       .setFont('6x8')
       .setFontAlign(-1, -1)
-      .drawString(ITEMS[i].desc, 26, y + 30);
+      .drawString(items[i].desc, 26, y + 24);
   }
 
   function move(dir) {
     selected += dir > 0 ? 1 : -1;
     if (selected < 0) selected = 0;
-    if (selected >= ITEMS.length) selected = ITEMS.length - 1;
+    if (selected >= items.length) selected = items.length - 1;
     draw();
     sound('HIGHLIGHT');
   }
@@ -93,8 +109,30 @@
   }
 
   function select() {
+    const it = items[selected];
+
+    if (it.stop) {
+      if (Pip.rcetStop) {
+        try {
+          Pip.rcetStop();
+        } catch (e) {}
+      }
+      items = buildItems();
+      if (selected >= items.length) selected = items.length - 1;
+      sound('TAB');
+      draw();
+      return;
+    }
+
     sound('TAB');
-    app.go(app.scenes[ITEMS[selected].scene]);
+    // Music persists across MUSIC/IMAGES; only VIDEO (its own audio)
+    // stops the background music.
+    if (Pip.radio && Pip.radio.mjOn && Pip.rcetStop && it.scene === 'VIDEO') {
+      try {
+        Pip.rcetStop();
+      } catch (e) {}
+    }
+    app.go(app.scenes[it.scene]);
   }
 
   function sound(name) {
@@ -103,7 +141,9 @@
     } catch (e) {}
   }
 
-  Pip.audioStop();
+  items = buildItems();
+  // Keep background audio playing if we returned here with it held.
+  if (!(Pip.radio && Pip.radio.mjOn)) Pip.audioStop();
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
   draw();

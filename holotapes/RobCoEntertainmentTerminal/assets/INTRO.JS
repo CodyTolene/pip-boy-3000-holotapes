@@ -6,48 +6,20 @@
 // =============================================================================
 
 (function (app) {
-  const INTRO_IMAGE = 'HOLO/RCET/IMG_RCET.BIN';
-  const INTRO_SOUND = 'HOLO/RCET/INTRO.WAV';
-  const INTRO_MS = 3000;
+  const INTRO_TEXT =
+    'ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM\n' +
+    'COPYRIGHT 2075-2077 ROBCO INDUSTRIES\n\n' +
+    'ROBCO ENTERTAINMENT TERMINAL V' +
+    app.version +
+    ' INITIALIZING... §\n\n' +
+    'CONNECTING TO MEDIA BUS... §\n' +
+    'PIP-BOY LINK ONLINE\n' +
+    'UPLINK ONLINE\n\n' +
+    'MOUNTING MUSIC/ VIDEOS/ IMAGES/ ARCHIVES... §\n' +
+    'MEDIA INDEX ONLINE\n' +
+    '\nMEDIA PLAYBACK READY... §§§';
 
   let done = false;
-  let introTimer = null;
-  let loadFailed = false;
-
-  function drawIntro() {
-    try {
-      const file = E.openFile(INTRO_IMAGE, 'r');
-      const target = new Uint8Array(h.buffer);
-      let offset = target.length;
-      let chunk = file.read(256);
-
-      while (chunk) {
-        offset -= chunk.length;
-        target.set(chunk, offset);
-        chunk = file.read(256);
-      }
-
-      file.close();
-      h.flip();
-      Pip.lastFlip = getTime();
-    } catch (e) {
-      // Silently fail, image is now optional.
-      // Draw loading text instead.
-      loadFailed = true;
-      h.clear()
-        .setColor(3)
-        .setFontAlign(0, 0)
-        .setFontMonofonto28()
-        .drawString('RobCo Entertainment Terminal', 240, 130)
-        .setFontMonofonto18()
-        .drawString('Vault-Tec Media Utility', 240, 180)
-        .drawString('Pip-Boy.com', 240, 210)
-        .setFontMonofonto14()
-        .drawString('Loading...', 240, 240)
-        .flip();
-      Pip.lastFlip = getTime();
-    }
-  }
 
   function finishIntro() {
     if (done) return;
@@ -66,11 +38,10 @@
   }
 
   function removeInputs() {
-    if (introTimer) {
-      clearTimeout(introTimer);
-      introTimer = null;
+    if (Pip.timers && Pip.timers.typeText) {
+      clearTimeout(Pip.timers.typeText);
+      Pip.timers.typeText = 0;
     }
-
     Pip.removeListener('knob1', onKnob1);
     Pip.removeListener('knob2', onKnob2);
   }
@@ -83,13 +54,12 @@
   Pip.audioStop();
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
-  drawIntro();
+  h.clear(0);
   try {
-    Pip.audioStart(INTRO_SOUND);
+    Pip.typeText(INTRO_TEXT, 18, 18, 444, 284, 'Monofonto16').then(finishIntro);
   } catch (e) {
-    // Do nothing if the sound fails to play.
+    finishIntro();
   }
-  introTimer = setTimeout(finishIntro, loadFailed ? 3000 : INTRO_MS);
 
   return {
     remove: removeScene,

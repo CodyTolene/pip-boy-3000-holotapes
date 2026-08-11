@@ -1,6 +1,7 @@
 // =============================================================================
 //  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
+//  Contributor(s): @joemto20-tech
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
@@ -27,7 +28,11 @@
       'RobCo Video Terminal',
     ],
     sortDir: global.__RCETSort || 1,
-    version: '2.1.0',
+    persist: global.__RCETPersist || false,
+    // Current app version
+    version: '2.2.1',
+    // CFW Persistent Audio Support
+    supportedFirmwareVersion: '1.1.5', // Pip-Boy Version
 
     scenes: {
       INTRO: 'INTRO.JS',
@@ -150,13 +155,19 @@
       scene = null;
     }
 
-    Pip.audioStop();
+    // If background audio is being held (persistent mode), leave it playing.
+    // (Pip.audioStop is a no-op while held anyway; this avoids calling it.)
+    if (!(Pip.radio && Pip.radio.mjOn)) {
+      Pip.audioStop();
+    }
     if (app.initialBright !== null) {
       try {
         Pip.setBrightness(app.initialBright);
       } catch (e) {}
     }
-    if (app.initialVol !== null) {
+    // Don't drop the volume back to the system level while the background radio
+    // is playing - that was silencing persistent audio on exit.
+    if (app.initialVol !== null && !(Pip.radio && Pip.radio.mjOn)) {
       try {
         Pip.setVol(app.initialVol);
       } catch (e) {}
@@ -179,7 +190,15 @@
     }
   } catch (e) {}
 
-  app.go(app.scenes.INTRO);
+  // If background audio is still held from a previous session, skip the intro
+  // (its splash sound would interrupt the music) and drop straight to the
+  // selection menu so playback keeps going. The menu shows a STOP RADIO option.
+  // Otherwise start with the intro as usual.
+  if (Pip.radio && Pip.radio.mjOn) {
+    app.go(app.scenes.MENU);
+  } else {
+    app.go(app.scenes.INTRO);
+  }
 
   return {
     id: 'rcet',

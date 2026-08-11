@@ -1,21 +1,41 @@
 // =============================================================================
 //  Name: RobCo Entertainment Terminal
 //  Author: @CodyTolene
+//  Contributor(s): @joemto20-tech
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
 // =============================================================================
 
-(function (app) {
-  const ROWS = ['sort', 'brightness', 'volume', 'timeout', 'back'];
+(function (app, params) {
+  const ROWS = ['persist', 'sort', 'brightness', 'volume', 'timeout', 'back'];
+  const FROM = params && params.from === 'MENU' ? 'MENU' : 'MUSIC';
   const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   // Screen timeout in ms; 0 = OFF (screen stays on). Matches firmware idleTimeout.
   const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
+  const PERSIST_SUPPORTED = (() => {
+    try {
+      return fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
+    } catch (e) {
+      return false;
+    }
+  })();
 
   let selected = 0;
 
   function adjust(dir) {
     const row = ROWS[selected];
-    if (row === 'sort') {
+    if (row === 'persist') {
+      if (!PERSIST_SUPPORTED) return;
+      app.persist = !app.persist;
+      global.__RCETPersist = app.persist;
+      // Turning it off restores the OS audio globals and stops background music.
+      if (!app.persist) {
+        try {
+          if (Pip.radio && Pip.radio.mjOn && Pip.rcetStop) Pip.rcetStop();
+        } catch (e) {}
+      }
+      sound('TAB');
+    } else if (row === 'sort') {
       app.sortDir = app.sortDir > 0 ? -1 : 1;
       global.__RCETSort = app.sortDir;
       sound('TAB');
@@ -37,7 +57,8 @@
 
   function back() {
     sound('TAB');
-    app.go(app.scenes.MUSIC || 'MUSIC.JS');
+    if (FROM === 'MENU') app.go(app.scenes.MENU || 'MENU.JS');
+    else app.go(app.scenes.MUSIC || 'MUSIC.JS');
   }
 
   function draw() {
@@ -64,14 +85,28 @@
   }
 
   function drawRow(i) {
-    const y = 88 + i * 40;
+    const y = 80 + i * 35;
     const row = ROWS[i];
     const on = i === selected;
     let val = '';
 
-    if (on) h.setColor(1).fillRect(14, y, app.W - 14, y + 34);
+    if (on) h.setColor(1).fillRect(14, y, app.W - 14, y + 30);
 
-    if (row === 'sort') val = app.sortDir > 0 ? 'A-Z' : 'Z-A';
+    if (row === 'persist' && !PERSIST_SUPPORTED) {
+      h.setColor(on ? 3 : 2)
+        .setFontMonofonto14()
+        .setFontAlign(-1, -1)
+        .drawString(
+          'Persistent play is only available on v' +
+            app.supportedFirmwareVersion,
+          24,
+          y + 8,
+        );
+      return;
+    }
+
+    if (row === 'persist') val = app.persist ? 'ON' : 'OFF';
+    else if (row === 'sort') val = app.sortDir > 0 ? 'A-Z' : 'Z-A';
     else if (row === 'brightness') val = Math.round(readBright() * 100) + '%';
     else if (row === 'volume') val = '' + readVol();
     else if (row === 'timeout') {
@@ -88,11 +123,13 @@
   }
 
   function label(row) {
+    if (row === 'persist')
+      return 'PERSISTENT AUDIO (CONTINUE MUSIC AFTER EXIT)';
     if (row === 'sort') return 'SONG SORT ORDER';
     if (row === 'brightness') return 'SCREEN BRIGHTNESS';
     if (row === 'volume') return 'AUDIO VOLUME';
     if (row === 'timeout') return 'SCREEN TIMEOUT';
-    return 'BACK TO MUSIC';
+    return FROM === 'MENU' ? 'BACK TO MENU' : 'BACK TO MUSIC';
   }
 
   function move(dir) {
@@ -181,6 +218,11 @@
       Pip.settings.idleTimeout = TIMEOUT_LEVELS[idx];
       if (Pip.kickIdleTimer) Pip.kickIdleTimer();
     } catch (e) {}
+  }
+
+  if (!PERSIST_SUPPORTED) {
+    app.persist = false;
+    global.__RCETPersist = false;
   }
 
   Pip.onExclusive('knob1', onKnob1);
