@@ -1,33 +1,91 @@
-PIP-CO Idle Framworks V1.0.0 is a lightweight idle and screensaver framework for
-the Wand Company Pip-Boy 3000.
+# PIP-CO Idle Frameworks
 
-The holotape works independently on its own. If Mesmetron 3000A is also
-installed, PIP-CO automatically detects it and adds Mesmetron’s available
-screensavers to the Idle Frameworks menu without modifying Mesmetron itself.
+A configurable idle/screensaver framework for The Wand Company Pip-Boy 3000.
 
-Mesmetron screensavers can be launched through manual previews or automatically
-after the built-in 2-minute idle timer. Screensavers run fullscreen and return
-cleanly to the Pip-Boy interface when exited or awakened.
+PIP-CO Idle Frameworks can run its built-in Pip-Boy 3000 falling-bomb
+screensaver or use compatible screensavers from an installed Mesmetron holotape
+as idle providers.
 
-The framework uses a compact, lazy-loaded MESIDLE.JS runner to help keep memory
-usage low and maintain smooth operation.
+## Features
 
-Features Independent PIP-CO idle framework Automatic Mesmetron 3000A detection
-Dynamic Mesmetron screensaver discovery Screensaver previews Individual
-Enable/Disable controls 2-minute automatic idle activation Fullscreen
-screensaver playback Button and control wake/exit support Lightweight
-lazy-loaded architecture Mesmetron files remain untouched Mesmetron Controls
+- 2-minute idle activation
+- Built-in PIP-BOY 3000 falling-bomb screensaver
+- Optional Mesmetron idle-provider integration
+- Live preview for the built-in screensaver and each detected Mesmetron idle
+- Mesmetron screensavers are detected from the installed
+  `HOLO/MESMETRON/TITLE.JS`
+- Idle Framework owns the wake controls while a screensaver is active
+- Mesmetron's native knob modifiers remain available when Mesmetron itself is
+  opened normally
+- Fullscreen automatic-idle runner prevents normal Pip-Boy page/header graphics
+  from drawing over the screensaver
+- Radio state/audio detection is read-only; the framework does not replace the
+  Pip-Boy radio implementation
 
-Mesmetron includes additional interactive controls for many screensavers. For
-example, Knob 2 can change speed or other saver-specific modes, such as Speed 1,
-2, or 3.
+## Installation
 
-These Mesmetron-specific controls are not currently implemented inside PIP-CO
-Idle Framworks. PIP-CO focuses on previewing and using Mesmetron screensavers as
-idle animations.
+Install through pip-boy.com / the holotape registry.
 
-For the full interactive Mesmetron experience and its additional controls, open
-the Mesmetron 3000A holotape directly.
+The installer creates the device-side `.info` registration from `metadata.json`.
+The public app does not create or overwrite `APPINFO/*.info`.
 
-PIP-CO and Mesmetron remain independent, making both easy to use and update
-separately.
+Installed files are placed under:
+
+`HOLO/FALLOUT_SCREENSAVER/`
+
+Mesmetron is optional and is not bundled with this holotape. If a compatible
+Mesmetron installation is present at `HOLO/MESMETRON/`, its current screensaver
+list is read dynamically.
+
+## Controls
+
+Inside PIP-CO Idle Frameworks:
+
+- Left wheel: move through menu items
+- Left wheel press: select
+- `Preview Screensaver`: start the selected preview immediately
+- `< Back`: return
+
+While an Idle Framework screensaver is active, wheel activity wakes/exits the
+screensaver instead of changing Mesmetron brightness or modifiers.
+
+## Idle Choices
+
+### PIP-BOY 3000
+
+The built-in Fallout-style falling-bomb screensaver.
+
+### Mesmetron
+
+When Mesmetron is installed, compatible entries from its actual `ITEMS` list are
+shown automatically. Developer/example text outside that list is ignored.
+
+Only one idle provider is selected at a time.
+
+## Compatibility
+
+The hardware-tested V23.67 runtime was specifically cleaned to coexist with:
+
+- PIP-CO Startup Systems
+- Mesmetron
+- built-in FM radio
+- other Pip-Boy pages such as RADIO, ITEMS, DATA, SETTINGS, and MISC
+
+Idle Framework does not replace `Pip.audioStart`, `Pip.bootAnimation`,
+`Pip.kickIdleTimer`, `Pip.goToSleep`, `Pip.onExclusive`, `Pip.CURRENT`, or
+`Pip.blitOptions`.
+
+Automatic idle uses a small fullscreen runner loaded through the normal holotape
+path. Mesmetron modules retain their native `draw(h)` rendering behavior so
+persistence-based effects such as Ribbon, Spiral, and Vortex render correctly.
+
+## Configuration
+
+The selected idle configuration is stored in:
+
+`HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON`
+
+## Hardware-tested baseline
+
+This repository update is based on **V23.67**, tested on The Wand Company
+Pip-Boy 3000 after the cleanup and compatibility pass.

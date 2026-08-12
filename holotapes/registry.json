@@ -489,43 +489,49 @@
     ]
   },
   {
-    "id": "FALLOUT_SCREENSAVER",
+    "id": "fallout-screensaver",
     "name": "PIP-CO Idle Frameworks",
-    "author": "PIP-CO",
-    "version": "1.4.5.4",
-    "description": "PIP-CO Idle Frameworks with built-in Pip-Boy screensaver support and optional Mesmetron idle-provider integration.",
+    "author": "@LlamaYeYe",
+    "version": "1.0.0",
+    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver and optional Mesmetron idle-provider integration.",
+    "previews": [],
     "type": "app",
     "readme": "PipCoIdleFrameworks/README.md",
     "storage": [
       {
-        "url": "PipCoIdleFrameworks/assets/APP.JS",
-        "name": "HOLO/FALLOUT_SCREENSAVER/APP.JS"
+        "name": "HOLO/FALLOUT_SCREENSAVER/APP.JS",
+        "url": "PipCoIdleFrameworks/app.min.js"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/BOMB.JS",
-        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.JS"
+        "name": "HOLO/FALLOUT_SCREENSAVER/IDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/IDLE.JS"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/CONFIG.JSON",
-        "name": "HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON"
+        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.JS",
+        "url": "PipCoIdleFrameworks/assets/BOMB.JS"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/FALLOUT.WAV",
-        "name": "HOLO/FALLOUT_SCREENSAVER/FALLOUT.WAV"
+        "name": "HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON",
+        "url": "PipCoIdleFrameworks/assets/CONFIG.JSON"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/LOGO.BIN",
-        "name": "HOLO/FALLOUT_SCREENSAVER/LOGO.BIN"
+        "name": "HOLO/FALLOUT_SCREENSAVER/FALLOUT.WAV",
+        "url": "PipCoIdleFrameworks/assets/FALLOUT.WAV"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/MESIDLE.JS",
-        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS"
+        "name": "HOLO/FALLOUT_SCREENSAVER/LOGO.BIN",
+        "url": "PipCoIdleFrameworks/assets/LOGO.BIN"
       },
       {
-        "url": "PipCoIdleFrameworks/assets/TITLE.BIN",
-        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN"
+        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/MESIDLE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN",
+        "url": "PipCoIdleFrameworks/assets/TITLE.BIN"
       }
-    ]
+    ],
+    "storageOptional": []
   },
   {
     "id": "startup-animations",

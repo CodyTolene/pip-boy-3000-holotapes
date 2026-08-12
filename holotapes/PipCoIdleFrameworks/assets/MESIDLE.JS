@@ -1,76 +1,38 @@
 (function (S, M, fs, h) {
   S.active = 1;
-  S.preview = 0;
   S.mode = 3;
+  E.defrag();
   try {
-    let p = Pip.CURRENT;
-    if (p && p.remove) p.remove();
-    p = undefined;
-    Pip.CURRENT = {
-      id: 'PIPCOMESIDLE',
-      fullscreen: true,
-      notDefault: true,
-      remove: function () {},
-    };
-    S.lastMenu = 'PIPCOMESIDLE';
-  } catch (e) {}
-  try {
-    process.memory(true);
-  } catch (e) {}
-  try {
-    E.defrag();
-  } catch (e) {}
-  let r;
-  try {
-    r = fs.readFileSync(M + S.mf);
-    r = r.replace(/["']ram["']\s*;?/g, '').replace(/["']jit["']\s*;?/g, '');
-    S.mo = eval(r)();
-    r = undefined;
-    if (!S.mo || !S.mo.draw) throw 0;
+    S.mo = eval(fs.readFileSync(M + (S.previewFile || S.mf)))();
+    if (!S.mo || !S.mo.draw) throw new Error('Invalid Mesmetron module');
     if (S.mo.init) S.mo.init(0);
-    h.reset();
-    h.setClipRect(0, 0, 479, 319);
-    h.clear();
-    try {
-      let o = Pip.blitOptions;
-      Pip.blitOptions = { anim: [], idleIndex: 0, idleFilter: [307] };
-      h.flip();
-      Pip.blitOptions = o;
-    } catch (x) {
-      try {
-        h.flip();
-      } catch (y) {}
-    }
-    Pip.lastFlip = getTime();
+    if (S.mo.remove) S.mo.remove();
+    if (S.attachInputs) S.attachInputs();
+    h.reset().setClipRect(0, 0, 479, 319).clear();
   } catch (e) {
-    r = undefined;
+    if (S.attachInputs) S.attachInputs();
     S.mo = undefined;
     S.active = 0;
     S.mode = 0;
     S.last = getTime();
-    try {
-      process.memory(true);
-    } catch (x) {}
-    try {
-      E.defrag();
-    } catch (x) {}
     setTimeout(function () {
-      try {
-        Pip.changeMenu();
-      } catch (x) {}
+      Pip.changeMenu();
     }, 0);
     return;
   }
-  function f() {
+
+  function frame() {
+    'ram';
     if (!S.active || S.mode !== 3 || !S.mo) return;
     try {
       S.mo.draw(h);
       h.flip();
       Pip.lastFlip = getTime();
     } catch (e) {
-      S.stop(0);
+      S.stop(1);
     }
   }
-  f();
-  S.loop = setInterval(f, 40);
+
+  frame();
+  S.loop = setInterval(frame, 40);
 });

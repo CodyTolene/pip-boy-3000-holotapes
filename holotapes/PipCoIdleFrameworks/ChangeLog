@@ -1,5 +1,10 @@
-1.4.5.4 (2026-08-10)
-- V23.54 Clean Native Page Reload Wake Fix
-- Prevents native Radio/STAT/ITEM/DATA screens from showing through Mesmetron idles.
-- Avoids restoring an already-removed native page object on wake.
-- Preserves the V23.49 lazy-loaded MESIDLE.JS memory architecture.
+1.0.0 (2026-08-11)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
+- Initial public PIP-CO Idle Frameworks submission.
+- Cleaned the idle runtime for constrained-memory Pip-Boy hardware.
+- Added fullscreen automatic-idle runner to prevent underlying page/header bleed-through.
+- Added built-in PIP-BOY 3000 idle and optional Mesmetron idle-provider integration.
+- Added live previews for detected Mesmetron screensavers.
+- Preserved native Mesmetron frame behavior for persistence-based effects such as Ribbon, Spiral, and Vortex.
+- Kept Idle Framework wake controls separate from Mesmetron's normal in-app knob controls.
+- Removed hardware-only APPINFO self-registration from the public repository build.
