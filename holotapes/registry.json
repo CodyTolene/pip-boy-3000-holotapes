@@ -346,6 +346,165 @@
     "storageOptional": []
   },
   {
+    "id": "hamcolock",
+    "name": "HAMCo Lock",
+    "author": "@joemto20-tech",
+    "version": "1.0.0",
+    "description": "A PIN lock screen for your Pip-Boy. Set a 4-digit access code, pick a faction logo, and choose whether it locks on startup, on wake from sleep, or both.",
+    "icon": "HamcoLock/hamcolock.png",
+    "previews": [],
+    "tags": "system,tool",
+    "type": "app",
+    "readme": "HamcoLock/README.md",
+    "storage": [
+      {
+        "name": "APPINFO/HAMCOLOCK.info",
+        "url": "HamcoLock/HAMCOLOCK.info"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/APP.JS",
+        "url": "HamcoLock/APP.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SERVICE.JS",
+        "url": "HamcoLock/SERVICE.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/LOCK.JS",
+        "url": "HamcoLock/LOCK.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GRANT.JS",
+        "url": "HamcoLock/GRANT.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SETTINGS.JS",
+        "url": "HamcoLock/SETTINGS.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SETPIN.JS",
+        "url": "HamcoLock/SETPIN.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/HAMCOLOCK.IMG",
+        "url": "HamcoLock/HAMCOLOCK.IMG"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/A.WAV",
+        "url": "HamcoLock/A.WAV"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/G.AVI",
+        "url": "HamcoLock/G.AVI"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ATOMCATS.BIN",
+        "url": "HamcoLock/ATOMCATS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/BIGMT.BIN",
+        "url": "HamcoLock/BIGMT.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/BROTHERHOOD.BIN",
+        "url": "HamcoLock/BROTHERHOOD.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ENCLAVE.BIN",
+        "url": "HamcoLock/ENCLAVE.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ENCLAVE1.BIN",
+        "url": "HamcoLock/ENCLAVE1.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/FIENDS.BIN",
+        "url": "HamcoLock/FIENDS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/FOLLOWERS.BIN",
+        "url": "HamcoLock/FOLLOWERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GREATKHANS.BIN",
+        "url": "HamcoLock/GREATKHANS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GUNNERS.BIN",
+        "url": "HamcoLock/GUNNERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/HAM.BIN",
+        "url": "HamcoLock/HAM.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/INTERSTATE80.BIN",
+        "url": "HamcoLock/INTERSTATE80.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/KINGS.BIN",
+        "url": "HamcoLock/KINGS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/LEGION.BIN",
+        "url": "HamcoLock/LEGION.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/MOTHMAN.BIN",
+        "url": "HamcoLock/MOTHMAN.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/NCR.BIN",
+        "url": "HamcoLock/NCR.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/NCRSEAL.BIN",
+        "url": "HamcoLock/NCRSEAL.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/OPERATORS.BIN",
+        "url": "HamcoLock/OPERATORS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/RANGERS.BIN",
+        "url": "HamcoLock/RANGERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/REDTALON.BIN",
+        "url": "HamcoLock/REDTALON.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/RESPONDERS.BIN",
+        "url": "HamcoLock/RESPONDERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SMUGGLERS.BIN",
+        "url": "HamcoLock/SMUGGLERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/TUNNELSNAKES.BIN",
+        "url": "HamcoLock/TUNNELSNAKES.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VANGRAFFS.BIN",
+        "url": "HamcoLock/VANGRAFFS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VAULTTEC.BIN",
+        "url": "HamcoLock/VAULTTEC.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VIPERS.BIN",
+        "url": "HamcoLock/VIPERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/WHITEGLOVE.BIN",
+        "url": "HamcoLock/WHITEGLOVE.BIN"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "killteamtracker",
     "name": "Kill Team Tracker",
     "author": "@SethSanchez",
