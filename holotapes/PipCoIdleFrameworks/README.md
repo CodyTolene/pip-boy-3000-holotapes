@@ -2,90 +2,88 @@
 
 A configurable idle/screensaver framework for The Wand Company Pip-Boy 3000.
 
-PIP-CO Idle Frameworks can run its built-in Pip-Boy 3000 falling-bomb
-screensaver or use compatible screensavers from an installed Mesmetron holotape
-as idle providers.
+PIP-CO Idle Frameworks includes its built-in PIP-BOY 3000 falling-bomb
+screensaver and can dynamically use compatible screensavers from separately
+installed provider holotapes.
 
 ## Features
 
-- 2-minute idle activation
+- 2-minute automatic idle activation
 - Built-in PIP-BOY 3000 falling-bomb screensaver
-- Optional Mesmetron idle-provider integration
-- Live preview for the built-in screensaver and each detected Mesmetron idle
-- Mesmetron screensavers are detected from the installed
-  `HOLO/MESMETRON/TITLE.JS`
-- Idle Framework owns the wake controls while a screensaver is active
-- Mesmetron's native knob modifiers remain available when Mesmetron itself is
-  opened normally
-- Fullscreen automatic-idle runner prevents normal Pip-Boy page/header graphics
-  from drawing over the screensaver
-- Radio state/audio detection is read-only; the framework does not replace the
-  Pip-Boy radio implementation
+- Optional Mesmetron integration
+- Optional Pipquarium integration
+- Live preview from the PIP-CO menu
+- Fullscreen automatic-idle runner
+- Provider entries only appear when the matching provider holotape is installed
+- PIP-CO owns wake/exit controls while a provider is running as an idle
+- Provider holotapes retain their own native behavior when opened normally
+- Radio/audio detection remains read-only
+
+## Optional providers
+
+### Mesmetron
+
+Mesmetron is not bundled with PIP-CO Idle Frameworks.
+
+If `HOLO/MESMETRON/TITLE.JS` is installed, PIP-CO reads Mesmetron's current
+screensaver list dynamically. Removing Mesmetron removes those entries from
+PIP-CO automatically.
+
+### Pipquarium
+
+Pipquarium is not bundled with PIP-CO Idle Frameworks.
+
+If a compatible PIP-CO-safe Pipquarium installation is present at
+`HOLO/PIPQUARIUM/APP.JS`, PIP-CO adds `Pipquarium` to the idle-provider list.
+Removing Pipquarium removes that entry automatically.
+
+Pipquarium is loaded only when its preview or automatic idle actually starts;
+its renderer is not embedded in the PIP-CO menu/service.
 
 ## Installation
 
 Install through pip-boy.com / the holotape registry.
 
 The installer creates the device-side `.info` registration from `metadata.json`.
-The public app does not create or overwrite `APPINFO/*.info`.
+The public runtime does not create or overwrite `APPINFO/*.info`.
 
-Installed files are placed under:
+Installed PIP-CO files live under:
 
 `HOLO/FALLOUT_SCREENSAVER/`
 
-Mesmetron is optional and is not bundled with this holotape. If a compatible
-Mesmetron installation is present at `HOLO/MESMETRON/`, its current screensaver
-list is read dynamically.
+Mesmetron and Pipquarium are optional independent holotapes and are not included
+inside this package.
 
 ## Controls
 
 Inside PIP-CO Idle Frameworks:
 
-- Left wheel: move through menu items
+- Left wheel: navigate
 - Left wheel press: select
-- `Preview Screensaver`: start the selected preview immediately
+- `Preview Screensaver`: preview the selected idle
 - `< Back`: return
 
-While an Idle Framework screensaver is active, wheel activity wakes/exits the
-screensaver instead of changing Mesmetron brightness or modifiers.
+While an idle is active, PIP-CO owns the wake/exit controls rather than allowing
+provider-specific wheel modifiers to change the provider state.
 
-## Idle Choices
+## Idle choices
 
-### PIP-BOY 3000
+With no optional providers installed, only the built-in `PIP-BOY 3000`
+screensaver is shown.
 
-The built-in Fallout-style falling-bomb screensaver.
+When Mesmetron and/or Pipquarium are installed, their compatible entries are
+added automatically.
 
-### Mesmetron
-
-When Mesmetron is installed, compatible entries from its actual `ITEMS` list are
-shown automatically. Developer/example text outside that list is ignored.
-
-Only one idle provider is selected at a time.
+Only one idle provider is active at a time.
 
 ## Compatibility
 
-The hardware-tested V23.67 runtime was specifically cleaned to coexist with:
+The integration does not bundle or rewrite Mesmetron or Pipquarium renderer
+assets. Each provider remains independently installable.
 
-- PIP-CO Startup Systems
-- Mesmetron
-- built-in FM radio
-- other Pip-Boy pages such as RADIO, ITEMS, DATA, SETTINGS, and MISC
+## CREDITS!!!!!
 
-Idle Framework does not replace `Pip.audioStart`, `Pip.bootAnimation`,
-`Pip.kickIdleTimer`, `Pip.goToSleep`, `Pip.onExclusive`, `Pip.CURRENT`, or
-`Pip.blitOptions`.
+Thankyou towards AidansLab -> https://github.com/AidansLab Thankyou towards
+Theeohn -> https://github.com/Theeohn
 
-Automatic idle uses a small fullscreen runner loaded through the normal holotape
-path. Mesmetron modules retain their native `draw(h)` rendering behavior so
-persistence-based effects such as Ribbon, Spiral, and Vortex render correctly.
-
-## Configuration
-
-The selected idle configuration is stored in:
-
-`HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON`
-
-## Hardware-tested baseline
-
-This repository update is based on **V23.67**, tested on The Wand Company
-Pip-Boy 3000 after the cleanup and compatibility pass.
+GO CHECK THEM OUT!

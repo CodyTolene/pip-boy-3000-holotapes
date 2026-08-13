@@ -1,12 +1,14 @@
 (function () {
-  let S = global.__PipCoIdleService;
+  let idleService = global.__PipCoIdleService;
 
-  function exitIdle() {
-    Pip.changeMenu();
+  function returnToMenu() {
+    try {
+      Pip.changeMenu();
+    } catch (e) {}
   }
 
-  if (!S) {
-    setTimeout(exitIdle, 0);
+  if (!idleService) {
+    setTimeout(returnToMenu, 0);
     return {
       id: 'PIPCOIDLERUNNER',
       notDefault: true,
@@ -15,36 +17,44 @@
     };
   }
 
-  S.detachInputs();
-  S.pageSuspended = 0;
+  idleService.detachInputs();
+  idleService.runner = 1;
 
-  if (S.runnerMode === 2) S.play(0);
-  else if (S.runnerMode === 3) {
-    S.mf = S.runnerFile || S.mf;
-    S.playMes(0, S.mf);
-  } else setTimeout(exitIdle, 0);
+  if (idleService.enabled) idleService.play(0);
+  else if (idleService.providerEnabled)
+    idleService.playProvider(0, idleService.providerFile);
 
-  function wake() {
-    if (!S.active) return;
-    exitIdle();
+  if (!idleService.active) {
+    idleService.runner = 0;
+    setTimeout(returnToMenu, 0);
+    return {
+      id: 'PIPCOIDLERUNNER',
+      notDefault: true,
+      fullscreen: true,
+      remove: function () {
+        idleService.attachInputs();
+      },
+    };
   }
 
-  Pip.onExclusive('knob1', wake);
-  Pip.onExclusive('knob2', wake);
+  function wakeFromIdle() {
+    returnToMenu();
+  }
+
+  Pip.onExclusive('knob1', wakeFromIdle);
+  Pip.onExclusive('knob2', wakeFromIdle);
 
   return {
     id: 'PIPCOIDLERUNNER',
     notDefault: true,
     fullscreen: true,
     remove: function () {
-      Pip.removeListener('knob1', wake);
-      Pip.removeListener('knob2', wake);
-      S.stop(0);
-      S.runner = 0;
-      S.runnerMode = 0;
-      S.runnerFile = '';
-      S.last = getTime();
-      S.attachInputs();
+      Pip.removeListener('knob1', wakeFromIdle);
+      Pip.removeListener('knob2', wakeFromIdle);
+      idleService.stop(0);
+      idleService.runner = 0;
+      idleService.last = getTime();
+      idleService.attachInputs();
     },
   };
 });

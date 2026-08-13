@@ -1,38 +1,74 @@
-(function (S, M, fs, h) {
-  S.active = 1;
-  S.mode = 3;
+(function (idleService, mesmetronPath, fs, h, log, fileName) {
+  let mesmetronModule, frameTimer;
+
+  idleService.detachInputs();
   E.defrag();
+
   try {
-    S.mo = eval(fs.readFileSync(M + (S.previewFile || S.mf)))();
-    if (!S.mo || !S.mo.draw) throw new Error('Invalid Mesmetron module');
-    if (S.mo.init) S.mo.init(0);
-    if (S.mo.remove) S.mo.remove();
-    if (S.attachInputs) S.attachInputs();
+    mesmetronModule = eval(fs.readFileSync(mesmetronPath + fileName))();
+
+    if (
+      !mesmetronModule ||
+      typeof mesmetronModule.init !== 'function' ||
+      typeof mesmetronModule.draw !== 'function'
+    ) {
+      throw new Error('Invalid Mesmetron module: ' + fileName);
+    }
+
+    mesmetronModule.init(0);
+
+    /* Mesmetron modules use remove() here only to unregister their native knob
+     handlers. Their renderer state remains alive while PIP-CO owns wake/exit. */
+    if (typeof mesmetronModule.remove === 'function') mesmetronModule.remove();
+
+    if (idleService.preview && idleService.claimInputs) {
+      idleService.claimInputs();
+    }
+
     h.reset().setClipRect(0, 0, 479, 319).clear();
   } catch (e) {
-    if (S.attachInputs) S.attachInputs();
-    S.mo = undefined;
-    S.active = 0;
-    S.mode = 0;
-    S.last = getTime();
-    setTimeout(function () {
-      Pip.changeMenu();
-    }, 0);
+    log('Mesmetron ' + fileName + ' failed: ' + e);
+    try {
+      if (mesmetronModule && typeof mesmetronModule.remove === 'function') {
+        mesmetronModule.remove();
+      }
+    } catch (cleanupError) {}
+    mesmetronModule = undefined;
     return;
   }
 
-  function frame() {
+  function drawFrame() {
     'ram';
-    if (!S.active || S.mode !== 3 || !S.mo) return;
+    if (!idleService.active || !mesmetronModule) return;
+
     try {
-      S.mo.draw(h);
+      mesmetronModule.draw(h);
       h.flip();
       Pip.lastFlip = getTime();
     } catch (e) {
-      S.stop(1);
+      log('Mesmetron draw failed: ' + e);
+      idleService.stop(1);
     }
   }
 
-  frame();
-  S.loop = setInterval(frame, 40);
+  drawFrame();
+  frameTimer = setInterval(drawFrame, 40);
+
+  return {
+    stop: function () {
+      if (frameTimer) {
+        clearInterval(frameTimer);
+        frameTimer = undefined;
+      }
+
+      try {
+        if (mesmetronModule && typeof mesmetronModule.remove === 'function') {
+          mesmetronModule.remove();
+        }
+      } catch (e) {}
+
+      mesmetronModule = undefined;
+      h.reset().setClipRect(0, 0, 479, 319);
+    },
+  };
 });

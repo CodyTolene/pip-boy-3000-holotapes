@@ -2,8 +2,8 @@
   "id": "fallout-screensaver",
   "name": "PIP-CO Idle Frameworks",
   "author": "@LlamaYeYe",
-  "version": "1.0.0",
-  "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver and optional Mesmetron idle-provider integration.",
+  "version": "1.1.0",
+  "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with optional dynamic Mesmetron and Pipquarium idle-provider integration.",
   "previews": [],
   "type": "app",
   "readme": "README.md",
@@ -15,6 +15,14 @@
     {
       "name": "HOLO/FALLOUT_SCREENSAVER/IDLE.JS",
       "url": "assets/IDLE.JS"
+    },
+    {
+      "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
+      "url": "assets/SERVICE.JS"
+    },
+    {
+      "name": "HOLO/FALLOUT_SCREENSAVER/BOMBRUN.JS",
+      "url": "assets/BOMBRUN.JS"
     },
     {
       "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.JS",
@@ -35,6 +43,10 @@
     {
       "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS",
       "url": "assets/MESIDLE.JS"
+    },
+    {
+      "name": "HOLO/FALLOUT_SCREENSAVER/PIPQIDLE.JS",
+      "url": "assets/PIPQIDLE.JS"
     },
     {
       "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN",

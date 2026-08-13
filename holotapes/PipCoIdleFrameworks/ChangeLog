@@ -1,10 +1,11 @@
-1.0.0 (2026-08-11)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
-- Initial public PIP-CO Idle Frameworks submission.
-- Cleaned the idle runtime for constrained-memory Pip-Boy hardware.
-- Added fullscreen automatic-idle runner to prevent underlying page/header bleed-through.
-- Added built-in PIP-BOY 3000 idle and optional Mesmetron idle-provider integration.
-- Added live previews for detected Mesmetron screensavers.
-- Preserved native Mesmetron frame behavior for persistence-based effects such as Ribbon, Spiral, and Vortex.
-- Kept Idle Framework wake controls separate from Mesmetron's normal in-app knob controls.
-- Removed hardware-only APPINFO self-registration from the public repository build.
+1.1.0 (2026-08-13)
+- Rebuilt Idle Frameworks around the lower-memory REWRITE2 architecture.
+- Split the menu, persistent idle service, built-in renderer, provider adapters, and fullscreen runner.
+- Added dynamic optional Pipquarium provider detection and PIPQIDLE adapter.
+- Preserved dynamic Mesmetron provider detection.
+- Provider holotapes are not bundled and disappear from PIP-CO when uninstalled.
+- Added lightweight fullscreen automatic-idle loading for provider screensavers.
+- Reduced peak memory pressure compared with the earlier all-in-one runtime.
+- Removed production debug viewer, heartbeat logging, and hardware-test registration behavior.
+- Fixed provider selection persistence so SERVICE.JS reads the saved CONFIG.JSON `mesFile` field correctly after reload/reboot.
+- Preserved the 2-minute idle timeout and existing built-in PIP-BOY 3000 screensaver behavior.
