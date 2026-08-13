@@ -1,0 +1,24 @@
+name: Validate Holotapes
+
+on:
+  pull_request:
+    paths:
+      # This will need expanding once more validations are added
+      - 'holotapes/**/metadata.json'
+      - '.scripts/metadata.schema.json'
+
+jobs:
+  metadata:
+    # Check that metadata matches the expected schema, this checks all of them
+    # but assuming they're all correct, this will just flag any newly added issues
+    name: Validate metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run:
+          npx ajv validate -s .scripts/metadata.schema.json -d
+          "holotapes/*/metadata.json" --all-errors

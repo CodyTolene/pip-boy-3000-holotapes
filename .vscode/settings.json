@@ -1,4 +1,10 @@
 {
+  "json.schemas": [
+    {
+      "fileMatch": ["/holotapes/*/metadata.json"],
+      "url": "./.scripts/metadata.schema.json"
+    }
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
