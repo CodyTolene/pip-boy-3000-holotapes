@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node --experimental-strip-types .scripts/build.ts",
+    "check-files": "node --experimental-strip-types .scripts/check-files.ts",
     "format": "prettier --write .",
     "prepare": "husky"
   },

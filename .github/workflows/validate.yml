@@ -3,15 +3,13 @@ name: Validate Holotapes
 on:
   pull_request:
     paths:
-      # This will need expanding once more validations are added
-      - 'holotapes/**/metadata.json'
       - '.scripts/metadata.schema.json'
+      - '.scripts/*.ts' # If the validation scripts themselves are updated in a PR
+      - 'holotapes/**' # Or any of the holotape contents
 
 jobs:
-  metadata:
-    # Check that metadata matches the expected schema, this checks all of them
-    # but assuming they're all correct, this will just flag any newly added issues
-    name: Validate metadata
+  validate:
+    name: Validate Holotape
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -19,6 +17,12 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
+
+      # Check that metadata matches the expected schema, this checks all of them
+      # but assuming they're all correct, this will just flag any newly added issues
       - run:
           npx ajv validate -s .scripts/metadata.schema.json -d
           "holotapes/*/metadata.json" --all-errors
+
+      # Check that all files specified in the manifest actually exist
+      - run: npm run check-files

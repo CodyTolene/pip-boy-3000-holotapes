@@ -1,29 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JsonValue[]
-  | { [key: string]: JsonValue };
-
-type Metadata = {
-  id?: string;
-  name?: string;
-  author?: string;
-  version?: string;
-  description?: string;
-  icon?: string;
-  previews?: string[];
-  type?: string;
-  readme?: string;
-  storage?: JsonValue[];
-  storageOptional?: JsonValue[];
-  customFirmwareFiles?: JsonValue[];
-  [key: string]: JsonValue | undefined;
-};
+import type { Metadata, StorageEntry } from './types.ts';
 
 const rootDir = process.cwd();
 const sectionName = 'holotapes';
@@ -41,10 +19,7 @@ function isRelativeAssetPath(value: string): boolean {
   return value.length > 0 && !value.startsWith('/') && !/^[a-z]+:/i.test(value);
 }
 
-function prefixAssetPath(
-  value: string | undefined,
-  entryDir: string,
-): string | undefined {
+function prefixAssetPath(value: string, entryDir: string): string {
   if (value === undefined || !isRelativeAssetPath(value)) {
     return value;
   }
@@ -53,28 +28,22 @@ function prefixAssetPath(
 }
 
 function rewriteStorage(
-  storage: JsonValue[] | undefined,
+  storage: StorageEntry[] | undefined,
   entryDir: string,
-): JsonValue[] | undefined {
+): StorageEntry[] | undefined {
   if (!storage) {
     return storage;
   }
 
   return storage.map((item) => {
-    if (!item || Array.isArray(item) || typeof item !== 'object') {
+    if (!item || typeof item.url !== 'string') {
       return item;
     }
 
-    const url = item.url;
-    if (typeof url !== 'string') {
-      return item;
-    }
-
-    const prefixedUrl = prefixAssetPath(url, entryDir);
     return {
       ...item,
-      url: prefixedUrl,
-    } as JsonValue;
+      url: prefixAssetPath(item.url, entryDir),
+    };
   });
 }
 
