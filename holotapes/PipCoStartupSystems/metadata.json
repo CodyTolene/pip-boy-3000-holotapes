@@ -3,8 +3,8 @@
   "name": "PIP-CO Startup Systems",
   "author": "@LlamaYeYe",
   "version": "1.1.0",
-  "description": "Choose custom startup animations and audio for the Wand Company Pip-Boy 3000. Install only the startup packs you want; the holotape automatically shows only the media currently installed.",
-  "icon": "assets/PIP_CO_STARTUP_SYSTEMS.png",
+  "description": "Choose custom startup sequences for The Wand Company Pip-Boy 3000. Each optional AVI contains its matching audio, and the holotape only shows startup media that is installed.",
+  "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
   "previews": ["previews/menu.bmp"],
   "type": "app",
   "readme": "README.md",
@@ -24,112 +24,58 @@
   ],
   "storageOptional": [
     {
-      "label": "Mister Handy — Animation",
+      "label": "Mister Handy",
       "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
-      "sizeKB": 942,
+      "sizeKB": 995,
       "url": "assets/MISTER.AVI"
     },
     {
-      "label": "Mister Handy — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.WAV",
-      "sizeKB": 180,
-      "url": "assets/MISTER.WAV"
-    },
-    {
-      "label": "Vault Girl — Animation",
+      "label": "Vault Girl",
       "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
-      "sizeKB": 453,
+      "sizeKB": 483,
       "url": "assets/VAULTGIRL.AVI"
     },
     {
-      "label": "Vault Girl — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.WAV",
-      "sizeKB": 92,
-      "url": "assets/VAULTGIRL.WAV"
-    },
-    {
-      "label": "Deathclaw Vault Experiment — Animation",
+      "label": "Deathclaw Vault Experiment",
       "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-      "sizeKB": 745,
+      "sizeKB": 776,
       "url": "assets/DEATHCLAW.AVI"
     },
     {
-      "label": "Deathclaw Vault Experiment — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.WAV",
-      "sizeKB": 92,
-      "url": "assets/DEATHCLAW.WAV"
-    },
-    {
-      "label": "YES MAN — Animation",
+      "label": "YES MAN",
       "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
-      "sizeKB": 51,
+      "sizeKB": 93,
       "url": "assets/YESMAN.AVI"
     },
     {
-      "label": "YES MAN — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/YES MAN.WAV",
-      "sizeKB": 137,
-      "url": "assets/YES MAN.WAV"
-    },
-    {
-      "label": "The Enclave — Animation",
+      "label": "The Enclave",
       "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
-      "sizeKB": 113,
+      "sizeKB": 161,
       "url": "assets/ENCLAVE.AVI"
     },
     {
-      "label": "The Enclave — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/THE ENCLAVE.WAV",
-      "sizeKB": 158,
-      "url": "assets/THE ENCLAVE.WAV"
-    },
-    {
-      "label": "The Brotherhood of Steel — Animation",
+      "label": "The Brotherhood of Steel",
       "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
-      "sizeKB": 869,
+      "sizeKB": 916,
       "url": "assets/BOS.AVI"
     },
     {
-      "label": "The Brotherhood of Steel — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/BOS.WAV",
-      "sizeKB": 157,
-      "url": "assets/BOS.WAV"
-    },
-    {
-      "label": "Mothman — Animation",
+      "label": "Mothman",
       "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
-      "sizeKB": 774,
+      "sizeKB": 821,
       "url": "assets/MOTHMAN.AVI"
     },
     {
-      "label": "Mothman — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.WAV",
-      "sizeKB": 158,
-      "url": "assets/MOTHMAN.WAV"
-    },
-    {
-      "label": "The Minutemen — Animation",
+      "label": "The Minutemen",
       "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
-      "sizeKB": 34,
+      "sizeKB": 82,
       "url": "assets/MINUTEMEN.AVI"
     },
     {
-      "label": "The Minutemen — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.WAV",
-      "sizeKB": 158,
-      "url": "assets/MINUTEMEN.WAV"
-    },
-    {
-      "label": "Enclave PIP-BOY — Animation",
+      "label": "Enclave PIP-BOY",
       "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
-      "sizeKB": 5350,
+      "sizeKB": 5563,
       "url": "assets/ENCLAVE_PIPBOY.AVI"
-    },
-    {
-      "label": "Enclave PIP-BOY — Audio",
-      "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.WAV",
-      "sizeKB": 797,
-      "url": "assets/ENCLAVE_PIPBOY.WAV"
     }
   ]
 }

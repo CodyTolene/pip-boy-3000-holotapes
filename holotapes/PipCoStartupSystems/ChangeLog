@@ -1,8 +1,11 @@
-1.1.0 (2026-08-11)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
-- Added modular optional startup media support.
-- Added YES MAN, The Enclave, The Brotherhood of Steel, Mothman, The Minutemen, and Enclave PIP-BOY.
-- Added TITLE.BIN as the single title-image format.
-- Cleaned startup selection and playback code following review feedback.
-- Removed runtime APPINFO self-registration; pip-boy.com creates registration from metadata.json.
-- Preserved the hardware-tested startup animation/audio behavior.
+1.1.0 (2026-08-13)
+- Reworked the public modular package from the final hardware-tested runtime.
+- Embedded each startup's matching audio directly into its AVI.
+- Reduced optional media from separate animation/audio pairs to one file per startup.
+- Added Enclave PIP-BOY as an optional startup sequence.
+- Replaced the old startup filename switch logic with one indexed startup table.
+- Removed hardware-test APPINFO self-registration from the public runtime.
+- Removed the legacy TITLE_IMG.JS fallback; TITLE.BIN is the standard title asset.
+- Guarded startup/audio hook capture and same-session wrapper restoration.
+- Guarded the firmware VERSION fallback so stock boot recovery cannot fail on an undefined VERSION.
+- Preserved the hardware-tested startup timings, fades, failsafes, menu order, and selection behavior.

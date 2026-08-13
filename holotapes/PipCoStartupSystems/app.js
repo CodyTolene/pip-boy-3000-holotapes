@@ -2,6 +2,122 @@
   const fs = require('fs'),
     B = 'HOLO/STARTUP_ANIMATIONS/',
     S = B + 'SELECT.JSON';
+  const LOGFILE = 'pipco.txt';
+
+  function log(msg) {
+    try {
+      if (Pip.log) Pip.log('PIPCO: ' + msg, LOGFILE);
+    } catch (e) {}
+  }
+
+  function ex(p) {
+    try {
+      return !!fs.statSync(p);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /* ---- One source of truth for every startup option ----------------------
+   * Replaces the old vf()/fm()/hm() switch statements (three separate
+   * tables keyed off the same numeric index, hand-kept in sync). That's
+   * exactly the kind of thing that gets out of sync when videos are
+   * re-encoded, which is what forced this rework in the first place.
+   * fade = ms from video start to the graceful fade-out (end()).
+   * hard = ms from bootAnimation() being invoked to the failsafe cutoff,
+   *        in case video playback never starts/finishes at all.
+   *
+   * Both were re-measured against the actual AVI files in this package
+   * (ffprobe, exact frame-count/12fps duration) after a real-device test
+   * showed MISTER cutting off early (video + audio both stopped before
+   * the clip finished). The old fade values only cleared each video's
+   * true runtime by ~360ms (Mister, Vault Girl, Deathclaw, Yes Man) or
+   * ~420-443ms (the rest) - the one confirmed working case (Enclave
+   * Pip-Boy) had one of the larger margins, the one confirmed failing
+   * case (Mister) had one of the smallest. That margin has to absorb
+   * whatever latency exists on real hardware between Pip.videoStart()
+   * being called and frames actually reaching the screen (SD read +
+   * decode start-up) - a desktop decode check can't measure that part.
+   * Every entry now gets a uniform, more generous 500ms pad added to
+   * fade (matching or exceeding the best-performing margin observed),
+   * with hard's cushion-beyond-fade left the same shape as before so
+   * the failsafe still can't fire before a normal-speed playback would
+   * finish. This does not touch the CRT-suppression pre-roll delay or
+   * the 180/420ms call-site offsets, which are tied to the stock startup
+   * chime timing, not video length.
+   */
+  const STARTUPS = [
+    {
+      file: 'MISTER.AVI',
+      label: 'Mister Handy',
+      cat: 'special',
+      fade: 6250,
+      hard: 9765,
+    },
+    {
+      file: 'VAULTGIRL.AVI',
+      label: 'Vault Girl',
+      cat: 'special',
+      fade: 3500,
+      hard: 7015,
+    },
+    {
+      file: 'DEATHCLAW.AVI',
+      label: 'Deathclaw Vault Experiment',
+      cat: 'special',
+      fade: 3500,
+      hard: 7015,
+    },
+    {
+      file: 'YESMAN.AVI',
+      label: 'YES MAN',
+      cat: 'npc',
+      fade: 4917,
+      hard: 8432,
+    },
+    {
+      file: 'ENCLAVE.AVI',
+      label: 'The Enclave',
+      cat: 'faction',
+      fade: 5500,
+      hard: 9015,
+    },
+    {
+      file: 'BOS.AVI',
+      label: 'The Brotherhood of Steel',
+      cat: 'faction',
+      fade: 5500,
+      hard: 9015,
+    },
+    {
+      file: 'MOTHMAN.AVI',
+      label: 'Mothman',
+      cat: 'faction',
+      fade: 5500,
+      hard: 9015,
+    },
+    {
+      file: 'MINUTEMEN.AVI',
+      label: 'The Minutemen',
+      cat: 'faction',
+      fade: 5500,
+      hard: 9015,
+    },
+    {
+      file: 'ENCLAVE_PIPBOY.AVI',
+      label: 'Enclave PIP-BOY',
+      cat: 'special',
+      fade: 26000,
+      hard: 30500,
+    },
+  ];
+  // Fixed per-submenu display order, identical to the original build.
+  const CAT_SPECIAL = [0, 1, 2, 8];
+  const CAT_FACTION = [4, 5, 7, 6];
+  const CAT_NPC = [3];
+
+  /* Public/repository build: installer metadata handles registration. */
+
   let c = 0,
     s = 0,
     t,
@@ -21,15 +137,77 @@
       buffer: fs.readFileSync(B + 'TITLE.BIN'),
     },
   };
-  if (!Pip.__SA22CleanBoot) Pip.__SA22CleanBoot = Pip.bootAnimation.bind(Pip);
-  if (!Pip.__SA22CleanAudio) Pip.__SA22CleanAudio = Pip.audioStart.bind(Pip);
-  function ex(p) {
-    return !!fs.statSync(p);
+
+  /* ---- Stock function capture --------------------------------------------
+   * Keep stock function references local to this app instance instead of
+   * persisting helper properties on Pip. For same-session Web IDE reloads,
+   * each PIP-CO wrapper carries a __pipcoOriginal pointer so a new load can
+   * unwrap the previous wrapper back to the real stock function.
+   *
+   * Also a plausible concrete cause of the V83/V84 crashes: the old code
+   * called Pip.bootAnimation.bind(Pip) at the top level with no typeof
+   * guard and no try/catch around it. If bootAnimation isn't attached to
+   * Pip yet at the exact moment this file runs (a real race on a cold
+   * boot), that line throws synchronously and uncaught, which can abort
+   * the whole app load. captureOriginals() below is guarded and is also
+   * called again inside hook() as a second chance.
+   */
+  const LEGACY_GLOBALS = [
+    '__SA18CRT',
+    '__SA18A',
+    '__SA22CleanBoot',
+    '__SA22CleanAudio',
+    '__startupAnimationsOriginalAudioStartV5',
+    '__startupAnimationsOriginalAudioStartV6',
+    '__startupAnimationsOriginalAudioStartV7',
+    '__startupAnimationsOriginalAudioStartV8',
+    '__startupAnimationsStockAudioStartV9',
+    '__startupAnimationsStockAudioStartV12',
+    '__startupAnimationsStockAudioV14',
+    '__pipcoOrigBoot',
+    '__pipcoOrigAudio',
+    '__pipcoCleaned',
+  ];
+  for (let i = 0; i < LEGACY_GLOBALS.length; i++) {
+    try {
+      if (Pip[LEGACY_GLOBALS[i]] !== undefined) delete Pip[LEGACY_GLOBALS[i]];
+    } catch (e) {}
   }
+
+  let stockBootFn, stockAudioFn;
+
+  /* Capture the real stock functions without storing extra persistent helper
+     properties on Pip. If this APP.JS is reloaded in the same session and a
+     previous PIP-CO hook is still installed, unwrap that hook through its
+     __pipcoOriginal reference instead of mistaking the wrapper for stock. */
+  function captureOriginals() {
+    try {
+      let f = Pip.bootAnimation;
+      if (!stockBootFn && typeof f === 'function') {
+        if (f.__pipcoHook && typeof f.__pipcoOriginal === 'function')
+          stockBootFn = f.__pipcoOriginal;
+        else if (!f.__pipcoHook) stockBootFn = f.bind(Pip);
+      }
+    } catch (e) {
+      log('capture bootAnimation failed: ' + e);
+    }
+    try {
+      let f = Pip.audioStart;
+      if (!stockAudioFn && typeof f === 'function') {
+        if (f.__pipcoHook && typeof f.__pipcoOriginal === 'function')
+          stockAudioFn = f.__pipcoOriginal;
+        else if (!f.__pipcoHook) stockAudioFn = f.bind(Pip);
+      }
+    } catch (e) {
+      log('capture audioStart failed: ' + e);
+    }
+  }
+  captureOriginals();
+
   function sel() {
     try {
       let n = JSON.parse(fs.readFileSync(S)).startup | 0;
-      return n >= -2 && n < 9 ? n : -2;
+      return n >= -2 && n < STARTUPS.length ? n : -2;
     } catch (e) {
       return -2;
     }
@@ -39,81 +217,44 @@
       fs.writeFileSync(S, '{"startup":' + n + '}');
       return 1;
     } catch (e) {
+      log('saveSel(' + n + ') failed: ' + e);
       return 0;
     }
   }
   function vf(n) {
-    switch (n) {
-      case 0:
-        return B + 'MISTER.AVI';
-      case 1:
-        return B + 'VAULTGIRL.AVI';
-      case 2:
-        return B + 'DEATHCLAW.AVI';
-      case 3:
-        return B + 'YESMAN.AVI';
-      case 4:
-        return B + 'ENCLAVE.AVI';
-      case 5:
-        return B + 'BOS.AVI';
-      case 6:
-        return B + 'MOTHMAN.AVI';
-      case 7:
-        return B + 'MINUTEMEN.AVI';
-      case 8:
-        return B + 'ENCLAVE_PIPBOY.AVI';
-    }
-  }
-  function af(n) {
-    switch (n) {
-      case 0:
-        return B + 'MISTER.WAV';
-      case 1:
-        return B + 'VAULTGIRL.WAV';
-      case 2:
-        return B + 'DEATHCLAW.WAV';
-      case 3:
-        return B + 'YES MAN.WAV';
-      case 4:
-        return B + 'THE ENCLAVE.WAV';
-      case 5:
-        return B + 'BOS.WAV';
-      case 6:
-        return B + 'MOTHMAN.WAV';
-      case 7:
-        return B + 'MINUTEMEN.WAV';
-      case 8:
-        return B + 'ENCLAVE_PIPBOY.WAV';
-    }
+    return B + STARTUPS[n].file;
   }
   function fm(n) {
-    if (n === 8) return 25500;
-    if (n === 0) return 5930;
-    if (n === 3) return 4597;
-    if (n >= 4 && n <= 7) return 5263;
-    return 3180;
+    return STARTUPS[n].fade;
   }
   function hm(n) {
-    if (n === 8) return 30000;
-    if (n === 0) return 9445;
-    if (n === 3) return 8112;
-    if (n >= 4 && n <= 7) return 8778;
-    return 6695;
+    return STARTUPS[n].hard;
   }
   function valid(n) {
-    return n >= 0 && n < 9 && ex(vf(n)) && ex(af(n));
+    return n >= 0 && n < STARTUPS.length && ex(vf(n));
+  }
+
+  function safeVersion() {
+    try {
+      if (typeof VERSION !== 'undefined') return VERSION;
+    } catch (e) {}
+    try {
+      if (process.env && process.env.VERSION) return process.env.VERSION;
+    } catch (e) {}
+    return 'UNKNOWN';
   }
   function stockBoot() {
-    let m = process.memory(false);
+    let m = process.memory(false),
+      v = safeVersion();
     h.clear();
     return Pip.typeText(
       '\n\n§§§*************** PIP-OS(R) V5.0.1.4 ***************\n\n' +
         'COPYRIGHT 2068 ROBCO(R) §\n' +
         'LOADER V' +
-        VERSION +
+        v +
         '\n' +
         'EXEC VERSION ' +
-        process.env.VERSION +
+        v +
         ' §\n' +
         ((m.total * m.blocksize) / 1e3).toFixed(0) +
         'K RAM SYSTEM\n' +
@@ -129,21 +270,12 @@
     );
   }
   function originalAudio() {
-    return (
-      Pip.__SA22CleanAudio ||
-      Pip.__startupAnimationsOriginalAudioStartV5 ||
-      Pip.__startupAnimationsOriginalAudioStartV6 ||
-      Pip.__startupAnimationsOriginalAudioStartV7 ||
-      Pip.__startupAnimationsOriginalAudioStartV8 ||
-      Pip.__startupAnimationsStockAudioStartV9 ||
-      Pip.__startupAnimationsStockAudioStartV12 ||
-      Pip.__startupAnimationsStockAudioV14 ||
-      Pip.audioStart.bind(Pip)
-    );
+    return stockAudioFn;
   }
   function originalBoot() {
-    return Pip.__SA22CleanBoot || stockBoot;
+    return stockBootFn || stockBoot;
   }
+
   function restore() {
     let q = originalAudio(),
       b = originalBoot();
@@ -164,22 +296,34 @@
     aHook = undefined;
     bHook = undefined;
   }
+
   function hook() {
+    captureOriginals();
     let q = originalAudio();
     suppressCRT = 0;
-    aHook = function (p) {
-      let n = sel();
-      if (!valid(n)) {
-        restore();
+    if (q) {
+      aHook = function (p) {
+        let n = sel();
+        if (!valid(n)) {
+          restore();
+          return q.apply(Pip, arguments);
+        }
+        if (suppressCRT && p === 'SOUND/FX/CRT_ON2.WAV') {
+          suppressCRT = 0;
+          return;
+        }
         return q.apply(Pip, arguments);
-      }
-      if (suppressCRT && p === 'SOUND/FX/CRT_ON2.WAV') {
-        suppressCRT = 0;
-        return;
-      }
-      return q.apply(Pip, arguments);
-    };
-    Pip.audioStart = aHook;
+      };
+      aHook.__pipcoHook = 1;
+      aHook.__pipcoOriginal = q;
+      Pip.audioStart = aHook;
+    } else {
+      aHook = undefined;
+      log(
+        'audioStart stock function unavailable; CRT suppression hook skipped',
+      );
+    }
+
     bHook = function () {
       let n = sel();
       if (!valid(n)) {
@@ -191,8 +335,9 @@
           b,
           d,
           e,
-          x = 0;
-        function end() {
+          x = 0,
+          vStart;
+        function end(reason) {
           if (x) return;
           x = 1;
           if (a) clearTimeout(a);
@@ -209,6 +354,14 @@
           }
           h.reset();
           suppressCRT = 1;
+          log(
+            'end n=' +
+              n +
+              ' reason=' +
+              reason +
+              ' elapsedSinceVideoStart=' +
+              (vStart ? (getTime() - vStart) * 1000 : 'n/a'),
+          );
           setTimeout(done, 160);
         }
         function play() {
@@ -219,6 +372,7 @@
             try {
               stockBoot().then(done);
             } catch (e) {
+              log('stockBoot fallback (play) failed: ' + e);
               done();
             }
             return;
@@ -233,7 +387,10 @@
             try {
               Pip.videoStart(vf(n), { x: 0, y: 0 });
               ownVideo = 1;
+              ownAudio = 1;
+              vStart = getTime();
             } catch (e) {
+              log('videoStart(' + vf(n) + ') failed: ' + e);
               restore();
               x = 1;
               try {
@@ -243,20 +400,12 @@
               }
               return;
             }
-            e = setTimeout(
+            b = setTimeout(
               function () {
-                e = undefined;
-                if (x) return;
-                try {
-                  Pip.audioStart(af(n));
-                  ownAudio = 1;
-                } catch (z) {
-                  ownAudio = 0;
-                }
+                end('fade');
               },
-              n === 8 ? 420 : 180,
+              fm(n) + (n === 8 ? 420 : 180),
             );
-            b = setTimeout(end, fm(n) + (n === 8 ? 420 : 180));
           }
           if (n === 8) {
             e = setTimeout(function () {
@@ -269,8 +418,11 @@
         }
         try {
           a = setTimeout(play, sel() === 8 ? 2150 : 1895);
-          d = setTimeout(end, hm(n));
+          d = setTimeout(function () {
+            end('hard-failsafe');
+          }, hm(n));
         } catch (e) {
+          log('hook() scheduling failed: ' + e);
           restore();
           try {
             stockBoot().then(done);
@@ -280,39 +432,35 @@
         }
       });
     };
+    bHook.__pipcoHook = 1;
+    bHook.__pipcoOriginal = originalBoot();
     Pip.bootAnimation = bHook;
   }
+
   function header() {
     h.clear().setColor(3).setFontMonofonto16().setFontAlign(0, -1);
     h.drawImage(TI.title, (480 - TI.title.width) >> 1, 6);
   }
   function scanInstalled() {
-    let n;
-    for (n = 0; n < 9; n++) ic[n] = valid(n) ? 1 : 0;
+    for (let n = 0; n < STARTUPS.length; n++) ic[n] = valid(n) ? 1 : 0;
   }
   function installed(n) {
-    return n >= 0 && n < 9 && ic[n];
+    return n >= 0 && n < STARTUPS.length && ic[n];
+  }
+  function entriesFor(ids) {
+    let a = [];
+    for (let i = 0; i < ids.length; i++)
+      if (installed(ids[i])) a.push([STARTUPS[ids[i]].label, ids[i]]);
+    return a;
   }
   function specialEntries() {
-    let a = [];
-    if (installed(0)) a.push(['Mister Handy', 0]);
-    if (installed(1)) a.push(['Vault Girl', 1]);
-    if (installed(2)) a.push(['Deathclaw Vault Experiment', 2]);
-    if (installed(8)) a.push(['Enclave PIP-BOY', 8]);
-    return a;
+    return entriesFor(CAT_SPECIAL);
   }
   function factionEntries() {
-    let a = [];
-    if (installed(4)) a.push(['The Enclave', 4]);
-    if (installed(5)) a.push(['The Brotherhood of Steel', 5]);
-    if (installed(7)) a.push(['The Minutemen', 7]);
-    if (installed(6)) a.push(['Mothman', 6]);
-    return a;
+    return entriesFor(CAT_FACTION);
   }
   function npcEntries() {
-    let a = [];
-    if (installed(3)) a.push(['YES MAN', 3]);
-    return a;
+    return entriesFor(CAT_NPC);
   }
   function mainEntries() {
     let a = [['Default Bootup', -1, 0]];
@@ -413,24 +561,28 @@
     }
     if (c < a.length) activateStartup(a[c][1]);
   }
-  s = sel();
-  scanInstalled();
-  if (s >= 0 && !valid(s)) {
-    saveSel(-1);
-    s = -1;
+
+  try {
+    s = sel();
+    scanInstalled();
+    if (s >= 0 && !valid(s)) {
+      saveSel(-1);
+      s = -1;
+    }
+    if (s === -2) s = -1;
+    c = 0;
+    Pip.onExclusive('knob1', knob);
+    draw();
+    if (s < 0) restore();
+    else
+      t = setTimeout(function () {
+        t = undefined;
+        hook();
+      }, 0);
+  } catch (e) {
+    log('init failed: ' + e);
   }
-  if (s === -2) s = -1;
-  c = 0;
-  Pip.onExclusive('knob1', knob);
-  draw();
-  if (s < 0) {
-    restore();
-  } else {
-    t = setTimeout(function () {
-      t = undefined;
-      hook();
-    }, 0);
-  }
+
   return {
     id: 'STARTUPANIMATIONS',
     notDefault: true,

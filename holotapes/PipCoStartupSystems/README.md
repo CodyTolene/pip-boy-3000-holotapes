@@ -1,68 +1,57 @@
 # PIP-CO Startup Systems
 
-A startup selector for The Wand Company Pip-Boy 3000.
+A modular custom-startup holotape for The Wand Company Pip-Boy 3000.
 
-This public modular build preserves the hardware-tested V79
-startup/menu/playback behavior while moving MISC registration back to the normal
-pip-boy.com metadata installation path.
+## Modular installation
 
-## Installation
+The core application is installed automatically. Each startup sequence is an
+optional self-contained AVI, so users can install only the sequences they want.
 
-Install through pip-boy.com / the holotape registry. The website creates the
-device-side `.info` registration from `metadata.json`, so the holotape appears
-under Items > MISC.
+Audio is embedded directly in each AVI. There are no separate startup WAV files
+to install or keep paired with the animation.
 
-The required **Core** installs:
+The holotape scans the installed startup AVIs and only shows categories and
+startup options whose media is present.
+
+## Core files
 
 - `HOLO/STARTUP_ANIMATIONS/APP.JS`
-- `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
 - `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
+- `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
 
-Startup media is optional. Each startup requires its matching **AVI + WAV
-pair**. The app scans installed files and only shows a startup when both
-required files are present.
-
-The website/installer is responsible for creating the device `.info`
-registration from `metadata.json`. `APP.JS` does not create or overwrite
-`APPINFO/*.info`.
-
-## Startup choices
-
-### Special Bootups
+## Optional startup sequences
 
 - Mister Handy
 - Vault Girl
 - Deathclaw Vault Experiment
-- Enclave PIP-BOY
-
-### Faction Bootups
-
+- YES MAN
 - The Enclave
 - The Brotherhood of Steel
-- The Minutemen
 - Mothman
-
-### NPC Bootups
-
-- YES MAN
-
-### Default Bootup
-
-Restores the stock startup sequence.
+- The Minutemen
+- Enclave PIP-BOY
 
 ## Controls
 
-- Left wheel: move
+- Left wheel: navigate
 - Left wheel press: select
-- `< Back`: return
+- `< Back`: return to MISC
 
-## Notes
+## Behavior
 
-The selected startup is stored in `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`.
+- `Default Bootup` restores the normal Pip-Boy startup.
+- The selected startup remains active across boots.
+- Missing optional startup AVIs are hidden automatically.
+- Startup media is loaded only when needed.
+- Runtime code does not create or overwrite APPINFO; registration is handled by
+  the installer metadata.
 
-For a custom startup to appear in the menu, both its AVI and WAV must be
-installed.
+## Hardware validation
 
-## Credits
+This release is derived from the final hardware-tested runtime. All nine startup
+sequences were tested on The Wand Company Pip-Boy 3000 after their matching
+audio was embedded into the AVI files.
 
-Created by @LlamaYeYe.
+The public build removes the hardware-test-only APPINFO self-registration block;
+startup behavior, timings, fades, failsafes, menu order, and selection behavior
+remain unchanged.
