@@ -52,28 +52,32 @@
       label: 'Mister Handy',
       cat: 'special',
       fade: 6250,
-      hard: 9765,
+      hard: 15000,
+      eventEnd: 1,
     },
     {
       file: 'VAULTGIRL.AVI',
       label: 'Vault Girl',
       cat: 'special',
       fade: 3500,
-      hard: 7015,
+      hard: 12000,
+      eventEnd: 1,
     },
     {
       file: 'DEATHCLAW.AVI',
       label: 'Deathclaw Vault Experiment',
       cat: 'special',
       fade: 3500,
-      hard: 7015,
+      hard: 13000,
+      eventEnd: 1,
     },
     {
       file: 'YESMAN.AVI',
       label: 'YES MAN',
       cat: 'npc',
       fade: 4917,
-      hard: 8432,
+      hard: 16000,
+      eventEnd: 1,
     },
     {
       file: 'ENCLAVE.AVI',
@@ -101,7 +105,8 @@
       label: 'The Minutemen',
       cat: 'faction',
       fade: 5500,
-      hard: 9015,
+      hard: 16500,
+      eventEnd: 1,
     },
     {
       file: 'ENCLAVE_PIPBOY.AVI',
@@ -110,19 +115,26 @@
       fade: 26000,
       hard: 30500,
     },
+    {
+      file: 'MRHOUSE.AVI',
+      label: 'Mr. House',
+      cat: 'npc',
+      fade: 7667,
+      hard: 11182,
+    },
   ];
   // Fixed per-submenu display order, identical to the original build.
   const CAT_SPECIAL = [0, 1, 2, 8];
   const CAT_FACTION = [4, 5, 7, 6];
-  const CAT_NPC = [3];
+  const CAT_NPC = [3, 9];
 
-  /* Public/repository build: installer metadata handles registration. */
+  /* Repository/modular build: registration is provided by metadata.json. */
 
   let c = 0,
     s = 0,
     t,
     page = 0,
-    ic = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    ic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   let ownVideo = 0,
     ownAudio = 0,
     aHook,
@@ -145,7 +157,7 @@
    * unwrap the previous wrapper back to the real stock function.
    *
    * Also a plausible concrete cause of the V83/V84 crashes: the old code
-   * called Pip.bootAnimation.bind(Pip) at the top level with no typeof
+   * did `Pip.bootAnimation.bind(Pip)` at the top level with no typeof
    * guard and no try/catch around it. If bootAnimation isn't attached to
    * Pip yet at the exact moment this file runs (a real race on a cold
    * boot), that line throws synchronously and uncaught, which can abort
@@ -335,21 +347,33 @@
           b,
           d,
           e,
+          vs,
           x = 0,
           vStart;
-        function end(reason) {
+        function end(reason, natural) {
           if (x) return;
           x = 1;
           if (a) clearTimeout(a);
           if (b) clearTimeout(b);
           if (d) clearTimeout(d);
           if (e) clearTimeout(e);
-          if (ownVideo) {
-            Pip.videoStop();
-            ownVideo = 0;
+          if (vs) {
+            try {
+              Pip.removeListener('videoStopped', vs);
+            } catch (ignore) {}
+            vs = undefined;
           }
-          if (ownAudio) {
-            Pip.audioStop();
+          if (!natural) {
+            if (ownVideo) {
+              Pip.videoStop();
+              ownVideo = 0;
+            }
+            if (ownAudio) {
+              Pip.audioStop();
+              ownAudio = 0;
+            }
+          } else {
+            ownVideo = 0;
             ownAudio = 0;
           }
           h.reset();
@@ -400,12 +424,20 @@
               }
               return;
             }
-            b = setTimeout(
-              function () {
-                end('fade');
-              },
-              fm(n) + (n === 8 ? 420 : 180),
-            );
+            if (STARTUPS[n].eventEnd) {
+              vs = function () {
+                if (x) return;
+                end('videoStopped', 1);
+              };
+              Pip.on('videoStopped', vs);
+            } else {
+              b = setTimeout(
+                function () {
+                  end('fade', 0);
+                },
+                fm(n) + (n === 8 ? 420 : 180),
+              );
+            }
           }
           if (n === 8) {
             e = setTimeout(function () {
@@ -419,7 +451,7 @@
         try {
           a = setTimeout(play, sel() === 8 ? 2150 : 1895);
           d = setTimeout(function () {
-            end('hard-failsafe');
+            end('hard-failsafe', 0);
           }, hm(n));
         } catch (e) {
           log('hook() scheduling failed: ' + e);

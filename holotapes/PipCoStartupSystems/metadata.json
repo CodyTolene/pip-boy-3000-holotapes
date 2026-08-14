@@ -26,26 +26,32 @@
     {
       "label": "Mister Handy",
       "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
-      "sizeKB": 995,
+      "sizeKB": 2142,
       "url": "assets/MISTER.AVI"
     },
     {
       "label": "Vault Girl",
       "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
-      "sizeKB": 483,
+      "sizeKB": 685,
       "url": "assets/VAULTGIRL.AVI"
     },
     {
       "label": "Deathclaw Vault Experiment",
       "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-      "sizeKB": 776,
+      "sizeKB": 360,
       "url": "assets/DEATHCLAW.AVI"
     },
     {
       "label": "YES MAN",
       "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
-      "sizeKB": 93,
+      "sizeKB": 200,
       "url": "assets/YESMAN.AVI"
+    },
+    {
+      "label": "Mr. House",
+      "name": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
+      "sizeKB": 2559,
+      "url": "assets/MRHOUSE.AVI"
     },
     {
       "label": "The Enclave",
@@ -68,7 +74,7 @@
     {
       "label": "The Minutemen",
       "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
-      "sizeKB": 82,
+      "sizeKB": 1668,
       "url": "assets/MINUTEMEN.AVI"
     },
     {
