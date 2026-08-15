@@ -81,10 +81,10 @@
   },
   "definitions": {
     "relativePath": {
-      "description": "Path relative to the holotape directory.",
+      "description": "Path relative to the holotape directory. Must stay inside it: no leading slash, no backslashes, and no \"..\" segments.",
       "type": "string",
       "minLength": 1,
-      "pattern": "^[^/\\\\][^\\\\]*$"
+      "pattern": "^(?!.*(^|/)\\.\\.(/|$))[^/\\\\][^\\\\]*$"
     },
     "storageList": {
       "type": "array",

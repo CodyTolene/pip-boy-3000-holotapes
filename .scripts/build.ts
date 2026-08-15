@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-import type { Metadata, StorageEntry } from './types.ts';
+import type { RawMetadata, StorageEntry } from './types.ts';
 
 const rootDir = process.cwd();
 const sectionName = 'holotapes';
@@ -19,7 +19,17 @@ function isRelativeAssetPath(value: string): boolean {
   return value.length > 0 && !value.startsWith('/') && !/^[a-z]+:/i.test(value);
 }
 
-function prefixAssetPath(value: string, entryDir: string): string {
+// Overload so that undefined is preserved as a return type, it is a valid
+// input and output value for optional fields.
+function prefixAssetPath(value: string, entryDir: string): string;
+function prefixAssetPath(
+  value: string | undefined,
+  entryDir: string,
+): string | undefined;
+function prefixAssetPath(
+  value: string | undefined,
+  entryDir: string,
+): string | undefined {
   if (value === undefined || !isRelativeAssetPath(value)) {
     return value;
   }
@@ -72,7 +82,7 @@ async function findMetadataFiles(dir: string): Promise<string[]> {
   return files.flat();
 }
 
-function byNameOrId(a: Metadata, b: Metadata): number {
+function byNameOrId(a: RawMetadata, b: RawMetadata): number {
   const left = (a.name ?? a.id ?? '').toLowerCase();
   const right = (b.name ?? b.id ?? '').toLowerCase();
   return left.localeCompare(right);
@@ -93,7 +103,7 @@ async function buildRegistry(): Promise<number> {
   const entries = await Promise.all(
     metadataFiles.map(async (filePath) => {
       const raw = await fs.readFile(filePath, 'utf8');
-      const metadata = JSON.parse(raw) as Metadata;
+      const metadata: RawMetadata = JSON.parse(raw);
       const relativeSource = normalizePath(path.relative(rootDir, filePath));
 
       validateType(metadata.type, relativeSource);
@@ -115,7 +125,7 @@ async function buildRegistry(): Promise<number> {
           metadata.customFirmwareFiles,
           entryDir,
         ),
-      } as Metadata;
+      } satisfies RawMetadata;
     }),
   );
 

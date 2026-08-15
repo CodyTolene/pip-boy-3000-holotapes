@@ -1,16 +1,16 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-import type { Metadata } from './types.ts';
+import type { HolotapeCheck, RawMetadata } from './types.ts';
 
 const rootDir = process.cwd();
 const sectionName = 'holotapes';
 const metadataFileName = 'metadata.json';
 
-function referencedPaths(metadata: Metadata): string[] {
+function referencedPaths(metadata: RawMetadata): string[] {
   const paths = [metadata.icon, metadata.readme, ...(metadata.previews ?? [])];
 
-  for (const entry of metadata.storage) {
+  for (const entry of metadata.storage ?? []) {
     paths.push(entry.url, entry.previewMp3, entry.previewMp4);
   }
   for (const entry of metadata.storageOptional ?? []) {
@@ -30,21 +30,71 @@ async function exists(filePath: string): Promise<boolean> {
     .catch(() => false);
 }
 
-async function checkHolotape(metadataFile: string): Promise<string[]> {
+// Check for case-sensitivity and that the filepath exists
+async function existsExact(
+  baseDir: string,
+  relativePath: string,
+): Promise<boolean> {
+  const segments = relativePath.split(/[/\\]/).filter((s) => s.length > 0);
+
+  if (segments.length === 0) {
+    return false;
+  }
+
+  let currentDir = baseDir;
+
+  for (const segment of segments) {
+    const entries = await fs.readdir(currentDir).catch(() => undefined);
+
+    if (!entries?.includes(segment)) {
+      return false;
+    }
+
+    currentDir = path.join(currentDir, segment);
+  }
+
+  return true;
+}
+
+async function checkHolotape(metadataFile: string): Promise<HolotapeCheck> {
   const raw = await fs.readFile(metadataFile, 'utf8');
-  const metadata = JSON.parse(raw) as Metadata;
+  const metadata: RawMetadata = JSON.parse(raw);
   const holotapeDir = path.dirname(metadataFile);
   const source = path.relative(rootDir, metadataFile);
 
   const missing = await Promise.all(
     referencedPaths(metadata).map(async (relativePath) =>
-      (await exists(path.join(holotapeDir, relativePath)))
+      (await existsExact(holotapeDir, relativePath))
         ? []
         : [`${source}: ${relativePath}`],
     ),
   );
 
-  return missing.flat();
+  return { id: metadata.id, missing: missing.flat(), source };
+}
+
+// Check for duplicate ids
+function duplicateIds(results: HolotapeCheck[]): string[] {
+  const sourcesById = new Map<string, string[]>();
+
+  for (const { id, source } of results) {
+    if (id === undefined) {
+      continue;
+    }
+
+    const sources = sourcesById.get(id);
+
+    if (sources) {
+      sources.push(source);
+    } else {
+      sourcesById.set(id, [source]);
+    }
+  }
+
+  return [...sourcesById.entries()]
+    .filter(([, sources]) => sources.length > 1)
+    .map(([id, sources]) => `${id} (${sources.sort().join(', ')})`)
+    .sort();
 }
 
 async function main(): Promise<void> {
@@ -62,19 +112,26 @@ async function main(): Promise<void> {
     }
   }
 
-  const missing = (await Promise.all(metadataFiles.map(checkHolotape))).flat();
+  const results = await Promise.all(metadataFiles.map(checkHolotape));
+  const missing = results.flatMap((result) => result.missing);
+  const duplicates = duplicateIds(results);
 
   for (const entry of missing.sort()) {
     process.stderr.write(`Missing file: ${entry}\n`);
   }
 
+  for (const entry of duplicates) {
+    process.stderr.write(`Duplicate id: ${entry}\n`);
+  }
+
   process.stdout.write(
     `Checked ${metadataFiles.length} holotape` +
       `${metadataFiles.length === 1 ? '' : 's'}, ` +
-      `${missing.length} missing file${missing.length === 1 ? '' : 's'}.\n`,
+      `${missing.length} missing file${missing.length === 1 ? '' : 's'}, ` +
+      `${duplicates.length} duplicate id${duplicates.length === 1 ? '' : 's'}.\n`,
   );
 
-  if (missing.length > 0) {
+  if (missing.length > 0 || duplicates.length > 0) {
     process.exitCode = 1;
   }
 }
