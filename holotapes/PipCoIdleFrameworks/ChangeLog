@@ -1,11 +1,3 @@
-1.1.0 (2026-08-13)
-- Rebuilt Idle Frameworks around the lower-memory REWRITE2 architecture.
-- Split the menu, persistent idle service, built-in renderer, provider adapters, and fullscreen runner.
-- Added dynamic optional Pipquarium provider detection and PIPQIDLE adapter.
-- Preserved dynamic Mesmetron provider detection.
-- Provider holotapes are not bundled and disappear from PIP-CO when uninstalled.
-- Added lightweight fullscreen automatic-idle loading for provider screensavers.
-- Reduced peak memory pressure compared with the earlier all-in-one runtime.
-- Removed production debug viewer, heartbeat logging, and hardware-test registration behavior.
-- Fixed provider selection persistence so SERVICE.JS reads the saved CONFIG.JSON `mesFile` field correctly after reload/reboot.
-- Preserved the 2-minute idle timeout and existing built-in PIP-BOY 3000 screensaver behavior.
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
+- Initial release

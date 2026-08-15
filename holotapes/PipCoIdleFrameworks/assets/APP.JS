@@ -57,7 +57,7 @@
     log('SERVICE.JS failed: ' + e);
     Pip.errorBox(e);
     return {
-      id: 'FALLOUTSCREENSAVER',
+      id: 'pip-co-idle-frameworks',
       notDefault: true,
       fullscreen: true,
       remove: function () {},
@@ -336,7 +336,7 @@
   drawMenu();
 
   return {
-    id: 'FALLOUTSCREENSAVER',
+    id: 'pip-co-idle-frameworks',
     notDefault: true,
     fullscreen: true,
     remove: function () {
