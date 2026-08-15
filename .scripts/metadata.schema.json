@@ -51,10 +51,7 @@
       }
     },
     "type": {
-      "enum": [
-        "app",
-        "game"
-      ]
+      "enum": ["app", "game"]
     },
     "readme": {
       "$ref": "#/definitions/relativePath"
@@ -98,10 +95,7 @@
     "storageEntry": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "name",
-        "url"
-      ],
+      "required": ["name", "url"],
       "properties": {
         "name": {
           "description": "Destination path on the device, e.g. HOLO/MYAPP/APP.JS.",
