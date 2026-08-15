@@ -1,0 +1,7 @@
+{
+  "id": "hamcolock",
+  "name": "SET LOCK",
+  "version": "1.00",
+  "src": "HOLO/HAMCOLOCK/APP.JS",
+  "icon": "HOLO/HAMCOLOCK/HAMCOLOCK.IMG"
+}

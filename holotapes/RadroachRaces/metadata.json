@@ -23,7 +23,6 @@
     { "name": "HOLO/RADROACH_RACES/ROACH.JSON", "url": "assets/ROACH.JSON" },
     { "name": "HOLO/RADROACH_RACES/SQUAREW.BIN", "url": "assets/SQUAREW.BIN" },
     { "name": "HOLO/RADROACH_RACES/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
-    { "name": "HOLO/RADROACH_RACES/TITLE.JSON", "url": "assets/TITLE.JSON" },
     {
       "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
       "url": "assets/TITLEIMG.BIN"
