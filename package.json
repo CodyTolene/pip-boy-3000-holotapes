@@ -7,7 +7,8 @@
     "build": "node --experimental-strip-types .scripts/build.ts",
     "check-files": "node --experimental-strip-types .scripts/check-files.ts",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "validate-metadata": "ajv validate -s .scripts/metadata.schema.json -d \"holotapes/*/metadata.json\" --all-errors"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
