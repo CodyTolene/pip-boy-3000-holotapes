@@ -271,6 +271,30 @@ This rebuilds `holotapes/registry.json`, rewrites relative file paths for the
 registry, and rejects metadata whose `type` is not `app` or `game`. It does not
 generate `app.min.js` or perform all of the submission checks for you.
 
+### Validation <a name="validation"></a>
+
+Pull requests that touch `holotapes/` are validated automatically. These checks
+run locally with the same commands CI uses:
+
+```sh
+npm run typecheck
+npm run validate-metadata
+npm run check-files
+```
+
+`typecheck` checks the build and validation scripts in `.scripts/` for type
+errors. It does not look at any Holotape.
+
+`validate-metadata` checks every `metadata.json` against
+`.scripts/metadata.schema.json` for required fields, formats, and fields for a
+Holotape.
+
+`check-files` checks that every file a `metadata.json` references exists,
+matches filename casing, and unique `id`s.
+
+Schema is wired up in `.vscode/settings.json` so you'll get IDE errors and
+warnings.
+
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
 <!---------------------------------------------------------------------------->
@@ -514,6 +538,15 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
    ```sh
    npm install
    npm run build
+   ```
+
+   Then run the same validation the pull request will run. See
+   [Validation](#validation) for what each check covers:
+
+   ```sh
+   npm run typecheck
+   npm run validate-metadata
+   npm run check-files
    ```
 
 6. Before opening a pull request, verify:

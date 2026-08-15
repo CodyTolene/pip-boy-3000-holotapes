@@ -1,32 +1,68 @@
-# RobCo Entertainment Terminal (previously iPip Media Player)
+# RobCo Entmt. Terminal (previously iPip Media Player)
 
 ### Info
 
-**Author(s):**
+**Author:**
 
 - [@CodyTolene](https://github.com/CodyTolene)
 
+**Contributors:**
+
+- [@joemto20-tech](https://github.com/joemto20-tech)
+
 ### Description
 
-A full media player for the Pip-Boy 3000.
+RobCo Entertainment Terminal is a full media player for the Pip-Boy 3000. It
+opens with a RobCo terminal sequence and provides three media players:
 
-After the intro, RobCo Entertainment Terminal opens a media menu with three
-players:
-
-- **MUSIC** - Play WAV playlists. Every folder in the `MUSIC/` folder is a
-  "station" (playlist).
+- **MUSIC** - Play WAV songs and playlists from the `MUSIC/` folder.
 - **VIDEOS** - Watch AVI clips from the `VIDEOS/` folder full screen.
-- **IMAGES** - View images from the `IMAGES/` folder centered on a black
-  background.
+- **IMAGES** - View images from the `IMAGES/` folder on a black background.
 
-### Notice
+### Music Player
 
-Try to keep your `.js` and `.json` images less than 30 KB or you will run into
-memory issues.
+Folders inside `MUSIC/` are shown as stations, or playlists.
+
+- Open a station to see its songs.
+- Select a song to play it. Select the playing song again to stop it.
+- Use **SHUFFLE PLAY ALL** or **PLAY ALL** to play the entire station.
+- When a song finishes, the next song starts automatically. Shuffle order is
+  kept while Shuffle is active.
+- Turn the right knob to adjust playback volume.
+
+### Persistent Audio
+
+Persistent Audio allows music to continue after leaving the holotape, much like
+the Pip-Boy's built-in radio. It is **off by default** and is currently
+available only on Pip-Boy firmware **v1.1.5**. Other firmware versions show an
+informational message instead of the ON/OFF setting.
+
+To turn it on:
+
+1. Open **MUSIC** from the RobCo Entertainment Terminal media menu.
+2. While viewing either the station list or a station's song list, press and
+   hold the left knob until the Music settings menu opens.
+3. Highlight **PERSISTENT AUDIO** and press the left knob to change it to
+   **ON**.
+4. Return to the Music player and start a station or song.
+
+The music can now continue playing across Pip-Boy screens.
+
+Persistent playback can be stopped in any of these ways:
+
+- Open RobCo Entertainment Terminal and select the currently playing song.
+- Open the Music settings menu and turn **PERSISTENT AUDIO** off.
+- Visit the main firmware's **DATA > Radio** tab. Playback stops automatically
+  so the built-in radio can use the audio system normally.
+- Put the Pip-Boy to sleep.
+- Restart, reboot, or power off the Pip-Boy.
+
+Persistent playback is held in RAM only. It is never restored after a restart or
+power loss. You have to boot the Holotape again to restore it.
 
 ### SD Card Layout
 
-```
+```text
 MUSIC/
   My Station/
     song-01.wav
@@ -43,107 +79,104 @@ IMAGES/
   fullscreen-01.bin
 ```
 
-- The `MUSIC/`, `VIDEOS/`, and `IMAGES/` folders are created automatically on
-  launch if they do not exist.
-- Full file paths must stay under 56 characters. Oversized entries are shown
-  dimmed and cannot be opened.
+The `MUSIC/`, `VIDEOS/`, and `IMAGES/` folders are created automatically when
+the terminal launches if they don't exist. Full file paths must stay under 56
+characters. Entries with paths that are too long are shown dimmed and cannot be
+opened.
 
 **Music (`MUSIC/`)**
 
-- Only `.wav` files inside station folders are played.
-- Files placed directly in `MUSIC/` are ignored.
-- Sub-folders inside station folders are ignored (one level only).
+- `.wav` files inside station folders are supported.
+- Stations support one folder level. Subfolders inside a station are ignored.
+- Convert audio files here: https://www.pip-boy.com/tools/audio-converter
 
 **Video (`VIDEOS/`)**
 
-- Only `.avi` files are listed.
-- Clips must use the MS RLE codec (8-bit paletted, grayscale) to decode on the
-  device. See the holotape development guide for the recommended ffmpeg command.
+- `.avi` files are supported.
+- Clips must use the MS RLE codec with 8-bit paletted grayscale video to decode
+  on the device.
+- Convert video files here: https://www.pip-boy.com/tools/video-converter
 
 **Images (`IMAGES/`)**
 
-- `.json` files (1, 2, or 4 bpp) from the Espruino / pip-boy.com image converter
-  are parsed and drawn centered on a black background.
-- `.js` files are Espruino image strings at **1 or 2 bpp** (the JS string format
-  from the converter). They are drawn centered on a black background.
-- `.img` files are raw Espruino image strings at **1 or 2 bpp** (the same binary
-  data a `.js` image contains, without the code wrapper). They are drawn
-  centered on a black background.
-- `.bin` files are treated as full-screen (480x320) raw framebuffers and are
-  streamed straight to the display.
-- Only `.json`, `.js`, `.img`, and `.bin` files are listed; other files are
-  ignored.
-- Keep image files small (roughly under 30 KB). Very large images can exhaust
-  device memory and fail to load.
+- Only the supported files `.json`, `.js`, `.img`, and `.bin` files are listed.
+- Keep converted image files roughly under 30 KB when possible. Very large
+  images can cause out of memory (OOM) errors.
+- Convert image files here: https://www.pip-boy.com/tools/image-converter
 
 ### Controls
 
 **Media menu**
 
-- Left knob scroll: Move selection up / down
-- Left knob press: Open the selected player
+- Left knob scroll: Move the selection up or down.
+- Left knob press: Open the selected player.
 
 **Music player**
 
-- Left knob scroll: Move selection up / down in list
-- Left knob press: Open station / play or stop song / navigate pages
-- Right knob scroll: Adjust volume
-- Left knob long press: Open settings menu (close with another long press)
-- Select **BACK TO MENU** (top of the station list) to return to the media menu.
+- Left knob scroll: Move through the station or song list.
+- Left knob press: Open a station, play or stop a song, or select a list action.
+- Left knob long press: Open the Music settings menu while viewing a list.
+- Right knob scroll: Adjust playback volume.
+- Select **BACK TO PLAYLISTS** to leave a song list.
+- Select **BACK TO MENU** from the station list to return to the media menu.
 
 **Video player**
 
-- Left knob scroll: Move selection up / down in list
-- Left knob press: Play the selected clip / while playing, stop and return to
-  the list. Playback also returns to the list automatically when the clip ends.
-- Select **BACK TO MENU** (top of the list) to return to the media menu.
+- Left knob scroll: Move through the video list.
+- Left knob press: Play the selected clip. Press again during playback to stop
+  and return to the list.
+- Finished clips return to the list automatically.
+- Select **BACK TO MENU** to return to the media menu.
 
 **Image viewer**
 
-- Left knob scroll: Move selection up / down in list
-- Left knob press: Show the selected image / while viewing, close it and return
+- Left knob scroll: Move through the image list.
+- Left knob press: Open the selected image. Press again to close it and return
   to the list.
-- Select **BACK TO MENU** (top of the list) to return to the media menu.
+- Select **BACK TO MENU** to return to the media menu.
 
 ### Instructions
 
-1. Install and reboot the Pip-Boy.
-2. Select **RobCo Entertainment Terminal** from Items -> Misc.
-3. After the intro, the media menu opens. Scroll with the left knob and press to
-   open **MUSIC**, **VIDEOS**, or **IMAGES**.
+1. Install the holotape and restart the Pip-Boy.
+2. Open **Items > Misc** and select **RobCo Entmt. Terminal**.
+3. After the intro, use the left knob to choose **MUSIC**, **VIDEOS**, or
+   **IMAGES**.
 
 **Music**
 
-1. Scroll to a station and press the left knob to open it.
-2. Scroll to a song and press to play. Press the same song again to stop.
-3. Use **SHUFFLE PLAY ALL** or **PLAY ALL (TOP-DOWN)** to play the whole
-   station.
-4. Use **< PREV PAGE** / **NEXT PAGE >** to page through a long song list.
-5. Select **BACK TO PLAYLISTS** to return to the station list, then **BACK TO
-   MENU** to return to the media menu.
+1. Select a station from the station list.
+2. Select a song to play it, or choose **SHUFFLE PLAY ALL** or **PLAY ALL**.
+3. Scroll up and down with the left knob to move through long song lists.
+4. Select **BACK TO PLAYLISTS**, then **BACK TO MENU**, to return to the main
+   media menu.
 
 **Videos**
 
-1. Scroll to a clip and press to play it full screen.
-2. Press again to stop early, or let it finish, to return to the list.
-3. Select **BACK TO MENU** to return to the media menu.
+1. Select a clip to play it full screen.
+2. Press the left knob to stop early, or let the clip finish.
+3. Select **BACK TO MENU** to leave the video player.
 
 **Images**
 
-1. Scroll to an image and press to view it centered on a black background.
-2. Press again to close it and return to the list.
-3. Select **BACK TO MENU** to return to the media menu.
+1. Select an image to view it.
+2. Press the left knob to close it and return to the list.
+3. Select **BACK TO MENU** to leave the image viewer.
 
-Convert audio, video, and images into the supported formats at
+Convert audio, video, and images into supported formats at
 [pip-boy.com/tools](https://pip-boy.com/tools).
 
-### Settings
+### Music Settings
 
-1. Open the music player, then hold / long press the left wheel button.
-2. Select a setting to adjust using the left knob.
-3. Adjust sorting from A-Z or Z-A.
-4. Adjust screen brightness with the right knob.
-5. Adjust volume with the right knob.
+The Music settings menu is available from either Music list. Press and hold the
+left knob while viewing the station list or a station's song list.
+
+- Left knob scroll: Highlight a setting.
+- Left knob press: Toggle or advance the highlighted setting.
+- Right knob scroll: Adjust the highlighted setting in either direction.
+
+Available settings include Persistent Audio, song sorting, screen brightness,
+audio volume, and screen timeout. Select **BACK TO MUSIC** to return to the
+player.
 
 ### License(s)
 
@@ -152,11 +185,4 @@ International License. See
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
 information.
 
-This app uses a sound effect from freesound.org. This sound effect uses a
-special license that allows for free use in personal and commercial projects.
-More information about this license can be found here:
-https://creativecommons.org/publicdomain/zero/1.0/
-
-- [`INTRO.WAV`](https://freesound.org/people/Sanderboah/sounds/838728/)
-
-`SPDX-License-Identifiers: CC-BY-NC-4.0, CC0-1.0`
+`SPDX-License-Identifiers: CC-BY-NC-4.0`

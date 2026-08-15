@@ -1,0 +1,28 @@
+{
+  "id": "pipquarium",
+  "name": "Pipquarium",
+  "author": "@AidansLab",
+  "version": "1.0.0",
+  "description": "A Pip-Boy 3000 remake of the classic Windows 95 Plus! for Kids Underwater screensaver, with real fish artwork extracted from the original screensaver.",
+  "icon": "PIPQUARIUM.IMG",
+  "previews": ["previews/preview.bmp"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/PIPQUARIUM/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/PIPQUARIUM/FISHA_L.IMG", "url": "assets/FISHA_L.IMG" },
+    { "name": "HOLO/PIPQUARIUM/FISHA_R.IMG", "url": "assets/FISHA_R.IMG" },
+    { "name": "HOLO/PIPQUARIUM/FISHB_L.IMG", "url": "assets/FISHB_L.IMG" },
+    { "name": "HOLO/PIPQUARIUM/FISHB_R.IMG", "url": "assets/FISHB_R.IMG" },
+    { "name": "HOLO/PIPQUARIUM/RAY_L.IMG", "url": "assets/RAY_L.IMG" },
+    { "name": "HOLO/PIPQUARIUM/RAY_R.IMG", "url": "assets/RAY_R.IMG" },
+    { "name": "HOLO/PIPQUARIUM/TRIG_L.IMG", "url": "assets/TRIG_L.IMG" },
+    { "name": "HOLO/PIPQUARIUM/TRIG_R.IMG", "url": "assets/TRIG_R.IMG" },
+    { "name": "HOLO/PIPQUARIUM/SEAHORSE.IMG", "url": "assets/SEAHORSE.IMG" },
+    { "name": "HOLO/PIPQUARIUM/CORAL_A.IMG", "url": "assets/CORAL_A.IMG" },
+    { "name": "HOLO/PIPQUARIUM/CORAL_B.IMG", "url": "assets/CORAL_B.IMG" },
+    { "name": "HOLO/PIPQUARIUM/BUBBLE.IMG", "url": "assets/BUBBLE.IMG" },
+    { "name": "HOLO/PIPQUARIUM/AMBIENT.WAV", "url": "assets/AMBIENT.WAV" }
+  ],
+  "storageOptional": []
+}

@@ -1,0 +1,13 @@
+1.0.0 (2026-08-11)
+Initial release.
+- Port of the "EXT TERMINAL" attachment (submenuExtTerminal) from the Pip-Boy
+  3000 Mk V firmware to a Pip-Boy 3000 holotape.
+- Enumerates the Pip-Boy as a USB HID and sends arrow keys and ENTER
+  from the knobs, plus a selectable key (TAB/SPACE/DEL/BACK/HOME/END/ESC)
+  driven by the STATS and DATA buttons.
+- Waits on a "Please reconnect USB" screen until the host re-enumerates the
+  device, then shows the same on-screen key map as the Mk V.
+- Long-pressing the knob opens a full Pip.createKeyboard, which types straight
+  to the host one key per click, long-press again returns to the key map.
+- STATS and DATA are intercepted ahead of the OS mode handler so they no longer
+  exit the app, ITEMS is left as the exit button.

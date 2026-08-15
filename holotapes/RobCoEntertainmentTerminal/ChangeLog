@@ -1,3 +1,22 @@
+2.2.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/85
+Features:
+- Replaced the optional image and sound intro with a RobCo style typed startup sequence.
+- Limited Persistent Audio to Pip-Boy software v1.1.5, where it is supported. Added a message for other versions.
+- Updated the Holotape image to display on the Pip-Boy.
+- Moved APP.JS and APP.MIN.JS into the assets folder.
+- Rename the app to "RobCo Entmt. Terminal" for a one-liner title on the Pip-Boy.
+Fixed issues from 2.2.0:
+- Restored the current song and playlist name display, long-name shortening, and brought back the volume bar.
+- Restored the playlist arrows, Shuffle and Play All status messages, active playback markers, and the full "NO PLAYLISTS FOUND" help message.
+- Fixed the waveform animation smooth again (50ms over 160ms refresh).
+- Fixed Z-A song sorting.
+
+2.2.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/82
+- Rebuilt the music list, removed pagination.
+- Added optional Persistent Audio, off by default, so a playlist can continue while using other Pip-Boy screens.
+
 2.1.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/58
 - Update name of app from "iPip Media Player" to "RobCo Entertainment Terminal"

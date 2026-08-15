@@ -7,7 +7,7 @@
   "icon": "previews/PipPong.PNG",
   "previews": ["previews/menu.bmp", "previews/game.bmp"],
   "type": "game",
-  "readme": "README.md",
+  "readme": "README.MD",
   "storage": [
     { "name": "HOLO/PIPPONG/APP.JS", "url": "APP.MIN.JS" },
     { "name": "HOLO/PIPPONG/PADDLE1.wav", "url": "assets/PADDLE1.wav" },

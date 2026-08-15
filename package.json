@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "build": "node --experimental-strip-types .scripts/build.ts",
+    "check-files": "node --experimental-strip-types .scripts/check-files.ts",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "typecheck": "tsc --noEmit",
+    "validate-metadata": "ajv validate -s .scripts/metadata.schema.json -d \"holotapes/*/metadata.json\" --all-errors"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "ajv-cli": "^5.0.0",
     "husky": "^9.1.7",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "typescript": "^7.0.2"
   }
 }

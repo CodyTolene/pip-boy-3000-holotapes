@@ -328,7 +328,7 @@
       "HAMCoLEDControl/previews/preview02.bmp"
     ],
     "type": "app",
-    "readme": "HAMCoLEDControl/README.txt",
+    "readme": "HAMCoLEDControl/README.md",
     "storage": [
       {
         "name": "HOLO/LEDCOLOR/APP.JS",
@@ -341,6 +341,165 @@
       {
         "name": "HOLO/LEDCOLOR/SESSION.JS",
         "url": "HAMCoLEDControl/assets/SESSION.MIN.JS"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "hamcolock",
+    "name": "HAMCo Lock",
+    "author": "@joemto20-tech",
+    "version": "1.0.0",
+    "description": "A PIN lock screen for your Pip-Boy. Set a 4-digit access code, pick a faction logo, and choose whether it locks on startup, on wake from sleep, or both.",
+    "icon": "HamcoLock/assets/HAMCOLOCK.IMG",
+    "previews": ["HamcoLock/previews/settings.bmp"],
+    "tags": "system,tool",
+    "type": "app",
+    "readme": "HamcoLock/README.md",
+    "storage": [
+      {
+        "name": "APPINFO/HAMCOLOCK.info",
+        "url": "HamcoLock/assets/HAMCOLOCK.info"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/APP.JS",
+        "url": "HamcoLock/assets/APP.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SERVICE.JS",
+        "url": "HamcoLock/assets/SERVICE.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/LOCK.JS",
+        "url": "HamcoLock/assets/LOCK.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GRANT.JS",
+        "url": "HamcoLock/assets/GRANT.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SETTINGS.JS",
+        "url": "HamcoLock/assets/SETTINGS.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SETPIN.JS",
+        "url": "HamcoLock/assets/SETPIN.JS"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/HAMCOLOCK.IMG",
+        "url": "HamcoLock/assets/HAMCOLOCK.IMG"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/A.WAV",
+        "url": "HamcoLock/assets/A.WAV"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/G.AVI",
+        "url": "HamcoLock/assets/G.AVI"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ATOMCATS.BIN",
+        "url": "HamcoLock/assets/ATOMCATS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/BIGMT.BIN",
+        "url": "HamcoLock/assets/BIGMT.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/BROTHERHOOD.BIN",
+        "url": "HamcoLock/assets/BROTHERHOOD.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ENCLAVE.BIN",
+        "url": "HamcoLock/assets/ENCLAVE.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/ENCLAVE1.BIN",
+        "url": "HamcoLock/assets/ENCLAVE1.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/FIENDS.BIN",
+        "url": "HamcoLock/assets/FIENDS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/FOLLOWERS.BIN",
+        "url": "HamcoLock/assets/FOLLOWERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GREATKHANS.BIN",
+        "url": "HamcoLock/assets/GREATKHANS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/GUNNERS.BIN",
+        "url": "HamcoLock/assets/GUNNERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/HAM.BIN",
+        "url": "HamcoLock/assets/HAM.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/INTERSTATE80.BIN",
+        "url": "HamcoLock/assets/INTERSTATE80.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/KINGS.BIN",
+        "url": "HamcoLock/assets/KINGS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/LEGION.BIN",
+        "url": "HamcoLock/assets/LEGION.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/MOTHMAN.BIN",
+        "url": "HamcoLock/assets/MOTHMAN.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/NCR.BIN",
+        "url": "HamcoLock/assets/NCR.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/NCRSEAL.BIN",
+        "url": "HamcoLock/assets/NCRSEAL.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/OPERATORS.BIN",
+        "url": "HamcoLock/assets/OPERATORS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/RANGERS.BIN",
+        "url": "HamcoLock/assets/RANGERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/REDTALON.BIN",
+        "url": "HamcoLock/assets/REDTALON.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/RESPONDERS.BIN",
+        "url": "HamcoLock/assets/RESPONDERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/SMUGGLERS.BIN",
+        "url": "HamcoLock/assets/SMUGGLERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/TUNNELSNAKES.BIN",
+        "url": "HamcoLock/assets/TUNNELSNAKES.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VANGRAFFS.BIN",
+        "url": "HamcoLock/assets/VANGRAFFS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VAULTTEC.BIN",
+        "url": "HamcoLock/assets/VAULTTEC.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/VIPERS.BIN",
+        "url": "HamcoLock/assets/VIPERS.BIN"
+      },
+      {
+        "name": "HOLO/HAMCOLOCK/WHITEGLOVE.BIN",
+        "url": "HamcoLock/assets/WHITEGLOVE.BIN"
       }
     ],
     "storageOptional": []
@@ -371,7 +530,7 @@
     "previousId": "magic8ball",
     "name": "Magic 8 Ball+",
     "author": "@Theeohn @joemto20-tech",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A classic and an updated Magic 8 Ball, all 20 original and plenty new responses. Plus a few rare resonses if you keep asking! Shake your pipboy or spin/press a wheel to get a new answer!",
     "icon": "Magic8BallPlus/assets/MAGIC8BALLPLUS.IMG",
     "previews": [
@@ -441,7 +600,7 @@
     "icon": "PipPong/previews/PipPong.PNG",
     "previews": ["PipPong/previews/menu.bmp", "PipPong/previews/game.bmp"],
     "type": "game",
-    "readme": "PipPong/README.md",
+    "readme": "PipPong/README.MD",
     "storage": [
       {
         "name": "HOLO/PIPPONG/APP.JS",
@@ -487,6 +646,64 @@
         "url": "PipCalc/app.min.js"
       }
     ]
+  },
+  {
+    "id": "pip-co-idle-frameworks",
+    "name": "PIP-CO Idle Frameworks",
+    "author": "@LlamaYeYe",
+    "version": "1.0.0",
+    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with optional dynamic Mesmetron and Pipquarium idle-provider integration.",
+    "icon": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG",
+    "previews": ["PipCoIdleFrameworks/previews/menu.bmp"],
+    "type": "app",
+    "readme": "PipCoIdleFrameworks/README.md",
+    "storage": [
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/APP.JS",
+        "url": "PipCoIdleFrameworks/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/IDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/IDLE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
+        "url": "PipCoIdleFrameworks/assets/SERVICE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/BOMBRUN.JS",
+        "url": "PipCoIdleFrameworks/assets/BOMBRUN.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.JS",
+        "url": "PipCoIdleFrameworks/assets/BOMB.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON",
+        "url": "PipCoIdleFrameworks/assets/CONFIG.JSON"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/FALLOUT.WAV",
+        "url": "PipCoIdleFrameworks/assets/FALLOUT.WAV"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/LOGO.BIN",
+        "url": "PipCoIdleFrameworks/assets/LOGO.BIN"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/MESIDLE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/PIPQIDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/PIPQIDLE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN",
+        "url": "PipCoIdleFrameworks/assets/TITLE.BIN"
+      }
+    ],
+    "storageOptional": []
   },
   {
     "id": "startup-animations",
@@ -662,6 +879,24 @@
     "storageOptional": []
   },
   {
+    "id": "piphid",
+    "name": "PipHID",
+    "author": "@AidansLab",
+    "version": "1.0.0",
+    "description": "Turns the Pip-Boy into a HID (Human Interface Device) for interacting with a computer, ported from the EXT TERMINAL attachment in the Pip-Boy 3000 Mk V firmware.",
+    "icon": "PipHID/PIPHID.IMG",
+    "previews": ["PipHID/previews/preview.bmp"],
+    "type": "app",
+    "readme": "PipHID/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPHID/APP.JS",
+        "url": "PipHID/assets/APP.MIN.JS"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "pipman",
     "name": "PIPMAN",
     "author": "@McBeefy34",
@@ -675,6 +910,76 @@
       {
         "name": "HOLO/PIPMAN/APP.JS",
         "url": "PipMan/app.min.js"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
+    "id": "pipquarium",
+    "name": "Pipquarium",
+    "author": "@AidansLab",
+    "version": "1.0.0",
+    "description": "A Pip-Boy 3000 remake of the classic Windows 95 Plus! for Kids Underwater screensaver, with real fish artwork extracted from the original screensaver.",
+    "icon": "Pipquarium/PIPQUARIUM.IMG",
+    "previews": ["Pipquarium/previews/preview.bmp"],
+    "type": "app",
+    "readme": "Pipquarium/README.md",
+    "storage": [
+      {
+        "name": "HOLO/PIPQUARIUM/APP.JS",
+        "url": "Pipquarium/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/FISHA_L.IMG",
+        "url": "Pipquarium/assets/FISHA_L.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/FISHA_R.IMG",
+        "url": "Pipquarium/assets/FISHA_R.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/FISHB_L.IMG",
+        "url": "Pipquarium/assets/FISHB_L.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/FISHB_R.IMG",
+        "url": "Pipquarium/assets/FISHB_R.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/RAY_L.IMG",
+        "url": "Pipquarium/assets/RAY_L.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/RAY_R.IMG",
+        "url": "Pipquarium/assets/RAY_R.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/TRIG_L.IMG",
+        "url": "Pipquarium/assets/TRIG_L.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/TRIG_R.IMG",
+        "url": "Pipquarium/assets/TRIG_R.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/SEAHORSE.IMG",
+        "url": "Pipquarium/assets/SEAHORSE.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/CORAL_A.IMG",
+        "url": "Pipquarium/assets/CORAL_A.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/CORAL_B.IMG",
+        "url": "Pipquarium/assets/CORAL_B.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/BUBBLE.IMG",
+        "url": "Pipquarium/assets/BUBBLE.IMG"
+      },
+      {
+        "name": "HOLO/PIPQUARIUM/AMBIENT.WAV",
+        "url": "Pipquarium/assets/AMBIENT.WAV"
       }
     ],
     "storageOptional": []
@@ -910,10 +1215,6 @@
         "url": "RadroachRaces/assets/TITLE.MIN.JS"
       },
       {
-        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
-        "url": "RadroachRaces/assets/TITLE.JSON"
-      },
-      {
         "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
         "url": "RadroachRaces/assets/TITLEIMG.BIN"
       },
@@ -1021,11 +1322,11 @@
   },
   {
     "id": "rcet",
-    "name": "RobCo Entertainment Terminal",
-    "author": "@CodyTolene",
-    "version": "2.1.0",
+    "name": "RobCo Entmt. Terminal",
+    "author": "@CodyTolene @joemto20-tech",
+    "version": "2.2.1",
     "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
-    "icon": "RobCoEntertainmentTerminal/RCET.PNG",
+    "icon": "RobCoEntertainmentTerminal/assets/RCET.IMG",
     "previews": [
       "RobCoEntertainmentTerminal/previews/menu.bmp",
       "RobCoEntertainmentTerminal/previews/music.bmp",
@@ -1039,7 +1340,11 @@
     "storage": [
       {
         "name": "HOLO/RCET/APP.JS",
-        "url": "RobCoEntertainmentTerminal/APP.MIN.JS"
+        "url": "RobCoEntertainmentTerminal/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/RCET/ENGINE.JS",
+        "url": "RobCoEntertainmentTerminal/assets/ENGINE.MIN.JS"
       },
       {
         "name": "HOLO/RCET/IMAGES.JS",
@@ -1067,19 +1372,6 @@
       }
     ],
     "storageOptional": [
-      {
-        "label": "Startup Intro Sound",
-        "name": "HOLO/RCET/INTRO.WAV",
-        "previewMp3": "assets/optional/INTRO.mp3",
-        "sizeKB": 31,
-        "url": "RobCoEntertainmentTerminal/assets/optional/INTRO.WAV"
-      },
-      {
-        "label": "Startup Intro Image",
-        "name": "HOLO/RCET/IMG_RCET.BIN",
-        "sizeKB": 38,
-        "url": "RobCoEntertainmentTerminal/assets/optional/IMG_RCET.BIN"
-      },
       {
         "label": "Example BIN Image",
         "name": "IMAGES/Example Full Screen BIN Image.bin",

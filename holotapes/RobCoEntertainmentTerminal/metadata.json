@@ -1,10 +1,10 @@
 {
   "id": "rcet",
-  "name": "RobCo Entertainment Terminal",
-  "author": "@CodyTolene",
-  "version": "2.1.0",
+  "name": "RobCo Entmt. Terminal",
+  "author": "@CodyTolene @joemto20-tech",
+  "version": "2.2.1",
   "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
-  "icon": "RCET.PNG",
+  "icon": "assets/RCET.IMG",
   "previews": [
     "previews/menu.bmp",
     "previews/music.bmp",
@@ -16,7 +16,8 @@
   "readme": "README.md",
   "previousId": "iPip",
   "storage": [
-    { "name": "HOLO/RCET/APP.JS", "url": "APP.MIN.JS" },
+    { "name": "HOLO/RCET/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/RCET/ENGINE.JS", "url": "assets/ENGINE.MIN.JS" },
     { "name": "HOLO/RCET/IMAGES.JS", "url": "assets/IMAGES.MIN.JS" },
     { "name": "HOLO/RCET/INTRO.JS", "url": "assets/INTRO.MIN.JS" },
     { "name": "HOLO/RCET/MENU.JS", "url": "assets/MENU.MIN.JS" },
@@ -25,19 +26,6 @@
     { "name": "HOLO/RCET/VIDEO.JS", "url": "assets/VIDEO.MIN.JS" }
   ],
   "storageOptional": [
-    {
-      "label": "Startup Intro Sound",
-      "name": "HOLO/RCET/INTRO.WAV",
-      "previewMp3": "assets/optional/INTRO.mp3",
-      "sizeKB": 31,
-      "url": "assets/optional/INTRO.WAV"
-    },
-    {
-      "label": "Startup Intro Image",
-      "name": "HOLO/RCET/IMG_RCET.BIN",
-      "sizeKB": 38,
-      "url": "assets/optional/IMG_RCET.BIN"
-    },
     {
       "label": "Example BIN Image",
       "name": "IMAGES/Example Full Screen BIN Image.bin",

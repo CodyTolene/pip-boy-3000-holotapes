@@ -1,0 +1,63 @@
+name: Validate Holotapes
+
+on:
+  # Validation runs if any of these files change
+  pull_request:
+    paths:
+      - '.github/workflows/validate.yml'
+      - '.prettierignore'
+      - '.scripts/metadata.schema.json'
+      - '.scripts/*.ts'
+      - 'holotapes/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'prettier.config.cjs'
+      - 'tsconfig.json'
+
+  # Also validate after main is updated (sanity check)
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/validate.yml'
+      - '.scripts/metadata.schema.json'
+      - '.scripts/*.ts'
+      - 'holotapes/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions:
+  contents: read
+
+# Cancel previous runs if a newer run is triggered for the same branch
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Holotape
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck build and validation scripts
+        run: npm run typecheck
+
+      - name: Validate metadata against schema
+        run: npm run validate-metadata
+
+      - name: Make sure manifest files exist
+        run: npm run check-files
+
+      - name: Make sure registry.json is up to date
+        run: |
+          npm run build
+          npm run format
+          git diff --exit-code holotapes/registry.json

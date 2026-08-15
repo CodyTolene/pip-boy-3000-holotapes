@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/CodyTolene/pip-boy-3000-holotapes/holotape-metadata.schema.json",
+  "title": "Holotape metadata",
+  "description": "Metadata fora Holotape published to Pip-Boy.com",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "name",
+    "author",
+    "version",
+    "description",
+    "icon",
+    "previews",
+    "type",
+    "readme",
+    "storage"
+  ],
+  "properties": {
+    "id": {
+      "description": "Unique registry id.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9-]+$"
+    },
+    "name": {
+      "description": "Display name on pip-boy.com.",
+      "type": "string",
+      "minLength": 3
+    },
+    "author": {
+      "description": "GitHub username(s) prefixed with @, space separated.",
+      "type": "string",
+      "pattern": "^@\\S+( @\\S+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10
+    },
+    "icon": {
+      "$ref": "#/definitions/relativePath"
+    },
+    "previews": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/relativePath"
+      }
+    },
+    "type": {
+      "enum": ["app", "game"]
+    },
+    "readme": {
+      "$ref": "#/definitions/relativePath"
+    },
+    "tags": {
+      "description": "Comma separated tags.",
+      "type": "string"
+    },
+    "previousId": {
+      "description": "Former id, so installs of the old name still resolve.",
+      "type": "string",
+      "minLength": 1
+    },
+    "storage": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/storageEntry"
+      }
+    },
+    "storageOptional": {
+      "$ref": "#/definitions/storageList"
+    },
+    "customFirmwareFiles": {
+      "$ref": "#/definitions/storageList"
+    }
+  },
+  "definitions": {
+    "relativePath": {
+      "description": "Path relative to the holotape directory. Must stay inside it: no leading slash, no backslashes, and no \"..\" segments.",
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!.*(^|/)\\.\\.(/|$))[^/\\\\][^\\\\]*$"
+    },
+    "storageList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/storageEntry"
+      }
+    },
+    "storageEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "description": "Destination path on the device, e.g. HOLO/MYAPP/APP.JS.",
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "label": {
+          "description": "Shown in the optional file picker.",
+          "type": "string",
+          "minLength": 1
+        },
+        "sizeKB": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "previewMp3": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "previewMp4": {
+          "$ref": "#/definitions/relativePath"
+        }
+      }
+    }
+  }
+}
