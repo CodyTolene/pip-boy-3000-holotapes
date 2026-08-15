@@ -21,7 +21,7 @@
     }, 0);
 
   return {
-    id: 'HAMCOLOCK',
+    id: 'hamcolock',
     notDefault: true,
     fullscreen: true,
     remove: function () {

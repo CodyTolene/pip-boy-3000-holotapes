@@ -481,7 +481,7 @@
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
   current = {
-    id: 'HAMCOLOCK',
+    id: 'hamcolock',
     notDefault: true,
     fullscreen: true,
     remove: cleanup,
