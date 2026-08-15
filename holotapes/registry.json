@@ -328,7 +328,7 @@
       "HAMCoLEDControl/previews/preview02.bmp"
     ],
     "type": "app",
-    "readme": "HAMCoLEDControl/README.txt",
+    "readme": "HAMCoLEDControl/README.md",
     "storage": [
       {
         "name": "HOLO/LEDCOLOR/APP.JS",
@@ -441,7 +441,7 @@
     "icon": "PipPong/previews/PipPong.PNG",
     "previews": ["PipPong/previews/menu.bmp", "PipPong/previews/game.bmp"],
     "type": "game",
-    "readme": "PipPong/README.md",
+    "readme": "PipPong/README.MD",
     "storage": [
       {
         "name": "HOLO/PIPPONG/APP.JS",
@@ -871,10 +871,6 @@
       {
         "name": "HOLO/RADROACH_RACES/TITLE.JS",
         "url": "RadroachRaces/assets/TITLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/RADROACH_RACES/TITLE.JSON",
-        "url": "RadroachRaces/assets/TITLE.JSON"
       },
       {
         "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",

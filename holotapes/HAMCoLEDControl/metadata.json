@@ -7,7 +7,7 @@
   "icon": "assets/HAMCOLEDCONTROL.IMG",
   "previews": ["previews/preview01.bmp", "previews/preview02.bmp"],
   "type": "app",
-  "readme": "README.txt",
+  "readme": "README.md",
   "storage": [
     { "name": "HOLO/LEDCOLOR/APP.JS", "url": "assets/APP.MIN.JS" },
     { "name": "HOLO/LEDCOLOR/LED.JSON", "url": "assets/LED.JSON" },
