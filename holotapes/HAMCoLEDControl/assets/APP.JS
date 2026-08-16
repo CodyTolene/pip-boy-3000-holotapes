@@ -17,7 +17,7 @@
     );
   var SPD = 'SLOW|MED|FAST'.split('|');
   function def() {
-    return { enabled: 0, fx: 1, ca: 0, cb: 3, spd: 1, fade: 4, level: 1 };
+    return { enabled: 0, fx: 1, ca: 0, cb: 3, spd: 1, level: 1 };
   }
   function clone(d) {
     d = d || def();
@@ -27,7 +27,6 @@
       ca: d.ca | 0,
       cb: d.cb | 0,
       spd: d.spd | 0,
-      fade: d.fade | 0,
       level: Number(d.level) || 1
     };
   }
@@ -88,7 +87,6 @@
     if (s.fx === 3) a.push('ca', 'cb');
     else if (one()) a.push('ca');
     if (s.fx !== 0) a.push('spd');
-    if (s.fx === 1 || s.fx === 3) a.push('fade');
     a.push('level', 'keep', 'restore', 'exit');
     return a;
   }
@@ -103,15 +101,13 @@
           ? 'COLOR B'
           : k === 'spd'
             ? 'EFFECT SPEED'
-            : k === 'fade'
-              ? 'FADE SPEED'
-              : k === 'level'
-                ? 'BRIGHTNESS'
-                : k === 'keep'
-                  ? 'KEEP EFFECT + EXIT'
-                  : k === 'restore'
-                    ? 'EXIT + RESTORE PIP-OS'
-                    : 'CANCEL CHANGES + EXIT';
+            : k === 'level'
+              ? 'BRIGHTNESS'
+              : k === 'keep'
+                ? 'KEEP EFFECT + EXIT'
+                : k === 'restore'
+                  ? 'EXIT + RESTORE PIP-OS'
+                  : 'CANCEL CHANGES + EXIT';
   }
   function val(k) {
     return k === 'fx'
@@ -122,15 +118,9 @@
           ? COL[s.cb]
           : k === 'spd'
             ? SPD[s.spd]
-            : k === 'fade'
-              ? s.fade === 0
-                ? '0 PAUSE'
-                : s.fade === 10
-                  ? '10 MAX'
-                  : '' + s.fade
-              : k === 'level'
-                ? Math.round(s.level * 100) + '%'
-                : '';
+            : k === 'level'
+              ? Math.round(s.level * 100) + '%'
+              : '';
   }
   function font(n) {
     try {
@@ -195,11 +185,7 @@
     } else if (k === 'ca') s.ca = (s.ca + d + COL.length) % COL.length;
     else if (k === 'cb') s.cb = (s.cb + d + COL.length) % COL.length;
     else if (k === 'spd') s.spd = (s.spd + d + 3) % 3;
-    else if (k === 'fade') {
-      s.fade += d;
-      if (s.fade > 10) s.fade = 0;
-      else if (s.fade < 0) s.fade = 10;
-    } else if (k === 'level') {
+    else if (k === 'level') {
       s.level += d * 0.25;
       if (s.level > 1) s.level = 0.25;
       else if (s.level < 0.25) s.level = 1;
