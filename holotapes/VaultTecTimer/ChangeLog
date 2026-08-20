@@ -1,3 +1,13 @@
+2.0.0 (2026-08-19)
+https://
+- Split holotape into parts, app.js, title.js, timer.js, and stopwatch.js
+- Major revisions to Timer formatting
+- Added LED functionality to Timer for alert, replacing screen flash and sound
+- Added ALARM folder for sound alert type, allowing user to choose and customize their notificaiton sound
+- Added whole new Stopwatch funtion
+- Stopwatch includes start/stop functionality, Lap counting and a reset button
+- Both timer and stopwatch allow user to return to menu/title.js
+
 1.0.0 (2026-06-08)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/7
 - Initial release
