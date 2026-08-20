@@ -1,9 +1,9 @@
 {
   "id": "vaulttimer",
   "name": "Vault-Tec Timer",
-  "author": "@trekker87",
-  "version": "1.0.0",
-  "description": "A countdown timer app for the Pip-Boy 3000. Set the number of minutes, choose your alert style, and press the knob to start. When the timer expires, the device will alert you with sound, flashing lights, or both — your choice.",
+  "author": "@trekker87", "@Theeohn",
+  "version": "2.0.0",
+  "description": "A countdown timer with customizable alerts, and a stopwatch with lap function.",
   "icon": "previews/vaulttectimer.png",
   "previews": ["previews/menu.bmp"],
   "type": "app",
