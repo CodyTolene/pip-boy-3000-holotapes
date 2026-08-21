@@ -718,7 +718,7 @@
     "storage": [
       {
         "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
-        "url": "PipCoStartupSystems/app.min.js"
+        "url": "PipCoStartupSystems/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",

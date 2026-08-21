@@ -1,4 +1,5 @@
-1.1.0 (2026-08-13)
+1.1.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
 - Reworked the public modular package from the final hardware-tested runtime.
 - Embedded each startup's matching audio directly into its AVI.
 - Reduced optional media from separate animation/audio pairs to one file per startup.
@@ -9,3 +10,9 @@
 - Guarded startup/audio hook capture and same-session wrapper restoration.
 - Guarded the firmware VERSION fallback so stock boot recovery cannot fail on an undefined VERSION.
 - Preserved the hardware-tested startup timings, fades, failsafes, menu order, and selection behavior.
+
+1.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/79
+- Initial public submission of PIP-CO Startup Systems.
+- Adds Default Bootup, Mister Handy, Vault Girl, and Deathclaw Ripped Suit startup selections.
+- Includes persistent selection and custom startup animation/audio assets.

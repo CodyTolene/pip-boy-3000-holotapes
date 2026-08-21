@@ -11,7 +11,7 @@
   "storage": [
     {
       "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
-      "url": "app.min.js"
+      "url": "assets/APP.MIN.JS"
     },
     {
       "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
