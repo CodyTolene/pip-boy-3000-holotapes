@@ -320,7 +320,7 @@
     "id": "ledcolor",
     "name": "HAMCo LED Control",
     "author": "@joemto20-tech",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Radiation RGB color control and safe LED hardware tester for the Pip-Boy 3000.",
     "icon": "HAMCoLEDControl/assets/HAMCOLEDCONTROL.IMG",
     "previews": [
@@ -1348,7 +1348,7 @@
     "id": "rcet",
     "name": "RobCo Entmt. Terminal",
     "author": "@CodyTolene @joemto20-tech",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
     "icon": "RobCoEntertainmentTerminal/assets/RCET.IMG",
     "previews": [
@@ -1538,17 +1538,33 @@
   {
     "id": "vaulttimer",
     "name": "Vault-Tec Timer",
-    "author": "@trekker87",
-    "version": "1.0.0",
-    "description": "A countdown timer app for the Pip-Boy 3000. Set the number of minutes, choose your alert style, and press the knob to start. When the timer expires, the device will alert you with sound, flashing lights, or both — your choice.",
-    "icon": "VaultTecTimer/previews/vaulttectimer.png",
-    "previews": ["VaultTecTimer/previews/menu.bmp"],
+    "author": "@trekker87 @Theeohn",
+    "version": "2.0.0",
+    "description": "A countdown timer with customizable alerts, and a stopwatch with lap function.",
+    "icon": "VaultTecTimer/assets/VAULTTECTIMER.IMG",
+    "previews": [
+      "VaultTecTimer/previews/MENU.BMP",
+      "VaultTecTimer/previews/TIMER.BMP",
+      "VaultTecTimer/previews/STOPWATCH.BMP"
+    ],
     "type": "app",
     "readme": "VaultTecTimer/README.md",
     "storage": [
       {
         "name": "HOLO/VAULT_TEC_TIMER/APP.JS",
-        "url": "VaultTecTimer/app.min.js"
+        "url": "VaultTecTimer/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/VAULT_TEC_TIMER/STOPWATCH.JS",
+        "url": "VaultTecTimer/assets/STOPWATCH.MIN.JS"
+      },
+      {
+        "name": "HOLO/VAULT_TEC_TIMER/TIMER.JS",
+        "url": "VaultTecTimer/assets/TIMER.MIN.JS"
+      },
+      {
+        "name": "HOLO/VAULT_TEC_TIMER/TITLE.JS",
+        "url": "VaultTecTimer/assets/TITLE.MIN.JS"
       }
     ],
     "storageOptional": []

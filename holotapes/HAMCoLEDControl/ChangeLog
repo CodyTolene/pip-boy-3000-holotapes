@@ -1,3 +1,10 @@
+1.0.3
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/90
+- Added the expanded light-control session runner used by the new APP.JS state model.
+- Added slow fade, dual-color controls, extra colors, and additional effects while preserving KEEP EFFECT + EXIT, RESTORE PIP-OS + EXIT, and cancel/rollback behavior.
+- Removed the separate fade-speed row; EFFECT SPEED now controls slow fade and dual-color fade timing.
+- Regenerated APP.MIN.JS and SESSION.MIN.JS so the installed holotape uses the updated code.
+
 1.0.2
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/76
 - Remove the old persistent/default-light approach that patched LED behavior across reboots. The new version has no boot loader, no saved startup state, no icon/image assets, and no LED.JSON, so reboot returns the Pip-Boy to normal as if the app was never running.

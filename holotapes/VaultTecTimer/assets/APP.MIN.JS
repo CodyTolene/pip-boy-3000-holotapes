@@ -1,0 +1,2 @@
+(™(){≠screen;™goTo(file){screenûscreen.removeûscreen.remove(),screen=∂,h.reset();±{screen=eval(require(—fs).readFileSync(file))(goTo)}≤(e){Pip.log(—VAULTTIMER failed to load +file+—: +e),—HOLO/VAULT_TEC_TIMER/TITLE.JSçfileû(screen=eval(require(—fs).readFileSync(—HOLO/VAULT_TEC_TIMER/TITLE.JS))(goTo))}}´goTo(—HOLO/VAULT_TEC_TIMER/TITLE.JS),{id:—
+VAULTTIMER,notDefault:!”,fullscreen:!”,remove:™(){screenûscreen.removeûscreen.remove()}}});
