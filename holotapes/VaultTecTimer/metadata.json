@@ -19,7 +19,8 @@
       "url": "assets/STOPWATCH.MIN.JS"
     },
     { "name": "HOLO/VAULT_TEC_TIMER/TIMER.JS", "url": "assets/TIMER.MIN.JS" },
-    { "name": "HOLO/VAULT_TEC_TIMER/TITLE.JS", "url": "assets/TITLE.MIN.JS" }
+    { "name": "HOLO/VAULT_TEC_TIMER/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
+    { "name": "HOLO/VAULT_TEC_TIMER/TITLE.BIN", "url": "assets/TITLE.BIN" }
   ],
   "storageOptional": []
 }
