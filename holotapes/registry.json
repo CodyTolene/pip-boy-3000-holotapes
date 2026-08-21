@@ -710,7 +710,7 @@
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",
     "version": "1.1.0",
-    "description": "Choose custom startup sequences for The Wand Company Pip-Boy 3000. Each optional AVI contains its matching audio, and the holotape only shows startup media that is installed.",
+    "description": "Choose modular custom Pip-Boy startup animations with embedded audio and a low-memory persistent startup runtime.",
     "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.IMG",
     "previews": ["PipCoStartupSystems/previews/menu.bmp"],
     "type": "app",
@@ -733,32 +733,26 @@
       {
         "label": "Mister Handy",
         "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
-        "sizeKB": 2142,
+        "sizeKB": 2143,
         "url": "PipCoStartupSystems/assets/MISTER.AVI"
       },
       {
         "label": "Vault Girl",
         "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
-        "sizeKB": 685,
+        "sizeKB": 686,
         "url": "PipCoStartupSystems/assets/VAULTGIRL.AVI"
       },
       {
         "label": "Deathclaw Vault Experiment",
         "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
-        "sizeKB": 360,
+        "sizeKB": 361,
         "url": "PipCoStartupSystems/assets/DEATHCLAW.AVI"
       },
       {
-        "label": "YES MAN",
-        "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
-        "sizeKB": 200,
-        "url": "PipCoStartupSystems/assets/YESMAN.AVI"
-      },
-      {
-        "label": "Mr. House",
-        "name": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
-        "sizeKB": 2559,
-        "url": "PipCoStartupSystems/assets/MRHOUSE.AVI"
+        "label": "Enclave PIP-BOY",
+        "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
+        "sizeKB": 5563,
+        "url": "PipCoStartupSystems/assets/ENCLAVE_PIPBOY.AVI"
       },
       {
         "label": "The Enclave",
@@ -773,22 +767,52 @@
         "url": "PipCoStartupSystems/assets/BOS.AVI"
       },
       {
-        "label": "Mothman",
-        "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
-        "sizeKB": 821,
-        "url": "PipCoStartupSystems/assets/MOTHMAN.AVI"
-      },
-      {
         "label": "The Minutemen",
         "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
         "sizeKB": 1668,
         "url": "PipCoStartupSystems/assets/MINUTEMEN.AVI"
       },
       {
-        "label": "Enclave PIP-BOY",
-        "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
-        "sizeKB": 5563,
-        "url": "PipCoStartupSystems/assets/ENCLAVE_PIPBOY.AVI"
+        "label": "Mothman",
+        "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
+        "sizeKB": 821,
+        "url": "PipCoStartupSystems/assets/MOTHMAN.AVI"
+      },
+      {
+        "label": "YES MAN",
+        "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
+        "sizeKB": 200,
+        "url": "PipCoStartupSystems/assets/YESMAN.AVI"
+      },
+      {
+        "label": "Mr. House",
+        "name": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
+        "sizeKB": 2559,
+        "url": "PipCoStartupSystems/assets/MRHOUSE.AVI"
+      },
+      {
+        "label": "Classic Mr. House",
+        "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE.AVI",
+        "sizeKB": 1875,
+        "url": "PipCoStartupSystems/assets/CLASSIC_MRHOUSE.AVI"
+      },
+      {
+        "label": "Classic Mr. House Animated",
+        "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_ANIMATED.AVI",
+        "sizeKB": 2235,
+        "url": "PipCoStartupSystems/assets/CLASSIC_MRHOUSE_ANIMATED.AVI"
+      },
+      {
+        "label": "Classic Mr. House Fully Animated",
+        "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
+        "sizeKB": 2063,
+        "url": "PipCoStartupSystems/assets/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI"
+      },
+      {
+        "label": "Dogmeat",
+        "name": "HOLO/STARTUP_ANIMATIONS/DOGMEAT.AVI",
+        "sizeKB": 1820,
+        "url": "PipCoStartupSystems/assets/DOGMEAT.AVI"
       }
     ]
   },

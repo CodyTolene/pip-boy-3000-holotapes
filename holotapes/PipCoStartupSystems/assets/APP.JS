@@ -2,14 +2,6 @@
   const fs = require('fs'),
     B = 'HOLO/STARTUP_ANIMATIONS/',
     S = B + 'SELECT.JSON';
-  const LOGFILE = 'pipco.txt';
-
-  function log(msg) {
-    try {
-      if (Pip.log) Pip.log('PIPCO: ' + msg, LOGFILE);
-    } catch (e) {}
-  }
-
   function ex(p) {
     try {
       return !!fs.statSync(p);
@@ -18,34 +10,6 @@
     }
   }
 
-  /* ---- One source of truth for every startup option ----------------------
-   * Replaces the old vf()/fm()/hm() switch statements (three separate
-   * tables keyed off the same numeric index, hand-kept in sync). That's
-   * exactly the kind of thing that gets out of sync when videos are
-   * re-encoded, which is what forced this rework in the first place.
-   * fade = ms from video start to the graceful fade-out (end()).
-   * hard = ms from bootAnimation() being invoked to the failsafe cutoff,
-   *        in case video playback never starts/finishes at all.
-   *
-   * Both were re-measured against the actual AVI files in this package
-   * (ffprobe, exact frame-count/12fps duration) after a real-device test
-   * showed MISTER cutting off early (video + audio both stopped before
-   * the clip finished). The old fade values only cleared each video's
-   * true runtime by ~360ms (Mister, Vault Girl, Deathclaw, Yes Man) or
-   * ~420-443ms (the rest) - the one confirmed working case (Enclave
-   * Pip-Boy) had one of the larger margins, the one confirmed failing
-   * case (Mister) had one of the smallest. That margin has to absorb
-   * whatever latency exists on real hardware between Pip.videoStart()
-   * being called and frames actually reaching the screen (SD read +
-   * decode start-up) - a desktop decode check can't measure that part.
-   * Every entry now gets a uniform, more generous 500ms pad added to
-   * fade (matching or exceeding the best-performing margin observed),
-   * with hard's cushion-beyond-fade left the same shape as before so
-   * the failsafe still can't fire before a normal-speed playback would
-   * finish. This does not touch the CRT-suppression pre-roll delay or
-   * the 180/420ms call-site offsets, which are tied to the stock startup
-   * chime timing, not video length.
-   */
   const STARTUPS = [
     {
       file: 'MISTER.AVI',
@@ -122,99 +86,90 @@
       fade: 7667,
       hard: 11182,
     },
-  ];
-  // Fixed per-submenu display order, identical to the original build.
-  const CAT_SPECIAL = [0, 1, 2, 8];
-  const CAT_FACTION = [4, 5, 7, 6];
-  const CAT_NPC = [3, 9];
-
-  /* Repository/modular build: registration is provided by metadata.json. */
-
-  let c = 0,
-    s = 0,
-    t,
-    page = 0,
-    ic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let ownVideo = 0,
-    ownAudio = 0,
-    aHook,
-    bHook,
-    suppressCRT = 0;
-  let TI = {
-    title: {
-      width: 176,
-      height: 98,
-      bpp: 1,
-      transparent: 0,
-      buffer: fs.readFileSync(B + 'TITLE.BIN'),
+    {
+      file: 'CLASSIC_MRHOUSE.AVI',
+      label: 'Classic Mr. House',
+      cat: 'npc',
+      fade: 5250,
+      hard: 13000,
+      eventEnd: 1,
     },
-  };
-
-  /* ---- Stock function capture --------------------------------------------
-   * Keep stock function references local to this app instance instead of
-   * persisting helper properties on Pip. For same-session Web IDE reloads,
-   * each PIP-CO wrapper carries a __pipcoOriginal pointer so a new load can
-   * unwrap the previous wrapper back to the real stock function.
-   *
-   * Also a plausible concrete cause of the V83/V84 crashes: the old code
-   * did `Pip.bootAnimation.bind(Pip)` at the top level with no typeof
-   * guard and no try/catch around it. If bootAnimation isn't attached to
-   * Pip yet at the exact moment this file runs (a real race on a cold
-   * boot), that line throws synchronously and uncaught, which can abort
-   * the whole app load. captureOriginals() below is guarded and is also
-   * called again inside hook() as a second chance.
-   */
-  const LEGACY_GLOBALS = [
-    '__SA18CRT',
-    '__SA18A',
-    '__SA22CleanBoot',
-    '__SA22CleanAudio',
-    '__startupAnimationsOriginalAudioStartV5',
-    '__startupAnimationsOriginalAudioStartV6',
-    '__startupAnimationsOriginalAudioStartV7',
-    '__startupAnimationsOriginalAudioStartV8',
-    '__startupAnimationsStockAudioStartV9',
-    '__startupAnimationsStockAudioStartV12',
-    '__startupAnimationsStockAudioV14',
-    '__pipcoOrigBoot',
-    '__pipcoOrigAudio',
-    '__pipcoCleaned',
+    {
+      file: 'CLASSIC_MRHOUSE_ANIMATED.AVI',
+      label: 'Classic Mr. House Animated',
+      cat: 'npc',
+      fade: 6083,
+      hard: 15000,
+      eventEnd: 1,
+    },
+    {
+      file: 'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+      label: 'Classic Mr. House Fully Animated',
+      cat: 'npc',
+      fade: 6000,
+      hard: 15000,
+      eventEnd: 1,
+    },
+    {
+      file: 'DOGMEAT.AVI',
+      label: 'Dogmeat',
+      cat: 'npc',
+      fade: 4167,
+      hard: 13000,
+      eventEnd: 1,
+    },
   ];
-  for (let i = 0; i < LEGACY_GLOBALS.length; i++) {
+  const CAT_SPECIAL = [0, 1, 2, 8],
+    CAT_FACTION = [4, 5, 7, 6],
+    CAT_NPC = [3, 9, 10, 11, 12, 13];
+
+  /* Persistent startup runtime.
+     This is deliberately created in global scope so Pip.bootAnimation/Pip.audioStart
+     retain only the small startup service after the holotape UI closes. Keeping the
+     menu/scroller/title closure alive caused CALLBACK/LOW_MEMORY/MEMORY failures on
+     repeated boot cycles during Pip-Boy OS 1.1.6 hardware testing. */
+  const installRuntime = Function(
+    'return function(){\n' +
+      "var fs=require('fs'),B='HOLO/STARTUP_ANIMATIONS/',S=B+'SELECT.JSON';" +
+      "var F=['MISTER.AVI','VAULTGIRL.AVI','DEATHCLAW.AVI','YESMAN.AVI','ENCLAVE.AVI','BOS.AVI','MOTHMAN.AVI','MINUTEMEN.AVI','ENCLAVE_PIPBOY.AVI','MRHOUSE.AVI','CLASSIC_MRHOUSE.AVI','CLASSIC_MRHOUSE_ANIMATED.AVI','CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI','DOGMEAT.AVI'];" +
+      'var FA=[6250,3500,3500,4917,5500,5500,5500,5500,26000,7667,5250,6083,6000,4167];' +
+      'var HA=[15000,12000,13000,16000,9015,9015,9015,16500,30500,11182,13000,15000,15000,13000];' +
+      'var EV=[1,1,1,1,0,0,0,1,0,0,1,1,1,1],ownV=0,ownA=0,crt=0;' +
+      'function sel(){try{var n=JSON.parse(fs.readFileSync(S)).startup|0;return n>=-2&&n<F.length?n:-2}catch(e){return -2}}' +
+      'function ok(n){try{return n>=0&&n<F.length&&!!fs.statSync(B+F[n])}catch(e){return false}}' +
+      "if(!Pip.__PIPCOStockBoot){if(typeof Pip.__SA22CleanBoot==='function')Pip.__PIPCOStockBoot=Pip.__SA22CleanBoot;else if(typeof Pip.bootAnimation==='function'&&!Pip.bootAnimation.__pipcoRT)Pip.__PIPCOStockBoot=Pip.bootAnimation.bind(Pip)}" +
+      "if(!Pip.__PIPCOStockAudio){if(typeof Pip.__SA22CleanAudio==='function')Pip.__PIPCOStockAudio=Pip.__SA22CleanAudio;else if(typeof Pip.audioStart==='function'&&!Pip.audioStart.__pipcoRT)Pip.__PIPCOStockAudio=Pip.audioStart.bind(Pip)}" +
+      'var sb=Pip.__PIPCOStockBoot,sa=Pip.__PIPCOStockAudio;' +
+      'function restore(){try{if(ownV)Pip.videoStop()}catch(e){}try{if(ownA)Pip.audioStop()}catch(e){}ownV=ownA=0;try{delete global.__PIPCO_CRT}catch(e){}if(sa)Pip.audioStart=sa;if(sb)Pip.bootAnimation=sb;try{delete global.__PIPCO_RT}catch(e){}}' +
+      "function finish(done){try{var p=sb?sb.call(Pip):0;if(p&&typeof p.then==='function')p.then(done);else done()}catch(e){done()}}" +
+      "function ah(p){var n=sel();if(!ok(n)){restore();return sa?sa.apply(Pip,arguments):undefined}if((crt||global.__PIPCO_CRT)&&p==='SOUND/FX/CRT_ON2.WAV'){crt=0;global.__PIPCO_CRT=0;return}return sa?sa.apply(Pip,arguments):undefined}" +
+      'function bh(){var n=sel();if(!ok(n)){restore();try{return sb?sb.call(Pip):Promise.resolve()}catch(e){return Promise.resolve()}}return new Promise(function(done){var a,b,d,vs,x=0;' +
+      "function end(r,nat){if(x)return;x=1;if(a)clearTimeout(a);if(b)clearTimeout(b);if(d)clearTimeout(d);if(vs){try{Pip.removeListener('videoStopped',vs)}catch(e){}vs=undefined}if(!nat){try{if(ownV)Pip.videoStop()}catch(e){}try{if(ownA)Pip.audioStop()}catch(e){}}ownV=ownA=0;try{h.reset()}catch(e){}try{h.setClipRect(0,0,479,319)}catch(e){}try{delete Pip.blitOptions.disable}catch(e){}crt=1;global.__PIPCO_CRT=1;setTimeout(done,160)}" +
+      "function play(){if(x)return;if(!ok(n)){x=1;restore();finish(done,'invalid');return}try{Pip.videoStop()}catch(e){}try{Pip.audioStop()}catch(e){}try{h.clear();h.flip()}catch(e){}try{Pip.videoStart(B+F[n],{x:0,y:0});ownV=1;ownA=1;d=setTimeout(function(){end('hard-failsafe',0)},HA[n])}catch(e){restore();x=1;finish(done);return}" +
+      "if(EV[n]){vs=function(){if(!x)end('videoStopped',1)};try{Pip.on('videoStopped',vs)}catch(e){vs=undefined;b=setTimeout(function(){end('fade-fallback',0)},FA[n]+500)}}else b=setTimeout(function(){end('fade',0)},FA[n]+(n===8?420:180))}" +
+      'try{a=setTimeout(play,1895)}catch(e){restore();finish(done)}})}' +
+      'ah.__pipcoRT=1;bh.__pipcoRT=1;ah.__pipcoOriginal=sa;bh.__pipcoOriginal=sb;' +
+      'if(sa)Pip.audioStart=ah;Pip.bootAnimation=bh;global.__PIPCO_RT={restore:restore};' +
+      '}',
+  )();
+
+  function restoreRuntime() {
     try {
-      if (Pip[LEGACY_GLOBALS[i]] !== undefined) delete Pip[LEGACY_GLOBALS[i]];
+      if (global.__PIPCO_RT && typeof global.__PIPCO_RT.restore === 'function')
+        global.__PIPCO_RT.restore();
     } catch (e) {}
   }
-
-  let stockBootFn, stockAudioFn;
-
-  /* Capture the real stock functions without storing extra persistent helper
-     properties on Pip. If this APP.JS is reloaded in the same session and a
-     previous PIP-CO hook is still installed, unwrap that hook through its
-     __pipcoOriginal reference instead of mistaking the wrapper for stock. */
-  function captureOriginals() {
+  function scheduleRuntime() {
     try {
-      let f = Pip.bootAnimation;
-      if (!stockBootFn && typeof f === 'function') {
-        if (f.__pipcoHook && typeof f.__pipcoOriginal === 'function')
-          stockBootFn = f.__pipcoOriginal;
-        else if (!f.__pipcoHook) stockBootFn = f.bind(Pip);
-      }
-    } catch (e) {
-      log('capture bootAnimation failed: ' + e);
-    }
-    try {
-      let f = Pip.audioStart;
-      if (!stockAudioFn && typeof f === 'function') {
-        if (f.__pipcoHook && typeof f.__pipcoOriginal === 'function')
-          stockAudioFn = f.__pipcoOriginal;
-        else if (!f.__pipcoHook) stockAudioFn = f.bind(Pip);
-      }
-    } catch (e) {
-      log('capture audioStart failed: ' + e);
-    }
+      if (global.__PIPCO_UI_TIMER) clearTimeout(global.__PIPCO_UI_TIMER);
+    } catch (e) {}
+    global.__PIPCO_UI_TIMER = setTimeout(function () {
+      try {
+        delete global.__PIPCO_UI_TIMER;
+        installRuntime();
+      } catch (e) {}
+    }, 0);
   }
-  captureOriginals();
 
   function sel() {
     try {
@@ -229,245 +184,27 @@
       fs.writeFileSync(S, '{"startup":' + n + '}');
       return 1;
     } catch (e) {
-      log('saveSel(' + n + ') failed: ' + e);
       return 0;
     }
   }
-  function vf(n) {
-    return B + STARTUPS[n].file;
-  }
-  function fm(n) {
-    return STARTUPS[n].fade;
-  }
-  function hm(n) {
-    return STARTUPS[n].hard;
-  }
   function valid(n) {
-    return n >= 0 && n < STARTUPS.length && ex(vf(n));
+    return n >= 0 && n < STARTUPS.length && ex(B + STARTUPS[n].file);
   }
 
-  function safeVersion() {
-    try {
-      if (typeof VERSION !== 'undefined') return VERSION;
-    } catch (e) {}
-    try {
-      if (process.env && process.env.VERSION) return process.env.VERSION;
-    } catch (e) {}
-    return 'UNKNOWN';
-  }
-  function stockBoot() {
-    let m = process.memory(false),
-      v = safeVersion();
-    h.clear();
-    return Pip.typeText(
-      '\n\n§§§*************** PIP-OS(R) V5.0.1.4 ***************\n\n' +
-        'COPYRIGHT 2068 ROBCO(R) §\n' +
-        'LOADER V' +
-        v +
-        '\n' +
-        'EXEC VERSION ' +
-        v +
-        ' §\n' +
-        ((m.total * m.blocksize) / 1e3).toFixed(0) +
-        'K RAM SYSTEM\n' +
-        m.free * m.blocksize +
-        ' BYTES FREE\n' +
-        'NO HOLOTAPE FOUND §\n' +
-        'LOAD ROM(1): DEITRIX 2040... COMPLETE §\n' +
-        '\n\n\n\n\n\n\n\n\n\n\n\n\n',
-      40,
-      0,
-      400,
-      240,
-    );
-  }
-  function originalAudio() {
-    return stockAudioFn;
-  }
-  function originalBoot() {
-    return stockBootFn || stockBoot;
-  }
-
-  function restore() {
-    let q = originalAudio(),
-      b = originalBoot();
-    if (t) {
-      clearTimeout(t);
-      t = undefined;
-    }
-    if (ownVideo) {
-      Pip.videoStop();
-      ownVideo = 0;
-    }
-    if (ownAudio) {
-      Pip.audioStop();
-      ownAudio = 0;
-    }
-    if (aHook && Pip.audioStart === aHook && q) Pip.audioStart = q;
-    if (bHook && Pip.bootAnimation === bHook) Pip.bootAnimation = b;
-    aHook = undefined;
-    bHook = undefined;
-  }
-
-  function hook() {
-    captureOriginals();
-    let q = originalAudio();
-    suppressCRT = 0;
-    if (q) {
-      aHook = function (p) {
-        let n = sel();
-        if (!valid(n)) {
-          restore();
-          return q.apply(Pip, arguments);
-        }
-        if (suppressCRT && p === 'SOUND/FX/CRT_ON2.WAV') {
-          suppressCRT = 0;
-          return;
-        }
-        return q.apply(Pip, arguments);
-      };
-      aHook.__pipcoHook = 1;
-      aHook.__pipcoOriginal = q;
-      Pip.audioStart = aHook;
-    } else {
-      aHook = undefined;
-      log(
-        'audioStart stock function unavailable; CRT suppression hook skipped',
-      );
-    }
-
-    bHook = function () {
-      let n = sel();
-      if (!valid(n)) {
-        restore();
-        return stockBoot();
-      }
-      return new Promise(function (done) {
-        let a,
-          b,
-          d,
-          e,
-          vs,
-          x = 0,
-          vStart;
-        function end(reason, natural) {
-          if (x) return;
-          x = 1;
-          if (a) clearTimeout(a);
-          if (b) clearTimeout(b);
-          if (d) clearTimeout(d);
-          if (e) clearTimeout(e);
-          if (vs) {
-            try {
-              Pip.removeListener('videoStopped', vs);
-            } catch (ignore) {}
-            vs = undefined;
-          }
-          if (!natural) {
-            if (ownVideo) {
-              Pip.videoStop();
-              ownVideo = 0;
-            }
-            if (ownAudio) {
-              Pip.audioStop();
-              ownAudio = 0;
-            }
-          } else {
-            ownVideo = 0;
-            ownAudio = 0;
-          }
-          h.reset();
-          suppressCRT = 1;
-          log(
-            'end n=' +
-              n +
-              ' reason=' +
-              reason +
-              ' elapsedSinceVideoStart=' +
-              (vStart ? (getTime() - vStart) * 1000 : 'n/a'),
-          );
-          setTimeout(done, 160);
-        }
-        function play() {
-          if (x) return;
-          if (!valid(n)) {
-            x = 1;
-            restore();
-            try {
-              stockBoot().then(done);
-            } catch (e) {
-              log('stockBoot fallback (play) failed: ' + e);
-              done();
-            }
-            return;
-          }
-          Pip.videoStop();
-          Pip.audioStop();
-          h.clear();
-          h.flip();
-          function startVideo() {
-            if (x) return;
-            E.defrag();
-            try {
-              Pip.videoStart(vf(n), { x: 0, y: 0 });
-              ownVideo = 1;
-              ownAudio = 1;
-              vStart = getTime();
-            } catch (e) {
-              log('videoStart(' + vf(n) + ') failed: ' + e);
-              restore();
-              x = 1;
-              try {
-                stockBoot().then(done);
-              } catch (z) {
-                done();
-              }
-              return;
-            }
-            if (STARTUPS[n].eventEnd) {
-              vs = function () {
-                if (x) return;
-                end('videoStopped', 1);
-              };
-              Pip.on('videoStopped', vs);
-            } else {
-              b = setTimeout(
-                function () {
-                  end('fade', 0);
-                },
-                fm(n) + (n === 8 ? 420 : 180),
-              );
-            }
-          }
-          if (n === 8) {
-            e = setTimeout(function () {
-              e = undefined;
-              startVideo();
-            }, 260);
-            return;
-          }
-          startVideo();
-        }
-        try {
-          a = setTimeout(play, sel() === 8 ? 2150 : 1895);
-          d = setTimeout(function () {
-            end('hard-failsafe', 0);
-          }, hm(n));
-        } catch (e) {
-          log('hook() scheduling failed: ' + e);
-          restore();
-          try {
-            stockBoot().then(done);
-          } catch (z) {
-            done();
-          }
-        }
-      });
-    };
-    bHook.__pipcoHook = 1;
-    bHook.__pipcoOriginal = originalBoot();
-    Pip.bootAnimation = bHook;
-  }
+  let c = 0,
+    s = 0,
+    page = 0,
+    npcScroll = 0,
+    ic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let TI = {
+    title: {
+      width: 176,
+      height: 98,
+      bpp: 1,
+      transparent: 0,
+      buffer: fs.readFileSync(B + 'TITLE.BIN'),
+    },
+  };
 
   function header() {
     h.clear().setColor(3).setFontMonofonto16().setFontAlign(0, -1);
@@ -508,6 +245,23 @@
     if (page === 3) return npcEntries();
     return mainEntries();
   }
+  function drawNpcScroller(total) {
+    if (total <= 5) return;
+    let top = 108,
+      bottom = 276,
+      tt = 118,
+      tb = 266,
+      max = Math.max(1, total - 5);
+    h.setColor(3)
+      .drawLine(13, top + 5, 18, top)
+      .drawLine(18, top, 23, top + 5)
+      .drawLine(13, bottom - 5, 18, bottom)
+      .drawLine(18, bottom, 23, bottom - 5)
+      .drawLine(18, tt, 18, tb);
+    let ht = Math.max(18, Math.floor(((tb - tt + 1) * 5) / total)),
+      y = tt + Math.floor(((tb - tt + 1 - ht) * npcScroll) / max);
+    h.fillRect(16, y, 20, y + ht - 1);
+  }
   function draw() {
     let y = 112,
       n,
@@ -521,16 +275,35 @@
           h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
         y += 36;
       }
-    } else {
-      for (n = 0; n < a.length; n++) {
-        if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
-        h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
-        if (s === a[n][1]) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+      return;
+    }
+    if (page === 3) {
+      let total = a.length + 1;
+      if (c < npcScroll) npcScroll = c;
+      if (c >= npcScroll + 5) npcScroll = c - 4;
+      npcScroll = E.clip(npcScroll, 0, Math.max(0, total - 5));
+      for (n = 0; n < 5 && npcScroll + n < total; n++) {
+        let row = npcScroll + n;
+        if (c === row) Pip.shadeBox(24, y - 4, 456, y + 22);
+        h.setColor(3).setFontAlign(-1, -1);
+        if (row < a.length) {
+          h.drawString(a[row][0], 38, y);
+          if (s === a[row][1])
+            h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+        } else h.drawString('< Back', 38, y);
         y += 36;
       }
-      if (c === a.length) Pip.shadeBox(24, y - 4, 456, y + 22);
-      h.setColor(3).setFontAlign(-1, -1).drawString('< Back', 38, y);
+      drawNpcScroller(total);
+      return;
     }
+    for (n = 0; n < a.length; n++) {
+      if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
+      h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
+      if (s === a[n][1]) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+      y += 36;
+    }
+    if (c === a.length) Pip.shadeBox(24, y - 4, 456, y + 22);
+    h.setColor(3).setFontAlign(-1, -1).drawString('< Back', 38, y);
   }
   function maxRow() {
     let a = pageEntries();
@@ -539,11 +312,7 @@
   function activateStartup(id) {
     if (!saveSel(id)) return;
     s = id;
-    if (t) clearTimeout(t);
-    t = setTimeout(function () {
-      t = undefined;
-      hook();
-    }, 0);
+    scheduleRuntime();
     draw();
   }
   function knob(d) {
@@ -567,12 +336,13 @@
       if (e[1] === -1) {
         if (!saveSel(-1)) return;
         s = -1;
-        restore();
+        restoreRuntime();
         draw();
         return;
       }
       page = e[2];
       c = 0;
+      if (page === 3) npcScroll = 0;
       draw();
       return;
     }
@@ -581,9 +351,9 @@
       let old = page;
       page = 0;
       c = 0;
-      let m = mainEntries(),
-        i;
-      for (i = 0; i < m.length; i++)
+      if (old === 3) npcScroll = 0;
+      let m = mainEntries();
+      for (let i = 0; i < m.length; i++)
         if (m[i][2] === old) {
           c = i;
           break;
@@ -603,34 +373,21 @@
     }
     if (s === -2) s = -1;
     c = 0;
+    global.__PIPCO_UI_KNOB = knob;
     Pip.onExclusive('knob1', knob);
     draw();
-    if (s < 0) restore();
-    else
-      t = setTimeout(function () {
-        t = undefined;
-        hook();
-      }, 0);
-  } catch (e) {
-    log('init failed: ' + e);
-  }
+    if (s < 0) restoreRuntime();
+    else scheduleRuntime();
+  } catch (e) {}
 
+  /* Standalone/global-scope remove: does not retain the menu closure after exit. */
+  const removeStandalone = Function(
+    "return function(){try{if(global.__PIPCO_UI_TIMER){clearTimeout(global.__PIPCO_UI_TIMER);delete global.__PIPCO_UI_TIMER}}catch(e){}try{if(global.__PIPCO_UI_KNOB)Pip.removeListener('knob1',global.__PIPCO_UI_KNOB)}catch(e){}try{delete global.__PIPCO_UI_KNOB}catch(e){}try{h.clear()}catch(e){}try{E.defrag()}catch(e){}}",
+  )();
   return {
     id: 'STARTUPANIMATIONS',
     notDefault: true,
     fullscreen: true,
-    remove: function () {
-      if (t) clearTimeout(t);
-      Pip.removeListener('knob1', knob);
-      if (ownVideo) {
-        Pip.videoStop();
-        ownVideo = 0;
-      }
-      if (ownAudio) {
-        Pip.audioStop();
-        ownAudio = 0;
-      }
-      h.clear();
-    },
+    remove: removeStandalone,
   };
 });

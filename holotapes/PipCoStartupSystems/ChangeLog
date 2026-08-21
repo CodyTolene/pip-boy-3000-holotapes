@@ -1,18 +1,14 @@
-1.1.0
+1.1.0 (2026-08-21)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
-- Reworked the public modular package from the final hardware-tested runtime.
-- Embedded each startup's matching audio directly into its AVI.
-- Reduced optional media from separate animation/audio pairs to one file per startup.
-- Added Enclave PIP-BOY as an optional startup sequence.
-- Replaced the old startup filename switch logic with one indexed startup table.
-- Removed hardware-test APPINFO self-registration from the public runtime.
-- Removed the legacy TITLE_IMG.JS fallback; TITLE.BIN is the standard title asset.
-- Guarded startup/audio hook capture and same-session wrapper restoration.
-- Guarded the firmware VERSION fallback so stock boot recovery cannot fail on an undefined VERSION.
-- Preserved the hardware-tested startup timings, fades, failsafes, menu order, and selection behavior.
+- Added low-memory runtime separation so the persistent startup hook does not retain the full holotape UI closure.
+- Fixed repeated boot-cycle crashes reported as CALLBACK, LOW_MEMORY, and MEMORY on Pip-Boy OS 1.1.6.
+- Moved hard-failsafe timing to begin after video playback starts.
+- Added the NPC submenu scroll indicator.
+- Added Dogmeat and Mr. House startup variants to the modular startup list.
+- Kept startup audio embedded in AVI files; no separate WAV dependencies.
+- Kept the targeted clean ENCLAVE_PIPBOY.AVI media fix for the 1.1.6 black-video/audio-only case.
+- Removed diagnostic PIP-CO logging and runtime APPINFO self-registration from the public modular build.
 
-1.0.0
+1.0.0 (2026-08-08)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/79
-- Initial public submission of PIP-CO Startup Systems.
-- Adds Default Bootup, Mister Handy, Vault Girl, and Deathclaw Ripped Suit startup selections.
-- Includes persistent selection and custom startup animation/audio assets.
+- Initial PIP-CO Startup Systems release.

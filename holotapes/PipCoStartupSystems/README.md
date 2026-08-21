@@ -1,57 +1,70 @@
 # PIP-CO Startup Systems
 
-A modular custom-startup holotape for The Wand Company Pip-Boy 3000.
+A modular custom-startup holotape for The Wand Company Pip-Boy 3000. Select a
+startup sequence in the holotape, then the selected animation is used on the
+next Pip-Boy boot/wake.
 
-## Modular installation
+## Pip-Boy.com modular installation
 
-The core application is installed automatically. Each startup sequence is an
-optional self-contained AVI, so users can install only the sequences they want.
+The core installs automatically. Each startup AVI is optional, so users can
+install only the startup sequences they want. Audio is embedded in each AVI;
+there are no separate startup WAV dependencies. The holotape only shows startups
+whose AVI is installed.
 
-Audio is embedded directly in each AVI. There are no separate startup WAV files
-to install or keep paired with the animation.
-
-The holotape scans the installed startup AVIs and only shows categories and
-startup options whose media is present.
-
-## Core files
+### Core files
 
 - `HOLO/STARTUP_ANIMATIONS/APP.JS`
 - `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
 - `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
 
-## Optional startup sequences
+### Optional startup sequences
 
 - Mister Handy
 - Vault Girl
 - Deathclaw Vault Experiment
-- YES MAN
+- Enclave PIP-BOY
 - The Enclave
 - The Brotherhood of Steel
-- Mothman
 - The Minutemen
-- Enclave PIP-BOY
+- Mothman
+- YES MAN
+- Mr. House
+- Classic Mr. House
+- Classic Mr. House Animated
+- Classic Mr. House Fully Animated
+- Dogmeat
 
 ## Controls
 
 - Left wheel: navigate
 - Left wheel press: select
-- `< Back`: return to MISC
+- `< Back`: return to Misc
+- NPC submenu: includes a scroll indicator when the list extends beyond the
+  visible rows
 
-## Behavior
+## Runtime / compatibility notes
 
-- `Default Bootup` restores the normal Pip-Boy startup.
-- The selected startup remains active across boots.
-- Missing optional startup AVIs are hidden automatically.
-- Startup media is loaded only when needed.
-- Runtime code does not create or overwrite APPINFO; registration is handled by
-  the installer metadata.
+Version 1.1.0 uses a small persistent startup service separated from the
+holotape menu/UI. This prevents the startup hook from retaining the full menu,
+title, and scroller closure after the holotape closes. The change was made after
+repeated hardware testing exposed `CALLBACK`, `LOW_MEMORY`, and `MEMORY`
+failures on Pip-Boy OS 1.1.6.
 
-## Hardware validation
+The hard-failsafe timer now begins after `Pip.videoStart()` succeeds, so
+firmware/pre-play delays do not consume the startup's playback window.
+Event-ended startup videos continue to use `videoStopped`; timer-ended startups
+use their normal fade path.
 
-This release is derived from the final hardware-tested runtime. All nine startup
-sequences were tested on The Wand Company Pip-Boy 3000 after their matching
-audio was embedded into the AVI files.
+`ENCLAVE_PIPBOY.AVI` uses the clean rebuilt media stream that resolved an
+audio-only/black-video startup case during 1.1.6 testing. Other startup media
+remains on its previously working encoding.
 
-The public build removes the hardware-test-only APPINFO self-registration block;
-startup behavior, timings, fades, failsafes, menu order, and selection behavior
-remain unchanged.
+Runtime APPINFO self-registration and diagnostic PIP-CO logging are not used in
+the repository/modular build. Registration is handled by `metadata.json`.
+
+## Tested hardware
+
+- The Wand Company Pip-Boy 3000
+- Pip-Boy OS 1.1.6 / firmware build 2v29.361
+- Repeated startup selection, holotape reopen, and boot-cycle testing across all
+  included startup entries
