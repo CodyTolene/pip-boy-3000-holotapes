@@ -1,4 +1,4 @@
-2.2.1
+2.2.2
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/85
 Features:
 - Replaced the optional image and sound intro with a RobCo style typed startup sequence.
