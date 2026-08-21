@@ -7,6 +7,8 @@ https://
 - Added whole new Stopwatch funtion
 - Stopwatch includes start/stop functionality, Lap counting and a reset button
 - Both timer and stopwatch allow user to return to menu/title.js
+- Update preview images
+- Set file names to be uppercase for consistency with other holotapes
 
 1.0.0 (2026-06-08)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/7
