@@ -1481,7 +1481,11 @@
     "version": "2.0.0",
     "description": "A countdown timer with customizable alerts, and a stopwatch with lap function.",
     "icon": "VaultTecTimer/assets/VAULTTECTIMER.IMG",
-    "previews": ["VaultTecTimer/previews/menu.bmp"],
+    "previews": [
+      "VaultTecTimer/previews/MENU.BMP",
+      "VaultTecTimer/previews/TIMER.BMP",
+      "VaultTecTimer/previews/STOPWATCH.BMP"
+    ],
     "type": "app",
     "readme": "VaultTecTimer/README.md",
     "storage": [
