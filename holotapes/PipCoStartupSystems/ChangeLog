@@ -1,7 +1,7 @@
 1.1.0 (2026-08-21)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
 - Added low-memory runtime separation so the persistent startup hook does not retain the full holotape UI closure.
-- Fixed repeated boot-cycle crashes reported as CALLBACK, LOW_MEMORY, and MEMORY on Pip-Boy OS 1.1.6.
+- Fixed repeated boot-cycle memory crashes exposed during Pip-Boy OS 1.1.6 hardware testing.
 - Moved hard-failsafe timing to begin after video playback starts.
 - Added the NPC submenu scroll indicator.
 - Added Dogmeat and Mr. House startup variants to the modular startup list.
