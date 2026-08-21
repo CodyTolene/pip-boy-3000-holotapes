@@ -28,7 +28,7 @@
       ca: lim(x.ca, 0, 12, 0),
       cb: lim(x.cb, 0, 12, 3),
       spd: lim(x.spd, 0, 2, 1),
-      level: Math.max(0.25, Math.min(1, Number(x.level) || 1))
+      level: Math.max(0.25, Math.min(1, Number(x.level) || 1)),
     };
   }
 
@@ -90,7 +90,7 @@
       native([
         { pin: LED_RED, target: (a[0] + (b[0] - a[0]) * x) * va },
         { pin: LED_GREEN, target: (a[1] + (b[1] - a[1]) * x) * va },
-        { pin: LED_BLUE, target: (a[2] + (b[2] - a[2]) * x) * va }
+        { pin: LED_BLUE, target: (a[2] + (b[2] - a[2]) * x) * va },
       ]);
     } catch (e) {}
   }
@@ -115,7 +115,7 @@
       native([
         { pin: LED_RED, target: r * v },
         { pin: LED_GREEN, target: g * v },
-        { pin: LED_BLUE, target: b * v }
+        { pin: LED_BLUE, target: b * v },
       ]);
     } catch (e) {}
   }
@@ -133,7 +133,12 @@
       t;
     for (i = 0; i < a.length; i++) {
       x = a[i] || {};
-      if (pin(x.pin, LED_RED) || pin(x.pin, LED_GREEN) || pin(x.pin, LED_BLUE) || pin(x.pin, LED_DOWNFIRE)) {
+      if (
+        pin(x.pin, LED_RED) ||
+        pin(x.pin, LED_GREEN) ||
+        pin(x.pin, LED_BLUE) ||
+        pin(x.pin, LED_DOWNFIRE)
+      ) {
         hit = 1;
         t = Number(x.target);
         if (!isNaN(t) && t > max) max = t;
@@ -162,13 +167,15 @@
       a = 28;
       b = (q / a) | 0;
       mix(val(b % 13), val((b + 1) % 13), (q % a) / (a - 1), 1);
-    } else if (f === 2) out(q % 14 < 5 ? 1 : 0, 0, q % 14 > 6 && q % 14 < 12 ? 1 : 0, 1);
+    } else if (f === 2)
+      out(q % 14 < 5 ? 1 : 0, 0, q % 14 > 6 && q % 14 < 12 ? 1 : 0, 1);
     else if (f === 3) {
       a = val(st.ca);
       b = val(st.cb);
       q %= 28;
       mix(a, b, q / 27, 1);
-    } else if (f === 9 || f === 13 || f === 18 || f === 20) rgb(st.ca, q % 8 < 2 ? 1 : 0.05);
+    } else if (f === 9 || f === 13 || f === 18 || f === 20)
+      rgb(st.ca, q % 8 < 2 ? 1 : 0.05);
     else if (f === 4 || f === 6 || f === 11 || f === 15) {
       q %= 30;
       if (q > 15) q = 30 - q;
@@ -197,7 +204,8 @@
     } catch (e1) {}
     if (light) {
       try {
-        if (Pip.setBrightness && typeof Pip.brightness === 'number') Pip.setBrightness(Pip.brightness);
+        if (Pip.setBrightness && typeof Pip.brightness === 'number')
+          Pip.setBrightness(Pip.brightness);
       } catch (e2) {}
       try {
         if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
@@ -228,7 +236,7 @@
       restoreNative: restore,
       remove: function (passive) {
         restore(!passive);
-      }
+      },
     };
   }
   return svc.apply(d || clean());

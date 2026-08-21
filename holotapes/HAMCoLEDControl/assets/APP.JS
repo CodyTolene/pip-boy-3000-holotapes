@@ -9,11 +9,11 @@
     hadSession = false;
   var FX =
     'SOLID|SLOW FADE|POLICE LIGHTS|DUAL COLORS|BREATHE|DOUBLE PULSE|SCANNER|GEIGER TICKS|POWER SURGE|WARNING BEACON|MELTDOWN|SIGNAL LOCK|LOW POWER|OVERCHARGE|SIREN FADE|IDLE GLOW|CANDLE FLICKER|RAD STORM|EMERGENCY STROBE|HEARTBEAT|VAULT BREACH|NUKA FLICKER'.split(
-      '|'
+      '|',
     );
   var COL =
     'AMBER|RED|TOXIC|VAULT BLUE|CYAN|PURPLE|WHITE|WARM WHITE|GREEN|ORANGE|PINK|ICE BLUE|YELLOW'.split(
-      '|'
+      '|',
     );
   var SPD = 'SLOW|MED|FAST'.split('|');
   function def() {
@@ -27,7 +27,7 @@
       ca: d.ca | 0,
       cb: d.cb | 0,
       spd: d.spd | 0,
-      level: Number(d.level) || 1
+      level: Number(d.level) || 1,
     };
   }
   function read() {
@@ -304,6 +304,6 @@
       if (dead) return;
       if (!done) rollback();
       close(false);
-    }
+    },
   };
 });
