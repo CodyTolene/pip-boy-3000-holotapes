@@ -42,7 +42,10 @@
   let lastTop = 1; // remembers whether Hours(0), Minutes(1), or Seconds(2) was last active
   let editing = false;
   let secondsRemaining = 0;
-  let ticker, alarmTicker, flashFrame = 0, redrawInterval;
+  let ticker,
+    alarmTicker,
+    flashFrame = 0,
+    redrawInterval;
   let runRow = 0; // RUNNING: 0 = cancel, 1 = menu | PAUSED: 0 = resume, 1 = cancel, 2 = menu
   let alertW; // computed once at load - half-width of the ALERT button
   let menuCx, startCx; // computed once at load - centers of the MENU/START pair
@@ -58,7 +61,12 @@
         const files = fs
           .readdir('/' + dirs[d])
           .filter(function (n) {
-            return n !== '.' && n !== '..' && n.length > 4 && n.slice(-4).toLowerCase() === '.wav';
+            return (
+              n !== '.' &&
+              n !== '..' &&
+              n.length > 4 &&
+              n.slice(-4).toLowerCase() === '.wav'
+            );
           })
           .sort();
         if (files.length > 0) {
@@ -72,7 +80,12 @@
       return fs
         .readdir('/' + C.SOUND_DIR)
         .filter(function (n) {
-          return n !== '.' && n !== '..' && n.length > 4 && n.slice(-4).toLowerCase() === '.wav';
+          return (
+            n !== '.' &&
+            n !== '..' &&
+            n.length > 4 &&
+            n.slice(-4).toLowerCase() === '.wav'
+          );
         })
         .sort();
     } catch (e2) {
@@ -122,126 +135,224 @@
     h.setColor(2).drawRect(cx - w, y1, cx + w, y2);
     if (enabled && focused) {
       h.setColor(3);
-      for (let o = 1; o <= 3; o++) h.drawRect(cx - w - o, y1 - o, cx + w + o, y2 + o);
+      for (let o = 1; o <= 3; o++)
+        h.drawRect(cx - w - o, y1 - o, cx + w + o, y2 + o);
     }
     h.setColor(enabled ? 3 : 2);
-    if (font === 28) h.setFontMonofonto28(); else h.setFontMonofonto18();
+    if (font === 28) h.setFontMonofonto28();
+    else h.setFontMonofonto18();
     h.setFontAlign(0, 0).drawString(label, cx, (y1 + y2) / 2);
   }
 
-  const NUM_FONT_SIZE = 36, LETTER_FONT_SIZE = 28;
+  const NUM_FONT_SIZE = 36,
+    LETTER_FONT_SIZE = 28;
   const LETTER_Y_OFFSET = (NUM_FONT_SIZE - LETTER_FONT_SIZE) / 2;
 
   function drawField(x, y, numStr, letterStr) {
     const numW = h.setFontMonofonto36().stringWidth(numStr);
     const letterW = h.setFontMonofonto28().stringWidth(letterStr);
     const startX = x - (numW + letterW) / 2;
-    h.setColor(3).setFontMonofonto36().setFontAlign(-1, 0).drawString(numStr, startX, y);
-    h.setColor(3).setFontMonofonto28().setFontAlign(-1, 0)
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(-1, 0)
+      .drawString(numStr, startX, y);
+    h.setColor(3)
+      .setFontMonofonto28()
+      .setFontAlign(-1, 0)
       .drawString(letterStr, startX + numW, y + LETTER_Y_OFFSET);
   }
 
   function drawSet() {
     layoutAlertWidth();
-    h.setColor(3).setFontMonofonto36().setFontAlign(0, 0).drawString('TIMER', 240, 47);
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(0, 0)
+      .drawString('TIMER', 240, 47);
 
     for (let i = 0; i < 3; i++) {
       if (pos === i) {
         const by = C.FIELD_Y;
         if (editing) {
-          Pip.shadeBox(C.FIELD_X[i] - 45, by - C.FIELD_BOX_HALF, C.FIELD_X[i] + 45, by + C.FIELD_BOX_HALF);
+          Pip.shadeBox(
+            C.FIELD_X[i] - 45,
+            by - C.FIELD_BOX_HALF,
+            C.FIELD_X[i] + 45,
+            by + C.FIELD_BOX_HALF,
+          );
         } else {
           h.setColor(3);
           for (let o = 0; o < 3; o++) {
-            h.drawRect(C.FIELD_X[i] - 45 - o, by - C.FIELD_BOX_HALF - o, C.FIELD_X[i] + 45 + o, by + C.FIELD_BOX_HALF + o);
+            h.drawRect(
+              C.FIELD_X[i] - 45 - o,
+              by - C.FIELD_BOX_HALF - o,
+              C.FIELD_X[i] + 45 + o,
+              by + C.FIELD_BOX_HALF + o,
+            );
           }
         }
       }
       drawField(C.FIELD_X[i], C.FIELD_Y, pad(time[i]), C.FIELD_LABELS[i]);
     }
 
-    drawButton(menuCx, C.ROW_Y1, C.ROW_Y2, C.MENU_W, 'MENU', 18, pos === 3, true);
-    drawButton(startCx, C.ROW_Y1, C.ROW_Y2, C.START_W, 'START', 28, pos === 4, true);
+    drawButton(
+      menuCx,
+      C.ROW_Y1,
+      C.ROW_Y2,
+      C.MENU_W,
+      'MENU',
+      18,
+      pos === 3,
+      true,
+    );
+    drawButton(
+      startCx,
+      C.ROW_Y1,
+      C.ROW_Y2,
+      C.START_W,
+      'START',
+      28,
+      pos === 4,
+      true,
+    );
 
     if (browsingSound) {
-      h.setColor(2).fillRect(240 - alertW, C.ALERT_Y1, 240 + alertW, C.ALERT_Y2);
+      h.setColor(2).fillRect(
+        240 - alertW,
+        C.ALERT_Y1,
+        240 + alertW,
+        C.ALERT_Y2,
+      );
       if (pos === 5) {
         h.setColor(3);
         for (let o = 1; o <= 3; o++) {
-          h.drawRect(240 - alertW - o, C.ALERT_Y1 - o, 240 + alertW + o, C.ALERT_Y2 + o);
+          h.drawRect(
+            240 - alertW - o,
+            C.ALERT_Y1 - o,
+            240 + alertW + o,
+            C.ALERT_Y2 + o,
+          );
         }
       }
-      h.setColor(0).setFontMonofonto18().setFontAlign(0, 0)
+      h.setColor(0)
+        .setFontMonofonto18()
+        .setFontAlign(0, 0)
         .drawString(alertLabel(), 240, (C.ALERT_Y1 + C.ALERT_Y2) / 2);
     } else {
-      drawButton(240, C.ALERT_Y1, C.ALERT_Y2, alertW, alertLabel(), 18, pos === 5, true);
+      drawButton(
+        240,
+        C.ALERT_Y1,
+        C.ALERT_Y2,
+        alertW,
+        alertLabel(),
+        18,
+        pos === 5,
+        true,
+      );
     }
 
     if (pos === 5) {
       if (alertType === 0) {
-        h.setColor(2).setFontMonofonto14().setFontAlign(0, 0)
+        h.setColor(2)
+          .setFontMonofonto14()
+          .setFontAlign(0, 0)
           .drawString(
-            browsingSound ? 'Press left wheel to confirm changes' : 'Press left wheel to change sound, turn right wheel to use LED',
-            240, C.ALERT_Y2 + 18
+            browsingSound
+              ? 'Press left wheel to confirm changes'
+              : 'Press left wheel to change sound, turn right wheel to use LED',
+            240,
+            C.ALERT_Y2 + 18,
           );
       } else {
-        h.setColor(2).setFontMonofonto14().setFontAlign(0, 0)
+        h.setColor(2)
+          .setFontMonofonto14()
+          .setFontAlign(0, 0)
           .drawString('Turn right wheel to use alarms', 240, C.ALERT_Y2 + 18);
       }
     }
-  } 
+  }
 
   function drawRunning() {
     const hrs = Math.floor(secondsRemaining / 3600);
     const mins = Math.floor((secondsRemaining % 3600) / 60);
     const secs = secondsRemaining % 60;
-    h.setColor(3).setFontMonofonto23().setFontAlign(0, 0).drawString('TIMER RUNNING', 240, 55);
-    h.setFontMonofonto36().setFontAlign(0, 0)
+    h.setColor(3)
+      .setFontMonofonto23()
+      .setFontAlign(0, 0)
+      .drawString('TIMER RUNNING', 240, 55);
+    h.setFontMonofonto36()
+      .setFontAlign(0, 0)
       .drawString(pad(hrs) + ':' + pad(mins) + ':' + pad(secs), 240, 150);
-    h.setColor(2).setFontMonofonto16().setFontAlign(0, 0).drawString(alertLabel(), 240, 200);
+    h.setColor(2)
+      .setFontMonofonto16()
+      .setFontAlign(0, 0)
+      .drawString(alertLabel(), 240, 200);
 
     h.setColor(2).drawRect(120, 230, 240, 254);
     if (runRow === 0) {
       h.setColor(3);
-      for (let o = 1; o <= 3; o++) h.drawRect(120 - o, 230 - o, 240 + o, 254 + o);
+      for (let o = 1; o <= 3; o++)
+        h.drawRect(120 - o, 230 - o, 240 + o, 254 + o);
     }
-    h.setColor(3).setFontMonofonto18().setFontAlign(0, 0).drawString('CANCEL', 180, 242);
+    h.setColor(3)
+      .setFontMonofonto18()
+      .setFontAlign(0, 0)
+      .drawString('CANCEL', 180, 242);
 
     h.setColor(2).drawRect(260, 230, 380, 254);
     if (runRow === 1) {
       h.setColor(3);
-      for (let o = 1; o <= 3; o++) h.drawRect(260 - o, 230 - o, 380 + o, 254 + o);
+      for (let o = 1; o <= 3; o++)
+        h.drawRect(260 - o, 230 - o, 380 + o, 254 + o);
     }
-    h.setColor(3).setFontMonofonto18().setFontAlign(0, 0).drawString('MENU', 320, 242);
+    h.setColor(3)
+      .setFontMonofonto18()
+      .setFontAlign(0, 0)
+      .drawString('MENU', 320, 242);
   }
 
   function drawPaused() {
     const hrs = Math.floor(secondsRemaining / 3600);
     const mins = Math.floor((secondsRemaining % 3600) / 60);
     const secs = secondsRemaining % 60;
-    h.setColor(3).setFontMonofonto23().setFontAlign(0, 0).drawString('TIMER PAUSED', 240, 50);
-    h.setFontMonofonto36().setFontAlign(0, 0)
+    h.setColor(3)
+      .setFontMonofonto23()
+      .setFontAlign(0, 0)
+      .drawString('TIMER PAUSED', 240, 50);
+    h.setFontMonofonto36()
+      .setFontAlign(0, 0)
       .drawString(pad(hrs) + ':' + pad(mins) + ':' + pad(secs), 240, 130);
 
     const labels = ['RESUME', 'CANCEL', 'MENU'];
-    const y1 = 200, y2 = 224;
+    const y1 = 200,
+      y2 = 224;
     for (let i = 0; i < 3; i++) {
       const cx = 130 + i * 110;
       h.setColor(2).drawRect(cx - 48, y1, cx + 48, y2);
       if (runRow === i) {
         h.setColor(3);
-        for (let o = 1; o <= 3; o++) h.drawRect(cx - 48 - o, y1 - o, cx + 48 + o, y2 + o);
+        for (let o = 1; o <= 3; o++)
+          h.drawRect(cx - 48 - o, y1 - o, cx + 48 + o, y2 + o);
       }
-      h.setColor(3).setFontMonofonto16().setFontAlign(0, 0).drawString(labels[i], cx, (y1 + y2) / 2);
+      h.setColor(3)
+        .setFontMonofonto16()
+        .setFontAlign(0, 0)
+        .drawString(labels[i], cx, (y1 + y2) / 2);
     }
   }
 
   function drawDone() {
-    h.setColor(3).setFontMonofonto36().setFontAlign(0, 0).drawString("** TIME'S UP! **", 240, 124);
-    h.setColor(2).setFontMonofonto28().setFontAlign(0, 0).drawString('PRESS LEFT WHEEL TO STOP', 240, 214);
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(0, 0)
+      .drawString("** TIME'S UP! **", 240, 124);
+    h.setColor(2)
+      .setFontMonofonto28()
+      .setFontAlign(0, 0)
+      .drawString('PRESS LEFT WHEEL TO STOP', 240, 214);
   }
 
-  function draw() {  "ram";
+  function draw() {
+    'ram';
     h.clear(1);
     if (mode === C.MODES.SET) drawSet();
     else if (mode === C.MODES.RUNNING) drawRunning();
@@ -258,7 +369,11 @@
   function stopAlarm() {
     if (alarmTicker) clearInterval(alarmTicker);
     if (alertType === 1) {
-      try { Pip.setTorch(false); } catch (e) { Pip.log('setTorch failed: ' + e); }
+      try {
+        Pip.setTorch(false);
+      } catch (e) {
+        Pip.log('setTorch failed: ' + e);
+      }
     } else {
       Pip.audioStop();
     }
@@ -327,7 +442,10 @@
     mode = C.MODES.PAUSED;
     runRow = 0;
     h.clear(1);
-    h.setColor(3).setFontMonofonto23().setFontAlign(0, 0).drawString('TIMER PAUSED', 240, 150);
+    h.setColor(3)
+      .setFontMonofonto23()
+      .setFontAlign(0, 0)
+      .drawString('TIMER PAUSED', 240, 150);
     h.flip();
     Pip.lastFlip = getTime();
     goTo('HOLO/VAULT_TEC_TIMER/TITLE.JS');
@@ -489,7 +607,8 @@
       return true;
     } else if (pos === 5) {
       const prev = alertType;
-      alertType = (alertType + dir + C.ALERT_TYPES.length) % C.ALERT_TYPES.length;
+      alertType =
+        (alertType + dir + C.ALERT_TYPES.length) % C.ALERT_TYPES.length;
       return alertType !== prev;
     }
     return false;
@@ -537,7 +656,7 @@
   draw();
 
   return {
-    id: "TIMER",
+    id: 'TIMER',
     remove: function () {
       clearInterval(redrawInterval);
       stopTicker();

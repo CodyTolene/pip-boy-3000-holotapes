@@ -17,7 +17,9 @@
     } catch (e) {
       Pip.log('VAULTTIMER failed to load ' + file + ': ' + e);
       if (file !== 'HOLO/VAULT_TEC_TIMER/TITLE.JS') {
-        screen = eval(require('fs').readFileSync('HOLO/VAULT_TEC_TIMER/TITLE.JS'))(goTo);
+        screen = eval(
+          require('fs').readFileSync('HOLO/VAULT_TEC_TIMER/TITLE.JS'),
+        )(goTo);
       }
     }
   }

@@ -55,28 +55,40 @@
     h.setColor(2).drawRect(cx - w, y1, cx + w, y2);
     if (enabled && focused) {
       h.setColor(3);
-      for (let o = 1; o <= 3; o++) h.drawRect(cx - w - o, y1 - o, cx + w + o, y2 + o);
+      for (let o = 1; o <= 3; o++)
+        h.drawRect(cx - w - o, y1 - o, cx + w + o, y2 + o);
     }
     h.setColor(enabled ? 3 : 2);
-    if (font === 28) h.setFontMonofonto28(); else h.setFontMonofonto18();
+    if (font === 28) h.setFontMonofonto28();
+    else h.setFontMonofonto18();
     h.setFontAlign(0, 0).drawString(label, cx, (y1 + y2) / 2);
   }
 
-  const NUM_FONT_SIZE = 36, LETTER_FONT_SIZE = 28;
+  const NUM_FONT_SIZE = 36,
+    LETTER_FONT_SIZE = 28;
   const LETTER_Y_OFFSET = (NUM_FONT_SIZE - LETTER_FONT_SIZE) / 2;
 
   function drawField(x, y, numStr, letterStr) {
     const numW = h.setFontMonofonto36().stringWidth(numStr);
     const letterW = h.setFontMonofonto28().stringWidth(letterStr);
     const startX = x - (numW + letterW) / 2;
-    h.setColor(3).setFontMonofonto36().setFontAlign(-1, 0).drawString(numStr, startX, y);
-    h.setColor(3).setFontMonofonto28().setFontAlign(-1, 0)
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(-1, 0)
+      .drawString(numStr, startX, y);
+    h.setColor(3)
+      .setFontMonofonto28()
+      .setFontAlign(-1, 0)
       .drawString(letterStr, startX + numW, y + LETTER_Y_OFFSET);
   }
 
-  function draw() {  "ram";
+  function draw() {
+    'ram';
     h.clear(1);
-    h.setColor(3).setFontMonofonto36().setFontAlign(0, 0).drawString('STOPWATCH', 240, 47);
+    h.setColor(3)
+      .setFontMonofonto36()
+      .setFontAlign(0, 0)
+      .drawString('STOPWATCH', 240, 47);
 
     const hrs = Math.floor(elapsed / 3600);
     const mins = Math.floor((elapsed % 3600) / 60);
@@ -87,17 +99,61 @@
     }
 
     // Main vertical stack: START/STOP, LAP
-    drawButton(240, C.START_Y1, C.START_Y2, 90, running ? 'STOP' : 'START', 28, focus === 'stack' && row === 0, true);
-    drawButton(240, C.LAP_Y1, C.LAP_Y2, 70, 'LAP', 18, focus === 'stack' && row === 1, running);
+    drawButton(
+      240,
+      C.START_Y1,
+      C.START_Y2,
+      90,
+      running ? 'STOP' : 'START',
+      28,
+      focus === 'stack' && row === 0,
+      true,
+    );
+    drawButton(
+      240,
+      C.LAP_Y1,
+      C.LAP_Y2,
+      70,
+      'LAP',
+      18,
+      focus === 'stack' && row === 1,
+      running,
+    );
 
     // MENU and RESET sit off to the sides, mirrored, reached via knob2.
-    drawButton(C.MENU_CX, C.SIDE_Y1, C.SIDE_Y2, C.SIDE_W, 'MENU', 18, focus === 'menu', true);
-    drawButton(C.RESET_CX, C.SIDE_Y1, C.SIDE_Y2, C.SIDE_W, 'RESET', 18, focus === 'reset', elapsed > 0);
+    drawButton(
+      C.MENU_CX,
+      C.SIDE_Y1,
+      C.SIDE_Y2,
+      C.SIDE_W,
+      'MENU',
+      18,
+      focus === 'menu',
+      true,
+    );
+    drawButton(
+      C.RESET_CX,
+      C.SIDE_Y1,
+      C.SIDE_Y2,
+      C.SIDE_W,
+      'RESET',
+      18,
+      focus === 'reset',
+      elapsed > 0,
+    );
 
     if (laps.length) {
-      h.setColor(2).setFontMonofonto14().setFontAlign(0, 0)
-        .drawString('LAP ' + (lapView + 1) + ' OF ' + laps.length, 240, C.LAPCOUNT_Y);
-      h.setColor(focus === 'stack' && row === 2 ? 3 : 2).setFontMonofonto16().setFontAlign(0, 0)
+      h.setColor(2)
+        .setFontMonofonto14()
+        .setFontAlign(0, 0)
+        .drawString(
+          'LAP ' + (lapView + 1) + ' OF ' + laps.length,
+          240,
+          C.LAPCOUNT_Y,
+        );
+      h.setColor(focus === 'stack' && row === 2 ? 3 : 2)
+        .setFontMonofonto16()
+        .setFontAlign(0, 0)
         .drawString('<  ' + laps[lapView] + '  >', 240, C.LAPVIEW_Y);
     }
 
@@ -160,12 +216,16 @@
     if (dir) {
       if (focus !== 'stack') return;
       const top = maxRow();
-      let next = row, found = false;
+      let next = row,
+        found = false;
       for (let i = 0; i < top + 1; i++) {
         const candidate = next + dir;
         if (candidate < 0 || candidate > top) break;
         next = candidate;
-        if (rowEnabled(next)) { found = true; break; }
+        if (rowEnabled(next)) {
+          found = true;
+          break;
+        }
       }
       if (found) {
         row = next;
