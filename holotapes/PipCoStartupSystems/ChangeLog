@@ -1,5 +1,14 @@
-1.0.0
+1.1.0 (2026-08-21)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
+- Added low-memory runtime separation so the persistent startup hook does not retain the full holotape UI closure.
+- Fixed repeated boot-cycle memory crashes exposed during Pip-Boy OS 1.1.6 hardware testing.
+- Moved hard-failsafe timing to begin after video playback starts.
+- Added the NPC submenu scroll indicator.
+- Added Dogmeat and Mr. House startup variants to the modular startup list.
+- Kept startup audio embedded in AVI files; no separate WAV dependencies.
+- Kept the targeted clean ENCLAVE_PIPBOY.AVI media fix for the 1.1.6 black-video/audio-only case.
+- Removed diagnostic PIP-CO logging and runtime APPINFO self-registration from the public modular build.
+
+1.0.0 (2026-08-08)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/79
-- Initial public submission of PIP-CO Startup Systems.
-- Adds Default Bootup, Mister Handy, Vault Girl, and Deathclaw Ripped Suit startup selections.
-- Includes persistent selection and custom startup animation/audio assets.
+- Initial PIP-CO Startup Systems release.
