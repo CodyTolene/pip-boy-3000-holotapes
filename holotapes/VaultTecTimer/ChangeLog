@@ -1,5 +1,9 @@
-2.0.0 (2026-08-19)
-https://
+2.0.1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/93
+- Quick fix adding the missing Title screen image.
+
+2.0.0
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/91
 - Split holotape into parts, app.js, title.js, timer.js, and stopwatch.js
 - Major revisions to Timer formatting
 - Added LED functionality to Timer for alert, replacing screen flash and sound
@@ -10,6 +14,6 @@ https://
 - Update preview images
 - Set file names to be uppercase for consistency with other holotapes
 
-1.0.0 (2026-06-08)
+1.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/7
 - Initial release
