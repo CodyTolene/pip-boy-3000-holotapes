@@ -1,0 +1,1 @@
+(ª(e){¬ t=!Ó;« setTimeout(ª(){£(t){t=!1;±{Pip.CURRENT=Ó}²(e){}±{E.defrag(),Pip.CURRENT=eval(fs.readFileSync(ÑHOLO/BRKBNCE/MAIN.JS))(e Ó)}²(e){print(ÑBRICK BOUNCE LOAD ERROR +(e.message e))}}},Ô),{id:ÑBRKBNCE,remove:ª(){t=!1}}});

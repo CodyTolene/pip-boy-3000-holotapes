@@ -1,0 +1,1 @@
+(function(e){let t=!0,n=setTimeout(function(){if(n=0,t){t=!1;try{Pip.CURRENT=0}catch(e){}try{E.defrag(),Pip.CURRENT=eval(fs.readFileSync("HOLO/BRKBNCE/MAIN.JS"))(e||0)}catch(e){print("BRICK BOUNCE LOAD ERROR "+(e.message||e))}}},30);return{id:"BRKBNCE",remove:function(){t=!1,n&&(clearTimeout(n),n=0)}}});
