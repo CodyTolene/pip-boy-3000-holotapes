@@ -1,0 +1,194 @@
+{
+  "id": "brkbnce",
+  "name": "Brick Bounce",
+  "author": "@HtheB",
+  "version": "1.0.0",
+  "description": "An original arcade brick-breaker with 50 levels, power-ups, profiles, custom levels, and unlockable bonus games.",
+  "icon": "assets/icon.png",
+  "previews": [
+    "assets/preview.png",
+    "assets/gameplay.png",
+    "assets/initials.png"
+  ],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    {
+      "name": "HOLO/BRKBNCE/APP.JS",
+      "url": "app.min.js"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MAIN.JS",
+      "url": "assets/MAIN.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/SAVE.JS",
+      "url": "assets/SAVE.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/SAVEW.JS",
+      "url": "assets/SAVEW.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/START.JS",
+      "url": "assets/START.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/GAME.JS",
+      "url": "assets/GAME.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/DEMO.JS",
+      "url": "assets/DEMO.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/PONG.JS",
+      "url": "assets/PONG.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/SNAKE.JS",
+      "url": "assets/SNAKE.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/FLOATY.JS",
+      "url": "assets/FLOATY.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/RUN.JS",
+      "url": "assets/RUN.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MUSIC.JS",
+      "url": "assets/MUSIC.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/CUSTOM.JS",
+      "url": "assets/CUSTOM.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/VICT.JS",
+      "url": "assets/VICT.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/HELP.JS",
+      "url": "assets/HELP.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/NAME.JS",
+      "url": "assets/NAME.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/UPLOAD.JS",
+      "url": "assets/UPLOAD.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/SCORE.JS",
+      "url": "assets/SCORE.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/BRICKS.JS",
+      "url": "assets/BRICKS.JS"
+    },
+    {
+      "name": "HOLO/BRKBNCE/LEVELS.TXT",
+      "url": "assets/LEVELS.TXT"
+    },
+    {
+      "name": "HOLO/BRKBNCE/UI1.BIN",
+      "url": "assets/UI1.BIN"
+    },
+    {
+      "name": "HOLO/BRKBNCE/UI2.BIN",
+      "url": "assets/UI2.BIN"
+    },
+    {
+      "name": "HOLO/BRKBNCE/UI3.BIN",
+      "url": "assets/UI3.BIN"
+    },
+    {
+      "name": "HOLO/BRKBNCE/ONLINE.IMG",
+      "url": "assets/ONLINE.IMG"
+    },
+    {
+      "name": "HOLO/BRKBNCE/ABOUT.AVI",
+      "url": "assets/ABOUT.AVI"
+    },
+    {
+      "name": "HOLO/BRKBNCE/ABOUTC.AVI",
+      "url": "assets/ABOUTC.AVI"
+    },
+    {
+      "name": "HOLO/BRKBNCE/INTRO.WAV",
+      "url": "assets/INTRO.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MUS1.WAV",
+      "url": "assets/MUS1.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MUS2.WAV",
+      "url": "assets/MUS2.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MUS3.WAV",
+      "url": "assets/MUS3.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/MUS4.WAV",
+      "url": "assets/MUS4.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/OVER.WAV",
+      "url": "assets/OVER.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/SERVE.WAV",
+      "url": "assets/SERVE.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/PAD.WAV",
+      "url": "assets/PAD.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/WALL.WAV",
+      "url": "assets/WALL.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/HIT.WAV",
+      "url": "assets/HIT.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/BRK.WAV",
+      "url": "assets/BRK.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/CLANK.WAV",
+      "url": "assets/CLANK.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/LOSE.WAV",
+      "url": "assets/LOSE.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/CLEAR.WAV",
+      "url": "assets/CLEAR.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/GAME.WAV",
+      "url": "assets/GAME.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/POWER.WAV",
+      "url": "assets/POWER.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/BAD.WAV",
+      "url": "assets/BAD.WAV"
+    },
+    {
+      "name": "HOLO/BRKBNCE/LIFE.WAV",
+      "url": "assets/LIFE.WAV"
+    }
+  ],
+  "storageOptional": []
+}
