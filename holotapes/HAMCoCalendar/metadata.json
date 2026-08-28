@@ -1,0 +1,27 @@
+{
+  "id": "hamcocalendar",
+  "name": "HAMCo Calendar",
+  "author": "@joemto20-tech",
+  "version": "1.0.0",
+  "description": "A native-feeling calendar with date jumping and note-taking.",
+  "icon": "assets/hamcal.img",
+  "previews": ["previews/AUG.bmp"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/CALENDAR/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/CALENDAR/jan.IMG", "url": "assets/jan.IMG" },
+    { "name": "HOLO/CALENDAR/feb.IMG", "url": "assets/feb.IMG" },
+    { "name": "HOLO/CALENDAR/mar.IMG", "url": "assets/mar.IMG" },
+    { "name": "HOLO/CALENDAR/april.IMG", "url": "assets/april.IMG" },
+    { "name": "HOLO/CALENDAR/may.IMG", "url": "assets/may.IMG" },
+    { "name": "HOLO/CALENDAR/june.IMG", "url": "assets/june.IMG" },
+    { "name": "HOLO/CALENDAR/july.IMG", "url": "assets/july.IMG" },
+    { "name": "HOLO/CALENDAR/aug.IMG", "url": "assets/aug.IMG" },
+    { "name": "HOLO/CALENDAR/sep.IMG", "url": "assets/sep.IMG" },
+    { "name": "HOLO/CALENDAR/oct.IMG", "url": "assets/oct.IMG" },
+    { "name": "HOLO/CALENDAR/nov.IMG", "url": "assets/nov.IMG" },
+    { "name": "HOLO/CALENDAR/dec.IMG", "url": "assets/dec.IMG" }
+  ],
+  "storageOptional": []
+}

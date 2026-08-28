@@ -1,3 +1,0 @@
-1.0.0 (2026-08-25)
-<pull-request-or-change-link>
-- Initial release
