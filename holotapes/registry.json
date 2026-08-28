@@ -516,7 +516,7 @@
     "author": "@joemto20-tech",
     "version": "1.0.0",
     "description": "A native-feeling calendar with date jumping and note-taking.",
-    "icon": "HAMCoCalendar/assets/hamcal.img",
+    "icon": "HAMCoCalendar/assets/hamcal.IMG",
     "previews": ["HAMCoCalendar/previews/AUG.bmp"],
     "type": "app",
     "readme": "HAMCoCalendar/README.md",

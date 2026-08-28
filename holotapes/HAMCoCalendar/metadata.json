@@ -4,7 +4,7 @@
   "author": "@joemto20-tech",
   "version": "1.0.0",
   "description": "A native-feeling calendar with date jumping and note-taking.",
-  "icon": "assets/hamcal.img",
+  "icon": "assets/hamcal.IMG",
   "previews": ["previews/AUG.bmp"],
   "type": "app",
   "readme": "README.md",
