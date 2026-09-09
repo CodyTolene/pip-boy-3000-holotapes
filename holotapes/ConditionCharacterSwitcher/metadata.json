@@ -2,7 +2,7 @@
   "id": "charswitcher",
   "name": "CND Character Switcher",
   "author": "@Aidan'sLab",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A character switching utility for the Pip-Boy 3000.",
   "icon": "previews/charswitcher.png",
   "previews": ["previews/holotape.bmp", "previews/cnd.bmp"],
