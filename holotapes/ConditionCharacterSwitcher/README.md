@@ -5,7 +5,6 @@
 **Author(s):**
 
 - [@Aidan'sLab](https://github.com/AidansLab)
-<<<<<<< HEAD
 - Special thanks to 𝕷𝖑𝖆𝖒𝖆'𝕹𝖆𝖙𝖎𝖛𝖊'𝖄𝖊𝖄𝖊 for the animated characters, and for the
   original idea.
 
@@ -42,7 +41,6 @@ Launch the holotape to open a scrollable character list. Highlighting an entry s
 | ------------------------- | -------------------------------------- |
 | Left scroll wheel (knob1) | Move the cursor up/down the list       |
 | Left scroll wheel press  | Select the hovered entry |
->>>>>>> 2a1cbd1 (Condition Character Switcher 1.0.0 initial push)
 
 ### License
 
