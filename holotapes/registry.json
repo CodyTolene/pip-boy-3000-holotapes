@@ -859,26 +859,22 @@
     "author": "@Theeohn",
     "version": "1.0.0",
     "description": "Screensavers of all kinds rendered locally, no videos. Modular so you can make and add your own!",
-    "icon": "Mesmetron/HYPNO.png",
-    "previews": [],
+    "icon": "Mesmetron/assets/HYPNO.IMG",
+    "previews": [
+      "Mesmetron/previews/cap1.bmp",
+      "Mesmetron/previews/cap2.bmp",
+      "Mesmetron/previews/cap3.bmp"
+    ],
     "type": "app",
     "readme": "Mesmetron/README.md",
     "storage": [
       {
         "name": "HOLO/MESMETRON/APP.JS",
-        "url": "Mesmetron/APP.MIN.JS"
-      },
-      {
-        "name": "HOLO/MESMETRON/assets/TITLE.JS",
-        "url": "Mesmetron/assets/TITLE.MIN.JS"
+        "url": "Mesmetron/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/MESMETRON/assets/MSMR.BIN",
         "url": "Mesmetron/assets/MSMR.BIN"
-      },
-      {
-        "name": "HOLO/MESMETRON/assets/wild.wav",
-        "url": "Mesmetron/assets/wild.wav"
       },
       {
         "name": "HOLO/MESMETRON/assets/RC.JSON",
@@ -889,7 +885,11 @@
         "url": "Mesmetron/assets/ROACH.JSON"
       },
       {
-        "name": "HOLO/MESMETRON/assets/bounder.js",
+        "name": "HOLO/MESMETRON/assets/TITLE.JS",
+        "url": "Mesmetron/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/MESMETRON/assets/bouncer.js",
         "url": "Mesmetron/assets/bouncer.min.js"
       },
       {
@@ -927,6 +927,10 @@
       {
         "name": "HOLO/MESMETRON/assets/web.js",
         "url": "Mesmetron/assets/web.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/assets/wild.wav",
+        "url": "Mesmetron/assets/wild.wav"
       }
     ],
     "storageOptional": []

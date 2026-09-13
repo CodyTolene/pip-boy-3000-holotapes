@@ -42,7 +42,7 @@
 
   const HINT = [
     'HOLD LEFT WHEEL TO RESTORE NORMALITY',
-    'RIGHT WHEEL VIBES, LEFT WHEEL BLINDS'
+    'RIGHT WHEEL VIBES, LEFT WHEEL BLINDS',
   ];
   const LINEH = h.setFont('Monofonto14').stringMetrics(HINT[0]).height + 1;
   let selected = 0;
