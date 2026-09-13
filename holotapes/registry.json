@@ -1606,7 +1606,7 @@
     "author": "@Theeohn @CodyTolene",
     "version": "2.1.0",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
-    "icon": "RadroachRaces/previews/RACES.png",
+    "icon": "RadroachRaces/assets/RACES.IMG",
     "previews": [
       "RadroachRaces/previews/menu.bmp",
       "RadroachRaces/previews/game.bmp",
@@ -1617,7 +1617,7 @@
     "storage": [
       {
         "name": "HOLO/RADROACH_RACES/APP.JS",
-        "url": "RadroachRaces/APP.MIN.JS"
+        "url": "RadroachRaces/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/RADROACH_RACES/BUGLE.WAV",
