@@ -2,7 +2,11 @@
   "id": "charswitcher",
   "name": "CND Character Switcher",
   "author": "@Aidan'sLab",
+<<<<<<< HEAD
   "version": "1.0.2",
+=======
+  "version": "1.0.1",
+>>>>>>> 3192c27ad57a13938cadd43490909157e8a980b7
   "description": "A character switching utility for the Pip-Boy 3000.",
   "icon": "previews/charswitcher.png",
   "previews": ["previews/holotape.bmp", "previews/cnd.bmp"],
@@ -30,11 +34,6 @@
       "name": "HOLO/CHARSWITCHER/chars/Vault-Girl.BIN",
       "url": "assets/chars/Vault-Girl.BIN"
     }
-    { "name": "HOLO/CHARSWITCHER/RENDERER.JS", "url": "assets/RENDERER.MIN.JS" },
-    { "name": "HOLO/CHARSWITCHER/chars/Mk_V_Vault-Boy.json", "url": "assets/chars/Mk_V_Vault-Boy.json" },
-    { "name": "HOLO/CHARSWITCHER/chars/Mk_V_Vault-Boy.BIN", "url": "assets/chars/Mk_V_Vault-Boy.BIN" },
-    { "name": "HOLO/CHARSWITCHER/chars/Vault-Girl.json", "url": "assets/chars/Vault-Girl.json" },
-    { "name": "HOLO/CHARSWITCHER/chars/Vault-Girl.BIN", "url": "assets/chars/Vault-Girl.BIN" }
   ],
   "storageOptional": []
 }
