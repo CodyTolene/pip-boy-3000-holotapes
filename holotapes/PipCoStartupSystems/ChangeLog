@@ -1,5 +1,5 @@
 1.3.0 (2026-09-10)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/compare/main...LlamaYeYe:pip-co-startup-systems-v1.3.0?expand=1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/105
 - Split the startup UI from the persistent startup runtime and deferred wake loader to reduce retained RAM after leaving the holotape.
 - Added STARTUP_RUNTIME.JS and STARTUP_WAKE.JS as required core runtime files.
 - Added reset-safe behavior: a true cold reboot/crash/power-loss reset returns Startup Systems to Default Bootup, while normal standby/off-to-on behavior keeps the active same-session selection.
