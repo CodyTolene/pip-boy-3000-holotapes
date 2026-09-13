@@ -2,8 +2,8 @@
   "id": "startup-animations",
   "name": "PIP-CO Startup Systems",
   "author": "@LlamaYeYe",
-  "version": "1.2.0",
-  "description": "Choose custom Pip-Boy startup animations with embedded audio, a low-memory persistent runtime, and up to five drop-in AVI-only community Custom Bootups.",
+  "version": "1.3.0",
+  "description": "Choose custom Pip-Boy startup animations with embedded audio, a lower-memory split runtime, reset-safe defaults, submenu scrolling, and up to five drop-in AVI-only Custom Bootups.",
   "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
   "previews": ["previews/menu.bmp"],
   "type": "app",
@@ -12,6 +12,14 @@
     {
       "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
       "url": "assets/APP.MIN.JS"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_RUNTIME.JS",
+      "url": "assets/STARTUP_RUNTIME.JS"
+    },
+    {
+      "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_WAKE.JS",
+      "url": "assets/STARTUP_WAKE.JS"
     },
     {
       "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",

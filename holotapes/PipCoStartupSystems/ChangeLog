@@ -1,3 +1,12 @@
+1.3.0 (2026-09-10)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/105
+- Split the startup UI from the persistent startup runtime and deferred wake loader to reduce retained RAM after leaving the holotape.
+- Added STARTUP_RUNTIME.JS and STARTUP_WAKE.JS as required core runtime files.
+- Added reset-safe behavior: a true cold reboot/crash/power-loss reset returns Startup Systems to Default Bootup, while normal standby/off-to-on behavior keeps the active same-session selection.
+- Added scroll support for startup submenus that exceed the visible row count.
+- Preserved v1.2.0 support for up to five drop-in Custom_Bootup AVI files and all existing optional built-in startup media.
+- Preserved embedded AVI audio, stock fallback behavior, and hardware-tested startup timings.
+
 1.2.0 (2026-08-26)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/97
 - Added automatic detection of up to five user-supplied Custom_Bootup AVI files directly in HOLO/STARTUP_ANIMATIONS/.
