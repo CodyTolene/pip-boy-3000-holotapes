@@ -1,5 +1,5 @@
 1.1.0 (2026-09-10)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/compare/main...LlamaYeYe:pip-co-idle-frameworks-v1.1.0?expand=1
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/104
 - Updated PIP-CO Idle Frameworks with the lower-memory wake/service architecture used by the latest hardware-tested build.
 - Added WAKE.JS as a lightweight 2-minute idle watcher that loads the fullscreen idle runner only when needed.
 - Added reset-safe behavior: a true cold reboot/crash/power-loss reset disables Idle Frameworks, while normal same-session standby/off-to-on preserves the selected provider.
