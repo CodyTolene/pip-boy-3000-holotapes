@@ -114,10 +114,6 @@
                 require("Storage").write(RENDERKEY, current);
             }
         } catch (e) {}
-        var patch = BOOT_MARK + '(function(){var fs=require("fs"),D="' + CHARDIR +
-            '";fs.writeFileSync(D+"ACTIVE.JSON",JSON.stringify({file:' + JSON.stringify(character.file) +
-            '}));var orig=fs.readFileSync.bind(fs),L="' + LIVE + '",R="' + RENDERER + '",K="' + RENDERKEY +
-            '";fs.readFileSync=function(p){if(p!==L)return orig(p);var s=require("Storage").read(K);return s!==undefined?s:orig(R);};})();';
         var slot = findOwnSlot() || findFreeSlot();
         if (!slot) {
             // .boot1-.boot3 are all in use by other mods and .boot0 is
@@ -125,6 +121,32 @@
             console.log("CHARSWITCHER: no free boot slot (.boot1-.boot3 all in use), character not activated");
             return;
         }
+        // Self-cleaning: deleting this holotape the normal way (from the
+        // Pip-Boy's own holotape list) only removes APPINFO/CHARSWITCHER.info -
+        // it has no idea this app also claimed a boot slot and cached
+        // RENDERER.JS in Storage, so without this the patch would go on
+        // intercepting STATUS_CND.JS forever. Checked first, every boot,
+        // before any of the rest of this patch's own logic runs: if the
+        // .info file is gone, erase this app's own slot (embedded below as
+        // a literal - the running boot script has no other way to know
+        // which key it was loaded from) plus the other two Storage keys,
+        // then stop - skipping the readFileSync patch entirely so even
+        // *this* boot shows the stock screen, not just the next one. Any
+        // error reading APPINFO is treated as "can't tell, assume still
+        // installed" and falls through to patch normally, rather than
+        // risking an unrelated SD-card hiccup wiping out a healthy install.
+        var patch = BOOT_MARK + '(function(){var fs=require("fs");' +
+            'try{var f=fs.readdirSync("APPINFO"),ok=false;' +
+            'for(var i=0;i<f.length;i++)if(f[i].toUpperCase()==="CHARSWITCHER.INFO"){ok=true;break;}' +
+            'if(!ok){var S=require("Storage");' +
+            'try{S.erase("' + ACTIVEKEY + '");}catch(e2){}' +
+            'try{S.erase("' + RENDERKEY + '");}catch(e2){}' +
+            'try{S.erase("' + slot + '");}catch(e2){}' +
+            'return;}' +
+            '}catch(e){}' +
+            'var D="' + CHARDIR + '";fs.writeFileSync(D+"ACTIVE.JSON",JSON.stringify({file:' + JSON.stringify(character.file) +
+            '}));var orig=fs.readFileSync.bind(fs),L="' + LIVE + '",R="' + RENDERER + '",K="' + RENDERKEY +
+            '";fs.readFileSync=function(p){if(p!==L)return orig(p);var s=require("Storage").read(K);return s!==undefined?s:orig(R);};})();';
         try {
             require("Storage").write(slot, patch);
             require("Storage").write(ACTIVEKEY, character.file);
