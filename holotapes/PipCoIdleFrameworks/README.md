@@ -1,10 +1,10 @@
-# PIP-CO Idle Frameworks
+# PIP-CO Idle Frameworks v1.1.0
 
 A configurable idle/screensaver framework for The Wand Company Pip-Boy 3000.
 
-PIP-CO Idle Frameworks includes its built-in PIP-BOY 3000 falling-bomb
-screensaver and can dynamically use compatible screensavers from separately
-installed provider holotapes.
+PIP-CO Idle Frameworks can run its built-in PIP-BOY 3000 falling-bomb
+screensaver or dynamically use compatible screensavers from separately installed
+provider holotapes.
 
 ## Features
 
@@ -16,74 +16,50 @@ installed provider holotapes.
 - Fullscreen automatic-idle runner
 - Provider entries only appear when the matching provider holotape is installed
 - PIP-CO owns wake/exit controls while a provider is running as an idle
-- Provider holotapes retain their own native behavior when opened normally
+- Provider holotapes retain their native behavior when opened normally
 - Radio/audio detection remains read-only
 
 ## Optional providers
 
 ### Mesmetron
 
-Mesmetron is not bundled with PIP-CO Idle Frameworks.
-
-If `HOLO/MESMETRON/TITLE.JS` is installed, PIP-CO reads Mesmetron's current
+Mesmetron is not bundled with PIP-CO Idle Frameworks. If
+`HOLO/MESMETRON/TITLE.JS` is installed, PIP-CO reads Mesmetron's current
 screensaver list dynamically. Removing Mesmetron removes those entries from
 PIP-CO automatically.
 
 ### Pipquarium
 
-Pipquarium is not bundled with PIP-CO Idle Frameworks.
-
-If a compatible PIP-CO-safe Pipquarium installation is present at
-`HOLO/PIPQUARIUM/APP.JS`, PIP-CO adds `Pipquarium` to the idle-provider list.
-Removing Pipquarium removes that entry automatically.
-
-Pipquarium is loaded only when its preview or automatic idle actually starts;
-its renderer is not embedded in the PIP-CO menu/service.
-
-## Installation
-
-Install through pip-boy.com / the holotape registry.
-
-The installer creates the device-side `.info` registration from `metadata.json`.
-The public runtime does not create or overwrite `APPINFO/*.info`.
-
-Installed PIP-CO files live under:
-
-`HOLO/FALLOUT_SCREENSAVER/`
-
-Mesmetron and Pipquarium are optional independent holotapes and are not included
-inside this package.
+Pipquarium is not bundled with PIP-CO Idle Frameworks. If
+`HOLO/PIPQUARIUM/APP.JS` is installed, Pipquarium appears automatically as an
+available provider.
 
 ## Controls
 
-Inside PIP-CO Idle Frameworks:
+- Left wheel: navigate the menu
+- Left wheel press: select / enable / disable / preview
+- Either scroll-wheel press: exit an active screensaver or preview
+- `< Back`: return to the previous menu or Misc
 
-- Left wheel: navigate
-- Left wheel press: select
-- `Preview Screensaver`: preview the selected idle
-- `< Back`: return
+## Runtime / compatibility notes
 
-While an idle is active, PIP-CO owns the wake/exit controls rather than allowing
-provider-specific wheel modifiers to change the provider state.
+Version 1.1.0 separates the settings UI from a lightweight wake watcher and
+transient idle service. When the holotape closes with an idle provider enabled,
+`WAKE.JS` watches for two minutes of inactivity and loads `IDLE.JS` only when a
+fullscreen screensaver actually needs to run.
 
-## Idle choices
+On a true cold reboot, crash reboot, or full power-loss reset, Idle Frameworks
+returns to **disabled**. Normal same-session standby/off-to-on behavior
+preserves the configured idle provider.
 
-With no optional providers installed, only the built-in `PIP-BOY 3000`
-screensaver is shown.
+The framework checks existing radio/audio state before starting its own built-in
+audio and does not replace the stock radio implementation.
 
-When Mesmetron and/or Pipquarium are installed, their compatible entries are
-added automatically.
+## Tested hardware
 
-Only one idle provider is active at a time.
+- The Wand Company Pip-Boy 3000
+- Pip-Boy OS 1.1.6 / firmware build 2v29.361
 
-## Compatibility
+## Credits
 
-The integration does not bundle or rewrite Mesmetron or Pipquarium renderer
-assets. Each provider remains independently installable.
-
-## CREDITS!!!!!
-
-Thankyou towards AidansLab -> https://github.com/AidansLab Thankyou towards
-Theeohn -> https://github.com/Theeohn
-
-GO CHECK THEM OUT!
+@LlamaYeYe

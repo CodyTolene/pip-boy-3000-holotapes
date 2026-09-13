@@ -1,3 +1,12 @@
-1.0.0
+1.1.0 (2026-09-10)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/104
+- Updated PIP-CO Idle Frameworks with the lower-memory wake/service architecture used by the latest hardware-tested build.
+- Added WAKE.JS as a lightweight 2-minute idle watcher that loads the fullscreen idle runner only when needed.
+- Added reset-safe behavior: a true cold reboot/crash/power-loss reset disables Idle Frameworks, while normal same-session standby/off-to-on preserves the selected provider.
+- Preserved the built-in PIP-BOY 3000 screensaver, dynamic Mesmetron provider discovery, and Pipquarium integration.
+- Preserved live preview behavior and read-only radio/audio detection.
+- Updated the built-in bomb renderer source while retaining the 12 fps-style 83 ms frame interval and existing audio behavior.
+
+1.0.0 (2026-08-10)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
-- Initial release
+- Initial PIP-CO Idle Frameworks release.

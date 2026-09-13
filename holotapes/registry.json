@@ -437,7 +437,7 @@
     "id": "charswitcher",
     "name": "CND Character Switcher",
     "author": "@Aidan'sLab",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A character switching utility for the Pip-Boy 3000.",
     "icon": "ConditionCharacterSwitcher/previews/charswitcher.png",
     "previews": [
@@ -978,8 +978,8 @@
     "id": "pip-co-idle-frameworks",
     "name": "PIP-CO Idle Frameworks",
     "author": "@LlamaYeYe",
-    "version": "1.0.0",
-    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with optional dynamic Mesmetron and Pipquarium idle-provider integration.",
+    "version": "1.1.0",
+    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with a lower-memory wake/service runtime and optional dynamic Mesmetron and Pipquarium provider integration.",
     "icon": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG",
     "previews": ["PipCoIdleFrameworks/previews/menu.bmp"],
     "type": "app",
@@ -996,6 +996,10 @@
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
         "url": "PipCoIdleFrameworks/assets/SERVICE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/WAKE.JS",
+        "url": "PipCoIdleFrameworks/assets/WAKE.JS"
       },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/BOMBRUN.JS",
