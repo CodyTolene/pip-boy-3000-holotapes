@@ -21,6 +21,7 @@
   let notes = [];
 
   let monthObject;
+  let keyboardInstance;
 
   let mode = 0;
   let selectedNote = 0;
@@ -250,7 +251,7 @@
     keyboardTimer = setTimeout(() => {
       const file = fs.statSync('HOLO/PIPCALENDAR/NOTES.json');
       if (file.size <= 3500) {
-        let keyboardInstance = Pip.createKeyboard(
+        keyboardInstance = Pip.createKeyboard(
           '',
           'NOTE ' + (selectedNote + 1),
           (c) => {
@@ -722,6 +723,7 @@
       if (keyboardTimer) clearTimeout(keyboardTimer);
       if (errorTimer) clearTimeout(errorTimer);
       if (leftWheelPressWatch) clearWatch(leftWheelPressWatch);
+      if (keyboardInstance) keyboardInstance.remove();
 
       Pip.removeListener('knob1', onLeftWheel);
       Pip.removeListener('knob2', onRightWheel);
