@@ -437,7 +437,7 @@
     "id": "charswitcher",
     "name": "CND Character Switcher",
     "author": "@Aidan'sLab",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "A character switching utility for the Pip-Boy 3000.",
     "icon": "ConditionCharacterSwitcher/previews/charswitcher.png",
     "previews": [
@@ -854,6 +854,88 @@
     "storageOptional": []
   },
   {
+    "id": "MESMETRON",
+    "name": "Mesmetron",
+    "author": "@Theeohn",
+    "version": "1.0.0",
+    "description": "Screensavers of all kinds rendered locally, no videos. Modular so you can make and add your own!",
+    "icon": "Mesmetron/assets/HYPNO.IMG",
+    "previews": [
+      "Mesmetron/previews/cap1.bmp",
+      "Mesmetron/previews/cap2.bmp",
+      "Mesmetron/previews/cap3.bmp"
+    ],
+    "type": "app",
+    "readme": "Mesmetron/README.md",
+    "storage": [
+      {
+        "name": "HOLO/MESMETRON/APP.JS",
+        "url": "Mesmetron/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/MESMETRON/MSMR.BIN",
+        "url": "Mesmetron/assets/MSMR.BIN"
+      },
+      {
+        "name": "HOLO/MESMETRON/RC.JSON",
+        "url": "Mesmetron/assets/RC.JSON"
+      },
+      {
+        "name": "HOLO/MESMETRON/ROACH.JSON",
+        "url": "Mesmetron/assets/ROACH.JSON"
+      },
+      {
+        "name": "HOLO/MESMETRON/TITLE.JS",
+        "url": "Mesmetron/assets/TITLE.MIN.JS"
+      },
+      {
+        "name": "HOLO/MESMETRON/bouncer.js",
+        "url": "Mesmetron/assets/bouncer.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/burst.js",
+        "url": "Mesmetron/assets/burst.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/fireworks.js",
+        "url": "Mesmetron/assets/fireworks.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/matrix.js",
+        "url": "Mesmetron/assets/matrix.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/ribbon.js",
+        "url": "Mesmetron/assets/ribbon.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/shapes.js",
+        "url": "Mesmetron/assets/shapes.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/spiral.js",
+        "url": "Mesmetron/assets/spiral.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/vortex.js",
+        "url": "Mesmetron/assets/vortex.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/warp.js",
+        "url": "Mesmetron/assets/warp.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/web.js",
+        "url": "Mesmetron/assets/web.min.js"
+      },
+      {
+        "name": "HOLO/MESMETRON/wild.wav",
+        "url": "Mesmetron/assets/wild.wav"
+      }
+    ],
+    "storageOptional": []
+  },
+  {
     "id": "mtgtracker",
     "name": "MTG Life Counter",
     "author": "@tylerjbartlett",
@@ -978,8 +1060,8 @@
     "id": "pip-co-idle-frameworks",
     "name": "PIP-CO Idle Frameworks",
     "author": "@LlamaYeYe",
-    "version": "1.0.0",
-    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with optional dynamic Mesmetron and Pipquarium idle-provider integration.",
+    "version": "1.1.0",
+    "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with a lower-memory wake/service runtime and optional dynamic Mesmetron and Pipquarium provider integration.",
     "icon": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG",
     "previews": ["PipCoIdleFrameworks/previews/menu.bmp"],
     "type": "app",
@@ -996,6 +1078,10 @@
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
         "url": "PipCoIdleFrameworks/assets/SERVICE.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/WAKE.JS",
+        "url": "PipCoIdleFrameworks/assets/WAKE.JS"
       },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/BOMBRUN.JS",
@@ -1036,8 +1122,8 @@
     "id": "startup-animations",
     "name": "PIP-CO Startup Systems",
     "author": "@LlamaYeYe",
-    "version": "1.2.0",
-    "description": "Choose custom Pip-Boy startup animations with embedded audio, a low-memory persistent runtime, and up to five drop-in AVI-only community Custom Bootups.",
+    "version": "1.3.0",
+    "description": "Choose custom Pip-Boy startup animations with embedded audio, a lower-memory split runtime, reset-safe defaults, submenu scrolling, and up to five drop-in AVI-only Custom Bootups.",
     "icon": "PipCoStartupSystems/assets/PIP_CO_STARTUP_SYSTEMS.IMG",
     "previews": ["PipCoStartupSystems/previews/menu.bmp"],
     "type": "app",
@@ -1046,6 +1132,14 @@
       {
         "name": "HOLO/STARTUP_ANIMATIONS/APP.JS",
         "url": "PipCoStartupSystems/assets/APP.MIN.JS"
+      },
+      {
+        "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_RUNTIME.JS",
+        "url": "PipCoStartupSystems/assets/STARTUP_RUNTIME.JS"
+      },
+      {
+        "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_WAKE.JS",
+        "url": "PipCoStartupSystems/assets/STARTUP_WAKE.JS"
       },
       {
         "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
@@ -1510,9 +1604,9 @@
     "id": "radroachraces",
     "name": "Radroach Races",
     "author": "@Theeohn @CodyTolene",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
-    "icon": "RadroachRaces/previews/RACES.png",
+    "icon": "RadroachRaces/assets/RACES.IMG",
     "previews": [
       "RadroachRaces/previews/menu.bmp",
       "RadroachRaces/previews/game.bmp",
@@ -1523,7 +1617,7 @@
     "storage": [
       {
         "name": "HOLO/RADROACH_RACES/APP.JS",
-        "url": "RadroachRaces/APP.MIN.JS"
+        "url": "RadroachRaces/assets/APP.MIN.JS"
       },
       {
         "name": "HOLO/RADROACH_RACES/BUGLE.WAV",

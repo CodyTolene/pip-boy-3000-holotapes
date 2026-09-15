@@ -1,0 +1,30 @@
+{
+  "id": "MESMETRON",
+  "name": "Mesmetron",
+  "author": "@Theeohn",
+  "version": "1.0.0",
+  "description": "Screensavers of all kinds rendered locally, no videos. Modular so you can make and add your own!",
+  "icon": "assets/HYPNO.IMG",
+  "previews": ["previews/cap1.bmp", "previews/cap2.bmp", "previews/cap3.bmp"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    { "name": "HOLO/MESMETRON/APP.JS", "url": "assets/APP.MIN.JS" },
+    { "name": "HOLO/MESMETRON/MSMR.BIN", "url": "assets/MSMR.BIN" },
+    { "name": "HOLO/MESMETRON/RC.JSON", "url": "assets/RC.JSON" },
+    { "name": "HOLO/MESMETRON/ROACH.JSON", "url": "assets/ROACH.JSON" },
+    { "name": "HOLO/MESMETRON/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
+    { "name": "HOLO/MESMETRON/bouncer.js", "url": "assets/bouncer.min.js" },
+    { "name": "HOLO/MESMETRON/burst.js", "url": "assets/burst.min.js" },
+    { "name": "HOLO/MESMETRON/fireworks.js", "url": "assets/fireworks.min.js" },
+    { "name": "HOLO/MESMETRON/matrix.js", "url": "assets/matrix.min.js" },
+    { "name": "HOLO/MESMETRON/ribbon.js", "url": "assets/ribbon.min.js" },
+    { "name": "HOLO/MESMETRON/shapes.js", "url": "assets/shapes.min.js" },
+    { "name": "HOLO/MESMETRON/spiral.js", "url": "assets/spiral.min.js" },
+    { "name": "HOLO/MESMETRON/vortex.js", "url": "assets/vortex.min.js" },
+    { "name": "HOLO/MESMETRON/warp.js", "url": "assets/warp.min.js" },
+    { "name": "HOLO/MESMETRON/web.js", "url": "assets/web.min.js" },
+    { "name": "HOLO/MESMETRON/wild.wav", "url": "assets/wild.wav" }
+  ],
+  "storageOptional": []
+}

@@ -14,6 +14,8 @@ whose AVI is installed.
 ### Core files
 
 - `HOLO/STARTUP_ANIMATIONS/APP.JS`
+- `HOLO/STARTUP_ANIMATIONS/STARTUP_RUNTIME.JS`
+- `HOLO/STARTUP_ANIMATIONS/STARTUP_WAKE.JS`
 - `HOLO/STARTUP_ANIMATIONS/SELECT.JSON`
 - `HOLO/STARTUP_ANIMATIONS/TITLE.BIN`
 
@@ -67,11 +69,15 @@ not continuously scan the SD card.
 
 ## Runtime / compatibility notes
 
-Version 1.2.0 continues to use a small persistent startup service separated from
-the holotape menu/UI. This prevents the startup hook from retaining the full
-menu, title, and scroller closure after the holotape closes. The change was made
-after repeated hardware testing exposed `CALLBACK`, `LOW_MEMORY`, and `MEMORY`
-failures on Pip-Boy OS 1.1.6.
+Version 1.3.0 further separates the holotape UI from the startup runtime. The
+full menu closure is released when the holotape closes; a small deferred wake
+loader arms the persistent startup runtime only when needed. This reduces
+retained RAM compared with keeping the full startup implementation inside the UI
+app.
+
+On a true cold reboot, crash reboot, or full power-loss reset, Startup Systems
+returns to **Default Bootup**. Normal same-session standby/off-to-on behavior
+keeps the selected custom startup active.
 
 The hard-failsafe timer now begins after `Pip.videoStart()` succeeds, so
 firmware/pre-play delays do not consume the startup's playback window.

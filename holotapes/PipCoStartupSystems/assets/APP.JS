@@ -2,449 +2,313 @@
   const fs = require('fs'),
     B = 'HOLO/STARTUP_ANIMATIONS/',
     S = B + 'SELECT.JSON';
-  function ex(p) {
-    try {
-      return !!fs.statSync(p);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  const STARTUPS = [
-    {
-      file: 'MISTER.AVI',
-      label: 'Mister Handy',
-      cat: 'special',
-      fade: 6250,
-      hard: 15000,
-      eventEnd: 1,
-    },
-    {
-      file: 'VAULTGIRL.AVI',
-      label: 'Vault Girl',
-      cat: 'special',
-      fade: 3500,
-      hard: 12000,
-      eventEnd: 1,
-    },
-    {
-      file: 'DEATHCLAW.AVI',
-      label: 'Deathclaw Vault Experiment',
-      cat: 'special',
-      fade: 3500,
-      hard: 13000,
-      eventEnd: 1,
-    },
-    {
-      file: 'YESMAN.AVI',
-      label: 'YES MAN',
-      cat: 'npc',
-      fade: 4917,
-      hard: 16000,
-      eventEnd: 1,
-    },
-    {
-      file: 'ENCLAVE.AVI',
-      label: 'The Enclave',
-      cat: 'faction',
-      fade: 5500,
-      hard: 9015,
-    },
-    {
-      file: 'BOS.AVI',
-      label: 'The Brotherhood of Steel',
-      cat: 'faction',
-      fade: 5500,
-      hard: 9015,
-    },
-    {
-      file: 'MOTHMAN.AVI',
-      label: 'Mothman',
-      cat: 'faction',
-      fade: 5500,
-      hard: 9015,
-    },
-    {
-      file: 'MINUTEMEN.AVI',
-      label: 'The Minutemen',
-      cat: 'faction',
-      fade: 5500,
-      hard: 16500,
-      eventEnd: 1,
-    },
-    {
-      file: 'ENCLAVE_PIPBOY.AVI',
-      label: 'Enclave PIP-BOY',
-      cat: 'special',
-      fade: 26000,
-      hard: 30500,
-    },
-    {
-      file: 'MRHOUSE.AVI',
-      label: 'Mr. House',
-      cat: 'npc',
-      fade: 7667,
-      hard: 11182,
-    },
-    {
-      file: 'CLASSIC_MRHOUSE.AVI',
-      label: 'Classic Mr. House',
-      cat: 'npc',
-      fade: 5250,
-      hard: 13000,
-      eventEnd: 1,
-    },
-    {
-      file: 'CLASSIC_MRHOUSE_ANIMATED.AVI',
-      label: 'Classic Mr. House Animated',
-      cat: 'npc',
-      fade: 6083,
-      hard: 15000,
-      eventEnd: 1,
-    },
-    {
-      file: 'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
-      label: 'Classic Mr. House Fully Animated',
-      cat: 'npc',
-      fade: 6000,
-      hard: 15000,
-      eventEnd: 1,
-    },
-    {
-      file: 'DOGMEAT.AVI',
-      label: 'Dogmeat',
-      cat: 'npc',
-      fade: 4167,
-      hard: 13000,
-      eventEnd: 1,
-    },
-    {
-      file: 'Custom_Bootup.AVI',
-      label: 'Custom Bootup',
-      cat: 'custom',
-      fade: 30000,
-      hard: 120000,
-      eventEnd: 1,
-    },
-    {
-      file: 'Custom_Bootup_2.AVI',
-      label: 'Custom Bootup 2',
-      cat: 'custom',
-      fade: 30000,
-      hard: 120000,
-      eventEnd: 1,
-    },
-    {
-      file: 'Custom_Bootup_3.AVI',
-      label: 'Custom Bootup 3',
-      cat: 'custom',
-      fade: 30000,
-      hard: 120000,
-      eventEnd: 1,
-    },
-    {
-      file: 'Custom_Bootup_4.AVI',
-      label: 'Custom Bootup 4',
-      cat: 'custom',
-      fade: 30000,
-      hard: 120000,
-      eventEnd: 1,
-    },
-    {
-      file: 'Custom_Bootup_5.AVI',
-      label: 'Custom Bootup 5',
-      cat: 'custom',
-      fade: 30000,
-      hard: 120000,
-      eventEnd: 1,
-    },
+  const F = [
+    'MISTER.AVI',
+    'VAULTGIRL.AVI',
+    'DEATHCLAW.AVI',
+    'YESMAN.AVI',
+    'ENCLAVE.AVI',
+    'BOS.AVI',
+    'MOTHMAN.AVI',
+    'MINUTEMEN.AVI',
+    'ENCLAVE_PIPBOY.AVI',
+    'MRHOUSE.AVI',
+    'CLASSIC_MRHOUSE.AVI',
+    'CLASSIC_MRHOUSE_ANIMATED.AVI',
+    'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+    'DOGMEAT.AVI',
+    'Custom_Bootup.AVI',
+    'Custom_Bootup_2.AVI',
+    'Custom_Bootup_3.AVI',
+    'Custom_Bootup_4.AVI',
+    'Custom_Bootup_5.AVI',
   ];
-  const CAT_SPECIAL = [0, 1, 2, 8],
-    CAT_FACTION = [4, 5, 7, 6],
-    CAT_NPC = [3, 9, 10, 11, 12, 13],
-    CAT_CUSTOM = [14, 15, 16, 17, 18];
-
-  /* CUSTOM BOOTUPS MEMORY-SAFE:
-     The holotape UI checks the five fixed Custom_Bootup*.AVI slots only while open.
-     The persistent boot runtime resolves only the selected custom filename.
-     AVI bytes are streamed by Pip.videoStart and are never loaded into JS memory.
-     Custom AVIs use videoStopped as the normal end condition; 120 seconds is emergency cleanup only. */
-
-  /* Persistent startup runtime.
-     This is deliberately created in global scope so Pip.bootAnimation/Pip.audioStart
-     retain only the small startup service after the holotape UI closes. Keeping the
-     menu/scroller/title closure alive caused CALLBACK/LOW_MEMORY/MEMORY failures on
-     repeated boot cycles during Pip-Boy OS 1.1.6 hardware testing. */
-  const installRuntime = Function(
-    'return function(){\n' +
-      "var fs=require('fs'),B='HOLO/STARTUP_ANIMATIONS/',S=B+'SELECT.JSON';" +
-      "var F=['MISTER.AVI','VAULTGIRL.AVI','DEATHCLAW.AVI','YESMAN.AVI','ENCLAVE.AVI','BOS.AVI','MOTHMAN.AVI','MINUTEMEN.AVI','ENCLAVE_PIPBOY.AVI','MRHOUSE.AVI','CLASSIC_MRHOUSE.AVI','CLASSIC_MRHOUSE_ANIMATED.AVI','CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI','DOGMEAT.AVI'];" +
-      'var FA=[6250,3500,3500,4917,5500,5500,5500,5500,26000,7667,5250,6083,6000,4167];' +
-      'var HA=[15000,12000,13000,16000,9015,9015,9015,16500,30500,11182,13000,15000,15000,13000];' +
-      'var EV=[1,1,1,1,0,0,0,1,0,0,1,1,1,1],ownV=0,ownA=0,crt=0;' +
-      "function cf(n){var q=n-14;return q===0?'Custom_Bootup.AVI':q>0&&q<5?'Custom_Bootup_'+(q+1)+'.AVI':''}" +
-      'function fn(n){return n<14?F[n]:cf(n)}' +
-      'function hd(n){return n<14?HA[n]:120000}' +
-      'function ev(n){return n<14?EV[n]:1}' +
-      'function fd(n){return n<14?FA[n]:0}' +
-      'function sel(){try{var n=JSON.parse(fs.readFileSync(S)).startup|0;return n>=-2&&n<19?n:-2}catch(e){return -2}}' +
-      'function ok(n){try{var f=fn(n);return n>=0&&n<19&&f&&!!fs.statSync(B+f)}catch(e){return false}}' +
-      "if(!Pip.__PIPCOStockBoot){if(typeof Pip.__SA22CleanBoot==='function')Pip.__PIPCOStockBoot=Pip.__SA22CleanBoot;else if(typeof Pip.bootAnimation==='function'&&!Pip.bootAnimation.__pipcoRT)Pip.__PIPCOStockBoot=Pip.bootAnimation.bind(Pip)}" +
-      "if(!Pip.__PIPCOStockAudio){if(typeof Pip.__SA22CleanAudio==='function')Pip.__PIPCOStockAudio=Pip.__SA22CleanAudio;else if(typeof Pip.audioStart==='function'&&!Pip.audioStart.__pipcoRT)Pip.__PIPCOStockAudio=Pip.audioStart.bind(Pip)}" +
-      'var sb=Pip.__PIPCOStockBoot,sa=Pip.__PIPCOStockAudio;' +
-      'function restore(){try{if(ownV)Pip.videoStop()}catch(e){}try{if(ownA)Pip.audioStop()}catch(e){}ownV=ownA=0;try{delete global.__PIPCO_CRT}catch(e){}if(sa)Pip.audioStart=sa;if(sb)Pip.bootAnimation=sb;try{delete global.__PIPCO_RT}catch(e){}}' +
-      "function finish(done){try{var p=sb?sb.call(Pip):0;if(p&&typeof p.then==='function')p.then(done);else done()}catch(e){done()}}" +
-      "function ah(p){var n=sel();if(!ok(n)){restore();return sa?sa.apply(Pip,arguments):undefined}if((crt||global.__PIPCO_CRT)&&p==='SOUND/FX/CRT_ON2.WAV'){crt=0;global.__PIPCO_CRT=0;return}return sa?sa.apply(Pip,arguments):undefined}" +
-      'function bh(){var n=sel();if(!ok(n)){restore();try{return sb?sb.call(Pip):Promise.resolve()}catch(e){return Promise.resolve()}}return new Promise(function(done){var a,b,d,vs,x=0;' +
-      "function end(r,nat){if(x)return;x=1;if(a)clearTimeout(a);if(b)clearTimeout(b);if(d)clearTimeout(d);if(vs){try{Pip.removeListener('videoStopped',vs)}catch(e){}vs=undefined}if(!nat){try{if(ownV)Pip.videoStop()}catch(e){}try{if(ownA)Pip.audioStop()}catch(e){}}ownV=ownA=0;try{h.reset()}catch(e){}try{h.setClipRect(0,0,479,319)}catch(e){}try{delete Pip.blitOptions.disable}catch(e){}crt=1;global.__PIPCO_CRT=1;setTimeout(done,160)}" +
-      "function play(){if(x)return;if(!ok(n)){x=1;restore();finish(done,'invalid');return}try{Pip.videoStop()}catch(e){}try{Pip.audioStop()}catch(e){}try{h.clear();h.flip()}catch(e){}try{Pip.videoStart(B+fn(n),{x:0,y:0});ownV=1;ownA=1;d=setTimeout(function(){end('hard-failsafe',0)},hd(n))}catch(e){restore();x=1;finish(done);return}" +
-      "if(ev(n)){vs=function(){if(!x)end('videoStopped',1)};try{Pip.on('videoStopped',vs)}catch(e){vs=undefined;if(n<14)b=setTimeout(function(){end('fade-fallback',0)},fd(n)+500)}}else b=setTimeout(function(){end('fade',0)},fd(n)+(n===8?420:180))}" +
-      'try{a=setTimeout(play,1895)}catch(e){restore();finish(done)}})}' +
-      'ah.__pipcoRT=1;bh.__pipcoRT=1;ah.__pipcoOriginal=sa;bh.__pipcoOriginal=sb;' +
-      'if(sa)Pip.audioStart=ah;Pip.bootAnimation=bh;global.__PIPCO_RT={restore:restore};' +
-      '}',
-  )();
-
-  function restoreRuntime() {
+  const L = [
+    'Mister Handy',
+    'Vault Girl',
+    'Deathclaw Vault Experiment',
+    'YES MAN',
+    'The Enclave',
+    'The Brotherhood of Steel',
+    'Mothman',
+    'The Minutemen',
+    'Enclave PIP-BOY',
+    'Mr. House',
+    'Classic Mr. House',
+    'Classic Mr. House Animated',
+    'Classic Mr. House Fully Animated',
+    'Dogmeat',
+    'Custom Bootup',
+    'Custom Bootup 2',
+    'Custom Bootup 3',
+    'Custom Bootup 4',
+    'Custom Bootup 5',
+  ];
+  const G = [
+    [0, 1, 2, 8],
+    [4, 5, 7, 6],
+    [3, 9, 10, 11, 12, 13],
+    [14, 15, 16, 17, 18],
+  ];
+  let P = new Uint8Array(19),
+    a = -1,
+    p = 0,
+    s = 0,
+    sc = 0,
+    closed = 0,
+    T;
+  function err(x) {
     try {
-      if (global.__PIPCO_RT && typeof global.__PIPCO_RT.restore === 'function')
-        global.__PIPCO_RT.restore();
+      if (Pip.log) Pip.log('STARTUP: ' + x, 'pipco.txt');
     } catch (e) {}
   }
-  function scheduleRuntime() {
+  function legacy() {
     try {
-      if (global.__PIPCO_UI_TIMER) clearTimeout(global.__PIPCO_UI_TIMER);
+      if (global.__PipCoStartupRuntimeV202)
+        global.__PipCoStartupRuntimeV202.restore();
     } catch (e) {}
-    global.__PIPCO_UI_TIMER = setTimeout(function () {
-      try {
-        delete global.__PIPCO_UI_TIMER;
-        installRuntime();
-      } catch (e) {}
-    }, 0);
+    try {
+      if (global.__PipCoStartupRuntimeV2)
+        global.__PipCoStartupRuntimeV2.restore();
+    } catch (e) {}
+    try {
+      if (global.__PIPCO_RT) global.__PIPCO_RT.restore();
+    } catch (e) {}
   }
-
-  function sel() {
+  function cancelWake() {
+    try {
+      if (global.__PipCoStartupWakeV130) global.__PipCoStartupWakeV130.cancel();
+    } catch (e) {}
+  }
+  function read() {
     try {
       let n = JSON.parse(fs.readFileSync(S)).startup | 0;
-      return n >= -2 && n < STARTUPS.length ? n : -2;
+      return n >= -1 && n < 19 ? n : -1;
     } catch (e) {
-      return -2;
+      return -1;
     }
   }
-  function saveSel(n) {
+  function save(n) {
     try {
       fs.writeFileSync(S, '{"startup":' + n + '}');
+      a = n;
       return 1;
     } catch (e) {
+      err('save ' + e);
       return 0;
     }
   }
-  function valid(n) {
-    return n >= 0 && n < STARTUPS.length && ex(B + STARTUPS[n].file);
+  function scan() {
+    for (let i = 0; i < 19; i++)
+      try {
+        P[i] = fs.statSync(B + F[i]) ? 1 : 0;
+      } catch (e) {
+        P[i] = 0;
+      }
   }
-
-  let c = 0,
-    s = 0,
-    page = 0,
-    npcScroll = 0,
-    ic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  let TI = {
-    title: {
-      width: 176,
-      height: 98,
-      bpp: 1,
-      transparent: 0,
-      buffer: fs.readFileSync(B + 'TITLE.BIN'),
-    },
-  };
-
-  function header() {
-    h.clear().setColor(3).setFontMonofonto16().setFontAlign(0, -1);
-    h.drawImage(TI.title, (480 - TI.title.width) >> 1, 6);
+  function cnt(k) {
+    let q = G[k - 1],
+      n = 0;
+    for (let i = 0; i < q.length; i++) if (P[q[i]]) n++;
+    return n;
   }
-  function scanInstalled() {
-    for (let n = 0; n < STARTUPS.length; n++) ic[n] = valid(n) ? 1 : 0;
+  function at(k, n) {
+    let q = G[k - 1],
+      z = 0;
+    for (let i = 0; i < q.length; i++)
+      if (P[q[i]]) {
+        if (z === n) return q[i];
+        z++;
+      }
+    return -1;
   }
-  function installed(n) {
-    return n >= 0 && n < STARTUPS.length && ic[n];
+  function mc() {
+    let n = 2;
+    for (let k = 1; k < 5; k++) if (cnt(k)) n++;
+    return n;
   }
-  function entriesFor(ids) {
-    let a = [];
-    for (let i = 0; i < ids.length; i++)
-      if (installed(ids[i])) a.push([STARTUPS[ids[i]].label, ids[i]]);
-    return a;
+  function mr(i) {
+    let q = 0;
+    if (i === q++) return [-1, 'Default Bootup', 0];
+    if (cnt(1) && i === q++) return [-10, 'Special Bootups', 1];
+    if (cnt(2) && i === q++) return [-11, 'Faction Bootups', 2];
+    if (cnt(3) && i === q++) return [-12, 'NPC Bootups', 3];
+    if (cnt(4) && i === q++) return [-13, 'Custom Bootups', 4];
+    return [-99, '< Back', -1];
   }
-  function specialEntries() {
-    return entriesFor(CAT_SPECIAL);
+  function shade(y) {
+    try {
+      Pip.shadeBox(24, y - 4, 456, y + 22);
+    } catch (e) {}
   }
-  function factionEntries() {
-    return entriesFor(CAT_FACTION);
-  }
-  function npcEntries() {
-    return entriesFor(CAT_NPC);
-  }
-  function customEntries() {
-    return entriesFor(CAT_CUSTOM);
-  }
-  function mainEntries() {
-    let a = [['Default Bootup', -1, 0]];
-    if (specialEntries().length) a.push(['Special Bootups', -10, 1]);
-    if (factionEntries().length) a.push(['Faction Bootups', -11, 2]);
-    if (npcEntries().length) a.push(['NPC Bootups', -12, 3]);
-    if (customEntries().length) a.push(['Custom Bootups', -13, 4]);
-    a.push(['< Back', -99, -1]);
-    return a;
-  }
-  function pageEntries() {
-    if (page === 1) return specialEntries();
-    if (page === 2) return factionEntries();
-    if (page === 3) return npcEntries();
-    if (page === 4) return customEntries();
-    return mainEntries();
-  }
-  function drawNpcScroller(total) {
-    if (total <= 5) return;
+  function scroller(total, first, visible) {
+    if (total <= visible) return;
     let top = 108,
-      bottom = 276,
-      tt = 118,
-      tb = 266,
-      max = Math.max(1, total - 5);
-    h.setColor(3)
-      .drawLine(13, top + 5, 18, top)
-      .drawLine(18, top, 23, top + 5)
-      .drawLine(13, bottom - 5, 18, bottom)
-      .drawLine(18, bottom, 23, bottom - 5)
-      .drawLine(18, tt, 18, tb);
-    let ht = Math.max(18, Math.floor(((tb - tt + 1) * 5) / total)),
-      y = tt + Math.floor(((tb - tt + 1 - ht) * npcScroll) / max);
-    h.fillRect(16, y, 20, y + ht - 1);
+      bottom = 294,
+      height = bottom - top,
+      thumb = Math.max(18, Math.floor((height * visible) / total));
+    let range = total - visible,
+      y = top;
+    if (range > 0) y += Math.floor(((height - thumb) * first) / range);
+    h.setColor(3);
+    h.drawRect(466, top, 470, bottom);
+    h.fillRect(467, y + 1, 469, y + thumb - 1);
+  }
+  function head() {
+    h.clear().setColor(3).setFontMonofonto16();
+    if (T)
+      try {
+        h.drawImage(T, 152, 6);
+      } catch (e) {}
   }
   function draw() {
-    let y = 112,
-      n,
-      a = pageEntries();
-    header();
-    if (page === 0) {
-      for (n = 0; n < a.length; n++) {
-        if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
-        h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
-        if (a[n][1] === -1 && s === -1)
+    head();
+    let y = 112;
+    if (!p) {
+      let n = mc();
+      for (let i = 0; i < n; i++) {
+        let r = mr(i);
+        if (s === i) shade(y);
+        h.setColor(3).setFontAlign(-1, -1).drawString(r[1], 38, y);
+        if (r[0] === -1 && a === -1)
           h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
         y += 36;
       }
       return;
     }
-    if (page === 3) {
-      let total = a.length + 1;
-      if (c < npcScroll) npcScroll = c;
-      if (c >= npcScroll + 5) npcScroll = c - 4;
-      npcScroll = E.clip(npcScroll, 0, Math.max(0, total - 5));
-      for (n = 0; n < 5 && npcScroll + n < total; n++) {
-        let row = npcScroll + n;
-        if (c === row) Pip.shadeBox(24, y - 4, 456, y + 22);
-        h.setColor(3).setFontAlign(-1, -1);
-        if (row < a.length) {
-          h.drawString(a[row][0], 38, y);
-          if (s === a[row][1])
-            h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
-        } else h.drawString('< Back', 38, y);
-        y += 36;
-      }
-      drawNpcScroller(total);
-      return;
-    }
-    for (n = 0; n < a.length; n++) {
-      if (c === n) Pip.shadeBox(24, y - 4, 456, y + 22);
-      h.setColor(3).setFontAlign(-1, -1).drawString(a[n][0], 38, y);
-      if (s === a[n][1]) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+    let n = cnt(p),
+      t = n + 1;
+    if (s < sc) sc = s;
+    if (s >= sc + 5) sc = s - 4;
+    sc = E.clip(sc, 0, Math.max(0, t - 5));
+    for (let i = 0; i < 5 && sc + i < t; i++) {
+      let pos = sc + i;
+      if (s === pos) shade(y);
+      h.setColor(3).setFontAlign(-1, -1);
+      if (pos < n) {
+        let x = at(p, pos);
+        h.drawString(L[x], 38, y);
+        if (a === x) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
+      } else h.drawString('< Back', 38, y);
       y += 36;
     }
-    if (c === a.length) Pip.shadeBox(24, y - 4, 456, y + 22);
-    h.setColor(3).setFontAlign(-1, -1).drawString('< Back', 38, y);
+    scroller(t, sc, 5);
   }
-  function maxRow() {
-    let a = pageEntries();
-    return page === 0 ? a.length - 1 : a.length;
-  }
-  function activateStartup(id) {
-    if (!saveSel(id)) return;
-    s = id;
-    scheduleRuntime();
-    draw();
+  function ensureLater() {
+    if (a < 0 || global.__PipCoStartupRuntimeV130) return;
+    try {
+      eval(fs.readFileSync(B + 'STARTUP_WAKE.JS'));
+    } catch (e) {
+      err('wake ' + e);
+    }
   }
   function knob(d) {
     if (d) {
-      c += d > 0 ? 1 : -1;
-      let m = maxRow();
-      if (c < 0) c = m;
-      if (c > m) c = 0;
-      Pip.playSound('SCROLL');
+      let m = p ? cnt(p) : mc() - 1;
+      s += d > 0 ? 1 : -1;
+      if (s < 0) s = m;
+      if (s > m) s = 0;
+      try {
+        Pip.playSound('SCROLL');
+      } catch (e) {}
       draw();
       return;
     }
-    Pip.playSound('SELECT');
-    if (page === 0) {
-      let a = mainEntries(),
-        e = a[c];
-      if (e[1] === -99) {
+    try {
+      Pip.playSound('SELECT');
+    } catch (e) {}
+    if (!p) {
+      let r = mr(s);
+      if (r[0] === -99) {
         Pip.changeMenu('MISC.JS');
         return;
       }
-      if (e[1] === -1) {
-        if (!saveSel(-1)) return;
-        s = -1;
-        restoreRuntime();
-        draw();
+      if (r[0] === -1) {
+        if (save(-1)) {
+          cancelWake();
+          try {
+            if (global.__PipCoStartupRuntimeV130)
+              global.__PipCoStartupRuntimeV130.restore();
+          } catch (e) {}
+          draw();
+        }
         return;
       }
-      page = e[2];
-      c = 0;
-      if (page === 3) npcScroll = 0;
+      p = r[2];
+      s = 0;
+      sc = 0;
       draw();
       return;
     }
-    let a = pageEntries();
-    if (c === a.length) {
-      let old = page;
-      page = 0;
-      c = 0;
-      if (old === 3) npcScroll = 0;
-      let m = mainEntries();
-      for (let i = 0; i < m.length; i++)
-        if (m[i][2] === old) {
-          c = i;
+    let n = cnt(p);
+    if (s === n) {
+      let old = p;
+      p = 0;
+      s = 0;
+      for (let i = 0; i < mc(); i++)
+        if (mr(i)[2] === old) {
+          s = i;
           break;
         }
+      sc = 0;
       draw();
       return;
     }
-    if (c < a.length) activateStartup(a[c][1]);
+    let x = at(p, s);
+    if (x >= 0 && save(x)) draw();
   }
-
+  let cold = !(
+    global.__PipCoStartupSessionV130 ||
+    global.__PipCoStartupRuntimeV130 ||
+    global.__PipCoStartupWakeV130
+  );
+  global.__PipCoStartupSessionV130 = 1;
+  cancelWake();
+  legacy();
+  a = read();
+  if (cold && a !== -1) save(-1);
+  scan();
+  if (a >= 0 && !P[a]) save(-1);
   try {
-    s = sel();
-    scanInstalled();
-    if (s >= 0 && !valid(s)) {
-      saveSel(-1);
-      s = -1;
-    }
-    if (s === -2) s = -1;
-    c = 0;
-    global.__PIPCO_UI_KNOB = knob;
+    T = {
+      width: 176,
+      height: 98,
+      bpp: 1,
+      transparent: 0,
+      buffer: fs.readFileSync(B + 'TITLE.BIN'),
+    };
+  } catch (e) {
+    T = undefined;
+  }
+  try {
     Pip.onExclusive('knob1', knob);
     draw();
-    if (s < 0) restoreRuntime();
-    else scheduleRuntime();
-  } catch (e) {}
-
-  /* Standalone/global-scope remove: does not retain the menu closure after exit. */
-  const removeStandalone = Function(
-    "return function(){try{if(global.__PIPCO_UI_TIMER){clearTimeout(global.__PIPCO_UI_TIMER);delete global.__PIPCO_UI_TIMER}}catch(e){}try{if(global.__PIPCO_UI_KNOB)Pip.removeListener('knob1',global.__PIPCO_UI_KNOB)}catch(e){}try{delete global.__PIPCO_UI_KNOB}catch(e){}try{h.clear()}catch(e){}try{E.defrag()}catch(e){}}",
-  )();
+  } catch (e) {
+    err('UI ' + e);
+    try {
+      Pip.errorBox('PIP-CO Startup Systems\nUI INIT FAILED');
+    } catch (x) {}
+  }
   return {
     id: 'STARTUPANIMATIONS',
     notDefault: true,
     fullscreen: true,
-    remove: removeStandalone,
+    remove: function () {
+      if (closed) return;
+      closed = 1;
+      try {
+        Pip.removeListener('knob1', knob);
+      } catch (e) {}
+      try {
+        h.clear();
+      } catch (e) {}
+      P = undefined;
+      T = undefined;
+      try {
+        process.memory(true);
+        if (E.defrag) E.defrag();
+      } catch (e) {}
+      if (a >= 0 && !global.__PipCoStartupRuntimeV130) ensureLater();
+    },
   };
 });

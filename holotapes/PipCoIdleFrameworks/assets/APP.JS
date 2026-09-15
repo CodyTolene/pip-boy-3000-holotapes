@@ -5,7 +5,6 @@
     mesmetronPath = 'HOLO/MESMETRON/',
     pipquariumPath = 'HOLO/PIPQUARIUM/',
     pipquariumSentinel = '@PIPQUARIUM';
-
   function log(message) {
     try {
       if (Pip.log) Pip.log('IDLEFW: ' + message, 'pipco.txt');
@@ -37,43 +36,63 @@
       log('config save failed: ' + e);
     }
   }
-
+  function startWake() {
+    try {
+      let source = fs.readFileSync(basePath + 'WAKE.JS'),
+        factory = Function('return ' + source)();
+      source = undefined;
+      factory();
+      factory = undefined;
+    } catch (e) {
+      log('WAKE.JS failed: ' + e);
+    }
+  }
+  let cold = !global.__PipCoIdleSessionV105;
+  global.__PipCoIdleSessionV105 = 1;
   E.defrag();
+  try {
+    if (global.__PipCoIdleWake && global.__PipCoIdleWake.destroy)
+      global.__PipCoIdleWake.destroy();
+  } catch (e) {}
+  try {
+    if (global.__PipCoIdleService && global.__PipCoIdleService.destroy)
+      global.__PipCoIdleService.destroy();
+  } catch (e) {}
   let config = loadConfig(),
+    serviceSource,
     serviceFactory,
     idleService;
+  if (cold && (config.enabled || config.mesEnabled)) {
+    config.enabled = 0;
+    config.mesEnabled = 0;
+    config.mesFile = '';
+    saveConfig(config);
+  }
   try {
-    serviceFactory = eval(fs.readFileSync(basePath + 'SERVICE.JS'));
-    idleService = serviceFactory(
-      config,
-      fs,
-      basePath,
-      mesmetronPath,
-      pipquariumPath,
-      pipquariumSentinel,
-      log,
-    );
+    serviceSource = fs.readFileSync(basePath + 'SERVICE.JS');
+    serviceFactory = Function('return ' + serviceSource)();
+    serviceSource = undefined;
+    idleService = serviceFactory();
+    serviceFactory = undefined;
   } catch (e) {
     log('SERVICE.JS failed: ' + e);
     Pip.errorBox(e);
     return {
-      id: 'pip-co-idle-frameworks',
+      id: 'PIPCOIDLEFRAMEWORKS',
       notDefault: true,
       fullscreen: true,
       remove: function () {},
     };
   }
-  serviceFactory = undefined;
   idleService.detachInputs();
   E.defrag();
-
   let providerNames = [],
     providerFiles = [];
   try {
     let mesmetronTitle = eval(fs.readFileSync(mesmetronPath + 'TITLE.JS'))(),
       mesmetronItems =
         mesmetronTitle && mesmetronTitle.items ? mesmetronTitle.items : [];
-    for (let i = 0; i < mesmetronItems.length; i++) {
+    for (let i = 0; i < mesmetronItems.length; i++)
       if (
         mesmetronItems[i] &&
         mesmetronItems[i].name &&
@@ -82,30 +101,22 @@
         providerNames.push(String(mesmetronItems[i].name));
         providerFiles.push(String(mesmetronItems[i].file));
       }
-    }
     mesmetronTitle = undefined;
     mesmetronItems = undefined;
   } catch (e) {}
-
-  /* Pipquarium is optional. statSync checks installation without reading its
-   heavy APP.JS into RAM while the PIP-CO menu is opening. */
   try {
     if (fs.statSync(pipquariumPath + 'APP.JS')) {
       providerNames.push('Pipquarium');
       providerFiles.push(pipquariumSentinel);
     }
   } catch (e) {}
-
   let selectedProvider = 0;
-  if (config.mesEnabled && config.mesFile) {
-    for (let i = 0; i < providerFiles.length; i++) {
+  if (config.mesEnabled && config.mesFile)
+    for (let i = 0; i < providerFiles.length; i++)
       if (providerFiles[i] === config.mesFile) {
         selectedProvider = i + 1;
         break;
       }
-    }
-  }
-
   let menuPage = 0,
     mainSelection = 0,
     mainScroll = 0,
@@ -114,8 +125,8 @@
     previewSubmenu = 0,
     configDirty = 0,
     appClosed = 0,
+    previewOwned = 0,
     previewTimer;
-
   function drawHeader() {
     h.clear();
     try {
@@ -188,7 +199,6 @@
       drawScroller();
       return;
     }
-
     if (submenuIndex === 0) {
       drawRow(
         126,
@@ -200,7 +210,6 @@
       drawText(246, 'Idle Time: 2 Minutes');
       return;
     }
-
     if (submenuSelection === 0) Pip.shadeBox(24, 104, 456, 130);
     h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1);
     h.drawString(providerNames[submenuIndex - 1], 38, 108);
@@ -215,8 +224,12 @@
     drawRow(188, '< Back', submenuSelection === 2);
     drawText(228, 'Idle Time: 2 Minutes');
   }
-
   function leavePreview() {
+    if (previewTimer) {
+      clearTimeout(previewTimer);
+      previewTimer = undefined;
+    }
+    previewOwned = 0;
     idleService.stop(0);
     menuPage = 1;
     submenuIndex = previewSubmenu;
@@ -225,12 +238,10 @@
   }
   function onKnob1(direction) {
     idleService.last = getTime();
-
-    if (idleService.active && idleService.preview) {
+    if (previewOwned || (idleService.active && idleService.preview)) {
       leavePreview();
       return;
     }
-
     if (menuPage === 0) {
       if (direction) {
         mainSelection += direction > 0 ? 1 : -1;
@@ -240,7 +251,6 @@
         drawMenu();
         return;
       }
-
       Pip.playSound('SELECT');
       if (mainSelection === itemCount() - 1) {
         Pip.changeMenu('MISC.JS');
@@ -252,7 +262,6 @@
       drawMenu();
       return;
     }
-
     if (direction) {
       submenuSelection += direction > 0 ? 1 : -1;
       if (submenuSelection < 0) submenuSelection = 2;
@@ -261,9 +270,7 @@
       drawMenu();
       return;
     }
-
     if (submenuSelection !== 1) Pip.playSound('SELECT');
-
     if (submenuSelection === 2) {
       menuPage = 0;
       submenuIndex = -1;
@@ -271,7 +278,6 @@
       drawMenu();
       return;
     }
-
     if (submenuIndex === 0) {
       if (submenuSelection === 0) {
         config.enabled = config.enabled ? 0 : 1;
@@ -283,16 +289,18 @@
         drawMenu();
         return;
       }
-
       previewSubmenu = 0;
+      previewOwned = 1;
       if (previewTimer) clearTimeout(previewTimer);
       previewTimer = setTimeout(function () {
         previewTimer = undefined;
-        if (!appClosed && !idleService.active) idleService.play(1);
+        if (!appClosed && !idleService.active) {
+          idleService.play(1);
+          if (!idleService.active) previewOwned = 0;
+        } else if (appClosed) previewOwned = 0;
       }, 120);
       return;
     }
-
     if (submenuSelection === 0) {
       if (selectedProvider === submenuIndex) {
         selectedProvider = 0;
@@ -309,19 +317,21 @@
       drawMenu();
       return;
     }
-
     previewSubmenu = submenuIndex;
+    previewOwned = 1;
     if (previewTimer) clearTimeout(previewTimer);
     previewTimer = setTimeout(function () {
       previewTimer = undefined;
       if (!appClosed && !idleService.active) {
         idleService.playProvider(1, providerFiles[previewSubmenu - 1]);
-      }
+        if (!idleService.active) previewOwned = 0;
+      } else if (appClosed) previewOwned = 0;
     }, 120);
   }
   function onKnob2() {
     idleService.last = getTime();
-    if (idleService.active && idleService.preview) leavePreview();
+    if (previewOwned || (idleService.active && idleService.preview))
+      leavePreview();
   }
   function claimInputs() {
     idleService.detachInputs();
@@ -330,17 +340,16 @@
     Pip.onExclusive('knob1', onKnob1);
     Pip.onExclusive('knob2', onKnob2);
   }
-
   idleService.claimInputs = claimInputs;
   claimInputs();
   drawMenu();
-
   return {
-    id: 'pip-co-idle-frameworks',
+    id: 'PIPCOIDLEFRAMEWORKS',
     notDefault: true,
     fullscreen: true,
     remove: function () {
       appClosed = 1;
+      previewOwned = 0;
       if (previewTimer) {
         clearTimeout(previewTimer);
         previewTimer = undefined;
@@ -349,7 +358,6 @@
       Pip.removeListener('knob2', onKnob2);
       idleService.claimInputs = undefined;
       if (idleService.active) idleService.stop(0);
-
       if (configDirty) {
         config.mesEnabled = selectedProvider ? 1 : 0;
         config.mesFile = selectedProvider
@@ -359,15 +367,14 @@
         idleService.providerFile = config.mesFile;
         saveConfig(config);
       }
-
       providerNames = undefined;
       providerFiles = undefined;
       h.clear();
+      let armWake = idleService.enabled || idleService.providerEnabled;
+      idleService.destroy();
+      idleService = undefined;
       E.defrag();
-
-      if (!idleService.enabled && !idleService.providerEnabled)
-        idleService.destroy();
-      else if (!idleService.runner) idleService.attachInputs();
+      if (armWake) startWake();
     },
   };
 });
