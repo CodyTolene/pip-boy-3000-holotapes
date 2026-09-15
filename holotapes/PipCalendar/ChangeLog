@@ -1,3 +1,7 @@
 1.0.0 (2026-09-07)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/101
 - Initial release.
+
+1.0.1 (2026-09-14)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/109
+- Fixed issue with keyboard not closing when exiting holotape.
