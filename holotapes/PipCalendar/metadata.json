@@ -2,7 +2,7 @@
   "id": "pipcalendar",
   "name": "Pip-Calendar",
   "author": "@GlitchedMicrowave",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple calendar and note-taking app for you Pip-Boy.",
   "icon": "previews/icon.png",
   "previews": ["previews/calendarpreview.bmp"],
