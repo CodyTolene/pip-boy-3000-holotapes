@@ -9,7 +9,7 @@
   "type": "app",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/PIPCALENDAR/APP.JS", "url": "app.min.js" },
+    { "name": "HOLO/PIPCALENDAR/APP.JS", "url": "APP.MIN.JS" },
     { "name": "HOLO/PIPCALENDAR/DAYS.IMG", "url": "assets/DAYS.IMG" },
     { "name": "HOLO/PIPCALENDAR/ROBCO.IMG", "url": "assets/ROBCO.IMG" }
   ],

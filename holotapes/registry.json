@@ -1043,7 +1043,7 @@
     "storage": [
       {
         "name": "HOLO/PIPCALENDAR/APP.JS",
-        "url": "PipCalendar/app.min.js"
+        "url": "PipCalendar/APP.MIN.JS"
       },
       {
         "name": "HOLO/PIPCALENDAR/DAYS.IMG",
