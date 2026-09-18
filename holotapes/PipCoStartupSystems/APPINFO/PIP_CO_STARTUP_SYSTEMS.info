@@ -1,0 +1,7 @@
+{
+  "id": "startup-animations",
+  "name": "PIP-CO Startup Systems",
+  "version": "1.4.0",
+  "src": "HOLO/STARTUP_ANIMATIONS/APP.JS",
+  "icon": "HOLO/STARTUP_ANIMATIONS/PIP_CO_STARTUP_SYSTEMS.IMG"
+}

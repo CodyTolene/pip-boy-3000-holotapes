@@ -1,31 +1,13 @@
-1.3.0 (2026-09-10)
+1.4.0 (2026-09-17)
+__PR_LINK__
+- Added APPINFO-backed MISC artwork using the supplied PIP-CO Startup Systems IMG.
+- Added readable source files alongside compact installed runtime files for the UI, startup runtime, and deferred wake loader.
+- Removed public diagnostic logging and kept the installed runtime focused on low-memory operation.
+- Removed whole-module `ram` directives and tightened temporary source/factory cleanup around deferred runtime loading.
+- Fixed post-boot last-frame retention by always stopping owned AVI/audio playback, resetting the display state, and restoring the proven 160 ms Pip-OS handoff delay.
+- Preserved the split wake/runtime architecture, optional startup AVI support, Custom Bootups, reset-safe Default Bootup behavior, and stock fallback.
+
+1.3.0 (2026-09-13)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/105
-- Split the startup UI from the persistent startup runtime and deferred wake loader to reduce retained RAM after leaving the holotape.
-- Added STARTUP_RUNTIME.JS and STARTUP_WAKE.JS as required core runtime files.
-- Added reset-safe behavior: a true cold reboot/crash/power-loss reset returns Startup Systems to Default Bootup, while normal standby/off-to-on behavior keeps the active same-session selection.
-- Added scroll support for startup submenus that exceed the visible row count.
-- Preserved v1.2.0 support for up to five drop-in Custom_Bootup AVI files and all existing optional built-in startup media.
-- Preserved embedded AVI audio, stock fallback behavior, and hardware-tested startup timings.
+- Public release with low-RAM persistent startup runtime, deferred wake loader, reset-safe Default Bootup policy, category scrolling, and optional startup AVI support.
 
-1.2.0 (2026-08-26)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/97
-- Added automatic detection of up to five user-supplied Custom_Bootup AVI files directly in HOLO/STARTUP_ANIMATIONS/.
-- Custom Bootups submenu appears only when at least one supported custom AVI exists.
-- No custom folder, JSON descriptor, or core JavaScript editing required.
-- Custom scanning occurs only when opening the holotape UI; persistent boot runtime stores/uses only the selected startup index.
-- Existing built-in startup behavior and low-memory runtime separation preserved.
-
-1.1.0 (2026-08-21)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/83
-- Added low-memory runtime separation so the persistent startup hook does not retain the full holotape UI closure.
-- Fixed repeated boot-cycle crashes reported as CALLBACK, LOW_MEMORY, and MEMORY on Pip-Boy OS 1.1.6.
-- Moved hard-failsafe timing to begin after video playback starts.
-- Added the NPC submenu scroll indicator.
-- Added Dogmeat and Mr. House startup variants to the modular startup list.
-- Kept startup audio embedded in AVI files; no separate WAV dependencies.
-- Kept the targeted clean ENCLAVE_PIPBOY.AVI media fix for the 1.1.6 black-video/audio-only case.
-- Removed diagnostic PIP-CO logging and runtime APPINFO self-registration from the public modular build.
-
-1.0.0 (2026-08-08)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/79
-- Initial PIP-CO Startup Systems release.
