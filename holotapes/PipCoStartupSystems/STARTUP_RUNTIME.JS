@@ -142,20 +142,30 @@
           videoStoppedHandler = undefined;
         }
 
+        // Always stop the owned media before handing control back to Pip-OS.
+        // Older hardware-tested builds used this same handoff and did not leave
+        // the AVI decoder's final frame on the display after wake.
         if (ownsVideo) {
           try {
             Pip.videoStop();
-          } catch (error) {}
+          } catch (error) {
+            // Playback may already have reached EOF; videoStop is cleanup only.
+          }
         }
         if (ownsAudio) {
           try {
             Pip.audioStop();
-          } catch (error) {}
+          } catch (error) {
+            // Embedded AVI audio may already have stopped with the video.
+          }
         }
 
         ownsVideo = ownsAudio = 0;
         h.reset().setClipRect(0, 0, 479, 319);
         suppressNextCrtSound = 1;
+
+        // Preserve the proven handoff delay so the video layer can fully
+        // release before firmware redraws the normal Pip-Boy screen.
         setTimeout(done, 160);
       }
 
@@ -172,7 +182,9 @@
         try {
           Pip.videoStop();
           Pip.audioStop();
-        } catch (error) {}
+        } catch (error) {
+          // Stopping stale playback is defensive; continue with a clean screen.
+        }
         h.clear();
         h.flip();
 

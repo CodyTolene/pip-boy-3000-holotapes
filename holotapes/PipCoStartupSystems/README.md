@@ -49,6 +49,7 @@ Designed for The Wand Company Pip-Boy 3000 firmware 1.1.6. Real-device testing r
 
 @LlamaYeYe
 
+
 ## MISC holotape icon
 
 The package includes `APPINFO/PIP_CO_STARTUP_SYSTEMS.info` and the supplied `PIP_CO_STARTUP_SYSTEMS.IMG`. The APPINFO entry points its `icon` field at `HOLO/STARTUP_ANIMATIONS/PIP_CO_STARTUP_SYSTEMS.IMG`, so the custom image is used for the holotape entry in MISC.
