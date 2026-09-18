@@ -47,10 +47,7 @@
     "version": "1.0.0",
     "description": "Place your airships, and blow up the enemies with the fog of war hiding them from you!",
     "icon": "BattlePip/assets/AIRSHIP.IMG",
-    "previews": [
-      "BattlePip/previews/menu.bmp",
-      "BattlePip/previews/game.bmp"
-    ],
+    "previews": ["BattlePip/previews/menu.bmp", "BattlePip/previews/game.bmp"],
     "type": "game",
     "readme": "BattlePip/README.md",
     "storage": [
@@ -108,9 +105,7 @@
     "version": "1.1.0",
     "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
     "icon": "Blackjack/previews/blackjack.png",
-    "previews": [
-      "Blackjack/previews/game.bmp"
-    ],
+    "previews": ["Blackjack/previews/game.bmp"],
     "type": "game",
     "readme": "Blackjack/README.md",
     "storage": [
@@ -177,9 +172,7 @@
     "version": "1.0.0",
     "description": "A .txt file reader for your Pip-Boy. Auto-bookmarking per page change, supports subfolders to help organize, and brightness control with the left wheel while reading.",
     "icon": "BookIt/assets/BOOKIT.IMG",
-    "previews": [
-      "BookIt/previews/menu.bmp"
-    ],
+    "previews": ["BookIt/previews/menu.bmp"],
     "type": "app",
     "readme": "BookIt/README.md",
     "storage": [
@@ -395,10 +388,7 @@
     "version": "1.1.0",
     "description": "A two-player Checkers game for the Pip-Boy 3000, with you playing against an AI opponent. Standard rules apply including forced jumps, multi-jumps, and king promotion.",
     "icon": "Checkers/previews/checkers.png",
-    "previews": [
-      "Checkers/previews/menu.bmp",
-      "Checkers/previews/game.bmp"
-    ],
+    "previews": ["Checkers/previews/menu.bmp", "Checkers/previews/game.bmp"],
     "type": "game",
     "readme": "Checkers/README.md",
     "storage": [
@@ -428,10 +418,7 @@
     "version": "1.0.0",
     "description": "A Drug Wars-style trading game set in the Mojave. You lost a shipment belonging to the Omertas and have 30 days to raise 50,000 caps before they collect your kneecaps. Buy low, sell high across six locations while dodging Officer NARC-9, one of Mr. House's police Securitrons on chem-interdiction patrol, along with other wasteland woes.",
     "icon": "ChemWars/chem-wars.png",
-    "previews": [
-      "ChemWars/previews/title.png",
-      "ChemWars/previews/game.png"
-    ],
+    "previews": ["ChemWars/previews/title.png", "ChemWars/previews/game.png"],
     "type": "game",
     "readme": "ChemWars/README.md",
     "storage": [
@@ -494,10 +481,7 @@
     "version": "1.0.0",
     "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
     "icon": "Fanorona/previews/fanorona.png",
-    "previews": [
-      "Fanorona/previews/menu.bmp",
-      "Fanorona/previews/game.bmp"
-    ],
+    "previews": ["Fanorona/previews/menu.bmp", "Fanorona/previews/game.bmp"],
     "type": "game",
     "readme": "Fanorona/README.md",
     "storage": [
@@ -556,10 +540,7 @@
     "version": "1.0.0",
     "description": "A text-based recreation of the Vault 101 Generalized Occupational Aptitude Test (G.O.A.T.) from Fallout 3. This holotape recreates all 10 original test questions and answers. Your answers are tallied by skill, and at the end of the test you're assigned a Vault job.",
     "icon": "TheGOAT/previews/GOAT.png",
-    "previews": [
-      "TheGOAT/previews/menu.bmp",
-      "TheGOAT/previews/game.bmp"
-    ],
+    "previews": ["TheGOAT/previews/menu.bmp", "TheGOAT/previews/game.bmp"],
     "type": "game",
     "readme": "TheGOAT/README.md",
     "storage": [
@@ -577,9 +558,7 @@
     "version": "1.0.0",
     "description": "A native-feeling calendar with date jumping and note-taking.",
     "icon": "HAMCoCalendar/assets/hamcal.IMG",
-    "previews": [
-      "HAMCoCalendar/previews/AUG.bmp"
-    ],
+    "previews": ["HAMCoCalendar/previews/AUG.bmp"],
     "type": "app",
     "readme": "HAMCoCalendar/README.md",
     "storage": [
@@ -674,9 +653,7 @@
     "version": "1.0.0",
     "description": "A PIN lock screen for your Pip-Boy. Set a 4-digit access code, pick a faction logo, and choose whether it locks on startup, on wake from sleep, or both.",
     "icon": "HamcoLock/assets/HAMCOLOCK.IMG",
-    "previews": [
-      "HamcoLock/previews/settings.bmp"
-    ],
+    "previews": ["HamcoLock/previews/settings.bmp"],
     "tags": "system,tool",
     "type": "app",
     "readme": "HamcoLock/README.md",
@@ -1004,10 +981,7 @@
     "version": "1.0.0",
     "description": "Pong on the Pip-Boy 3000a.",
     "icon": "PipPong/previews/PipPong.PNG",
-    "previews": [
-      "PipPong/previews/menu.bmp",
-      "PipPong/previews/game.bmp"
-    ],
+    "previews": ["PipPong/previews/menu.bmp", "PipPong/previews/game.bmp"],
     "type": "game",
     "readme": "PipPong/README.MD",
     "storage": [
@@ -1045,9 +1019,7 @@
     "version": "1.0.0",
     "description": "A simple calculator app for the Pip-Boy 3000.",
     "icon": "PipCalc/previews/pipcalc.png",
-    "previews": [
-      "PipCalc/previews/calculator.bmp"
-    ],
+    "previews": ["PipCalc/previews/calculator.bmp"],
     "tags": "tool",
     "type": "app",
     "readme": "PipCalc/README.md",
@@ -1065,9 +1037,7 @@
     "version": "1.0.1",
     "description": "A simple calendar and note-taking app for you Pip-Boy.",
     "icon": "PipCalendar/previews/icon.png",
-    "previews": [
-      "PipCalendar/previews/calendarpreview.bmp"
-    ],
+    "previews": ["PipCalendar/previews/calendarpreview.bmp"],
     "type": "app",
     "readme": "PipCalendar/README.md",
     "storage": [
@@ -1093,9 +1063,7 @@
     "version": "1.1.0",
     "description": "PIP-CO Idle Frameworks adds a two-minute Pip-Boy screensaver with a lower-memory wake/service runtime and optional dynamic Mesmetron and Pipquarium provider integration.",
     "icon": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG",
-    "previews": [
-      "PipCoIdleFrameworks/previews/menu.bmp"
-    ],
+    "previews": ["PipCoIdleFrameworks/previews/menu.bmp"],
     "type": "app",
     "readme": "PipCoIdleFrameworks/README.md",
     "storage": [
@@ -1285,10 +1253,7 @@
     "version": "1.0.0",
     "description": "A Fallout-themed take on the classic Tic-Tac-Toe. Challenge a friend in 2-Player mode or take on the CPU.",
     "icon": "PipTacToe/previews/piptactoe.png",
-    "previews": [
-      "PipTacToe/previews/menu.bmp",
-      "PipTacToe/previews/game.bmp"
-    ],
+    "previews": ["PipTacToe/previews/menu.bmp", "PipTacToe/previews/game.bmp"],
     "type": "game",
     "readme": "PipTacToe/README.md",
     "storage": [
@@ -1334,10 +1299,7 @@
     "version": "1.0.0",
     "description": "A Wordle clone for the Pip-Boy 3000.",
     "icon": "PipWordle/previews/wordle.png",
-    "previews": [
-      "PipWordle/previews/menu.bmp",
-      "PipWordle/previews/game.bmp"
-    ],
+    "previews": ["PipWordle/previews/menu.bmp", "PipWordle/previews/game.bmp"],
     "type": "game",
     "readme": "PipWordle/README.md",
     "storage": [
@@ -1359,10 +1321,7 @@
     "version": "1.0.0",
     "description": "Chess on the Pip-Boy!",
     "icon": "PipChess/previews/PipChess.png",
-    "previews": [
-      "PipChess/previews/menu.bmp",
-      "PipChess/previews/game.bmp"
-    ],
+    "previews": ["PipChess/previews/menu.bmp", "PipChess/previews/game.bmp"],
     "type": "game",
     "readme": "PipChess/README.md",
     "storage": [
@@ -1380,9 +1339,7 @@
     "version": "1.0.0",
     "description": "Turns the Pip-Boy into a HID (Human Interface Device) for interacting with a computer, ported from the EXT TERMINAL attachment in the Pip-Boy 3000 Mk V firmware.",
     "icon": "PipHID/PIPHID.IMG",
-    "previews": [
-      "PipHID/previews/preview.bmp"
-    ],
+    "previews": ["PipHID/previews/preview.bmp"],
     "type": "app",
     "readme": "PipHID/README.md",
     "storage": [
@@ -1400,10 +1357,7 @@
     "version": "1.0.1",
     "description": "PipMan is a Pac-Man inspired arcade game built for the Pip-Boy 3000, blending retro gaming nostalgia with the iconic wasteland aesthetic. Navigate the vault, dodge ghouls, and collect every bottle caps, all from the wrist-mounted terminal of the Commonwealth.",
     "icon": "PipMan/previews/pipman_logo.png",
-    "previews": [
-      "PipMan/previews/menu.bmp",
-      "PipMan/previews/game.bmp"
-    ],
+    "previews": ["PipMan/previews/menu.bmp", "PipMan/previews/game.bmp"],
     "type": "game",
     "readme": "PipMan/README.md",
     "storage": [
@@ -1421,9 +1375,7 @@
     "version": "1.0.0",
     "description": "A Pip-Boy 3000 remake of the classic Windows 95 Plus! for Kids Underwater screensaver, with real fish artwork extracted from the original screensaver.",
     "icon": "Pipquarium/PIPQUARIUM.IMG",
-    "previews": [
-      "Pipquarium/previews/preview.bmp"
-    ],
+    "previews": ["Pipquarium/previews/preview.bmp"],
     "type": "app",
     "readme": "Pipquarium/README.md",
     "storage": [
@@ -1602,9 +1554,7 @@
     "version": "1.0.0",
     "description": "Play videos using your pip-boy on your pc.",
     "icon": "PipVideoController/previews/PipVideoController.png",
-    "previews": [
-      "PipVideoController/previews/start.bmp"
-    ],
+    "previews": ["PipVideoController/previews/start.bmp"],
     "type": "app",
     "readme": "PipVideoController/README.md",
     "storage": [
@@ -1937,10 +1887,7 @@
     "version": "1.0.0",
     "description": "One of the most famous single-player card games, now playable on the Pip-Boy!",
     "icon": "Solitaire/assets/SOLITAIRE.IMG",
-    "previews": [
-      "Solitaire/previews/menu.bmp",
-      "Solitaire/previews/game.bmp"
-    ],
+    "previews": ["Solitaire/previews/menu.bmp", "Solitaire/previews/game.bmp"],
     "type": "game",
     "readme": "Solitaire/README.md",
     "storage": [
@@ -2006,9 +1953,7 @@
     "version": "1.1.0",
     "description": "Like an etch-a-sketch but for your pip-boy and shades to choose from, autosave, and an eraser!",
     "icon": "Sukechi/sukechi.png",
-    "previews": [
-      "Sukechi/previews/game.bmp"
-    ],
+    "previews": ["Sukechi/previews/game.bmp"],
     "previousId": "ssukechi",
     "type": "game",
     "readme": "Sukechi/README.md",
