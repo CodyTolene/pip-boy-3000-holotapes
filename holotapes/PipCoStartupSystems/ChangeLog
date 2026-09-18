@@ -1,5 +1,4 @@
 1.4.0 (2026-09-17)
-__PR_LINK__
 - Added APPINFO-backed MISC artwork using the supplied PIP-CO Startup Systems IMG.
 - Added readable source files alongside compact installed runtime files for the UI, startup runtime, and deferred wake loader.
 - Removed public diagnostic logging and kept the installed runtime focused on low-memory operation.
