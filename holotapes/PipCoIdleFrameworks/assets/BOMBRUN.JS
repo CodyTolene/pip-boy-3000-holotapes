@@ -1,14 +1,15 @@
-(function (idleService, fs, basePath, log, audioMuted) {
-  let frameTimer,
-    audioWatchTimer,
+(function(idleService, fs, basePath, ignoreError, audioAlreadyActive) {
+  let frameTimer = 0,
+    audioWatchTimer = 0,
     logoImage,
-    bombSprite,
+    bombImage,
     bombX,
     bombY,
     logoFramesRemaining = 60,
     bombReady = 0,
     movementPhase = 0,
     ownsAudio = 0;
+
   function resetBomb(index) {
     switch (index) {
       case 0:
@@ -68,117 +69,130 @@
         bombY[index] = -210;
     }
   }
+
+  function restartOwnedAudio() {
+    if (idleService.active && ownsAudio && Pip.audioIsPlaying && !Pip.audioIsPlaying()) {
+      try {
+        Pip.audioStart(basePath + "FALLOUT.WAV", { repeat: true });
+      } catch (error) {
+        ignoreError("screensaver audio restart failed: " + error);
+      }
+    }
+  }
+
   function startBombRenderer() {
     if (bombReady) return 1;
     logoImage = undefined;
+    process.memory(true);
     E.defrag();
     try {
-      bombSprite = eval(fs.readFileSync(basePath + 'BOMB.JS'));
-    } catch (e) {
-      log('BOMB.JS load failed: ' + e);
+      bombImage = {
+        width: 71,
+        height: 67,
+        bpp: 2,
+        transparent: 0,
+        buffer: fs.readFileSync(basePath + "BOMB.BIN")
+      };
+    } catch (error) {
+      ignoreError("BOMB.BIN load failed: " + error);
       return 0;
     }
-    bombX = new Int16Array([
-      455, 390, 325, 255, 185, 520, 445, 370, 295, 610, 535, 460, 385, 690,
-    ]);
-    bombY = new Int16Array([
-      -67, -22, 18, 62, 106, -125, -170, -215, -260, -70, -120, -170, -220,
-      -130,
-    ]);
+
+    bombX = new Int16Array([455, 390, 325, 255, 185, 520, 445, 370, 295, 610, 535, 460, 385, 690]);
+    bombY = new Int16Array([-67, -22, 18, 62, 106, -125, -170, -215, -260, -70, -120, -170, -220, -130]);
     bombReady = 1;
-    if (!audioMuted) {
+
+    if (!audioAlreadyActive) {
       try {
-        Pip.audioStart(basePath + 'FALLOUT.WAV', { repeat: true });
+        Pip.audioStart(basePath + "FALLOUT.WAV", { repeat: true });
         ownsAudio = 1;
-      } catch (e) {}
-      audioWatchTimer = setInterval(function () {
-        if (
-          idleService.active &&
-          ownsAudio &&
-          Pip.audioIsPlaying &&
-          !Pip.audioIsPlaying()
-        ) {
-          try {
-            Pip.audioStart(basePath + 'FALLOUT.WAV', { repeat: true });
-          } catch (e) {}
-        }
-      }, 10000);
+      } catch (error) {
+        ignoreError("screensaver audio start failed: " + error);
+      }
+      if (ownsAudio) audioWatchTimer = setInterval(restartOwnedAudio, 10000);
     }
     return 1;
   }
+
   function drawFrame() {
-    'ram';
+    "ram";
+    let bombIndex;
     if (!idleService.active) return;
     h.reset().setClipRect(0, 0, 479, 319).clear(0);
+
     if (logoFramesRemaining > 0) {
       h.setColor(3).drawImage(
         logoImage,
         (480 - logoImage.width) >> 1,
-        (320 - logoImage.height) >> 1,
+        (320 - logoImage.height) >> 1
       );
       logoFramesRemaining--;
       h.flip();
       Pip.lastFlip = getTime();
       return;
     }
+
     if (!bombReady && !startBombRenderer()) {
       idleService.stop(1);
       return;
     }
-    for (let i = 0; i < 14; i++) {
-      let deltaX = movementPhase ? 3 : 2,
-        deltaY = 2;
-      h.drawImage(bombSprite, bombX[i], bombY[i]);
-      if (i === 1 || i === 5 || i === 10) {
-        deltaX++;
-        deltaY++;
+
+    for (bombIndex = 0; bombIndex < 14; bombIndex++) {
+      h.drawImage(bombImage, bombX[bombIndex], bombY[bombIndex]);
+      bombX[bombIndex] -= movementPhase ? 3 : 2;
+      bombY[bombIndex] += 2;
+      if (bombIndex === 1 || bombIndex === 5 || bombIndex === 10) {
+        bombX[bombIndex]--;
+        bombY[bombIndex]++;
       }
-      bombX[i] -= deltaX;
-      bombY[i] += deltaY;
-      if (bombX[i] < -71 && bombY[i] > 320) resetBomb(i);
+      if (bombX[bombIndex] < -71 && bombY[bombIndex] > 320) resetBomb(bombIndex);
     }
+
     movementPhase = movementPhase ? 0 : 1;
     h.flip();
     Pip.lastFlip = getTime();
   }
+
+  function stopRenderer() {
+    if (frameTimer) {
+      clearInterval(frameTimer);
+      frameTimer = 0;
+    }
+    if (audioWatchTimer) {
+      clearInterval(audioWatchTimer);
+      audioWatchTimer = 0;
+    }
+    if (ownsAudio) {
+      try {
+        Pip.audioStop();
+      } catch (error) {
+        ignoreError("screensaver audio stop failed: " + error);
+      }
+    }
+    ownsAudio = 0;
+    logoImage = bombImage = bombX = bombY = undefined;
+    h.reset().setClipRect(0, 0, 479, 319);
+    process.memory(true);
+    E.defrag();
+  }
+
   try {
     logoImage = {
       width: 240,
       height: 227,
       bpp: 1,
       transparent: 0,
-      buffer: fs.readFileSync(basePath + 'LOGO.BIN'),
+      buffer: fs.readFileSync(basePath + "LOGO.BIN")
     };
-  } catch (e) {
-    log('LOGO.BIN load failed: ' + e);
+  } catch (error) {
+    ignoreError("LOGO.BIN load failed: " + error);
     return;
   }
+
   h.reset().setClipRect(0, 0, 479, 319).clear(0);
   h.flip();
   Pip.lastFlip = getTime();
   drawFrame();
   frameTimer = setInterval(drawFrame, 83);
-  return {
-    stop: function () {
-      if (frameTimer) {
-        clearInterval(frameTimer);
-        frameTimer = undefined;
-      }
-      if (audioWatchTimer) {
-        clearInterval(audioWatchTimer);
-        audioWatchTimer = undefined;
-      }
-      if (ownsAudio) {
-        try {
-          Pip.audioStop();
-        } catch (e) {}
-      }
-      ownsAudio = 0;
-      logoImage = undefined;
-      bombSprite = undefined;
-      bombX = undefined;
-      bombY = undefined;
-      h.reset().setClipRect(0, 0, 479, 319);
-    },
-  };
+  return { stop: stopRenderer };
 });

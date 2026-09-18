@@ -1,138 +1,167 @@
-(function () {
-  const f = require('fs'),
-    B = 'HOLO/FALLOUT_SCREENSAVER/',
-    M = 'HOLO/MESMETRON/',
-    Q = 'HOLO/PIPQUARIUM/',
-    S = '@PIPQUARIUM';
-  function L(x) {
+(function() {
+  const fs = require("fs"),
+    basePath = "HOLO/FALLOUT_SCREENSAVER/",
+    mesmetronPath = "HOLO/MESMETRON/";
+
+  let existingService = global.__PipCoIdleService,
+    returnToMenuTimer = 0;
+
+  function ignoreError(message) {}
+
+  function loadConfig() {
     try {
-      if (Pip.log) Pip.log('IDLEFW: ' + x, 'pipco.txt');
-    } catch (e) {}
-  }
-  function C() {
-    try {
-      let x = JSON.parse(f.readFileSync(B + 'CONFIG.JSON'));
-      return [x.enabled ? 1 : 0, x.mesEnabled ? 1 : 0, x.mesFile || ''];
-    } catch (e) {
-      return [0, 0, ''];
+      let savedConfig = JSON.parse(fs.readFileSync(basePath + "CONFIG.JSON"));
+      return {
+        enabled: savedConfig.enabled ? 1 : 0,
+        providerEnabled: savedConfig.mesEnabled ? 1 : 0,
+        providerFile: savedConfig.mesFile || ""
+      };
+    } catch (error) {
+      return { enabled: 0, providerEnabled: 0, providerFile: "" };
     }
   }
-  let p = global.__PipCoIdleService;
-  if (p && p.destroy)
-    try {
-      p.destroy();
-    } catch (e) {}
-  let c = C(),
-    o = {
-      version: 'rewrite2k-transient',
-      enabled: c[0],
-      providerEnabled: c[1],
-      providerFile: c[2],
-      last: getTime(),
-      active: 0,
-      preview: 0,
-      runner: 0,
-      run: undefined,
-      claimInputs: undefined,
-    };
-  c = p = undefined;
-  function R() {
+
+  function audioAlreadyActive() {
     try {
       if (Pip.radioOn || global.__PipRadioActive) return 1;
       if (Pip.audioIsPlaying && Pip.audioIsPlaying()) return 1;
       if (Pip.streamPlaying) {
-        let x = Pip.streamPlaying();
-        if (x === 'audio' || x === 'both') return 1;
+        let streamType = Pip.streamPlaying();
+        if (streamType === "audio" || streamType === "both") return 1;
       }
-    } catch (e) {}
+    } catch (error) {
+      ignoreError("audio-state check failed: " + error);
+      return 1;
+    }
     return 0;
   }
-  function D() {}
-  function I() {}
-  function X(r) {
-    let x = o.run;
-    o.run = undefined;
-    if (x && x.stop)
-      try {
-        x.stop();
-      } catch (e) {
-        L('renderer stop failed: ' + e);
-      }
-    o.active = 0;
-    o.preview = 0;
-    o.last = getTime();
+
+  function loadRenderer(fileName, args) {
+    let sourceCode = 0,
+      rendererFactory = 0,
+      renderer = 0;
+    process.memory(true);
     E.defrag();
-    if (r && !o.runner)
-      setTimeout(function () {
+    try {
+      sourceCode = fs.readFileSync(basePath + fileName);
+      rendererFactory = eval(sourceCode);
+      sourceCode = 0;
+      renderer = rendererFactory.apply(undefined, args);
+      rendererFactory = 0;
+      process.memory(true);
+      return renderer;
+    } catch (error) {
+      sourceCode = rendererFactory = 0;
+      ignoreError(fileName + " load/start failed: " + error);
+      process.memory(true);
+      return 0;
+    }
+  }
+
+  function stopRenderer(returnToMenu) {
+    let renderer = service.run;
+    service.run = undefined;
+    if (renderer && renderer.stop) {
+      try {
+        renderer.stop();
+      } catch (error) {
+        ignoreError("renderer stop failed: " + error);
+      }
+    }
+    renderer = 0;
+    service.active = 0;
+    service.preview = 0;
+    service.last = getTime();
+    process.memory(true);
+    E.defrag();
+    if (returnToMenu && !service.runner) {
+      if (returnToMenuTimer) clearTimeout(returnToMenuTimer);
+      returnToMenuTimer = setTimeout(function() {
+        returnToMenuTimer = 0;
         try {
           Pip.changeMenu();
-        } catch (e) {
-          L('redraw failed: ' + e);
+        } catch (error) {
+          ignoreError("menu return failed: " + error);
         }
       }, 0);
-  }
-  function G(n, a) {
-    let g;
-    E.defrag();
-    try {
-      g = eval(f.readFileSync(B + n));
-    } catch (e) {
-      L(n + ' load failed: ' + e);
-      return;
-    }
-    try {
-      return g.apply(undefined, a);
-    } catch (e) {
-      L(n + ' start failed: ' + e);
     }
   }
-  function P(v) {
-    if (o.active || (!v && !o.enabled)) return;
-    o.preview = v ? 1 : 0;
-    o.active = 1;
-    o.run = G('BOMBRUN.JS', [o, f, B, L, R()]);
-    if (!o.run) {
-      o.active = 0;
-      o.preview = 0;
-      o.last = getTime();
+
+  function playBuiltIn(preview) {
+    if (service.active || (!preview && !service.enabled)) return;
+    service.preview = preview ? 1 : 0;
+    service.active = 1;
+    service.run = loadRenderer("BOMBRUN.JS", [service, fs, basePath, logError, audioAlreadyActive()]);
+    if (!service.run) {
+      service.active = 0;
+      service.preview = 0;
+      service.last = getTime();
       E.defrag();
     }
   }
-  function V(v, n) {
-    if (o.active) return;
-    if (v) {
-      if (!n) return;
-      o.preview = 1;
+
+  function playProvider(preview, fileName) {
+    if (service.active) return;
+    if (preview) {
+      if (!fileName) return;
+      service.preview = 1;
     } else {
-      if (!o.providerEnabled || !o.providerFile) return;
-      o.preview = 0;
-      n = o.providerFile;
+      if (!service.providerEnabled || !service.providerFile) return;
+      service.preview = 0;
+      fileName = service.providerFile;
     }
-    o.active = 1;
-    o.run =
-      n === S
-        ? G('PIPQIDLE.JS', [o, f, Q, L])
-        : G('MESIDLE.JS', [o, M, f, h, L, n]);
-    if (!o.run) {
-      o.active = 0;
-      o.preview = 0;
-      o.last = getTime();
+
+    if (fileName === "@PIPQUARIUM") return;
+    service.active = 1;
+    service.run = loadRenderer("MESIDLE.JS", [service, mesmetronPath, fs, logError, fileName]);
+    if (!service.run) {
+      service.active = 0;
+      service.preview = 0;
+      service.last = getTime();
       E.defrag();
     }
   }
-  function Z() {
-    if (o.active) X(0);
-    o.claimInputs = undefined;
-    o.run = undefined;
-    if (global.__PipCoIdleService === o) global.__PipCoIdleService = undefined;
+
+  function destroyService() {
+    if (returnToMenuTimer) {
+      clearTimeout(returnToMenuTimer);
+      returnToMenuTimer = 0;
+    }
+    if (service.active) stopRenderer(0);
+    service.claimInputs = undefined;
+    service.run = undefined;
+    if (global.__PipCoIdleService === service) global.__PipCoIdleService = undefined;
+    process.memory(true);
     E.defrag();
   }
-  o.stop = X;
-  o.play = P;
-  o.playProvider = V;
-  o.attachInputs = I;
-  o.detachInputs = D;
-  o.destroy = Z;
-  global.__PipCoIdleService = o;
-  return o;
+
+  if (existingService && existingService.destroy) {
+    try {
+      existingService.destroy();
+    } catch (error) {
+      ignoreError("existing service cleanup failed: " + error);
+    }
+  }
+  existingService = undefined;
+
+  let savedConfig = loadConfig();
+  const service = {
+    version: "1.2.0",
+    enabled: savedConfig.enabled,
+    providerEnabled: savedConfig.providerEnabled,
+    providerFile: savedConfig.providerFile,
+    last: getTime(),
+    active: 0,
+    preview: 0,
+    runner: 0,
+    run: undefined,
+    claimInputs: undefined,
+    stop: stopRenderer,
+    play: playBuiltIn,
+    playProvider: playProvider,
+    destroy: destroyService
+  };
+  savedConfig = undefined;
+  global.__PipCoIdleService = service;
+  return service;
 });

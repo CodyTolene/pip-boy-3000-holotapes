@@ -1,112 +1,163 @@
-(function () {
-  const f = require('fs'),
-    B = 'HOLO/FALLOUT_SCREENSAVER/';
-  if (!global.__PipCoIdleSessionV105) {
+(function() {
+  const fs = require("fs"),
+    basePath = "HOLO/FALLOUT_SCREENSAVER/";
+
+  if (!global.__PipCoIdleSessionV120) {
     try {
-      f.writeFileSync(
-        B + 'CONFIG.JSON',
-        '{"enabled":0,"mesEnabled":0,"mesFile":""}',
-      );
-    } catch (e) {}
-    global.__PipCoIdleSessionV105 = 1;
+      fs.writeFileSync(basePath + "CONFIG.JSON", '{"enabled":0,"mesEnabled":0,"mesFile":""}');
+    } catch (error) {
+      // Cold-session safety still disables the framework in memory.
+    }
+    global.__PipCoIdleSessionV120 = 1;
     return 0;
   }
-  function L(x) {
+
+  let idleTimer = 0,
+    active = 1,
+    listenerMask = 0,
+    existingWake = global.__PipCoIdleWake;
+
+  function ignoreError(message) {}
+
+  function loadIdleMode() {
     try {
-      if (Pip.log) Pip.log('IDLEFW: ' + x, 'pipco.txt');
-    } catch (e) {}
+      let savedConfig = JSON.parse(fs.readFileSync(basePath + "CONFIG.JSON"));
+      if (savedConfig.enabled) return 1;
+      if (savedConfig.mesEnabled && savedConfig.mesFile) {
+        if (savedConfig.mesFile === "@PIPQUARIUM") return 2;
+        return 1;
+      }
+    } catch (error) {
+      return 0;
+    }
+    return 0;
   }
-  function C() {
-    try {
-      let x = JSON.parse(f.readFileSync(B + 'CONFIG.JSON'));
-      return [x.enabled ? 1 : 0, x.mesEnabled ? 1 : 0];
-    } catch (e) {
-      return [0, 0];
+
+  function detachActivityListeners() {
+    if (listenerMask & 1) {
+      Pip.removeListener("mode", onActivity);
+      listenerMask &= ~1;
+    }
+    if (listenerMask & 2) {
+      Pip.removeListener("menuX", onActivity);
+      listenerMask &= ~2;
     }
   }
-  let t,
-    a = 1,
-    p = global.__PipCoIdleWake;
-  if (p && p.destroy)
+
+  function attachActivityListeners() {
+    detachActivityListeners();
+    Pip.on("mode", onActivity);
+    listenerMask |= 1;
     try {
-      p.destroy();
-    } catch (e) {}
-  function D() {
-    try {
-      Pip.removeListener('mode', A);
-      Pip.removeListener('menuX', A);
-    } catch (e) {}
-  }
-  function S() {
-    if (!a) return;
-    if (t) {
-      clearTimeout(t);
-      t = undefined;
+      Pip.on("menuX", onActivity);
+      listenerMask |= 2;
+    } catch (error) {
+      detachActivityListeners();
+      throw error;
     }
-    t = setTimeout(H, 120000);
   }
-  function A() {
-    S();
+
+  function scheduleIdleCheck() {
+    if (!active) return;
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(onIdleTimeout, 120000);
   }
-  function K() {
+
+  function onActivity() {
+    scheduleIdleCheck();
+  }
+
+  function shouldDeferIdle() {
     try {
       if (Pip.sleeping || Pip.menuChanging) return 1;
       if (Pip.CURRENT && Pip.CURRENT.notDefault) return 1;
       if (Pip.MODE === 2 && Pip.MENUX === 0) return 1;
-    } catch (e) {
+    } catch (error) {
       return 1;
     }
     return 0;
   }
-  function Z() {
-    if (!a) return;
-    a = 0;
-    if (t) {
-      clearTimeout(t);
-      t = undefined;
+
+  function destroyWake() {
+    if (!active) return;
+    active = 0;
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+      idleTimer = 0;
     }
-    D();
-    if (global.__PipCoIdleWake === o) global.__PipCoIdleWake = undefined;
+    detachActivityListeners();
+    if (global.__PipCoIdleWake === wakeApi) global.__PipCoIdleWake = undefined;
+    process.memory(true);
   }
-  function H() {
-    t = undefined;
-    if (!a) return;
-    let c = C();
-    if (!c[0] && !c[1]) {
-      Z();
+
+  function onIdleTimeout() {
+    let idleMode;
+    idleTimer = 0;
+    if (!active) return;
+    idleMode = loadIdleMode();
+    if (!idleMode) {
+      destroyWake();
       return;
     }
-    if (K()) {
-      S();
+    if (shouldDeferIdle()) {
+      scheduleIdleCheck();
       return;
     }
-    D();
+
+    detachActivityListeners();
     try {
-      if (typeof Pip.loadHolotape !== 'function')
-        throw new Error('Pip.loadHolotape unavailable');
-      Pip.loadHolotape(B + 'IDLE.JS');
-    } catch (e) {
-      L('runner load failed: ' + e);
-      if (a) {
+      if (typeof Pip.loadHolotape !== "function") {
+        throw new Error("Pip.loadHolotape unavailable");
+      }
+      E.defrag();
+      if (idleMode === 2) {
+        fs.writeFileSync(basePath + "PIPQMODE.CFG", "0");
+        Pip.loadHolotape(basePath + "PIPQRUN.JS");
+      } else {
+        Pip.loadHolotape(basePath + "IDLE.JS");
+      }
+    } catch (error) {
+      ignoreError("runner load failed: " + error);
+      if (active) {
         try {
-          Pip.on('mode', A);
-          Pip.on('menuX', A);
-        } catch (x) {}
-        S();
+          attachActivityListeners();
+          scheduleIdleCheck();
+        } catch (attachError) {
+          ignoreError("wake listener restore failed: " + attachError);
+          destroyWake();
+        }
       }
     }
   }
-  let c = C(),
-    o = { version: 'tiny-wake-1', destroy: Z, touch: A };
-  global.__PipCoIdleWake = o;
-  if (!c[0] && !c[1]) {
-    Z();
+
+  if (existingWake && existingWake.destroy) {
+    try {
+      existingWake.destroy();
+    } catch (error) {
+      ignoreError("existing wake cleanup failed: " + error);
+    }
+  }
+  existingWake = undefined;
+
+  const wakeApi = {
+    version: "1.2.0",
+    destroy: destroyWake,
+    touch: onActivity
+  };
+  global.__PipCoIdleWake = wakeApi;
+
+  if (!loadIdleMode()) {
+    destroyWake();
     return 0;
   }
+
   try {
-    Pip.on('mode', A);
-    Pip.on('menuX', A);
-  } catch (e) {}
-  S();
-  return o;
+    attachActivityListeners();
+  } catch (error) {
+    ignoreError("wake listener attach failed: " + error);
+    destroyWake();
+    return 0;
+  }
+  scheduleIdleCheck();
+  return wakeApi;
 });

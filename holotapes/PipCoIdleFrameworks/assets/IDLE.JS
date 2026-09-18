@@ -1,94 +1,165 @@
-(function () {
-  const f = require('fs'),
-    B = 'HOLO/FALLOUT_SCREENSAVER/';
-  if (!global.__PipCoIdleSessionV105) {
-    try {
-      f.writeFileSync(
-        B + 'CONFIG.JSON',
-        '{"enabled":0,"mesEnabled":0,"mesFile":""}',
-      );
-    } catch (e) {}
-    global.__PipCoIdleSessionV105 = 1;
+(function() {
+  const fs = require("fs"),
+    basePath = "HOLO/FALLOUT_SCREENSAVER/";
+
+  let idleService,
+    returnTimer = 0,
+    inputMask = 0,
+    removed = 0;
+
+  function ignoreError(message) {}
+
+  function loadFactory(fileName) {
+    let sourceCode = 0,
+      factory = 0;
+    process.memory(true);
+    E.defrag();
+    sourceCode = fs.readFileSync(basePath + fileName);
+    factory = eval(sourceCode);
+    sourceCode = 0;
+    return factory;
   }
-  function L(x) {
+
+  function startWakeWatcher() {
+    let wakeFactory = 0;
     try {
-      if (Pip.log) Pip.log('IDLEFW: ' + x, 'pipco.txt');
-    } catch (e) {}
-  }
-  function W() {
-    try {
-      let s = f.readFileSync(B + 'WAKE.JS'),
-        q = Function('return ' + s)();
-      s = undefined;
-      q();
-      q = undefined;
-    } catch (e) {
-      L('WAKE.JS failed: ' + e);
+      wakeFactory = loadFactory("WAKE.JS");
+      wakeFactory();
+      wakeFactory = 0;
+      process.memory(true);
+    } catch (error) {
+      wakeFactory = 0;
+      ignoreError("WAKE.JS failed: " + error);
     }
   }
-  function M() {
+
+  function returnToMenu() {
+    returnTimer = 0;
     try {
       Pip.changeMenu();
-    } catch (e) {}
+    } catch (error) {
+      ignoreError("menu return failed: " + error);
+    }
   }
-  try {
-    if (global.__PipCoIdleWake && global.__PipCoIdleWake.destroy)
+
+  function scheduleReturnToMenu() {
+    if (returnTimer) clearTimeout(returnTimer);
+    returnTimer = setTimeout(returnToMenu, 0);
+  }
+
+  function detachInputs() {
+    if (inputMask & 1) {
+      Pip.removeListener("knob1", onExitInput);
+      inputMask &= ~1;
+    }
+    if (inputMask & 2) {
+      Pip.removeListener("knob2", onExitInput);
+      inputMask &= ~2;
+    }
+  }
+
+  function attachInputs() {
+    detachInputs();
+    Pip.onExclusive("knob1", onExitInput);
+    inputMask |= 1;
+    try {
+      Pip.onExclusive("knob2", onExitInput);
+      inputMask |= 2;
+    } catch (error) {
+      detachInputs();
+      throw error;
+    }
+  }
+
+  function onExitInput() {
+    returnToMenu();
+  }
+
+  function removeRunner() {
+    if (removed) return;
+    removed = 1;
+    if (returnTimer) {
+      clearTimeout(returnTimer);
+      returnTimer = 0;
+    }
+    detachInputs();
+    if (idleService) {
+      idleService.stop(0);
+      idleService.runner = 0;
+      idleService.destroy();
+      idleService = undefined;
+    }
+    process.memory(true);
+    E.defrag();
+    startWakeWatcher();
+  }
+
+  if (!global.__PipCoIdleSessionV120) {
+    try {
+      fs.writeFileSync(basePath + "CONFIG.JSON", '{"enabled":0,"mesEnabled":0,"mesFile":""}');
+    } catch (error) {
+      // The cold runner will simply exit if the config cannot be rewritten.
+    }
+    global.__PipCoIdleSessionV120 = 1;
+  }
+
+  if (global.__PipCoIdleWake && global.__PipCoIdleWake.destroy) {
+    try {
       global.__PipCoIdleWake.destroy();
-  } catch (e) {}
-  let s, q, o;
+    } catch (error) {
+      ignoreError("wake cleanup failed: " + error);
+    }
+  }
+
   try {
-    s = f.readFileSync(B + 'SERVICE.JS');
-    q = Function('return ' + s)();
-    s = undefined;
-    o = q();
-    q = undefined;
-  } catch (e) {
-    L('SERVICE.JS failed in IDLE.JS: ' + e);
-    W();
-    setTimeout(M, 0);
+    idleService = loadFactory("SERVICE.JS")();
+  } catch (error) {
+    ignoreError("SERVICE.JS failed in IDLE.JS: " + error);
+    idleService = undefined;
+    startWakeWatcher();
+    scheduleReturnToMenu();
     return {
-      id: 'PIPCOIDLERUNNER',
+      id: "PIPCOIDLERUNNER",
       notDefault: true,
       fullscreen: true,
-      remove: function () {},
+      remove: removeRunner
     };
   }
-  o.runner = 1;
-  if (o.enabled) o.play(0);
-  else if (o.providerEnabled) o.playProvider(0, o.providerFile);
-  if (!o.active) {
-    o.runner = 0;
-    o.destroy();
-    o = undefined;
-    W();
-    setTimeout(M, 0);
+
+  idleService.runner = 1;
+  if (idleService.enabled) idleService.play(0);
+  else if (idleService.providerEnabled) idleService.playProvider(0, idleService.providerFile);
+
+  if (!idleService.active) {
+    idleService.runner = 0;
+    idleService.destroy();
+    idleService = undefined;
+    startWakeWatcher();
+    scheduleReturnToMenu();
     return {
-      id: 'PIPCOIDLERUNNER',
+      id: "PIPCOIDLERUNNER",
       notDefault: true,
       fullscreen: true,
-      remove: function () {},
+      remove: removeRunner
     };
   }
-  function K() {
-    M();
+
+  try {
+    attachInputs();
+  } catch (error) {
+    ignoreError("runner input attach failed: " + error);
+    idleService.stop(0);
+    idleService.runner = 0;
+    idleService.destroy();
+    idleService = undefined;
+    startWakeWatcher();
+    scheduleReturnToMenu();
   }
-  Pip.onExclusive('knob1', K);
-  Pip.onExclusive('knob2', K);
+
   return {
-    id: 'PIPCOIDLERUNNER',
+    id: "PIPCOIDLERUNNER",
     notDefault: true,
     fullscreen: true,
-    remove: function () {
-      Pip.removeListener('knob1', K);
-      Pip.removeListener('knob2', K);
-      if (o) {
-        o.stop(0);
-        o.runner = 0;
-        o.destroy();
-        o = undefined;
-      }
-      E.defrag();
-      W();
-    },
+    remove: removeRunner
   };
 });

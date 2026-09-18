@@ -1,12 +1,11 @@
-1.1.0 (2026-09-10)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/104
-- Updated PIP-CO Idle Frameworks with the lower-memory wake/service architecture used by the latest hardware-tested build.
-- Added WAKE.JS as a lightweight 2-minute idle watcher that loads the fullscreen idle runner only when needed.
-- Added reset-safe behavior: a true cold reboot/crash/power-loss reset disables Idle Frameworks, while normal same-session standby/off-to-on preserves the selected provider.
-- Preserved the built-in PIP-BOY 3000 screensaver, dynamic Mesmetron provider discovery, and Pipquarium integration.
-- Preserved live preview behavior and read-only radio/audio detection.
-- Updated the built-in bomb renderer source while retaining the 12 fps-style 83 ms frame interval and existing audio behavior.
+1.2.0 (2026-09-17)
+- Added APPINFO-backed MISC artwork using PIPCOIDLEFRAMEWORKS.IMG.
+- Replaced the nested Pipquarium provider path with a dedicated low-memory PIPQRUN handoff that runs the separately installed Pipquarium APP.JS.
+- Added readable source plus compact installed runtime files for the wake, idle, service, provider, and built-in renderer paths.
+- Replaced the eval-loaded bomb image source with BOMB.BIN and reduced co-resident JavaScript state before provider startup.
+- Removed whole-module ram directives and retained cleanup/defrag behavior for lower memory pressure.
+- Removed runtime diagnostic file writes from the installed runtime.
 
-1.0.0 (2026-08-10)
-https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
-- Initial PIP-CO Idle Frameworks release.
+1.1.0 (2026-09-13)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/104
+- Public release with a two-minute idle watcher, built-in PIP-BOY 3000 screensaver, Mesmetron/Pipquarium providers, previews, reset-safe configuration, and low-memory deferred loading.
