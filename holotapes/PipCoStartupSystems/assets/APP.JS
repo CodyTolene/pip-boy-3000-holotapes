@@ -1,54 +1,54 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/STARTUP_ANIMATIONS/",
-    selectionPath = basePath + "SELECT.JSON",
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON',
     bootupFiles = [
-      "MISTER.AVI",
-      "VAULTGIRL.AVI",
-      "DEATHCLAW.AVI",
-      "YESMAN.AVI",
-      "ENCLAVE.AVI",
-      "BOS.AVI",
-      "MOTHMAN.AVI",
-      "MINUTEMEN.AVI",
-      "ENCLAVE_PIPBOY.AVI",
-      "MRHOUSE.AVI",
-      "CLASSIC_MRHOUSE.AVI",
-      "CLASSIC_MRHOUSE_ANIMATED.AVI",
-      "CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
-      "DOGMEAT.AVI",
-      "Custom_Bootup.AVI",
-      "Custom_Bootup_2.AVI",
-      "Custom_Bootup_3.AVI",
-      "Custom_Bootup_4.AVI",
-      "Custom_Bootup_5.AVI"
+      'MISTER.AVI',
+      'VAULTGIRL.AVI',
+      'DEATHCLAW.AVI',
+      'YESMAN.AVI',
+      'ENCLAVE.AVI',
+      'BOS.AVI',
+      'MOTHMAN.AVI',
+      'MINUTEMEN.AVI',
+      'ENCLAVE_PIPBOY.AVI',
+      'MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE_ANIMATED.AVI',
+      'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+      'DOGMEAT.AVI',
+      'Custom_Bootup.AVI',
+      'Custom_Bootup_2.AVI',
+      'Custom_Bootup_3.AVI',
+      'Custom_Bootup_4.AVI',
+      'Custom_Bootup_5.AVI',
     ],
     bootupLabels = [
-      "Mister Handy",
-      "Vault Girl",
-      "Deathclaw Vault Experiment",
-      "YES MAN",
-      "The Enclave",
-      "The Brotherhood of Steel",
-      "Mothman",
-      "The Minutemen",
-      "Enclave PIP-BOY",
-      "Mr. House",
-      "Classic Mr. House",
-      "Classic Mr. House Animated",
-      "Classic Mr. House Fully Animated",
-      "Dogmeat",
-      "Custom Bootup",
-      "Custom Bootup 2",
-      "Custom Bootup 3",
-      "Custom Bootup 4",
-      "Custom Bootup 5"
+      'Mister Handy',
+      'Vault Girl',
+      'Deathclaw Vault Experiment',
+      'YES MAN',
+      'The Enclave',
+      'The Brotherhood of Steel',
+      'Mothman',
+      'The Minutemen',
+      'Enclave PIP-BOY',
+      'Mr. House',
+      'Classic Mr. House',
+      'Classic Mr. House Animated',
+      'Classic Mr. House Fully Animated',
+      'Dogmeat',
+      'Custom Bootup',
+      'Custom Bootup 2',
+      'Custom Bootup 3',
+      'Custom Bootup 4',
+      'Custom Bootup 5',
     ],
     categoryMembers = [
       [0, 1, 2, 8],
       [4, 5, 7, 6],
       [3, 9, 10, 11, 12, 13],
-      [14, 15, 16, 17, 18]
+      [14, 15, 16, 17, 18],
     ];
 
   let installedBootups = new Uint8Array(19),
@@ -68,19 +68,19 @@
         global.__PipCoStartupRuntimeV202.restore();
       }
     } catch (error) {
-      ignoreError("legacy runtime V202 restore failed: " + error);
+      ignoreError('legacy runtime V202 restore failed: ' + error);
     }
     try {
       if (global.__PipCoStartupRuntimeV2) {
         global.__PipCoStartupRuntimeV2.restore();
       }
     } catch (error) {
-      ignoreError("legacy runtime V2 restore failed: " + error);
+      ignoreError('legacy runtime V2 restore failed: ' + error);
     }
     try {
       if (global.__PIPCO_RT) global.__PIPCO_RT.restore();
     } catch (error) {
-      ignoreError("legacy runtime restore failed: " + error);
+      ignoreError('legacy runtime restore failed: ' + error);
     }
   }
 
@@ -90,7 +90,7 @@
         global.__PipCoStartupWakeV210.cancel();
       }
     } catch (error) {
-      ignoreError("wake cancel failed: " + error);
+      ignoreError('wake cancel failed: ' + error);
     }
   }
 
@@ -105,11 +105,11 @@
 
   function saveSelection(startupIndex) {
     try {
-      fs.writeFileSync(selectionPath, '{"startup":' + startupIndex + "}");
+      fs.writeFileSync(selectionPath, '{"startup":' + startupIndex + '}');
       activeStartup = startupIndex;
       return 1;
     } catch (error) {
-      ignoreError("selection save failed: " + error);
+      ignoreError('selection save failed: ' + error);
       return 0;
     }
   }
@@ -117,7 +117,11 @@
   function scanInstalledBootups() {
     let startupIndex;
     for (startupIndex = 0; startupIndex < 19; startupIndex++) {
-      installedBootups[startupIndex] = fs.statSync(basePath + bootupFiles[startupIndex]) ? 1 : 0;
+      installedBootups[startupIndex] = fs.statSync(
+        basePath + bootupFiles[startupIndex],
+      )
+        ? 1
+        : 0;
     }
   }
 
@@ -164,12 +168,12 @@
   }
 
   function mainMenuLabel(categoryNumber) {
-    if (categoryNumber === -1) return "Default Bootup";
-    if (categoryNumber === 1) return "Special Bootups";
-    if (categoryNumber === 2) return "Faction Bootups";
-    if (categoryNumber === 3) return "NPC Bootups";
-    if (categoryNumber === 4) return "Custom Bootups";
-    return "< Back";
+    if (categoryNumber === -1) return 'Default Bootup';
+    if (categoryNumber === 1) return 'Special Bootups';
+    if (categoryNumber === 2) return 'Faction Bootups';
+    if (categoryNumber === 3) return 'NPC Bootups';
+    if (categoryNumber === 4) return 'Custom Bootups';
+    return '< Back';
   }
 
   function shadeRow(y) {
@@ -181,11 +185,16 @@
     let trackTop = 108,
       trackBottom = 294,
       trackHeight = trackBottom - trackTop,
-      thumbHeight = Math.max(18, Math.floor(trackHeight * visibleRows / totalRows)),
+      thumbHeight = Math.max(
+        18,
+        Math.floor((trackHeight * visibleRows) / totalRows),
+      ),
       scrollRange = totalRows - visibleRows,
       thumbY = trackTop;
     if (scrollRange > 0) {
-      thumbY += Math.floor((trackHeight - thumbHeight) * firstRow / scrollRange);
+      thumbY += Math.floor(
+        ((trackHeight - thumbHeight) * firstRow) / scrollRange,
+      );
     }
     h.setColor(3)
       .drawRect(466, trackTop, 470, trackBottom)
@@ -216,7 +225,7 @@
           .setFontAlign(-1, -1)
           .drawString(mainMenuLabel(categoryNumber), 38, rowY);
         if (categoryNumber === -1 && activeStartup === -1) {
-          h.setFontAlign(1, -1).drawString("ACTIVE", 442, rowY);
+          h.setFontAlign(1, -1).drawString('ACTIVE', 442, rowY);
         }
         rowY += 36;
       }
@@ -229,7 +238,11 @@
     if (selectedRow >= firstVisibleRow + 5) firstVisibleRow = selectedRow - 4;
     firstVisibleRow = E.clip(firstVisibleRow, 0, Math.max(0, totalRows - 5));
 
-    for (visibleRow = 0; visibleRow < 5 && firstVisibleRow + visibleRow < totalRows; visibleRow++) {
+    for (
+      visibleRow = 0;
+      visibleRow < 5 && firstVisibleRow + visibleRow < totalRows;
+      visibleRow++
+    ) {
       rowIndex = firstVisibleRow + visibleRow;
       if (selectedRow === rowIndex) shadeRow(rowY);
       h.setColor(3).setFontAlign(-1, -1);
@@ -237,10 +250,10 @@
         startupIndex = startupIndexAt(currentCategory, rowIndex);
         h.drawString(bootupLabels[startupIndex], 38, rowY);
         if (activeStartup === startupIndex) {
-          h.setFontAlign(1, -1).drawString("ACTIVE", 442, rowY);
+          h.setFontAlign(1, -1).drawString('ACTIVE', 442, rowY);
         }
       } else {
-        h.drawString("< Back", 38, rowY);
+        h.drawString('< Back', 38, rowY);
       }
       rowY += 36;
     }
@@ -254,7 +267,7 @@
     try {
       process.memory(true);
       E.defrag();
-      sourceCode = fs.readFileSync(basePath + "STARTUP_WAKE.JS");
+      sourceCode = fs.readFileSync(basePath + 'STARTUP_WAKE.JS');
       wakeFactory = eval(sourceCode);
       sourceCode = 0;
       wakeFactory();
@@ -262,7 +275,7 @@
       process.memory(true);
     } catch (error) {
       sourceCode = wakeFactory = 0;
-      ignoreError("wake load failed: " + error);
+      ignoreError('wake load failed: ' + error);
     }
   }
 
@@ -275,20 +288,22 @@
       startupIndex;
 
     if (direction) {
-      lastRow = currentCategory ? countInstalledInCategory(currentCategory) : mainMenuCount() - 1;
+      lastRow = currentCategory
+        ? countInstalledInCategory(currentCategory)
+        : mainMenuCount() - 1;
       selectedRow += direction > 0 ? 1 : -1;
       if (selectedRow < 0) selectedRow = lastRow;
       if (selectedRow > lastRow) selectedRow = 0;
-      Pip.playSound("SCROLL");
+      Pip.playSound('SCROLL');
       drawMenu();
       return;
     }
 
-    Pip.playSound("SELECT");
+    Pip.playSound('SELECT');
     if (!currentCategory) {
       categoryNumber = mainMenuCategoryAt(selectedRow);
       if (!categoryNumber) {
-        Pip.changeMenu("MISC.JS");
+        Pip.changeMenu('MISC.JS');
         return;
       }
       if (categoryNumber === -1) {
@@ -332,7 +347,7 @@
     if (closed) return;
     closed = 1;
     if (inputAttached) {
-      Pip.removeListener("knob1", onKnob1);
+      Pip.removeListener('knob1', onKnob1);
       inputAttached = 0;
     }
     h.clear();
@@ -340,7 +355,8 @@
     titleImage = undefined;
     process.memory(true);
     E.defrag();
-    if (activeStartup >= 0 && !global.__PipCoStartupRuntimeV210) loadWakeWatcher();
+    if (activeStartup >= 0 && !global.__PipCoStartupRuntimeV210)
+      loadWakeWatcher();
   }
 
   let coldSession = !(
@@ -363,29 +379,29 @@
       height: 98,
       bpp: 1,
       transparent: 0,
-      buffer: fs.readFileSync(basePath + "TITLE.BIN")
+      buffer: fs.readFileSync(basePath + 'TITLE.BIN'),
     };
   } catch (error) {
     titleImage = undefined;
   }
 
   try {
-    Pip.onExclusive("knob1", onKnob1);
+    Pip.onExclusive('knob1', onKnob1);
     inputAttached = 1;
     drawMenu();
   } catch (error) {
     if (inputAttached) {
-      Pip.removeListener("knob1", onKnob1);
+      Pip.removeListener('knob1', onKnob1);
       inputAttached = 0;
     }
-    ignoreError("UI initialization failed: " + error);
-    Pip.errorBox("PIP-CO Startup Systems\nUI INIT FAILED");
+    ignoreError('UI initialization failed: ' + error);
+    Pip.errorBox('PIP-CO Startup Systems\nUI INIT FAILED');
   }
 
   return {
-    id: "STARTUPANIMATIONS",
+    id: 'STARTUPANIMATIONS',
     notDefault: true,
     fullscreen: true,
-    remove: removeApp
+    remove: removeApp,
   };
 });

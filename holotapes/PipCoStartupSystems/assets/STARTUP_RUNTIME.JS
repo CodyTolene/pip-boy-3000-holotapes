@@ -1,34 +1,36 @@
-(function() {
+(function () {
   if (global.__PipCoStartupRuntimeV210) return global.__PipCoStartupRuntimeV210;
 
-  const fs = require("fs"),
-    basePath = "HOLO/STARTUP_ANIMATIONS/",
-    selectionPath = basePath + "SELECT.JSON",
+  const fs = require('fs'),
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON',
     builtinFiles = [
-      "MISTER.AVI",
-      "VAULTGIRL.AVI",
-      "DEATHCLAW.AVI",
-      "YESMAN.AVI",
-      "ENCLAVE.AVI",
-      "BOS.AVI",
-      "MOTHMAN.AVI",
-      "MINUTEMEN.AVI",
-      "ENCLAVE_PIPBOY.AVI",
-      "MRHOUSE.AVI",
-      "CLASSIC_MRHOUSE.AVI",
-      "CLASSIC_MRHOUSE_ANIMATED.AVI",
-      "CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
-      "DOGMEAT.AVI"
+      'MISTER.AVI',
+      'VAULTGIRL.AVI',
+      'DEATHCLAW.AVI',
+      'YESMAN.AVI',
+      'ENCLAVE.AVI',
+      'BOS.AVI',
+      'MOTHMAN.AVI',
+      'MINUTEMEN.AVI',
+      'ENCLAVE_PIPBOY.AVI',
+      'MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE_ANIMATED.AVI',
+      'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+      'DOGMEAT.AVI',
     ],
     expectedDurations = new Uint16Array([
-      6250, 3500, 3500, 4917, 5500, 5500, 5500,
-      5500, 26000, 7667, 5250, 6083, 6000, 4167
+      6250, 3500, 3500, 4917, 5500, 5500, 5500, 5500, 26000, 7667, 5250, 6083,
+      6000, 4167,
     ]),
     safetyTimeouts = new Uint16Array([
-      15000, 12000, 13000, 16000, 9015, 9015, 9015,
-      16500, 30500, 11182, 13000, 15000, 15000, 13000
+      15000, 12000, 13000, 16000, 9015, 9015, 9015, 16500, 30500, 11182, 13000,
+      15000, 15000, 13000,
     ]),
-    useVideoStoppedEvent = new Uint8Array([1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1]);
+    useVideoStoppedEvent = new Uint8Array([
+      1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1,
+    ]);
 
   if (!global.__PipCoStartupSessionV214) {
     try {
@@ -40,19 +42,21 @@
     return 0;
   }
 
-  let stockBootAnimation = typeof Pip.bootAnimation === "function" ? Pip.bootAnimation : undefined,
-    stockAudioStart = typeof Pip.audioStart === "function" ? Pip.audioStart : undefined,
+  let stockBootAnimation =
+      typeof Pip.bootAnimation === 'function' ? Pip.bootAnimation : undefined,
+    stockAudioStart =
+      typeof Pip.audioStart === 'function' ? Pip.audioStart : undefined,
     ownsVideo = 0,
     ownsAudio = 0,
     suppressNextCrtSound = 0;
 
   function startupFile(startupIndex) {
     if (startupIndex < 14) return builtinFiles[startupIndex];
-    if (startupIndex === 14) return "Custom_Bootup.AVI";
+    if (startupIndex === 14) return 'Custom_Bootup.AVI';
     if (startupIndex > 14 && startupIndex < 19) {
-      return "Custom_Bootup_" + (startupIndex - 13) + ".AVI";
+      return 'Custom_Bootup_' + (startupIndex - 13) + '.AVI';
     }
-    return "";
+    return '';
   }
 
   function selectedStartup() {
@@ -66,7 +70,9 @@
 
   function startupAvailable(startupIndex) {
     let fileName = startupFile(startupIndex);
-    return startupIndex >= 0 && fileName && fs.statSync(basePath + fileName) ? 1 : 0;
+    return startupIndex >= 0 && fileName && fs.statSync(basePath + fileName)
+      ? 1
+      : 0;
   }
 
   function restoreRuntime() {
@@ -97,9 +103,11 @@
   function filteredAudioStart(path) {
     let startupIndex = selectedStartup();
     if (!startupAvailable(startupIndex)) {
-      return stockAudioStart ? stockAudioStart.apply(Pip, arguments) : undefined;
+      return stockAudioStart
+        ? stockAudioStart.apply(Pip, arguments)
+        : undefined;
     }
-    if (suppressNextCrtSound && path === "SOUND/FX/CRT_ON2.WAV") {
+    if (suppressNextCrtSound && path === 'SOUND/FX/CRT_ON2.WAV') {
       suppressNextCrtSound = 0;
       return;
     }
@@ -110,7 +118,7 @@
     let result;
     try {
       result = stockBootAnimation ? stockBootAnimation.call(Pip) : undefined;
-      if (result && typeof result.then === "function") result.then(done);
+      if (result && typeof result.then === 'function') result.then(done);
       else done();
     } catch (error) {
       done();
@@ -120,10 +128,12 @@
   function customBootAnimation() {
     let startupIndex = selectedStartup();
     if (!startupAvailable(startupIndex)) {
-      return stockBootAnimation ? stockBootAnimation.call(Pip) : Promise.resolve();
+      return stockBootAnimation
+        ? stockBootAnimation.call(Pip)
+        : Promise.resolve();
     }
 
-    return new Promise(function(done) {
+    return new Promise(function (done) {
       let launchTimer = 0,
         safetyTimer = 0,
         fallbackTimer = 0,
@@ -138,7 +148,7 @@
         if (fallbackTimer) clearTimeout(fallbackTimer);
         launchTimer = safetyTimer = fallbackTimer = 0;
         if (videoStoppedHandler) {
-          Pip.removeListener("videoStopped", videoStoppedHandler);
+          Pip.removeListener('videoStopped', videoStoppedHandler);
           videoStoppedHandler = undefined;
         }
 
@@ -191,9 +201,12 @@
         try {
           Pip.videoStart(basePath + fileName, { x: 0, y: 0 });
           ownsVideo = ownsAudio = 1;
-          safetyTimer = setTimeout(function() {
-            finishBoot();
-          }, startupIndex < 14 ? safetyTimeouts[startupIndex] : 120000);
+          safetyTimer = setTimeout(
+            function () {
+              finishBoot();
+            },
+            startupIndex < 14 ? safetyTimeouts[startupIndex] : 120000,
+          );
         } catch (error) {
           finished = 1;
           ownsVideo = ownsAudio = 0;
@@ -202,21 +215,28 @@
         }
 
         if (startupIndex < 14 ? useVideoStoppedEvent[startupIndex] : 1) {
-          videoStoppedHandler = function() {
+          videoStoppedHandler = function () {
             finishBoot();
           };
           try {
-            Pip.on("videoStopped", videoStoppedHandler);
+            Pip.on('videoStopped', videoStoppedHandler);
           } catch (error) {
             videoStoppedHandler = undefined;
-            fallbackTimer = setTimeout(function() {
-              finishBoot();
-            }, (startupIndex < 14 ? expectedDurations[startupIndex] : 30000) + 500);
+            fallbackTimer = setTimeout(
+              function () {
+                finishBoot();
+              },
+              (startupIndex < 14 ? expectedDurations[startupIndex] : 30000) +
+                500,
+            );
           }
         } else {
-          fallbackTimer = setTimeout(function() {
-            finishBoot();
-          }, expectedDurations[startupIndex] + (startupIndex === 8 ? 420 : 180));
+          fallbackTimer = setTimeout(
+            function () {
+              finishBoot();
+            },
+            expectedDurations[startupIndex] + (startupIndex === 8 ? 420 : 180),
+          );
         }
       }
 

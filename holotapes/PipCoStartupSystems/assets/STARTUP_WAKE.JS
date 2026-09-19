@@ -1,7 +1,7 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/STARTUP_ANIMATIONS/",
-    selectionPath = basePath + "SELECT.JSON";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON';
 
   if (!global.__PipCoStartupSessionV214) {
     try {
@@ -12,7 +12,8 @@
     global.__PipCoStartupSessionV214 = 1;
     return 0;
   }
-  if (global.__PipCoStartupRuntimeV210 || global.__PipCoStartupWakeV210) return 0;
+  if (global.__PipCoStartupRuntimeV210 || global.__PipCoStartupWakeV210)
+    return 0;
 
   let retryTimer = 0,
     cancelled = 0;
@@ -46,7 +47,7 @@
     try {
       process.memory(true);
       E.defrag();
-      sourceCode = fs.readFileSync(basePath + "STARTUP_RUNTIME.JS");
+      sourceCode = fs.readFileSync(basePath + 'STARTUP_RUNTIME.JS');
       runtimeFactory = eval(sourceCode);
       sourceCode = 0;
       runtimeFactory();
