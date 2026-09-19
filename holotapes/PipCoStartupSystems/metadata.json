@@ -33,85 +33,85 @@
       "label": "Classic Mr. House Animated",
       "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_ANIMATED.AVI",
       "sizeKB": 2235,
-      "url": "assets/CLASSIC_MRHOUSE_ANIMATED.AVI"
+      "url": "optional/CLASSIC_MRHOUSE_ANIMATED.AVI"
     },
     {
       "label": "Classic Mr. House Fully Animated",
       "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
       "sizeKB": 2063,
-      "url": "assets/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI"
+      "url": "optional/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI"
     },
     {
       "label": "Classic Mr. House",
       "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE.AVI",
       "sizeKB": 1875,
-      "url": "assets/CLASSIC_MRHOUSE.AVI"
+      "url": "optional/CLASSIC_MRHOUSE.AVI"
     },
     {
       "label": "Deathclaw Vault Experiment",
       "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
       "sizeKB": 361,
-      "url": "assets/DEATHCLAW.AVI"
+      "url": "optional/DEATHCLAW.AVI"
     },
     {
       "label": "Dogmeat",
       "name": "HOLO/STARTUP_ANIMATIONS/DOGMEAT.AVI",
       "sizeKB": 1820,
-      "url": "assets/DOGMEAT.AVI"
+      "url": "optional/DOGMEAT.AVI"
     },
     {
       "label": "Enclave PIP-BOY",
       "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
       "sizeKB": 5563,
-      "url": "assets/ENCLAVE_PIPBOY.AVI"
+      "url": "optional/ENCLAVE_PIPBOY.AVI"
     },
     {
       "label": "Mister Handy",
       "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
       "sizeKB": 2143,
-      "url": "assets/MISTER.AVI"
+      "url": "optional/MISTER.AVI"
     },
     {
       "label": "Mothman",
       "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
       "sizeKB": 821,
-      "url": "assets/MOTHMAN.AVI"
+      "url": "optional/MOTHMAN.AVI"
     },
     {
       "label": "Mr. House",
       "name": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
       "sizeKB": 2559,
-      "url": "assets/MRHOUSE.AVI"
+      "url": "optional/MRHOUSE.AVI"
     },
     {
       "label": "The Brotherhood of Steel",
       "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
       "sizeKB": 916,
-      "url": "assets/BOS.AVI"
+      "url": "optional/BOS.AVI"
     },
     {
       "label": "The Enclave",
       "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
       "sizeKB": 161,
-      "url": "assets/ENCLAVE.AVI"
+      "url": "optional/ENCLAVE.AVI"
     },
     {
       "label": "The Minutemen",
       "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
       "sizeKB": 1668,
-      "url": "assets/MINUTEMEN.AVI"
+      "url": "optional/MINUTEMEN.AVI"
     },
     {
       "label": "Vault Girl",
       "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
       "sizeKB": 686,
-      "url": "assets/VAULTGIRL.AVI"
+      "url": "optional/VAULTGIRL.AVI"
     },
     {
       "label": "YES MAN",
       "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
       "sizeKB": 200,
-      "url": "assets/YESMAN.AVI"
+      "url": "optional/YESMAN.AVI"
     }
   ]
 }
