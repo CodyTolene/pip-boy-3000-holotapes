@@ -1,314 +1,407 @@
 (function () {
   const fs = require('fs'),
-    B = 'HOLO/STARTUP_ANIMATIONS/',
-    S = B + 'SELECT.JSON';
-  const F = [
-    'MISTER.AVI',
-    'VAULTGIRL.AVI',
-    'DEATHCLAW.AVI',
-    'YESMAN.AVI',
-    'ENCLAVE.AVI',
-    'BOS.AVI',
-    'MOTHMAN.AVI',
-    'MINUTEMEN.AVI',
-    'ENCLAVE_PIPBOY.AVI',
-    'MRHOUSE.AVI',
-    'CLASSIC_MRHOUSE.AVI',
-    'CLASSIC_MRHOUSE_ANIMATED.AVI',
-    'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
-    'DOGMEAT.AVI',
-    'Custom_Bootup.AVI',
-    'Custom_Bootup_2.AVI',
-    'Custom_Bootup_3.AVI',
-    'Custom_Bootup_4.AVI',
-    'Custom_Bootup_5.AVI',
-  ];
-  const L = [
-    'Mister Handy',
-    'Vault Girl',
-    'Deathclaw Vault Experiment',
-    'YES MAN',
-    'The Enclave',
-    'The Brotherhood of Steel',
-    'Mothman',
-    'The Minutemen',
-    'Enclave PIP-BOY',
-    'Mr. House',
-    'Classic Mr. House',
-    'Classic Mr. House Animated',
-    'Classic Mr. House Fully Animated',
-    'Dogmeat',
-    'Custom Bootup',
-    'Custom Bootup 2',
-    'Custom Bootup 3',
-    'Custom Bootup 4',
-    'Custom Bootup 5',
-  ];
-  const G = [
-    [0, 1, 2, 8],
-    [4, 5, 7, 6],
-    [3, 9, 10, 11, 12, 13],
-    [14, 15, 16, 17, 18],
-  ];
-  let P = new Uint8Array(19),
-    a = -1,
-    p = 0,
-    s = 0,
-    sc = 0,
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON',
+    bootupFiles = [
+      'MISTER.AVI',
+      'VAULTGIRL.AVI',
+      'DEATHCLAW.AVI',
+      'YESMAN.AVI',
+      'ENCLAVE.AVI',
+      'BOS.AVI',
+      'MOTHMAN.AVI',
+      'MINUTEMEN.AVI',
+      'ENCLAVE_PIPBOY.AVI',
+      'MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE_ANIMATED.AVI',
+      'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+      'DOGMEAT.AVI',
+      'Custom_Bootup.AVI',
+      'Custom_Bootup_2.AVI',
+      'Custom_Bootup_3.AVI',
+      'Custom_Bootup_4.AVI',
+      'Custom_Bootup_5.AVI',
+    ],
+    bootupLabels = [
+      'Mister Handy',
+      'Vault Girl',
+      'Deathclaw Vault Experiment',
+      'YES MAN',
+      'The Enclave',
+      'The Brotherhood of Steel',
+      'Mothman',
+      'The Minutemen',
+      'Enclave PIP-BOY',
+      'Mr. House',
+      'Classic Mr. House',
+      'Classic Mr. House Animated',
+      'Classic Mr. House Fully Animated',
+      'Dogmeat',
+      'Custom Bootup',
+      'Custom Bootup 2',
+      'Custom Bootup 3',
+      'Custom Bootup 4',
+      'Custom Bootup 5',
+    ],
+    categoryMembers = [
+      [0, 1, 2, 8],
+      [4, 5, 7, 6],
+      [3, 9, 10, 11, 12, 13],
+      [14, 15, 16, 17, 18],
+    ];
+
+  let installedBootups = new Uint8Array(19),
+    activeStartup = -1,
+    currentCategory = 0,
+    selectedRow = 0,
+    firstVisibleRow = 0,
     closed = 0,
-    T;
-  function err(x) {
+    inputAttached = 0,
+    titleImage;
+
+  function ignoreError(message) {}
+
+  function stopLegacyRuntime() {
     try {
-      if (Pip.log) Pip.log('STARTUP: ' + x, 'pipco.txt');
-    } catch (e) {}
-  }
-  function legacy() {
-    try {
-      if (global.__PipCoStartupRuntimeV202)
+      if (global.__PipCoStartupRuntimeV202) {
         global.__PipCoStartupRuntimeV202.restore();
-    } catch (e) {}
+      }
+    } catch (error) {
+      ignoreError('legacy runtime V202 restore failed: ' + error);
+    }
     try {
-      if (global.__PipCoStartupRuntimeV2)
+      if (global.__PipCoStartupRuntimeV2) {
         global.__PipCoStartupRuntimeV2.restore();
-    } catch (e) {}
+      }
+    } catch (error) {
+      ignoreError('legacy runtime V2 restore failed: ' + error);
+    }
     try {
       if (global.__PIPCO_RT) global.__PIPCO_RT.restore();
-    } catch (e) {}
+    } catch (error) {
+      ignoreError('legacy runtime restore failed: ' + error);
+    }
   }
-  function cancelWake() {
+
+  function cancelWakeWatcher() {
     try {
-      if (global.__PipCoStartupWakeV130) global.__PipCoStartupWakeV130.cancel();
-    } catch (e) {}
+      if (global.__PipCoStartupWakeV210) {
+        global.__PipCoStartupWakeV210.cancel();
+      }
+    } catch (error) {
+      ignoreError('wake cancel failed: ' + error);
+    }
   }
-  function read() {
+
+  function readSelection() {
     try {
-      let n = JSON.parse(fs.readFileSync(S)).startup | 0;
-      return n >= -1 && n < 19 ? n : -1;
-    } catch (e) {
+      let startupIndex = JSON.parse(fs.readFileSync(selectionPath)).startup | 0;
+      return startupIndex >= -1 && startupIndex < 19 ? startupIndex : -1;
+    } catch (error) {
       return -1;
     }
   }
-  function save(n) {
+
+  function saveSelection(startupIndex) {
     try {
-      fs.writeFileSync(S, '{"startup":' + n + '}');
-      a = n;
+      fs.writeFileSync(selectionPath, '{"startup":' + startupIndex + '}');
+      activeStartup = startupIndex;
       return 1;
-    } catch (e) {
-      err('save ' + e);
+    } catch (error) {
+      ignoreError('selection save failed: ' + error);
       return 0;
     }
   }
-  function scan() {
-    for (let i = 0; i < 19; i++)
-      try {
-        P[i] = fs.statSync(B + F[i]) ? 1 : 0;
-      } catch (e) {
-        P[i] = 0;
-      }
+
+  function scanInstalledBootups() {
+    let startupIndex;
+    for (startupIndex = 0; startupIndex < 19; startupIndex++) {
+      installedBootups[startupIndex] = fs.statSync(
+        basePath + bootupFiles[startupIndex],
+      )
+        ? 1
+        : 0;
+    }
   }
-  function cnt(k) {
-    let q = G[k - 1],
-      n = 0;
-    for (let i = 0; i < q.length; i++) if (P[q[i]]) n++;
-    return n;
+
+  function countInstalledInCategory(categoryNumber) {
+    let members = categoryMembers[categoryNumber - 1],
+      memberIndex,
+      count = 0;
+    for (memberIndex = 0; memberIndex < members.length; memberIndex++) {
+      if (installedBootups[members[memberIndex]]) count++;
+    }
+    return count;
   }
-  function at(k, n) {
-    let q = G[k - 1],
-      z = 0;
-    for (let i = 0; i < q.length; i++)
-      if (P[q[i]]) {
-        if (z === n) return q[i];
-        z++;
+
+  function startupIndexAt(categoryNumber, visibleIndex) {
+    let members = categoryMembers[categoryNumber - 1],
+      memberIndex,
+      installedIndex = 0;
+    for (memberIndex = 0; memberIndex < members.length; memberIndex++) {
+      if (installedBootups[members[memberIndex]]) {
+        if (installedIndex === visibleIndex) return members[memberIndex];
+        installedIndex++;
       }
+    }
     return -1;
   }
-  function mc() {
-    let n = 2;
-    for (let k = 1; k < 5; k++) if (cnt(k)) n++;
-    return n;
+
+  function mainMenuCount() {
+    let count = 2,
+      categoryNumber;
+    for (categoryNumber = 1; categoryNumber < 5; categoryNumber++) {
+      if (countInstalledInCategory(categoryNumber)) count++;
+    }
+    return count;
   }
-  function mr(i) {
-    let q = 0;
-    if (i === q++) return [-1, 'Default Bootup', 0];
-    if (cnt(1) && i === q++) return [-10, 'Special Bootups', 1];
-    if (cnt(2) && i === q++) return [-11, 'Faction Bootups', 2];
-    if (cnt(3) && i === q++) return [-12, 'NPC Bootups', 3];
-    if (cnt(4) && i === q++) return [-13, 'Custom Bootups', 4];
-    return [-99, '< Back', -1];
+
+  function mainMenuCategoryAt(rowIndex) {
+    let cursor = 0;
+    if (rowIndex === cursor++) return -1;
+    if (countInstalledInCategory(1) && rowIndex === cursor++) return 1;
+    if (countInstalledInCategory(2) && rowIndex === cursor++) return 2;
+    if (countInstalledInCategory(3) && rowIndex === cursor++) return 3;
+    if (countInstalledInCategory(4) && rowIndex === cursor++) return 4;
+    return 0;
   }
-  function shade(y) {
-    try {
-      Pip.shadeBox(24, y - 4, 456, y + 22);
-    } catch (e) {}
+
+  function mainMenuLabel(categoryNumber) {
+    if (categoryNumber === -1) return 'Default Bootup';
+    if (categoryNumber === 1) return 'Special Bootups';
+    if (categoryNumber === 2) return 'Faction Bootups';
+    if (categoryNumber === 3) return 'NPC Bootups';
+    if (categoryNumber === 4) return 'Custom Bootups';
+    return '< Back';
   }
-  function scroller(total, first, visible) {
-    if (total <= visible) return;
-    let top = 108,
-      bottom = 294,
-      height = bottom - top,
-      thumb = Math.max(18, Math.floor((height * visible) / total));
-    let range = total - visible,
-      y = top;
-    if (range > 0) y += Math.floor(((height - thumb) * first) / range);
-    h.setColor(3);
-    h.drawRect(466, top, 470, bottom);
-    h.fillRect(467, y + 1, 469, y + thumb - 1);
+
+  function shadeRow(y) {
+    Pip.shadeBox(24, y - 4, 456, y + 22);
   }
-  function head() {
+
+  function drawScroller(totalRows, firstRow, visibleRows) {
+    if (totalRows <= visibleRows) return;
+    let trackTop = 108,
+      trackBottom = 294,
+      trackHeight = trackBottom - trackTop,
+      thumbHeight = Math.max(
+        18,
+        Math.floor((trackHeight * visibleRows) / totalRows),
+      ),
+      scrollRange = totalRows - visibleRows,
+      thumbY = trackTop;
+    if (scrollRange > 0) {
+      thumbY += Math.floor(
+        ((trackHeight - thumbHeight) * firstRow) / scrollRange,
+      );
+    }
+    h.setColor(3)
+      .drawRect(466, trackTop, 470, trackBottom)
+      .fillRect(467, thumbY + 1, 469, thumbY + thumbHeight - 1);
+  }
+
+  function drawHeader() {
     h.clear().setColor(3).setFontMonofonto16();
-    if (T)
-      try {
-        h.drawImage(T, 152, 6);
-      } catch (e) {}
+    if (titleImage) h.drawImage(titleImage, 152, 6);
   }
-  function draw() {
-    head();
-    let y = 112;
-    if (!p) {
-      let n = mc();
-      for (let i = 0; i < n; i++) {
-        let r = mr(i);
-        if (s === i) shade(y);
-        h.setColor(3).setFontAlign(-1, -1).drawString(r[1], 38, y);
-        if (r[0] === -1 && a === -1)
-          h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
-        y += 36;
+
+  function drawMenu() {
+    let rowY = 112,
+      rowIndex,
+      categoryNumber,
+      categoryItemCount,
+      totalRows,
+      visibleRow,
+      startupIndex;
+
+    drawHeader();
+    if (!currentCategory) {
+      totalRows = mainMenuCount();
+      for (rowIndex = 0; rowIndex < totalRows; rowIndex++) {
+        categoryNumber = mainMenuCategoryAt(rowIndex);
+        if (selectedRow === rowIndex) shadeRow(rowY);
+        h.setColor(3)
+          .setFontAlign(-1, -1)
+          .drawString(mainMenuLabel(categoryNumber), 38, rowY);
+        if (categoryNumber === -1 && activeStartup === -1) {
+          h.setFontAlign(1, -1).drawString('ACTIVE', 442, rowY);
+        }
+        rowY += 36;
       }
       return;
     }
-    let n = cnt(p),
-      t = n + 1;
-    if (s < sc) sc = s;
-    if (s >= sc + 5) sc = s - 4;
-    sc = E.clip(sc, 0, Math.max(0, t - 5));
-    for (let i = 0; i < 5 && sc + i < t; i++) {
-      let pos = sc + i;
-      if (s === pos) shade(y);
+
+    categoryItemCount = countInstalledInCategory(currentCategory);
+    totalRows = categoryItemCount + 1;
+    if (selectedRow < firstVisibleRow) firstVisibleRow = selectedRow;
+    if (selectedRow >= firstVisibleRow + 5) firstVisibleRow = selectedRow - 4;
+    firstVisibleRow = E.clip(firstVisibleRow, 0, Math.max(0, totalRows - 5));
+
+    for (
+      visibleRow = 0;
+      visibleRow < 5 && firstVisibleRow + visibleRow < totalRows;
+      visibleRow++
+    ) {
+      rowIndex = firstVisibleRow + visibleRow;
+      if (selectedRow === rowIndex) shadeRow(rowY);
       h.setColor(3).setFontAlign(-1, -1);
-      if (pos < n) {
-        let x = at(p, pos);
-        h.drawString(L[x], 38, y);
-        if (a === x) h.setFontAlign(1, -1).drawString('ACTIVE', 442, y);
-      } else h.drawString('< Back', 38, y);
-      y += 36;
+      if (rowIndex < categoryItemCount) {
+        startupIndex = startupIndexAt(currentCategory, rowIndex);
+        h.drawString(bootupLabels[startupIndex], 38, rowY);
+        if (activeStartup === startupIndex) {
+          h.setFontAlign(1, -1).drawString('ACTIVE', 442, rowY);
+        }
+      } else {
+        h.drawString('< Back', 38, rowY);
+      }
+      rowY += 36;
     }
-    scroller(t, sc, 5);
+    drawScroller(totalRows, firstVisibleRow, 5);
   }
-  function ensureLater() {
-    if (a < 0 || global.__PipCoStartupRuntimeV130) return;
+
+  function loadWakeWatcher() {
+    let sourceCode = 0,
+      wakeFactory = 0;
+    if (activeStartup < 0 || global.__PipCoStartupRuntimeV210) return;
     try {
-      eval(fs.readFileSync(B + 'STARTUP_WAKE.JS'));
-    } catch (e) {
-      err('wake ' + e);
+      process.memory(true);
+      E.defrag();
+      sourceCode = fs.readFileSync(basePath + 'STARTUP_WAKE.JS');
+      wakeFactory = eval(sourceCode);
+      sourceCode = 0;
+      wakeFactory();
+      wakeFactory = 0;
+      process.memory(true);
+    } catch (error) {
+      sourceCode = wakeFactory = 0;
+      ignoreError('wake load failed: ' + error);
     }
   }
-  function knob(d) {
-    if (d) {
-      let m = p ? cnt(p) : mc() - 1;
-      s += d > 0 ? 1 : -1;
-      if (s < 0) s = m;
-      if (s > m) s = 0;
-      try {
-        Pip.playSound('SCROLL');
-      } catch (e) {}
-      draw();
+
+  function onKnob1(direction) {
+    let lastRow,
+      categoryNumber,
+      categoryItemCount,
+      previousCategory,
+      rowIndex,
+      startupIndex;
+
+    if (direction) {
+      lastRow = currentCategory
+        ? countInstalledInCategory(currentCategory)
+        : mainMenuCount() - 1;
+      selectedRow += direction > 0 ? 1 : -1;
+      if (selectedRow < 0) selectedRow = lastRow;
+      if (selectedRow > lastRow) selectedRow = 0;
+      Pip.playSound('SCROLL');
+      drawMenu();
       return;
     }
-    try {
-      Pip.playSound('SELECT');
-    } catch (e) {}
-    if (!p) {
-      let r = mr(s);
-      if (r[0] === -99) {
+
+    Pip.playSound('SELECT');
+    if (!currentCategory) {
+      categoryNumber = mainMenuCategoryAt(selectedRow);
+      if (!categoryNumber) {
         Pip.changeMenu('MISC.JS');
         return;
       }
-      if (r[0] === -1) {
-        if (save(-1)) {
-          cancelWake();
-          try {
-            if (global.__PipCoStartupRuntimeV130)
-              global.__PipCoStartupRuntimeV130.restore();
-          } catch (e) {}
-          draw();
+      if (categoryNumber === -1) {
+        if (saveSelection(-1)) {
+          cancelWakeWatcher();
+          if (global.__PipCoStartupRuntimeV210) {
+            global.__PipCoStartupRuntimeV210.restore();
+          }
+          drawMenu();
         }
         return;
       }
-      p = r[2];
-      s = 0;
-      sc = 0;
-      draw();
+      currentCategory = categoryNumber;
+      selectedRow = 0;
+      firstVisibleRow = 0;
+      drawMenu();
       return;
     }
-    let n = cnt(p);
-    if (s === n) {
-      let old = p;
-      p = 0;
-      s = 0;
-      for (let i = 0; i < mc(); i++)
-        if (mr(i)[2] === old) {
-          s = i;
+
+    categoryItemCount = countInstalledInCategory(currentCategory);
+    if (selectedRow === categoryItemCount) {
+      previousCategory = currentCategory;
+      currentCategory = 0;
+      selectedRow = 0;
+      for (rowIndex = 0; rowIndex < mainMenuCount(); rowIndex++) {
+        if (mainMenuCategoryAt(rowIndex) === previousCategory) {
+          selectedRow = rowIndex;
           break;
         }
-      sc = 0;
-      draw();
+      }
+      firstVisibleRow = 0;
+      drawMenu();
       return;
     }
-    let x = at(p, s);
-    if (x >= 0 && save(x)) draw();
+
+    startupIndex = startupIndexAt(currentCategory, selectedRow);
+    if (startupIndex >= 0 && saveSelection(startupIndex)) drawMenu();
   }
-  let cold = !(
-    global.__PipCoStartupSessionV130 ||
-    global.__PipCoStartupRuntimeV130 ||
-    global.__PipCoStartupWakeV130
+
+  function removeApp() {
+    if (closed) return;
+    closed = 1;
+    if (inputAttached) {
+      Pip.removeListener('knob1', onKnob1);
+      inputAttached = 0;
+    }
+    h.clear();
+    installedBootups = undefined;
+    titleImage = undefined;
+    process.memory(true);
+    E.defrag();
+    if (activeStartup >= 0 && !global.__PipCoStartupRuntimeV210)
+      loadWakeWatcher();
+  }
+
+  let coldSession = !(
+    global.__PipCoStartupSessionV214 ||
+    global.__PipCoStartupRuntimeV210 ||
+    global.__PipCoStartupWakeV210
   );
-  global.__PipCoStartupSessionV130 = 1;
-  cancelWake();
-  legacy();
-  a = read();
-  if (cold && a !== -1) save(-1);
-  scan();
-  if (a >= 0 && !P[a]) save(-1);
+
+  global.__PipCoStartupSessionV214 = 1;
+  cancelWakeWatcher();
+  stopLegacyRuntime();
+  activeStartup = readSelection();
+  if (coldSession && activeStartup !== -1) saveSelection(-1);
+  scanInstalledBootups();
+  if (activeStartup >= 0 && !installedBootups[activeStartup]) saveSelection(-1);
+
   try {
-    T = {
+    titleImage = {
       width: 176,
       height: 98,
       bpp: 1,
       transparent: 0,
-      buffer: fs.readFileSync(B + 'TITLE.BIN'),
+      buffer: fs.readFileSync(basePath + 'TITLE.BIN'),
     };
-  } catch (e) {
-    T = undefined;
+  } catch (error) {
+    titleImage = undefined;
   }
+
   try {
-    Pip.onExclusive('knob1', knob);
-    draw();
-  } catch (e) {
-    err('UI ' + e);
-    try {
-      Pip.errorBox('PIP-CO Startup Systems\nUI INIT FAILED');
-    } catch (x) {}
+    Pip.onExclusive('knob1', onKnob1);
+    inputAttached = 1;
+    drawMenu();
+  } catch (error) {
+    if (inputAttached) {
+      Pip.removeListener('knob1', onKnob1);
+      inputAttached = 0;
+    }
+    ignoreError('UI initialization failed: ' + error);
+    Pip.errorBox('PIP-CO Startup Systems\nUI INIT FAILED');
   }
+
   return {
     id: 'STARTUPANIMATIONS',
     notDefault: true,
     fullscreen: true,
-    remove: function () {
-      if (closed) return;
-      closed = 1;
-      try {
-        Pip.removeListener('knob1', knob);
-      } catch (e) {}
-      try {
-        h.clear();
-      } catch (e) {}
-      P = undefined;
-      T = undefined;
-      try {
-        process.memory(true);
-        if (E.defrag) E.defrag();
-      } catch (e) {}
-      if (a >= 0 && !global.__PipCoStartupRuntimeV130) ensureLater();
-    },
+    remove: removeApp,
   };
 });

@@ -1,43 +1,66 @@
 (function () {
   const fs = require('fs'),
-    B = 'HOLO/STARTUP_ANIMATIONS/',
-    S = B + 'SELECT.JSON';
-  if (!global.__PipCoStartupSessionV130) {
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON';
+
+  if (!global.__PipCoStartupSessionV214) {
     try {
-      fs.writeFileSync(S, '{"startup":-1}');
-    } catch (e) {}
-    global.__PipCoStartupSessionV130 = 1;
-    return;
+      fs.writeFileSync(selectionPath, '{"startup":-1}');
+    } catch (error) {
+      // Cold-session safety still falls back to stock if the SD write fails.
+    }
+    global.__PipCoStartupSessionV214 = 1;
+    return 0;
   }
-  if (global.__PipCoStartupRuntimeV130 || global.__PipCoStartupWakeV130) return;
-  let t = 0,
-    dead = 0;
-  function cancel() {
-    dead = 1;
-    if (t) clearTimeout(t);
-    try {
-      delete global.__PipCoStartupWakeV130;
-    } catch (e) {}
+  if (global.__PipCoStartupRuntimeV210 || global.__PipCoStartupWakeV210)
+    return 0;
+
+  let retryTimer = 0,
+    cancelled = 0;
+
+  function cancelWake() {
+    if (cancelled) return;
+    cancelled = 1;
+    if (retryTimer) {
+      clearTimeout(retryTimer);
+      retryTimer = 0;
+    }
+    if (global.__PipCoStartupWakeV210 === wakeApi) {
+      global.__PipCoStartupWakeV210 = undefined;
+    }
   }
-  function go() {
-    if (dead) return;
+
+  function loadRuntime() {
+    let sourceCode = 0,
+      runtimeFactory = 0;
+    if (cancelled) return;
     try {
       if (Pip.CURRENT && Pip.CURRENT.notDefault) {
-        t = setTimeout(go, 800);
+        retryTimer = setTimeout(loadRuntime, 800);
         return;
       }
-    } catch (e) {}
-    try {
-      eval(fs.readFileSync(B + 'STARTUP_RUNTIME.JS'));
-    } catch (e) {
-      try {
-        if (Pip.log) Pip.log('STARTUP runtime ' + e, 'pipco.txt');
-      } catch (x) {}
+    } catch (error) {
+      retryTimer = setTimeout(loadRuntime, 800);
+      return;
     }
-    cancel();
+
+    try {
+      process.memory(true);
+      E.defrag();
+      sourceCode = fs.readFileSync(basePath + 'STARTUP_RUNTIME.JS');
+      runtimeFactory = eval(sourceCode);
+      sourceCode = 0;
+      runtimeFactory();
+      runtimeFactory = 0;
+      process.memory(true);
+    } catch (error) {
+      sourceCode = runtimeFactory = 0;
+    }
+    cancelWake();
   }
-  global.__PipCoStartupWakeV130 = {
-    cancel: cancel,
-  };
-  t = setTimeout(go, 800);
-})();
+
+  const wakeApi = { cancel: cancelWake };
+  global.__PipCoStartupWakeV210 = wakeApi;
+  retryTimer = setTimeout(loadRuntime, 800);
+  return wakeApi;
+});

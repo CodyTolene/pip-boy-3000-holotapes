@@ -1,219 +1,252 @@
 (function () {
-  if (global.__PipCoStartupRuntimeV130) return;
+  if (global.__PipCoStartupRuntimeV210) return global.__PipCoStartupRuntimeV210;
+
   const fs = require('fs'),
-    B = 'HOLO/STARTUP_ANIMATIONS/',
-    S = B + 'SELECT.JSON';
-  if (!global.__PipCoStartupSessionV130) {
-    try {
-      fs.writeFileSync(S, '{"startup":-1}');
-    } catch (e) {}
-    global.__PipCoStartupSessionV130 = 1;
-    return;
-  }
-  const F = [
-    'MISTER.AVI',
-    'VAULTGIRL.AVI',
-    'DEATHCLAW.AVI',
-    'YESMAN.AVI',
-    'ENCLAVE.AVI',
-    'BOS.AVI',
-    'MOTHMAN.AVI',
-    'MINUTEMEN.AVI',
-    'ENCLAVE_PIPBOY.AVI',
-    'MRHOUSE.AVI',
-    'CLASSIC_MRHOUSE.AVI',
-    'CLASSIC_MRHOUSE_ANIMATED.AVI',
-    'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
-    'DOGMEAT.AVI',
-  ];
-  const D = [
+    basePath = 'HOLO/STARTUP_ANIMATIONS/',
+    selectionPath = basePath + 'SELECT.JSON',
+    builtinFiles = [
+      'MISTER.AVI',
+      'VAULTGIRL.AVI',
+      'DEATHCLAW.AVI',
+      'YESMAN.AVI',
+      'ENCLAVE.AVI',
+      'BOS.AVI',
+      'MOTHMAN.AVI',
+      'MINUTEMEN.AVI',
+      'ENCLAVE_PIPBOY.AVI',
+      'MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE.AVI',
+      'CLASSIC_MRHOUSE_ANIMATED.AVI',
+      'CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI',
+      'DOGMEAT.AVI',
+    ],
+    expectedDurations = new Uint16Array([
       6250, 3500, 3500, 4917, 5500, 5500, 5500, 5500, 26000, 7667, 5250, 6083,
       6000, 4167,
-    ],
-    H = [
+    ]),
+    safetyTimeouts = new Uint16Array([
       15000, 12000, 13000, 16000, 9015, 9015, 9015, 16500, 30500, 11182, 13000,
       15000, 15000, 13000,
-    ],
-    V = [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1];
-  let sb =
-      typeof Pip.__PIPCOStockBoot === 'function'
-        ? Pip.__PIPCOStockBoot
-        : typeof Pip.bootAnimation === 'function'
-          ? Pip.bootAnimation.bind(Pip)
-          : undefined,
-    sa =
-      typeof Pip.__PIPCOStockAudio === 'function'
-        ? Pip.__PIPCOStockAudio
-        : typeof Pip.audioStart === 'function'
-          ? Pip.audioStart.bind(Pip)
-          : undefined,
-    ov = 0,
-    oa = 0,
-    crt = 0;
-  Pip.__PIPCOStockBoot = sb;
-  Pip.__PIPCOStockAudio = sa;
-  function file(n) {
-    if (n < 14) return F[n];
-    if (n === 14) return 'Custom_Bootup.AVI';
-    if (n > 14 && n < 19) return 'Custom_Bootup_' + (n - 13) + '.AVI';
+    ]),
+    useVideoStoppedEvent = new Uint8Array([
+      1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1,
+    ]);
+
+  if (!global.__PipCoStartupSessionV214) {
+    try {
+      fs.writeFileSync(selectionPath, '{"startup":-1}');
+    } catch (error) {
+      // A cold session must still fall back to stock even if the SD write fails.
+    }
+    global.__PipCoStartupSessionV214 = 1;
+    return 0;
+  }
+
+  let stockBootAnimation =
+      typeof Pip.bootAnimation === 'function' ? Pip.bootAnimation : undefined,
+    stockAudioStart =
+      typeof Pip.audioStart === 'function' ? Pip.audioStart : undefined,
+    ownsVideo = 0,
+    ownsAudio = 0,
+    suppressNextCrtSound = 0;
+
+  function startupFile(startupIndex) {
+    if (startupIndex < 14) return builtinFiles[startupIndex];
+    if (startupIndex === 14) return 'Custom_Bootup.AVI';
+    if (startupIndex > 14 && startupIndex < 19) {
+      return 'Custom_Bootup_' + (startupIndex - 13) + '.AVI';
+    }
     return '';
   }
-  function sel() {
+
+  function selectedStartup() {
     try {
-      let n = JSON.parse(fs.readFileSync(S)).startup | 0;
-      return n >= -1 && n < 19 ? n : -1;
-    } catch (e) {
+      let startupIndex = JSON.parse(fs.readFileSync(selectionPath)).startup | 0;
+      return startupIndex >= -1 && startupIndex < 19 ? startupIndex : -1;
+    } catch (error) {
       return -1;
     }
   }
-  function ok(n) {
-    let f = file(n);
-    if (n < 0 || !f) return 0;
-    try {
-      return fs.statSync(B + f) ? 1 : 0;
-    } catch (e) {
-      return 0;
+
+  function startupAvailable(startupIndex) {
+    let fileName = startupFile(startupIndex);
+    return startupIndex >= 0 && fileName && fs.statSync(basePath + fileName)
+      ? 1
+      : 0;
+  }
+
+  function restoreRuntime() {
+    if (ownsVideo) {
+      try {
+        Pip.videoStop();
+      } catch (error) {
+        // Cleanup is best-effort if firmware is already tearing down playback.
+      }
     }
+    if (ownsAudio) {
+      try {
+        Pip.audioStop();
+      } catch (error) {
+        // Cleanup is best-effort if firmware is already tearing down playback.
+      }
+    }
+    ownsVideo = ownsAudio = 0;
+    if (stockAudioStart) Pip.audioStart = stockAudioStart;
+    if (stockBootAnimation) Pip.bootAnimation = stockBootAnimation;
+    if (global.__PipCoStartupRuntimeV210 === runtimeApi) {
+      global.__PipCoStartupRuntimeV210 = undefined;
+    }
+    process.memory(true);
+    E.defrag();
   }
-  function restore() {
-    try {
-      if (ov) Pip.videoStop();
-    } catch (e) {}
-    try {
-      if (oa) Pip.audioStop();
-    } catch (e) {}
-    ov = oa = 0;
-    try {
-      delete global.__PIPCO_CRT;
-    } catch (e) {}
-    if (sa) Pip.audioStart = sa;
-    if (sb) Pip.bootAnimation = sb;
-    try {
-      delete global.__PipCoStartupRuntimeV130;
-    } catch (e) {}
-  }
-  function ah(path) {
-    let n = sel();
-    if (!ok(n)) return sa ? sa.apply(Pip, arguments) : undefined;
-    if ((crt || global.__PIPCO_CRT) && path === 'SOUND/FX/CRT_ON2.WAV') {
-      crt = 0;
-      global.__PIPCO_CRT = 0;
+
+  function filteredAudioStart(path) {
+    let startupIndex = selectedStartup();
+    if (!startupAvailable(startupIndex)) {
+      return stockAudioStart
+        ? stockAudioStart.apply(Pip, arguments)
+        : undefined;
+    }
+    if (suppressNextCrtSound && path === 'SOUND/FX/CRT_ON2.WAV') {
+      suppressNextCrtSound = 0;
       return;
     }
-    return sa ? sa.apply(Pip, arguments) : undefined;
+    return stockAudioStart ? stockAudioStart.apply(Pip, arguments) : undefined;
   }
-  function stock(done) {
+
+  function runStockBoot(done) {
+    let result;
     try {
-      let q = sb ? sb.call(Pip) : undefined;
-      if (q && typeof q.then === 'function') q.then(done);
+      result = stockBootAnimation ? stockBootAnimation.call(Pip) : undefined;
+      if (result && typeof result.then === 'function') result.then(done);
       else done();
-    } catch (e) {
+    } catch (error) {
       done();
     }
   }
-  function bh() {
-    let n = sel();
-    if (!ok(n)) return sb ? sb.call(Pip) : Promise.resolve();
+
+  function customBootAnimation() {
+    let startupIndex = selectedStartup();
+    if (!startupAvailable(startupIndex)) {
+      return stockBootAnimation
+        ? stockBootAnimation.call(Pip)
+        : Promise.resolve();
+    }
+
     return new Promise(function (done) {
-      let t1,
-        t2,
-        t3,
-        sl,
-        fin = 0;
-      function end(nat) {
-        if (fin) return;
-        fin = 1;
-        if (t1) clearTimeout(t1);
-        if (t2) clearTimeout(t2);
-        if (t3) clearTimeout(t3);
-        if (sl)
-          try {
-            Pip.removeListener('videoStopped', sl);
-          } catch (e) {}
-        if (!nat) {
-          try {
-            if (ov) Pip.videoStop();
-          } catch (e) {}
-          try {
-            if (oa) Pip.audioStop();
-          } catch (e) {}
+      let launchTimer = 0,
+        safetyTimer = 0,
+        fallbackTimer = 0,
+        videoStoppedHandler,
+        finished = 0;
+
+      function finishBoot() {
+        if (finished) return;
+        finished = 1;
+        if (launchTimer) clearTimeout(launchTimer);
+        if (safetyTimer) clearTimeout(safetyTimer);
+        if (fallbackTimer) clearTimeout(fallbackTimer);
+        launchTimer = safetyTimer = fallbackTimer = 0;
+        if (videoStoppedHandler) {
+          Pip.removeListener('videoStopped', videoStoppedHandler);
+          videoStoppedHandler = undefined;
         }
-        ov = oa = 0;
-        try {
-          h.reset().setClipRect(0, 0, 479, 319);
-        } catch (e) {}
-        try {
-          delete Pip.blitOptions.disable;
-        } catch (e) {}
-        crt = 1;
-        global.__PIPCO_CRT = 1;
-        setTimeout(done, 0);
+
+        // Always stop the owned media before handing control back to Pip-OS.
+        // Older hardware-tested builds used this same handoff and did not leave
+        // the AVI decoder's final frame on the display after wake.
+        if (ownsVideo) {
+          try {
+            Pip.videoStop();
+          } catch (error) {
+            // Playback may already have reached EOF; videoStop is cleanup only.
+          }
+        }
+        if (ownsAudio) {
+          try {
+            Pip.audioStop();
+          } catch (error) {
+            // Embedded AVI audio may already have stopped with the video.
+          }
+        }
+
+        ownsVideo = ownsAudio = 0;
+        h.reset().setClipRect(0, 0, 479, 319);
+        suppressNextCrtSound = 1;
+
+        // Preserve the proven handoff delay so the video layer can fully
+        // release before firmware redraws the normal Pip-Boy screen.
+        setTimeout(done, 160);
       }
-      function play() {
-        if (fin) return;
-        if (!ok(n)) {
-          fin = 1;
-          stock(done);
+
+      function playSelectedStartup() {
+        let fileName;
+        if (finished) return;
+        if (!startupAvailable(startupIndex)) {
+          finished = 1;
+          runStockBoot(done);
           return;
         }
+
+        fileName = startupFile(startupIndex);
         try {
           Pip.videoStop();
           Pip.audioStop();
-        } catch (e) {}
+        } catch (error) {
+          // Stopping stale playback is defensive; continue with a clean screen.
+        }
+        h.clear();
+        h.flip();
+
         try {
-          h.clear();
-          h.flip();
-        } catch (e) {}
-        try {
-          Pip.videoStart(B + file(n), {
-            x: 0,
-            y: 0,
-          });
-          ov = oa = 1;
-          t2 = setTimeout(
+          Pip.videoStart(basePath + fileName, { x: 0, y: 0 });
+          ownsVideo = ownsAudio = 1;
+          safetyTimer = setTimeout(
             function () {
-              end(0);
+              finishBoot();
             },
-            n < 14 ? H[n] : 120000,
+            startupIndex < 14 ? safetyTimeouts[startupIndex] : 120000,
           );
-        } catch (e) {
-          fin = 1;
-          stock(done);
+        } catch (error) {
+          finished = 1;
+          ownsVideo = ownsAudio = 0;
+          runStockBoot(done);
           return;
         }
-        if (n < 14 ? V[n] : 1) {
-          sl = function () {
-            end(1);
+
+        if (startupIndex < 14 ? useVideoStoppedEvent[startupIndex] : 1) {
+          videoStoppedHandler = function () {
+            finishBoot();
           };
           try {
-            Pip.on('videoStopped', sl);
-          } catch (e) {
-            sl = undefined;
-            t3 = setTimeout(
+            Pip.on('videoStopped', videoStoppedHandler);
+          } catch (error) {
+            videoStoppedHandler = undefined;
+            fallbackTimer = setTimeout(
               function () {
-                end(0);
+                finishBoot();
               },
-              (n < 14 ? D[n] : 30000) + 500,
+              (startupIndex < 14 ? expectedDurations[startupIndex] : 30000) +
+                500,
             );
           }
-        } else
-          t3 = setTimeout(
+        } else {
+          fallbackTimer = setTimeout(
             function () {
-              end(0);
+              finishBoot();
             },
-            D[n] + (n === 8 ? 420 : 180),
+            expectedDurations[startupIndex] + (startupIndex === 8 ? 420 : 180),
           );
+        }
       }
-      t1 = setTimeout(play, 1895);
+
+      launchTimer = setTimeout(playSelectedStartup, 1895);
     });
   }
-  ah.__pipcoRT = 1;
-  bh.__pipcoRT = 1;
-  ah.__pipcoOriginal = sa;
-  bh.__pipcoOriginal = sb;
-  if (sa) Pip.audioStart = ah;
-  Pip.bootAnimation = bh;
-  global.__PipCoStartupRuntimeV130 = {
-    restore: restore,
-  };
-})();
+
+  const runtimeApi = { restore: restoreRuntime };
+  if (stockAudioStart) Pip.audioStart = filteredAudioStart;
+  Pip.bootAnimation = customBootAnimation;
+  global.__PipCoStartupRuntimeV210 = runtimeApi;
+  return runtimeApi;
+});
