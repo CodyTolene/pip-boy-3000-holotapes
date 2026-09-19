@@ -1,7 +1,7 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/FALLOUT_SCREENSAVER/",
-    mesmetronPath = "HOLO/MESMETRON/";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/FALLOUT_SCREENSAVER/',
+    mesmetronPath = 'HOLO/MESMETRON/';
 
   let existingService = global.__PipCoIdleService,
     returnToMenuTimer = 0;
@@ -10,14 +10,14 @@
 
   function loadConfig() {
     try {
-      let savedConfig = JSON.parse(fs.readFileSync(basePath + "CONFIG.JSON"));
+      let savedConfig = JSON.parse(fs.readFileSync(basePath + 'CONFIG.JSON'));
       return {
         enabled: savedConfig.enabled ? 1 : 0,
         providerEnabled: savedConfig.mesEnabled ? 1 : 0,
-        providerFile: savedConfig.mesFile || ""
+        providerFile: savedConfig.mesFile || '',
       };
     } catch (error) {
-      return { enabled: 0, providerEnabled: 0, providerFile: "" };
+      return { enabled: 0, providerEnabled: 0, providerFile: '' };
     }
   }
 
@@ -27,10 +27,10 @@
       if (Pip.audioIsPlaying && Pip.audioIsPlaying()) return 1;
       if (Pip.streamPlaying) {
         let streamType = Pip.streamPlaying();
-        if (streamType === "audio" || streamType === "both") return 1;
+        if (streamType === 'audio' || streamType === 'both') return 1;
       }
     } catch (error) {
-      ignoreError("audio-state check failed: " + error);
+      ignoreError('audio-state check failed: ' + error);
       return 1;
     }
     return 0;
@@ -52,7 +52,7 @@
       return renderer;
     } catch (error) {
       sourceCode = rendererFactory = 0;
-      ignoreError(fileName + " load/start failed: " + error);
+      ignoreError(fileName + ' load/start failed: ' + error);
       process.memory(true);
       return 0;
     }
@@ -65,7 +65,7 @@
       try {
         renderer.stop();
       } catch (error) {
-        ignoreError("renderer stop failed: " + error);
+        ignoreError('renderer stop failed: ' + error);
       }
     }
     renderer = 0;
@@ -76,12 +76,12 @@
     E.defrag();
     if (returnToMenu && !service.runner) {
       if (returnToMenuTimer) clearTimeout(returnToMenuTimer);
-      returnToMenuTimer = setTimeout(function() {
+      returnToMenuTimer = setTimeout(function () {
         returnToMenuTimer = 0;
         try {
           Pip.changeMenu();
         } catch (error) {
-          ignoreError("menu return failed: " + error);
+          ignoreError('menu return failed: ' + error);
         }
       }, 0);
     }
@@ -91,7 +91,13 @@
     if (service.active || (!preview && !service.enabled)) return;
     service.preview = preview ? 1 : 0;
     service.active = 1;
-    service.run = loadRenderer("BOMBRUN.JS", [service, fs, basePath, logError, audioAlreadyActive()]);
+    service.run = loadRenderer('BOMBRUN.JS', [
+      service,
+      fs,
+      basePath,
+      logError,
+      audioAlreadyActive(),
+    ]);
     if (!service.run) {
       service.active = 0;
       service.preview = 0;
@@ -111,9 +117,15 @@
       fileName = service.providerFile;
     }
 
-    if (fileName === "@PIPQUARIUM") return;
+    if (fileName === '@PIPQUARIUM') return;
     service.active = 1;
-    service.run = loadRenderer("MESIDLE.JS", [service, mesmetronPath, fs, logError, fileName]);
+    service.run = loadRenderer('MESIDLE.JS', [
+      service,
+      mesmetronPath,
+      fs,
+      logError,
+      fileName,
+    ]);
     if (!service.run) {
       service.active = 0;
       service.preview = 0;
@@ -130,7 +142,8 @@
     if (service.active) stopRenderer(0);
     service.claimInputs = undefined;
     service.run = undefined;
-    if (global.__PipCoIdleService === service) global.__PipCoIdleService = undefined;
+    if (global.__PipCoIdleService === service)
+      global.__PipCoIdleService = undefined;
     process.memory(true);
     E.defrag();
   }
@@ -139,14 +152,14 @@
     try {
       existingService.destroy();
     } catch (error) {
-      ignoreError("existing service cleanup failed: " + error);
+      ignoreError('existing service cleanup failed: ' + error);
     }
   }
   existingService = undefined;
 
   let savedConfig = loadConfig();
   const service = {
-    version: "1.2.0",
+    version: '1.2.0',
     enabled: savedConfig.enabled,
     providerEnabled: savedConfig.providerEnabled,
     providerFile: savedConfig.providerFile,
@@ -159,7 +172,7 @@
     stop: stopRenderer,
     play: playBuiltIn,
     playProvider: playProvider,
-    destroy: destroyService
+    destroy: destroyService,
   };
   savedConfig = undefined;
   global.__PipCoIdleService = service;

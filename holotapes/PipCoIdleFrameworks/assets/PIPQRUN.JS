@@ -1,7 +1,7 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/FALLOUT_SCREENSAVER/",
-    pipquariumPath = "HOLO/PIPQUARIUM/";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/FALLOUT_SCREENSAVER/',
+    pipquariumPath = 'HOLO/PIPQUARIUM/';
 
   let pipquariumApp,
     exitTimer = 0,
@@ -11,21 +11,21 @@
 
   function releaseInputs() {
     if (inputMask & 1) {
-      Pip.removeListener("knob1", onExitInput);
+      Pip.removeListener('knob1', onExitInput);
       inputMask &= ~1;
     }
     if (inputMask & 2) {
-      Pip.removeListener("knob2", onExitInput);
+      Pip.removeListener('knob2', onExitInput);
       inputMask &= ~2;
     }
   }
 
   function claimInputs() {
     releaseInputs();
-    Pip.onExclusive("knob1", onExitInput);
+    Pip.onExclusive('knob1', onExitInput);
     inputMask |= 1;
     try {
-      Pip.onExclusive("knob2", onExitInput);
+      Pip.onExclusive('knob2', onExitInput);
       inputMask |= 2;
     } catch (error) {
       releaseInputs();
@@ -34,10 +34,11 @@
   }
 
   function startWakeWatcher() {
-    let sourceCode = 0, wakeFactory = 0;
+    let sourceCode = 0,
+      wakeFactory = 0;
     try {
       E.defrag();
-      sourceCode = fs.readFileSync(basePath + "WAKE.JS");
+      sourceCode = fs.readFileSync(basePath + 'WAKE.JS');
       wakeFactory = eval(sourceCode);
       sourceCode = 0;
       wakeFactory();
@@ -55,7 +56,7 @@
       exitTimer = 0;
     }
     releaseInputs();
-    if (pipquariumApp && typeof pipquariumApp.remove === "function") {
+    if (pipquariumApp && typeof pipquariumApp.remove === 'function') {
       try {
         pipquariumApp.remove();
       } catch (error) {
@@ -69,7 +70,7 @@
 
   function finishExit() {
     exitTimer = 0;
-    if (preview) Pip.loadHolotape(basePath + "APP.JS");
+    if (preview) Pip.loadHolotape(basePath + 'APP.JS');
     else Pip.changeMenu();
   }
 
@@ -87,44 +88,47 @@
   }
 
   try {
-    preview = fs.readFileSync(basePath + "PIPQMODE.CFG") === "1" ? 1 : 0;
+    preview = fs.readFileSync(basePath + 'PIPQMODE.CFG') === '1' ? 1 : 0;
   } catch (error) {
     preview = 0;
   }
   try {
-    fs.writeFileSync(basePath + "PIPQMODE.CFG", "0");
+    fs.writeFileSync(basePath + 'PIPQMODE.CFG', '0');
   } catch (error) {
     // The mode has already been captured in RAM.
   }
 
   try {
-    let sourceCode = 0, pipquariumFactory = 0;
+    let sourceCode = 0,
+      pipquariumFactory = 0;
     E.defrag();
-    sourceCode = fs.readFileSync(pipquariumPath + "APP.JS");
+    sourceCode = fs.readFileSync(pipquariumPath + 'APP.JS');
     pipquariumFactory = eval(sourceCode);
     sourceCode = 0;
     pipquariumApp = pipquariumFactory();
     pipquariumFactory = 0;
-    if (!pipquariumApp || typeof pipquariumApp.remove !== "function") {
-      throw new Error("Invalid Pipquarium APP.JS");
+    if (!pipquariumApp || typeof pipquariumApp.remove !== 'function') {
+      throw new Error('Invalid Pipquarium APP.JS');
     }
     E.defrag();
     claimInputs();
   } catch (error) {
     releaseInputs();
-    if (pipquariumApp && typeof pipquariumApp.remove === "function") {
-      try { pipquariumApp.remove(); } catch (removeError) {}
+    if (pipquariumApp && typeof pipquariumApp.remove === 'function') {
+      try {
+        pipquariumApp.remove();
+      } catch (removeError) {}
     }
     pipquariumApp = undefined;
     E.defrag();
-    Pip.errorBox("PIP-CO Idle Framework\nPIPQUARIUM START FAILED");
+    Pip.errorBox('PIP-CO Idle Framework\nPIPQUARIUM START FAILED');
     exitTimer = setTimeout(finishExit, 0);
   }
 
   return {
-    id: "PIPCOIDLEPIPQUARIUM",
+    id: 'PIPCOIDLEPIPQUARIUM',
     notDefault: true,
     fullscreen: true,
-    remove: removeRunner
+    remove: removeRunner,
   };
 });

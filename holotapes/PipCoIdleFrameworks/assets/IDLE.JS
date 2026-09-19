@@ -1,6 +1,6 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/FALLOUT_SCREENSAVER/";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/FALLOUT_SCREENSAVER/';
 
   let idleService,
     returnTimer = 0,
@@ -23,13 +23,13 @@
   function startWakeWatcher() {
     let wakeFactory = 0;
     try {
-      wakeFactory = loadFactory("WAKE.JS");
+      wakeFactory = loadFactory('WAKE.JS');
       wakeFactory();
       wakeFactory = 0;
       process.memory(true);
     } catch (error) {
       wakeFactory = 0;
-      ignoreError("WAKE.JS failed: " + error);
+      ignoreError('WAKE.JS failed: ' + error);
     }
   }
 
@@ -38,7 +38,7 @@
     try {
       Pip.changeMenu();
     } catch (error) {
-      ignoreError("menu return failed: " + error);
+      ignoreError('menu return failed: ' + error);
     }
   }
 
@@ -49,21 +49,21 @@
 
   function detachInputs() {
     if (inputMask & 1) {
-      Pip.removeListener("knob1", onExitInput);
+      Pip.removeListener('knob1', onExitInput);
       inputMask &= ~1;
     }
     if (inputMask & 2) {
-      Pip.removeListener("knob2", onExitInput);
+      Pip.removeListener('knob2', onExitInput);
       inputMask &= ~2;
     }
   }
 
   function attachInputs() {
     detachInputs();
-    Pip.onExclusive("knob1", onExitInput);
+    Pip.onExclusive('knob1', onExitInput);
     inputMask |= 1;
     try {
-      Pip.onExclusive("knob2", onExitInput);
+      Pip.onExclusive('knob2', onExitInput);
       inputMask |= 2;
     } catch (error) {
       detachInputs();
@@ -96,7 +96,10 @@
 
   if (!global.__PipCoIdleSessionV120) {
     try {
-      fs.writeFileSync(basePath + "CONFIG.JSON", '{"enabled":0,"mesEnabled":0,"mesFile":""}');
+      fs.writeFileSync(
+        basePath + 'CONFIG.JSON',
+        '{"enabled":0,"mesEnabled":0,"mesFile":""}',
+      );
     } catch (error) {
       // The cold runner will simply exit if the config cannot be rewritten.
     }
@@ -107,28 +110,29 @@
     try {
       global.__PipCoIdleWake.destroy();
     } catch (error) {
-      ignoreError("wake cleanup failed: " + error);
+      ignoreError('wake cleanup failed: ' + error);
     }
   }
 
   try {
-    idleService = loadFactory("SERVICE.JS")();
+    idleService = loadFactory('SERVICE.JS')();
   } catch (error) {
-    ignoreError("SERVICE.JS failed in IDLE.JS: " + error);
+    ignoreError('SERVICE.JS failed in IDLE.JS: ' + error);
     idleService = undefined;
     startWakeWatcher();
     scheduleReturnToMenu();
     return {
-      id: "PIPCOIDLERUNNER",
+      id: 'PIPCOIDLERUNNER',
       notDefault: true,
       fullscreen: true,
-      remove: removeRunner
+      remove: removeRunner,
     };
   }
 
   idleService.runner = 1;
   if (idleService.enabled) idleService.play(0);
-  else if (idleService.providerEnabled) idleService.playProvider(0, idleService.providerFile);
+  else if (idleService.providerEnabled)
+    idleService.playProvider(0, idleService.providerFile);
 
   if (!idleService.active) {
     idleService.runner = 0;
@@ -137,17 +141,17 @@
     startWakeWatcher();
     scheduleReturnToMenu();
     return {
-      id: "PIPCOIDLERUNNER",
+      id: 'PIPCOIDLERUNNER',
       notDefault: true,
       fullscreen: true,
-      remove: removeRunner
+      remove: removeRunner,
     };
   }
 
   try {
     attachInputs();
   } catch (error) {
-    ignoreError("runner input attach failed: " + error);
+    ignoreError('runner input attach failed: ' + error);
     idleService.stop(0);
     idleService.runner = 0;
     idleService.destroy();
@@ -157,9 +161,9 @@
   }
 
   return {
-    id: "PIPCOIDLERUNNER",
+    id: 'PIPCOIDLERUNNER',
     notDefault: true,
     fullscreen: true,
-    remove: removeRunner
+    remove: removeRunner,
   };
 });

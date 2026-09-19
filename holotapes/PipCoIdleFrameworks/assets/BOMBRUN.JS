@@ -1,4 +1,4 @@
-(function(idleService, fs, basePath, ignoreError, audioAlreadyActive) {
+(function (idleService, fs, basePath, ignoreError, audioAlreadyActive) {
   let frameTimer = 0,
     audioWatchTimer = 0,
     logoImage,
@@ -71,11 +71,16 @@
   }
 
   function restartOwnedAudio() {
-    if (idleService.active && ownsAudio && Pip.audioIsPlaying && !Pip.audioIsPlaying()) {
+    if (
+      idleService.active &&
+      ownsAudio &&
+      Pip.audioIsPlaying &&
+      !Pip.audioIsPlaying()
+    ) {
       try {
-        Pip.audioStart(basePath + "FALLOUT.WAV", { repeat: true });
+        Pip.audioStart(basePath + 'FALLOUT.WAV', { repeat: true });
       } catch (error) {
-        ignoreError("screensaver audio restart failed: " + error);
+        ignoreError('screensaver audio restart failed: ' + error);
       }
     }
   }
@@ -91,23 +96,28 @@
         height: 67,
         bpp: 2,
         transparent: 0,
-        buffer: fs.readFileSync(basePath + "BOMB.BIN")
+        buffer: fs.readFileSync(basePath + 'BOMB.BIN'),
       };
     } catch (error) {
-      ignoreError("BOMB.BIN load failed: " + error);
+      ignoreError('BOMB.BIN load failed: ' + error);
       return 0;
     }
 
-    bombX = new Int16Array([455, 390, 325, 255, 185, 520, 445, 370, 295, 610, 535, 460, 385, 690]);
-    bombY = new Int16Array([-67, -22, 18, 62, 106, -125, -170, -215, -260, -70, -120, -170, -220, -130]);
+    bombX = new Int16Array([
+      455, 390, 325, 255, 185, 520, 445, 370, 295, 610, 535, 460, 385, 690,
+    ]);
+    bombY = new Int16Array([
+      -67, -22, 18, 62, 106, -125, -170, -215, -260, -70, -120, -170, -220,
+      -130,
+    ]);
     bombReady = 1;
 
     if (!audioAlreadyActive) {
       try {
-        Pip.audioStart(basePath + "FALLOUT.WAV", { repeat: true });
+        Pip.audioStart(basePath + 'FALLOUT.WAV', { repeat: true });
         ownsAudio = 1;
       } catch (error) {
-        ignoreError("screensaver audio start failed: " + error);
+        ignoreError('screensaver audio start failed: ' + error);
       }
       if (ownsAudio) audioWatchTimer = setInterval(restartOwnedAudio, 10000);
     }
@@ -115,7 +125,7 @@
   }
 
   function drawFrame() {
-    "ram";
+    'ram';
     let bombIndex;
     if (!idleService.active) return;
     h.reset().setClipRect(0, 0, 479, 319).clear(0);
@@ -124,7 +134,7 @@
       h.setColor(3).drawImage(
         logoImage,
         (480 - logoImage.width) >> 1,
-        (320 - logoImage.height) >> 1
+        (320 - logoImage.height) >> 1,
       );
       logoFramesRemaining--;
       h.flip();
@@ -145,7 +155,8 @@
         bombX[bombIndex]--;
         bombY[bombIndex]++;
       }
-      if (bombX[bombIndex] < -71 && bombY[bombIndex] > 320) resetBomb(bombIndex);
+      if (bombX[bombIndex] < -71 && bombY[bombIndex] > 320)
+        resetBomb(bombIndex);
     }
 
     movementPhase = movementPhase ? 0 : 1;
@@ -166,7 +177,7 @@
       try {
         Pip.audioStop();
       } catch (error) {
-        ignoreError("screensaver audio stop failed: " + error);
+        ignoreError('screensaver audio stop failed: ' + error);
       }
     }
     ownsAudio = 0;
@@ -182,10 +193,10 @@
       height: 227,
       bpp: 1,
       transparent: 0,
-      buffer: fs.readFileSync(basePath + "LOGO.BIN")
+      buffer: fs.readFileSync(basePath + 'LOGO.BIN'),
     };
   } catch (error) {
-    ignoreError("LOGO.BIN load failed: " + error);
+    ignoreError('LOGO.BIN load failed: ' + error);
     return;
   }
 

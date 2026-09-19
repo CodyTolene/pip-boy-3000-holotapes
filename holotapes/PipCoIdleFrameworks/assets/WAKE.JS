@@ -1,10 +1,13 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/FALLOUT_SCREENSAVER/";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/FALLOUT_SCREENSAVER/';
 
   if (!global.__PipCoIdleSessionV120) {
     try {
-      fs.writeFileSync(basePath + "CONFIG.JSON", '{"enabled":0,"mesEnabled":0,"mesFile":""}');
+      fs.writeFileSync(
+        basePath + 'CONFIG.JSON',
+        '{"enabled":0,"mesEnabled":0,"mesFile":""}',
+      );
     } catch (error) {
       // Cold-session safety still disables the framework in memory.
     }
@@ -21,10 +24,10 @@
 
   function loadIdleMode() {
     try {
-      let savedConfig = JSON.parse(fs.readFileSync(basePath + "CONFIG.JSON"));
+      let savedConfig = JSON.parse(fs.readFileSync(basePath + 'CONFIG.JSON'));
       if (savedConfig.enabled) return 1;
       if (savedConfig.mesEnabled && savedConfig.mesFile) {
-        if (savedConfig.mesFile === "@PIPQUARIUM") return 2;
+        if (savedConfig.mesFile === '@PIPQUARIUM') return 2;
         return 1;
       }
     } catch (error) {
@@ -35,21 +38,21 @@
 
   function detachActivityListeners() {
     if (listenerMask & 1) {
-      Pip.removeListener("mode", onActivity);
+      Pip.removeListener('mode', onActivity);
       listenerMask &= ~1;
     }
     if (listenerMask & 2) {
-      Pip.removeListener("menuX", onActivity);
+      Pip.removeListener('menuX', onActivity);
       listenerMask &= ~2;
     }
   }
 
   function attachActivityListeners() {
     detachActivityListeners();
-    Pip.on("mode", onActivity);
+    Pip.on('mode', onActivity);
     listenerMask |= 1;
     try {
-      Pip.on("menuX", onActivity);
+      Pip.on('menuX', onActivity);
       listenerMask |= 2;
     } catch (error) {
       detachActivityListeners();
@@ -106,24 +109,24 @@
 
     detachActivityListeners();
     try {
-      if (typeof Pip.loadHolotape !== "function") {
-        throw new Error("Pip.loadHolotape unavailable");
+      if (typeof Pip.loadHolotape !== 'function') {
+        throw new Error('Pip.loadHolotape unavailable');
       }
       E.defrag();
       if (idleMode === 2) {
-        fs.writeFileSync(basePath + "PIPQMODE.CFG", "0");
-        Pip.loadHolotape(basePath + "PIPQRUN.JS");
+        fs.writeFileSync(basePath + 'PIPQMODE.CFG', '0');
+        Pip.loadHolotape(basePath + 'PIPQRUN.JS');
       } else {
-        Pip.loadHolotape(basePath + "IDLE.JS");
+        Pip.loadHolotape(basePath + 'IDLE.JS');
       }
     } catch (error) {
-      ignoreError("runner load failed: " + error);
+      ignoreError('runner load failed: ' + error);
       if (active) {
         try {
           attachActivityListeners();
           scheduleIdleCheck();
         } catch (attachError) {
-          ignoreError("wake listener restore failed: " + attachError);
+          ignoreError('wake listener restore failed: ' + attachError);
           destroyWake();
         }
       }
@@ -134,15 +137,15 @@
     try {
       existingWake.destroy();
     } catch (error) {
-      ignoreError("existing wake cleanup failed: " + error);
+      ignoreError('existing wake cleanup failed: ' + error);
     }
   }
   existingWake = undefined;
 
   const wakeApi = {
-    version: "1.2.0",
+    version: '1.2.0',
     destroy: destroyWake,
-    touch: onActivity
+    touch: onActivity,
   };
   global.__PipCoIdleWake = wakeApi;
 
@@ -154,7 +157,7 @@
   try {
     attachActivityListeners();
   } catch (error) {
-    ignoreError("wake listener attach failed: " + error);
+    ignoreError('wake listener attach failed: ' + error);
     destroyWake();
     return 0;
   }

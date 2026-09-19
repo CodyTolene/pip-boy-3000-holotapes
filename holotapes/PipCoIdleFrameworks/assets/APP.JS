@@ -1,11 +1,11 @@
-(function() {
-  const fs = require("fs"),
-    basePath = "HOLO/FALLOUT_SCREENSAVER/",
-    configPath = basePath + "CONFIG.JSON",
-    pipquariumModePath = basePath + "PIPQMODE.CFG",
-    mesmetronPath = "HOLO/MESMETRON/",
-    pipquariumPath = "HOLO/PIPQUARIUM/",
-    pipquariumSentinel = "@PIPQUARIUM";
+(function () {
+  const fs = require('fs'),
+    basePath = 'HOLO/FALLOUT_SCREENSAVER/',
+    configPath = basePath + 'CONFIG.JSON',
+    pipquariumModePath = basePath + 'PIPQMODE.CFG',
+    mesmetronPath = 'HOLO/MESMETRON/',
+    pipquariumPath = 'HOLO/PIPQUARIUM/',
+    pipquariumSentinel = '@PIPQUARIUM';
 
   let config,
     idleService,
@@ -34,10 +34,10 @@
       return {
         enabled: savedConfig.enabled ? 1 : 0,
         mesEnabled: savedConfig.mesEnabled ? 1 : 0,
-        mesFile: savedConfig.mesFile || ""
+        mesFile: savedConfig.mesFile || '',
       };
     } catch (error) {
-      return { enabled: 0, mesEnabled: 0, mesFile: "" };
+      return { enabled: 0, mesEnabled: 0, mesFile: '' };
     }
   }
 
@@ -48,11 +48,11 @@
         JSON.stringify({
           enabled: currentConfig.enabled ? 1 : 0,
           mesEnabled: currentConfig.mesEnabled ? 1 : 0,
-          mesFile: currentConfig.mesFile || ""
-        })
+          mesFile: currentConfig.mesFile || '',
+        }),
       );
     } catch (error) {
-      ignoreError("config save failed: " + error);
+      ignoreError('config save failed: ' + error);
     }
   }
 
@@ -70,13 +70,13 @@
   function startWakeWatcher() {
     let wakeFactory = 0;
     try {
-      wakeFactory = loadFactory("WAKE.JS");
+      wakeFactory = loadFactory('WAKE.JS');
       wakeFactory();
       wakeFactory = 0;
       process.memory(true);
     } catch (error) {
       wakeFactory = 0;
-      ignoreError("WAKE.JS failed: " + error);
+      ignoreError('WAKE.JS failed: ' + error);
     }
   }
 
@@ -85,14 +85,14 @@
       try {
         global.__PipCoIdleWake.destroy();
       } catch (error) {
-        ignoreError("existing wake cleanup failed: " + error);
+        ignoreError('existing wake cleanup failed: ' + error);
       }
     }
     if (global.__PipCoIdleService && global.__PipCoIdleService.destroy) {
       try {
         global.__PipCoIdleService.destroy();
       } catch (error) {
-        ignoreError("existing service cleanup failed: " + error);
+        ignoreError('existing service cleanup failed: ' + error);
       }
     }
   }
@@ -105,14 +105,19 @@
       itemIndex;
 
     try {
-      sourceCode = fs.readFileSync(mesmetronPath + "TITLE.JS");
+      sourceCode = fs.readFileSync(mesmetronPath + 'TITLE.JS');
       titleFactory = eval(sourceCode);
       sourceCode = 0;
       mesmetronTitle = titleFactory();
       titleFactory = 0;
-      mesmetronItems = mesmetronTitle && mesmetronTitle.items ? mesmetronTitle.items : [];
+      mesmetronItems =
+        mesmetronTitle && mesmetronTitle.items ? mesmetronTitle.items : [];
       for (itemIndex = 0; itemIndex < mesmetronItems.length; itemIndex++) {
-        if (mesmetronItems[itemIndex] && mesmetronItems[itemIndex].name && mesmetronItems[itemIndex].file) {
+        if (
+          mesmetronItems[itemIndex] &&
+          mesmetronItems[itemIndex].name &&
+          mesmetronItems[itemIndex].file
+        ) {
           providerNames.push(String(mesmetronItems[itemIndex].name));
           providerFiles.push(String(mesmetronItems[itemIndex].file));
         }
@@ -122,8 +127,8 @@
     }
     sourceCode = titleFactory = mesmetronTitle = mesmetronItems = 0;
 
-    if (fs.statSync(pipquariumPath + "APP.JS")) {
-      providerNames.push("Pipquarium");
+    if (fs.statSync(pipquariumPath + 'APP.JS')) {
+      providerNames.push('Pipquarium');
       providerFiles.push(pipquariumSentinel);
     }
   }
@@ -131,16 +136,20 @@
   function resolveSelectedProvider() {
     let providerIndex;
     if (!config.mesEnabled || !config.mesFile) return;
-    for (providerIndex = 0; providerIndex < providerFiles.length; providerIndex++) {
+    for (
+      providerIndex = 0;
+      providerIndex < providerFiles.length;
+      providerIndex++
+    ) {
       if (providerFiles[providerIndex] === config.mesFile) {
         selectedProvider = providerIndex + 1;
         return;
       }
     }
     config.mesEnabled = 0;
-    config.mesFile = "";
+    config.mesFile = '';
     idleService.providerEnabled = 0;
-    idleService.providerFile = "";
+    idleService.providerFile = '';
     configDirty = 1;
   }
 
@@ -150,7 +159,10 @@
   }
 
   function drawText(y, text) {
-    h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1).drawString(text, 38, y);
+    h.setColor(3)
+      .setFontMonofonto16()
+      .setFontAlign(-1, -1)
+      .drawString(text, 38, y);
   }
 
   function drawRow(y, text, selected) {
@@ -163,8 +175,8 @@
   }
 
   function mainItemLabel(index) {
-    if (index === 0) return "PIP-BOY 3000";
-    if (index === mainItemCount() - 1) return "< Back";
+    if (index === 0) return 'PIP-BOY 3000';
+    if (index === mainItemCount() - 1) return '< Back';
     return providerNames[index - 1];
   }
 
@@ -185,37 +197,53 @@
       .drawLine(13, 279, 18, 284)
       .drawLine(18, 284, 23, 279)
       .drawLine(18, trackTop, 18, trackBottom);
-    thumbHeight = Math.max(18, Math.floor((trackBottom - trackTop + 1) * 5 / itemCount));
-    thumbY = trackTop + Math.floor(((trackBottom - trackTop + 1) - thumbHeight) * mainScroll / maxScroll);
+    thumbHeight = Math.max(
+      18,
+      Math.floor(((trackBottom - trackTop + 1) * 5) / itemCount),
+    );
+    thumbY =
+      trackTop +
+      Math.floor(
+        ((trackBottom - trackTop + 1 - thumbHeight) * mainScroll) / maxScroll,
+      );
     h.fillRect(16, thumbY, 20, thumbY + thumbHeight - 1);
   }
 
   function drawMenu() {
-    let itemCount,
-      visibleIndex,
-      itemIndex,
-      labelWidth;
+    let itemCount, visibleIndex, itemIndex, labelWidth;
 
     drawHeader();
     if (menuPage === 0) {
-      drawText(112, "Screensaver Idle Animations:");
+      drawText(112, 'Screensaver Idle Animations:');
       itemCount = mainItemCount();
       if (mainSelection < mainScroll) mainScroll = mainSelection;
       if (mainSelection >= mainScroll + 5) mainScroll = mainSelection - 4;
       mainScroll = E.clip(mainScroll, 0, Math.max(0, itemCount - 5));
-      for (visibleIndex = 0; visibleIndex < 5 && mainScroll + visibleIndex < itemCount; visibleIndex++) {
+      for (
+        visibleIndex = 0;
+        visibleIndex < 5 && mainScroll + visibleIndex < itemCount;
+        visibleIndex++
+      ) {
         itemIndex = mainScroll + visibleIndex;
-        drawRow(142 + visibleIndex * 30, mainItemLabel(itemIndex), itemIndex === mainSelection);
+        drawRow(
+          142 + visibleIndex * 30,
+          mainItemLabel(itemIndex),
+          itemIndex === mainSelection,
+        );
       }
       drawScroller();
       return;
     }
 
     if (submenuIndex === 0) {
-      drawRow(126, "PIP-BOY 3000 Idle: " + (config.enabled ? "ENABLED" : "DISABLED"), submenuSelection === 0);
-      drawRow(166, "Preview Screensaver", submenuSelection === 1);
-      drawRow(206, "< Back", submenuSelection === 2);
-      drawText(246, "Idle Time: 2 Minutes");
+      drawRow(
+        126,
+        'PIP-BOY 3000 Idle: ' + (config.enabled ? 'ENABLED' : 'DISABLED'),
+        submenuSelection === 0,
+      );
+      drawRow(166, 'Preview Screensaver', submenuSelection === 1);
+      drawRow(206, '< Back', submenuSelection === 2);
+      drawText(246, 'Idle Time: 2 Minutes');
       return;
     }
 
@@ -223,35 +251,35 @@
     h.setColor(3).setFontMonofonto16().setFontAlign(-1, -1);
     h.drawString(providerNames[submenuIndex - 1], 38, 108);
     labelWidth = h.stringWidth(providerNames[submenuIndex - 1]);
-    h.drawString(" Idle: ", 38 + labelWidth, 108);
+    h.drawString(' Idle: ', 38 + labelWidth, 108);
     h.drawString(
-      selectedProvider === submenuIndex ? "ENABLED" : "DISABLED",
-      38 + labelWidth + h.stringWidth(" Idle: "),
-      108
+      selectedProvider === submenuIndex ? 'ENABLED' : 'DISABLED',
+      38 + labelWidth + h.stringWidth(' Idle: '),
+      108,
     );
-    drawRow(148, "Preview Screensaver", submenuSelection === 1);
-    drawRow(188, "< Back", submenuSelection === 2);
-    drawText(228, "Idle Time: 2 Minutes");
+    drawRow(148, 'Preview Screensaver', submenuSelection === 1);
+    drawRow(188, '< Back', submenuSelection === 2);
+    drawText(228, 'Idle Time: 2 Minutes');
   }
 
   function launchPipquariumPreview() {
     if (pipquariumHandoff || appClosed) return;
     try {
-      fs.writeFileSync(pipquariumModePath, "1");
+      fs.writeFileSync(pipquariumModePath, '1');
     } catch (error) {
-      ignoreError("Pipquarium preview handoff failed: " + error);
+      ignoreError('Pipquarium preview handoff failed: ' + error);
       return;
     }
     pipquariumHandoff = 1;
     previewOwned = 0;
-    setTimeout(function() {
+    setTimeout(function () {
       if (appClosed && !pipquariumHandoff) return;
       try {
-        Pip.loadHolotape(basePath + "PIPQRUN.JS");
+        Pip.loadHolotape(basePath + 'PIPQRUN.JS');
       } catch (error) {
         pipquariumHandoff = 0;
-        ignoreError("PIPQRUN.JS preview load failed: " + error);
-        Pip.errorBox("PIP-CO Idle Framework\nPIPQUARIUM LOAD FAILED");
+        ignoreError('PIPQRUN.JS preview load failed: ' + error);
+        Pip.errorBox('PIP-CO Idle Framework\nPIPQUARIUM LOAD FAILED');
       }
     }, 0);
   }
@@ -271,7 +299,10 @@
 
   function onKnob1(direction) {
     if (idleService) idleService.last = getTime();
-    if (previewOwned || (idleService && idleService.active && idleService.preview)) {
+    if (
+      previewOwned ||
+      (idleService && idleService.active && idleService.preview)
+    ) {
       leavePreview();
       return;
     }
@@ -281,13 +312,13 @@
         mainSelection += direction > 0 ? 1 : -1;
         if (mainSelection < 0) mainSelection = mainItemCount() - 1;
         if (mainSelection >= mainItemCount()) mainSelection = 0;
-        Pip.playSound("SCROLL");
+        Pip.playSound('SCROLL');
         drawMenu();
         return;
       }
-      Pip.playSound("SELECT");
+      Pip.playSound('SELECT');
       if (mainSelection === mainItemCount() - 1) {
-        Pip.changeMenu("MISC.JS");
+        Pip.changeMenu('MISC.JS');
         return;
       }
       submenuIndex = mainSelection;
@@ -301,12 +332,12 @@
       submenuSelection += direction > 0 ? 1 : -1;
       if (submenuSelection < 0) submenuSelection = 2;
       if (submenuSelection > 2) submenuSelection = 0;
-      Pip.playSound("SCROLL");
+      Pip.playSound('SCROLL');
       drawMenu();
       return;
     }
 
-    if (submenuSelection !== 1) Pip.playSound("SELECT");
+    if (submenuSelection !== 1) Pip.playSound('SELECT');
     if (submenuSelection === 2) {
       menuPage = 0;
       submenuIndex = -1;
@@ -321,7 +352,7 @@
         if (config.enabled) selectedProvider = 0;
         idleService.enabled = config.enabled;
         idleService.providerEnabled = 0;
-        idleService.providerFile = "";
+        idleService.providerFile = '';
         configDirty = 1;
         drawMenu();
         return;
@@ -329,7 +360,7 @@
       previewSubmenu = 0;
       previewOwned = 1;
       if (previewTimer) clearTimeout(previewTimer);
-      previewTimer = setTimeout(function() {
+      previewTimer = setTimeout(function () {
         previewTimer = 0;
         if (!appClosed && !idleService.active) {
           idleService.play(1);
@@ -345,7 +376,7 @@
       if (selectedProvider === submenuIndex) {
         selectedProvider = 0;
         idleService.providerEnabled = 0;
-        idleService.providerFile = "";
+        idleService.providerFile = '';
       } else {
         selectedProvider = submenuIndex;
         config.enabled = 0;
@@ -365,7 +396,7 @@
     }
     previewOwned = 1;
     if (previewTimer) clearTimeout(previewTimer);
-    previewTimer = setTimeout(function() {
+    previewTimer = setTimeout(function () {
       previewTimer = 0;
       if (!appClosed && !idleService.active) {
         idleService.playProvider(1, providerFiles[previewSubmenu - 1]);
@@ -378,26 +409,30 @@
 
   function onKnob2() {
     if (idleService) idleService.last = getTime();
-    if (previewOwned || (idleService && idleService.active && idleService.preview)) leavePreview();
+    if (
+      previewOwned ||
+      (idleService && idleService.active && idleService.preview)
+    )
+      leavePreview();
   }
 
   function releaseInputs() {
     if (inputMask & 1) {
-      Pip.removeListener("knob1", onKnob1);
+      Pip.removeListener('knob1', onKnob1);
       inputMask &= ~1;
     }
     if (inputMask & 2) {
-      Pip.removeListener("knob2", onKnob2);
+      Pip.removeListener('knob2', onKnob2);
       inputMask &= ~2;
     }
   }
 
   function claimInputs() {
     releaseInputs();
-    Pip.onExclusive("knob1", onKnob1);
+    Pip.onExclusive('knob1', onKnob1);
     inputMask |= 1;
     try {
-      Pip.onExclusive("knob2", onKnob2);
+      Pip.onExclusive('knob2', onKnob2);
       inputMask |= 2;
     } catch (error) {
       releaseInputs();
@@ -420,7 +455,9 @@
       if (idleService.active) idleService.stop(0);
       if (configDirty) {
         config.mesEnabled = selectedProvider ? 1 : 0;
-        config.mesFile = selectedProvider ? providerFiles[selectedProvider - 1] : "";
+        config.mesFile = selectedProvider
+          ? providerFiles[selectedProvider - 1]
+          : '';
         idleService.providerEnabled = config.mesEnabled;
         idleService.providerFile = config.mesFile;
         saveConfig(config);
@@ -446,23 +483,23 @@
   if (coldSession && (config.enabled || config.mesEnabled)) {
     config.enabled = 0;
     config.mesEnabled = 0;
-    config.mesFile = "";
+    config.mesFile = '';
     saveConfig(config);
   }
 
   try {
-    serviceFactory = loadFactory("SERVICE.JS");
+    serviceFactory = loadFactory('SERVICE.JS');
     idleService = serviceFactory();
     serviceFactory = 0;
   } catch (error) {
     serviceFactory = 0;
-    ignoreError("SERVICE.JS failed: " + error);
-    Pip.errorBox("PIP-CO Idle Framework\nSERVICE INIT FAILED");
+    ignoreError('SERVICE.JS failed: ' + error);
+    Pip.errorBox('PIP-CO Idle Framework\nSERVICE INIT FAILED');
     return {
-      id: "PIPCOIDLEFRAMEWORK",
+      id: 'PIPCOIDLEFRAMEWORK',
       notDefault: true,
       fullscreen: true,
-      remove: function() {}
+      remove: function () {},
     };
   }
 
@@ -474,7 +511,7 @@
       height: 98,
       bpp: 1,
       transparent: 0,
-      buffer: fs.readFileSync(basePath + "TITLE.BIN")
+      buffer: fs.readFileSync(basePath + 'TITLE.BIN'),
     };
   } catch (error) {
     titleImage = undefined;
@@ -485,15 +522,15 @@
     claimInputs();
     drawMenu();
   } catch (error) {
-    ignoreError("input initialization failed: " + error);
+    ignoreError('input initialization failed: ' + error);
     removeApp();
-    Pip.errorBox("PIP-CO Idle Framework\nINPUT INIT FAILED");
+    Pip.errorBox('PIP-CO Idle Framework\nINPUT INIT FAILED');
   }
 
   return {
-    id: "PIPCOIDLEFRAMEWORK",
+    id: 'PIPCOIDLEFRAMEWORK',
     notDefault: true,
     fullscreen: true,
-    remove: removeApp
+    remove: removeApp,
   };
 });

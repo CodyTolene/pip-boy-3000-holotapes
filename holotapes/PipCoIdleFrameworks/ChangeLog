@@ -1,4 +1,5 @@
 1.2.0 (2026-09-17)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/111
 - Added APPINFO-backed MISC artwork using PIPCOIDLEFRAMEWORKS.IMG.
 - Replaced the nested Pipquarium provider path with a dedicated low-memory PIPQRUN handoff that runs the separately installed Pipquarium APP.JS.
 - Added readable source plus compact installed runtime files for the wake, idle, service, provider, and built-in renderer paths.
@@ -9,3 +10,7 @@
 1.1.0 (2026-09-13)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/104
 - Public release with a two-minute idle watcher, built-in PIP-BOY 3000 screensaver, Mesmetron/Pipquarium providers, previews, reset-safe configuration, and low-memory deferred loading.
+
+1.0.0 (2026-08-10)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/84
+- Initial PIP-CO Idle Frameworks release.

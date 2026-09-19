@@ -1063,41 +1063,21 @@
     "version": "1.2.0",
     "description": "Adds a 2-minute Pip-Boy idle screensaver you can point at the built-in PIP-BOY 3000 animation, or hand off to an installed Mesmetron item or Pipquarium, with a live preview for whichever is selected.",
     "icon": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG",
-    "previews": [],
+    "previews": ["PipCoIdleFrameworks/previews/menu.bmp"],
     "type": "app",
     "readme": "PipCoIdleFrameworks/README.md",
     "storage": [
-      {
-        "name": "APPINFO/PIP_CO_IDLE_FRAMEWORKS.info",
-        "url": "PipCoIdleFrameworks/assets/PIP_CO_IDLE_FRAMEWORKS.info"
-      },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/APP.JS",
         "url": "PipCoIdleFrameworks/assets/APP.MIN.JS"
       },
       {
-        "name": "HOLO/FALLOUT_SCREENSAVER/IDLE.JS",
-        "url": "PipCoIdleFrameworks/assets/IDLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
-        "url": "PipCoIdleFrameworks/assets/SERVICE.MIN.JS"
-      },
-      {
-        "name": "HOLO/FALLOUT_SCREENSAVER/WAKE.JS",
-        "url": "PipCoIdleFrameworks/assets/WAKE.MIN.JS"
+        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.BIN",
+        "url": "PipCoIdleFrameworks/assets/BOMB.BIN"
       },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/BOMBRUN.JS",
         "url": "PipCoIdleFrameworks/assets/BOMBRUN.MIN.JS"
-      },
-      {
-        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS",
-        "url": "PipCoIdleFrameworks/assets/MESIDLE.MIN.JS"
-      },
-      {
-        "name": "HOLO/FALLOUT_SCREENSAVER/BOMB.BIN",
-        "url": "PipCoIdleFrameworks/assets/BOMB.BIN"
       },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/CONFIG.JSON",
@@ -1108,24 +1088,40 @@
         "url": "PipCoIdleFrameworks/assets/FALLOUT.WAV"
       },
       {
+        "name": "HOLO/FALLOUT_SCREENSAVER/IDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/IDLE.MIN.JS"
+      },
+      {
         "name": "HOLO/FALLOUT_SCREENSAVER/LOGO.BIN",
         "url": "PipCoIdleFrameworks/assets/LOGO.BIN"
       },
       {
-        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN",
-        "url": "PipCoIdleFrameworks/assets/TITLE.BIN"
+        "name": "HOLO/FALLOUT_SCREENSAVER/MESIDLE.JS",
+        "url": "PipCoIdleFrameworks/assets/MESIDLE.MIN.JS"
       },
       {
-        "name": "HOLO/FALLOUT_SCREENSAVER/PIPQRUN.JS",
-        "url": "PipCoIdleFrameworks/assets/PIPQRUN.MIN.JS"
+        "name": "HOLO/FALLOUT_SCREENSAVER/PIPCOIDLEFRAMEWORKS.IMG",
+        "url": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG"
       },
       {
         "name": "HOLO/FALLOUT_SCREENSAVER/PIPQMODE.CFG",
         "url": "PipCoIdleFrameworks/assets/PIPQMODE.CFG"
       },
       {
-        "name": "HOLO/FALLOUT_SCREENSAVER/PIPCOIDLEFRAMEWORKS.IMG",
-        "url": "PipCoIdleFrameworks/assets/PIPCOIDLEFRAMEWORKS.IMG"
+        "name": "HOLO/FALLOUT_SCREENSAVER/PIPQRUN.JS",
+        "url": "PipCoIdleFrameworks/assets/PIPQRUN.MIN.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/SERVICE.JS",
+        "url": "PipCoIdleFrameworks/assets/SERVICE.MIN.JS"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/TITLE.BIN",
+        "url": "PipCoIdleFrameworks/assets/TITLE.BIN"
+      },
+      {
+        "name": "HOLO/FALLOUT_SCREENSAVER/WAKE.JS",
+        "url": "PipCoIdleFrameworks/assets/WAKE.MIN.JS"
       }
     ],
     "storageOptional": []
