@@ -1,64 +1,59 @@
-# PIP-CO Idle Frameworks v1.1.0
+# PIP-CO Idle Frameworks v1.2.0
 
-A configurable idle/screensaver framework for The Wand Company Pip-Boy 3000.
+Adds a 2-minute Pip-Boy idle screensaver with a choice of the built-in PIP-BOY
+3000 animation, an installed Mesmetron item, or Pipquarium.
 
-PIP-CO Idle Frameworks can run its built-in PIP-BOY 3000 falling-bomb
-screensaver or dynamically use compatible screensavers from separately installed
-provider holotapes.
+## Options
 
-## Features
+- **PIP-BOY 3000** — built-in logo/bomb screensaver with its own audio bed.
+- **Mesmetron** — installed Mesmetron entries are discovered from
+  `HOLO/MESMETRON/TITLE.JS`.
+- **Pipquarium** — appears automatically when `HOLO/PIPQUARIUM/APP.JS` exists.
 
-- 2-minute automatic idle activation
-- Built-in PIP-BOY 3000 falling-bomb screensaver
-- Optional Mesmetron integration
-- Optional Pipquarium integration
-- Live preview from the PIP-CO menu
-- Fullscreen automatic-idle runner
-- Provider entries only appear when the matching provider holotape is installed
-- PIP-CO owns wake/exit controls while a provider is running as an idle
-- Provider holotapes retain their native behavior when opened normally
-- Radio/audio detection remains read-only
-
-## Optional providers
-
-### Mesmetron
-
-Mesmetron is not bundled with PIP-CO Idle Frameworks. If
-`HOLO/MESMETRON/TITLE.JS` is installed, PIP-CO reads Mesmetron's current
-screensaver list dynamically. Removing Mesmetron removes those entries from
-PIP-CO automatically.
-
-### Pipquarium
-
-Pipquarium is not bundled with PIP-CO Idle Frameworks. If
-`HOLO/PIPQUARIUM/APP.JS` is installed, Pipquarium appears automatically as an
-available provider.
+Only one idle provider can be active at a time.
 
 ## Controls
 
-- Left wheel: navigate the menu
-- Left wheel press: select / enable / disable / preview
-- Either scroll-wheel press: exit an active screensaver or preview
-- `< Back`: return to the previous menu or Misc
+- **Left wheel, rotate** — move the selection.
+- **Left wheel, press** — open a submenu, toggle an option, Preview, or Back.
+- **Either wheel while a preview/screensaver is active** — exit the idle
+  renderer.
 
-## Runtime / compatibility notes
+## Runtime and memory design
 
-Version 1.1.0 separates the settings UI from a lightweight wake watcher and
-transient idle service. When the holotape closes with an idle provider enabled,
-`WAKE.JS` watches for two minutes of inactivity and loads `IDLE.JS` only when a
-fullscreen screensaver actually needs to run.
+The settings UI is not kept resident. On exit it stores the selection and arms a
+lightweight wake watcher. The wake watcher waits for two minutes of inactivity,
+then loads `IDLE.JS`, which loads the service and only the selected renderer.
 
-On a true cold reboot, crash reboot, or full power-loss reset, Idle Frameworks
-returns to **disabled**. Normal same-session standby/off-to-on behavior
-preserves the configured idle provider.
+Readable source is kept in the holotape root while optimized runtime copies live
+under `assets/` and are the files installed by `metadata.json`. Readable source
+is kept separate from the compact installed runtime. Large components are
+lazy-loaded only when needed, and whole-module `ram` directives are avoided so
+normal Pip-Boy use keeps a smaller resident footprint.
 
-The framework checks existing radio/audio state before starting its own built-in
-audio and does not replace the stock radio implementation.
+Additional cleanup in this build:
 
-## Tested hardware
+- `TITLE.BIN` is loaded once per settings session instead of being re-read on
+  every menu redraw.
+- The bomb sprite is stored as `BOMB.BIN` instead of eval-loading a
+  JavaScript/base64 image object.
+- Lazy-loaded source strings/factories are released immediately after
+  evaluation.
+- All owned timers and knob listeners are explicitly tracked and cleared.
+- The lightweight wake watcher is the only resident idle component while normal
+  Pip-Boy menus are in use.
+- Existing radio/audio playback is detected so the built-in screensaver does not
+  take over audio that it does not own.
 
-- The Wand Company Pip-Boy 3000
-- Pip-Boy OS 1.1.6 / firmware build 2v29.361
+## Installation
+
+Install through pip-boy.com.
+
+## Firmware tested
+
+Designed for The Wand Company Pip-Boy 3000 firmware 1.1.6. Tested against The
+Wand Company Pip-Boy 3000 firmware 1.1.6; real-device idle/wake/menu behavior
+remains the final source of truth.
 
 ## Credits
 
