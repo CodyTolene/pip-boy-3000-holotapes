@@ -56,8 +56,8 @@ character takes that shot. Be luck be on your side
 Install from Pip-Boy.com, or copy to the SD card manually:
 
 ```
-HOLO/ZERO_ESCAPE_VAULT_9/APP.JS        (assets/APP.MIN.JS)
-HOLO/ZERO_ESCAPE_VAULT_9/DATA.JSON     (assets/DATA.JSON)
+HOLO/ZERO_ESCAPE_VAULT_9/APP.JS        (from storage/APP.ts; build emits APP.MIN.JS)
+HOLO/ZERO_ESCAPE_VAULT_9/DATA.JSON     (storage/DATA.JSON)
 ```
 
 Optional assets - the game runs without them and falls back to text screens:

@@ -4,40 +4,46 @@
   "author": "@CodyTolene",
   "version": "2.0.0",
   "description": "Scavenge mutfruit, grow longer, and keep your bloodworm alive by avoiding walls, your own tail, and your opponent (vs mode).",
-  "icon": "previews/bloodworm.png",
+  "icon": "storage/BLOODWORM.png",
   "previews": [
-    "previews/bloodworm.mp4",
-    "previews/menu.bmp",
-    "previews/one-player.bmp",
-    "previews/two-player.bmp"
+    "previews/BLOODWORM.mp4",
+    "previews/MENU.bmp",
+    "previews/ONE-PLAYER.bmp",
+    "previews/TWO-PLAYER.bmp"
   ],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/BLOODWORM/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/BLOODWORM/bloodworm.json", "url": "assets/bloodworm.json" }
+    {
+      "pipboy": "HOLO/BLOODWORM/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/BLOODWORM/BLOODWORM.JSON",
+      "source": "storage/BLOODWORM.json"
+    }
   ],
   "storageOptional": [
     {
       "label": "Eat (Sound Effect)",
-      "name": "HOLO/BLOODWORM/bloodworm-eat.wav",
-      "previewMp3": "assets/bloodworm-eat.mp3",
+      "previewMp3": "previews/BLOODWORM-EAT.mp3",
       "sizeKB": 10,
-      "url": "assets/bloodworm-eat.wav"
+      "pipboy": "HOLO/BLOODWORM/BLOODWORM-EAT.WAV",
+      "source": "optional/BLOODWORM-EAT.wav"
     },
     {
       "label": "Die (Sound Effect)",
-      "name": "HOLO/BLOODWORM/bloodworm-die.wav",
-      "previewMp3": "assets/bloodworm-die.mp3",
+      "previewMp3": "previews/BLOODWORM-DIE.mp3",
       "sizeKB": 12,
-      "url": "assets/bloodworm-die.wav"
+      "pipboy": "HOLO/BLOODWORM/BLOODWORM-DIE.WAV",
+      "source": "optional/BLOODWORM-DIE.wav"
     },
     {
       "label": "Start (Sound Effect)",
-      "name": "HOLO/BLOODWORM/bloodworm-start.wav",
-      "previewMp3": "assets/bloodworm-start.mp3",
+      "previewMp3": "previews/BLOODWORM-START.mp3",
       "sizeKB": 19,
-      "url": "assets/bloodworm-start.wav"
+      "pipboy": "HOLO/BLOODWORM/BLOODWORM-START.WAV",
+      "source": "optional/BLOODWORM-START.wav"
     }
   ]
 }

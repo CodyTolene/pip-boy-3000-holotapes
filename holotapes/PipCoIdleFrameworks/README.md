@@ -25,11 +25,11 @@ The settings UI is not kept resident. On exit it stores the selection and arms a
 lightweight wake watcher. The wake watcher waits for two minutes of inactivity,
 then loads `IDLE.JS`, which loads the service and only the selected renderer.
 
-Readable source is kept in the holotape root while optimized runtime copies live
-under `assets/` and are the files installed by `metadata.json`. Readable source
-is kept separate from the compact installed runtime. Large components are
-lazy-loaded only when needed, and whole-module `ram` directives are avoided so
-normal Pip-Boy use keeps a smaller resident footprint.
+TypeScript sources live under `storage/` and are listed in `metadata.json` as
+`source` entries. The build emits the compact `.JS` / `.MIN.JS` runtime that
+installs to the device. Large components are lazy-loaded only when needed, and
+whole-module `ram` directives are avoided so normal Pip-Boy use keeps a smaller
+resident footprint.
 
 Additional cleanup in this build:
 

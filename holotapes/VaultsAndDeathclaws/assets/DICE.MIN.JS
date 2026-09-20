@@ -1,1 +1,0 @@
-(ª(e){­t=setTimeout(ª(){t=¶;±{process.memory(!Ó),E.defrag()}²(e){}e.diceState=[Ô,Ô,Ô,Ô,Ô,Ô,Ô,Ó,Ó,Ó],e.go(e.scenes.DICE_MENU)},Ó);«{remove:ª(){tžclearTimeout(t)}}});

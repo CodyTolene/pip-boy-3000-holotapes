@@ -4,58 +4,82 @@
   "author": "@CodyTolene @joemto20-tech",
   "version": "2.2.2",
   "description": "A Vault-Tec approved RobCo holotape for playing WAVs from `MUSIC/`, AVI reels from `VIDEOS/`, and images from `IMAGES/`.",
-  "icon": "assets/RCET.IMG",
+  "icon": "storage/RCET.img",
   "previews": [
-    "previews/menu.bmp",
-    "previews/music.bmp",
-    "previews/music-menu.bmp",
-    "previews/images.bmp",
-    "previews/videos.bmp"
+    "previews/MENU.bmp",
+    "previews/MUSIC.bmp",
+    "previews/MUSIC-MENU.bmp",
+    "previews/IMAGES.bmp",
+    "previews/VIDEOS.bmp"
   ],
   "type": "app",
   "readme": "README.md",
   "previousId": "iPip",
   "storage": [
-    { "name": "HOLO/RCET/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/RCET/ENGINE.JS", "url": "assets/ENGINE.MIN.JS" },
-    { "name": "HOLO/RCET/IMAGES.JS", "url": "assets/IMAGES.MIN.JS" },
-    { "name": "HOLO/RCET/INTRO.JS", "url": "assets/INTRO.MIN.JS" },
-    { "name": "HOLO/RCET/MENU.JS", "url": "assets/MENU.MIN.JS" },
-    { "name": "HOLO/RCET/MUSIC.JS", "url": "assets/MUSIC.MIN.JS" },
-    { "name": "HOLO/RCET/SETTINGS.JS", "url": "assets/SETTINGS.MIN.JS" },
-    { "name": "HOLO/RCET/VIDEO.JS", "url": "assets/VIDEO.MIN.JS" }
+    {
+      "pipboy": "HOLO/RCET/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/ENGINE.JS",
+      "source": "storage/ENGINE.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/IMAGES.JS",
+      "source": "storage/IMAGES.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/INTRO.JS",
+      "source": "storage/INTRO.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/MENU.JS",
+      "source": "storage/MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/MUSIC.JS",
+      "source": "storage/MUSIC.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/SETTINGS.JS",
+      "source": "storage/SETTINGS.ts"
+    },
+    {
+      "pipboy": "HOLO/RCET/VIDEO.JS",
+      "source": "storage/VIDEO.ts"
+    }
   ],
   "storageOptional": [
     {
       "label": "Example BIN Image",
-      "name": "IMAGES/Example Full Screen BIN Image.bin",
       "sizeKB": 38,
-      "url": "assets/optional/IMG_RCET_EXAMPLE_FS.BIN"
+      "pipboy": "IMAGES/EXAMPLE FULL SCREEN BIN IMAGE.BIN",
+      "source": "optional/IMG_RCET_EXAMPLE_FS.bin"
     },
     {
       "label": "Example IMG Native",
-      "name": "IMAGES/Example IMG Image.img",
       "sizeKB": 11,
-      "url": "assets/optional/IMG_RCET_EXAMPLE.IMG"
+      "pipboy": "IMAGES/EXAMPLE IMG IMAGE.IMG",
+      "source": "optional/IMG_RCET_EXAMPLE.img"
     },
     {
       "label": "Example JS Image",
-      "name": "IMAGES/Example JS Image.js",
       "sizeKB": 11,
-      "url": "assets/optional/IMG_RCET_EXAMPLE.JS"
+      "pipboy": "IMAGES/EXAMPLE JS IMAGE.JS",
+      "source": "optional/IMG_RCET_EXAMPLE.ts"
     },
     {
       "label": "Example JSON Image",
-      "name": "IMAGES/Example JSON Image.json",
       "sizeKB": 15,
-      "url": "assets/optional/IMG_RCET_EXAMPLE.JSON"
+      "pipboy": "IMAGES/EXAMPLE JSON IMAGE.JSON",
+      "source": "optional/IMG_RCET_EXAMPLE.json"
     },
     {
       "label": "Example AVI Video",
-      "name": "VIDEOS/Example Short AVI Video.AVI",
-      "previewMp4": "assets/optional/VID_EXAMPLE_SHORT.mp4",
+      "previewMp4": "previews/VID_EXAMPLE_SHORT.mp4",
       "sizeKB": 616,
-      "url": "assets/optional/VID_EXAMPLE_SHORT.AVI"
+      "pipboy": "VIDEOS/EXAMPLE SHORT AVI VIDEO.AVI",
+      "source": "optional/VID_EXAMPLE_SHORT.avi"
     }
   ]
 }

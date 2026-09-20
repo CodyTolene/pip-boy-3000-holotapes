@@ -4,17 +4,35 @@
   "author": "@CodyTolene @pip-4111 @beaverboy-12",
   "version": "2.1.0",
   "description": "Crack locked RobCo terminals by guessing the correct password from a list of corrupted pre-war entries.",
-  "icon": "previews/access-terminal.png",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/ACCESS-TERMINAL.png",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/ACCESS/APP.JS", "url": "app.min.js" },
-    { "name": "HOLO/ACCESS/words_5.json", "url": "assets/words_5.json" },
-    { "name": "HOLO/ACCESS/words_6.json", "url": "assets/words_6.json" },
-    { "name": "HOLO/ACCESS/words_7.json", "url": "assets/words_7.json" },
-    { "name": "HOLO/ACCESS/words_8.json", "url": "assets/words_8.json" },
-    { "name": "HOLO/ACCESS/words_9.json", "url": "assets/words_9.json" }
+    {
+      "pipboy": "HOLO/ACCESS/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/ACCESS/WORDS_5.JSON",
+      "source": "storage/WORDS_5.json"
+    },
+    {
+      "pipboy": "HOLO/ACCESS/WORDS_6.JSON",
+      "source": "storage/WORDS_6.json"
+    },
+    {
+      "pipboy": "HOLO/ACCESS/WORDS_7.JSON",
+      "source": "storage/WORDS_7.json"
+    },
+    {
+      "pipboy": "HOLO/ACCESS/WORDS_8.JSON",
+      "source": "storage/WORDS_8.json"
+    },
+    {
+      "pipboy": "HOLO/ACCESS/WORDS_9.JSON",
+      "source": "storage/WORDS_9.json"
+    }
   ],
   "storageOptional": []
 }

@@ -1,0 +1,237 @@
+// =============================================================================
+//  Name: RobCo Entertainment Terminal
+//  Author: @CodyTolene
+//  Contributor(s): @joemto20-tech
+//  License: CC-BY-NC-4.0
+//  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
+// =============================================================================
+
+(function (app: RcetApp, params?: RcetSettingsParams | object) {
+  const ROWS = ['persist', 'sort', 'brightness', 'volume', 'timeout', 'back'];
+  const FROM =
+    params && (params as RcetSettingsParams).from === 'MENU' ? 'MENU' : 'MUSIC';
+  const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+  // Screen timeout in ms; 0 = OFF (screen stays on). Matches firmware idleTimeout.
+  const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
+  const PERSIST_SUPPORTED = (() => {
+    try {
+      return fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
+    } catch (e) {
+      return false;
+    }
+  })();
+
+  let selected = 0;
+
+  function adjust(dir: number): void {
+    const row = ROWS[selected];
+    if (row === 'persist') {
+      if (!PERSIST_SUPPORTED) return;
+      app.persist = !app.persist;
+      global.__RCETPersist = app.persist;
+      // Turning it off restores the OS audio globals and stops background music.
+      if (!app.persist) {
+        try {
+          if (Pip.radio && Pip.radio.mjOn && Pip.rcetStop)
+            (Pip.rcetStop as () => void)();
+        } catch (e) {}
+      }
+      sound('TAB');
+    } else if (row === 'sort') {
+      app.sortDir = app.sortDir > 0 ? -1 : 1;
+      global.__RCETSort = app.sortDir;
+      sound('TAB');
+    } else if (row === 'brightness') {
+      stepBright(dir > 0 ? 1 : -1);
+      sound('HIGHLIGHT');
+    } else if (row === 'volume') {
+      app.currentVol = E.clip(readVol() + (dir > 0 ? 1 : -1), 0, 27);
+      try {
+        Pip.setVol(app.currentVol);
+      } catch (e) {}
+      sound('HIGHLIGHT');
+    } else if (row === 'timeout') {
+      stepTimeout(dir > 0 ? 1 : -1);
+      sound('HIGHLIGHT');
+    }
+    draw();
+  }
+
+  function back(): void {
+    sound('TAB');
+    if (FROM === 'MENU') app.go(app.scenes.MENU || 'MENU.JS');
+    else app.go(app.scenes.MUSIC || 'MUSIC.JS');
+  }
+
+  function draw(): void {
+    h.clear(1);
+    try {
+      Pip.renderHeader();
+      Pip.renderFooter();
+    } catch (e) {
+      h.setColor(1)
+        .drawLine(0, 39, app.W - 1, 39)
+        .drawLine(0, app.H - 30, app.W - 1, app.H - 30);
+    }
+
+    h.setColor(3)
+      .setFontMonofonto16()
+      .setFontAlign(-1, -1)
+      .drawString(app.names[2] + ' Settings Menu', 18, 52);
+    h.setColor(1).drawLine(12, 74, app.W - 12, 74);
+
+    for (let i = 0; i < ROWS.length; i++) drawRow(i);
+
+    h.flip();
+    Pip.lastFlip = getTime();
+  }
+
+  function drawRow(i: number): void {
+    const y = 80 + i * 35;
+    const row = ROWS[i];
+    const on = i === selected;
+    let val = '';
+
+    if (on) h.setColor(1).fillRect(14, y, app.W - 14, y + 30);
+
+    if (row === 'persist' && !PERSIST_SUPPORTED) {
+      h.setColor(on ? 3 : 2)
+        .setFontMonofonto14()
+        .setFontAlign(-1, -1)
+        .drawString(
+          'Persistent play is only available on v' +
+            app.supportedFirmwareVersion,
+          24,
+          y + 8,
+        );
+      return;
+    }
+
+    if (row === 'persist') val = app.persist ? 'ON' : 'OFF';
+    else if (row === 'sort') val = app.sortDir > 0 ? 'A-Z' : 'Z-A';
+    else if (row === 'brightness') val = Math.round(readBright() * 100) + '%';
+    else if (row === 'volume') val = '' + readVol();
+    else if (row === 'timeout') {
+      const to = readTimeout();
+      val = to ? to / 60000 + ' MIN' : 'OFF';
+    } else val = 'RETURN';
+
+    h.setColor(on ? 3 : 2)
+      .setFontMonofonto14()
+      .setFontAlign(-1, -1)
+      .drawString(label(row), 24, y + 8)
+      .setFontAlign(1, -1)
+      .drawString(val, app.W - 28, y + 8);
+  }
+
+  function label(row: string): string {
+    if (row === 'persist')
+      return 'PERSISTENT AUDIO (CONTINUE MUSIC AFTER EXIT)';
+    if (row === 'sort') return 'SONG SORT ORDER';
+    if (row === 'brightness') return 'SCREEN BRIGHTNESS';
+    if (row === 'volume') return 'AUDIO VOLUME';
+    if (row === 'timeout') return 'SCREEN TIMEOUT';
+    return FROM === 'MENU' ? 'BACK TO MENU' : 'BACK TO MUSIC';
+  }
+
+  function move(dir: number): void {
+    selected += dir > 0 ? 1 : -1;
+    if (selected < 0) selected = 0;
+    if (selected >= ROWS.length) selected = ROWS.length - 1;
+    draw();
+    sound('HIGHLIGHT');
+  }
+
+  function onKnob1(dir: KnobDirection): void {
+    if (dir) move(dir);
+    else if (ROWS[selected] === 'back') back();
+    else adjust(1);
+  }
+
+  function onKnob2(dir: KnobDirection): void {
+    if (dir) adjust(dir);
+  }
+
+  function readBright(): number {
+    if (typeof app.currentBright === 'number') return app.currentBright;
+    try {
+      if (typeof Pip.brightness === 'number') return Pip.brightness;
+    } catch (e) {}
+    return 1;
+  }
+
+  function readTimeout(): number {
+    try {
+      if (Pip.settings && typeof Pip.settings.idleTimeout === 'number')
+        return Pip.settings.idleTimeout;
+    } catch (e) {}
+    return 300000;
+  }
+
+  function readVol(): number {
+    if (typeof app.currentVol === 'number') return app.currentVol;
+    try {
+      if (Pip.settings && typeof Pip.settings.volume === 'number')
+        return Pip.settings.volume;
+    } catch (e) {}
+    return 20;
+  }
+
+  function remove(): void {
+    Pip.removeListener('knob1', onKnob1);
+    Pip.removeListener('knob2', onKnob2);
+  }
+
+  function sound(name: string): void {
+    try {
+      if (Pip.playSound) Pip.playSound(name as PipSoundName);
+    } catch (e) {}
+  }
+
+  function stepBright(dir: number): void {
+    let b = readBright(),
+      idx = 0,
+      diff = 9;
+    for (let i = 0; i < BRIGHT_LEVELS.length; i++) {
+      if (Math.abs(BRIGHT_LEVELS[i] - b) < diff) {
+        diff = Math.abs(BRIGHT_LEVELS[i] - b);
+        idx = i;
+      }
+    }
+    idx = E.clip(idx + dir, 0, BRIGHT_LEVELS.length - 1);
+    app.currentBright = BRIGHT_LEVELS[idx];
+    try {
+      Pip.setBrightness(app.currentBright);
+    } catch (e) {}
+  }
+
+  function stepTimeout(dir: number): void {
+    let t = readTimeout(),
+      idx = 0,
+      diff = 1e12;
+    for (let i = 0; i < TIMEOUT_LEVELS.length; i++) {
+      if (Math.abs(TIMEOUT_LEVELS[i] - t) < diff) {
+        diff = Math.abs(TIMEOUT_LEVELS[i] - t);
+        idx = i;
+      }
+    }
+    idx = E.clip(idx + dir, 0, TIMEOUT_LEVELS.length - 1);
+    try {
+      Pip.settings.idleTimeout = TIMEOUT_LEVELS[idx];
+      if (Pip.kickIdleTimer) Pip.kickIdleTimer();
+    } catch (e) {}
+  }
+
+  if (!PERSIST_SUPPORTED) {
+    app.persist = false;
+    global.__RCETPersist = false;
+  }
+
+  Pip.onExclusive('knob1', onKnob1);
+  Pip.onExclusive('knob2', onKnob2);
+  draw();
+
+  return {
+    remove: remove,
+  };
+});
