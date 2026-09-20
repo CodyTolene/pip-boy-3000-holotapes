@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "moduleDetection": "auto",
+    "types": [],
     "noEmit": true,
-    "resolveJsonModule": true,
     "strict": true,
-    "target": "ES2022",
-    "types": ["node"]
+    "noImplicitOverride": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false
   },
-  "include": [".scripts/**/*.ts"]
+  "include": [
+    "holotapes/**/*.d.ts",
+    "holotapes/**/*.ts",
+    "types/**/*.d.ts",
+    "types/**/*.ts"
+  ]
 }

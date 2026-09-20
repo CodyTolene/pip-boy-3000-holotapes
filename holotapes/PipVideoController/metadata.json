@@ -4,12 +4,15 @@
   "author": "@OrionMissesRust",
   "version": "1.0.0",
   "description": "Play videos using your pip-boy on your pc.",
-  "icon": "previews/PipVideoController.png",
-  "previews": ["previews/start.bmp"],
+  "icon": "storage/PIPVIDEOCONTROLLER.png",
+  "previews": ["previews/START.bmp"],
   "type": "app",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/PIPVIDEOCONTROLLER/APP.JS", "url": "app.min.js" }
+    {
+      "pipboy": "HOLO/PIPVIDEOCONTROLLER/APP.JS",
+      "source": "storage/APP.ts"
+    }
   ],
   "storageOptional": []
 }

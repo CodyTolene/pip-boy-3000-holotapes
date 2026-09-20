@@ -4,10 +4,15 @@
   "author": "@AidansLab",
   "version": "1.0.0",
   "description": "Turns the Pip-Boy into a HID (Human Interface Device) for interacting with a computer, ported from the EXT TERMINAL attachment in the Pip-Boy 3000 Mk V firmware.",
-  "icon": "PIPHID.IMG",
-  "previews": ["previews/preview.bmp"],
+  "icon": "storage/PIPHID.img",
+  "previews": ["previews/PREVIEW.bmp"],
   "type": "app",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/PIPHID/APP.JS", "url": "assets/APP.MIN.JS" }],
+  "storage": [
+    {
+      "pipboy": "HOLO/PIPHID/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
   "storageOptional": []
 }

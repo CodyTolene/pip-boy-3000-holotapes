@@ -1,27 +1,66 @@
 {
-  "id": "SOLITAIRE",
+  "id": "solitaire",
   "name": "Solitaire",
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "One of the most famous single-player card games, now playable on the Pip-Boy!",
-  "icon": "assets/SOLITAIRE.IMG",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/SOLITAIRE.img",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/SOLITAIRE/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/SOLITAIRE/13.JSON", "url": "assets/13.JSON" },
-    { "name": "HOLO/SOLITAIRE/ATOMIC.JSON", "url": "assets/ATOMIC.JSON" },
-    { "name": "HOLO/SOLITAIRE/BISON.JSON", "url": "assets/BISON.JSON" },
-    { "name": "HOLO/SOLITAIRE/GOMORRAH.JSON", "url": "assets/GOMORRAH.JSON" },
-    { "name": "HOLO/SOLITAIRE/LUCKY.JSON", "url": "assets/LUCKY.JSON" },
-    { "name": "HOLO/SOLITAIRE/PEBBLES.JSON", "url": "assets/PEBBLES.JSON" },
-    { "name": "HOLO/SOLITAIRE/SIERRA.JSON", "url": "assets/SIERRA.JSON" },
-    { "name": "HOLO/SOLITAIRE/SILVER.JSON", "url": "assets/SILVER.JSON" },
-    { "name": "HOLO/SOLITAIRE/TOPS.JSON", "url": "assets/TOPS.JSON" },
-    { "name": "HOLO/SOLITAIRE/ULTRA.JSON", "url": "assets/ULTRA.JSON" },
-    { "name": "HOLO/SOLITAIRE/VAULTB.JSON", "url": "assets/VAULTB.JSON" },
-    { "name": "HOLO/SOLITAIRE/WILD.JSON", "url": "assets/WILD.JSON" }
+    {
+      "pipboy": "HOLO/SOLITAIRE/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/13.JSON",
+      "source": "storage/13.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/ATOMIC.JSON",
+      "source": "storage/ATOMIC.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/BISON.JSON",
+      "source": "storage/BISON.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/GOMORRAH.JSON",
+      "source": "storage/GOMORRAH.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/LUCKY.JSON",
+      "source": "storage/LUCKY.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/PEBBLES.JSON",
+      "source": "storage/PEBBLES.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/SIERRA.JSON",
+      "source": "storage/SIERRA.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/SILVER.JSON",
+      "source": "storage/SILVER.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/TOPS.JSON",
+      "source": "storage/TOPS.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/ULTRA.JSON",
+      "source": "storage/ULTRA.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/VAULTB.JSON",
+      "source": "storage/VAULTB.json"
+    },
+    {
+      "pipboy": "HOLO/SOLITAIRE/WILD.JSON",
+      "source": "storage/WILD.json"
+    }
   ],
   "storageOptional": []
 }

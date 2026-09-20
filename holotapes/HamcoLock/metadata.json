@@ -4,155 +4,155 @@
   "author": "@joemto20-tech",
   "version": "1.0.0",
   "description": "A PIN lock screen for your Pip-Boy. Set a 4-digit access code, pick a faction logo, and choose whether it locks on startup, on wake from sleep, or both.",
-  "icon": "assets/HAMCOLOCK.IMG",
-  "previews": ["previews/settings.bmp"],
+  "icon": "storage/HAMCOLOCK.img",
+  "previews": ["previews/SETTINGS.bmp"],
   "tags": "system,tool",
   "type": "app",
   "readme": "README.md",
   "storage": [
     {
-      "name": "APPINFO/HAMCOLOCK.info",
-      "url": "assets/HAMCOLOCK.info"
+      "pipboy": "APPINFO/HAMCOLOCK.INFO",
+      "source": "storage/HAMCOLOCK.info"
     },
     {
-      "name": "HOLO/HAMCOLOCK/APP.JS",
-      "url": "assets/APP.JS"
+      "pipboy": "HOLO/HAMCOLOCK/APP.JS",
+      "source": "storage/APP.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/SERVICE.JS",
-      "url": "assets/SERVICE.JS"
+      "pipboy": "HOLO/HAMCOLOCK/SERVICE.JS",
+      "source": "storage/SERVICE.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/LOCK.JS",
-      "url": "assets/LOCK.JS"
+      "pipboy": "HOLO/HAMCOLOCK/LOCK.JS",
+      "source": "storage/LOCK.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/GRANT.JS",
-      "url": "assets/GRANT.JS"
+      "pipboy": "HOLO/HAMCOLOCK/GRANT.JS",
+      "source": "storage/GRANT.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/SETTINGS.JS",
-      "url": "assets/SETTINGS.JS"
+      "pipboy": "HOLO/HAMCOLOCK/SETTINGS.JS",
+      "source": "storage/SETTINGS.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/SETPIN.JS",
-      "url": "assets/SETPIN.JS"
+      "pipboy": "HOLO/HAMCOLOCK/SETPIN.JS",
+      "source": "storage/SETPIN.ts"
     },
     {
-      "name": "HOLO/HAMCOLOCK/HAMCOLOCK.IMG",
-      "url": "assets/HAMCOLOCK.IMG"
+      "pipboy": "HOLO/HAMCOLOCK/HAMCOLOCK.IMG",
+      "source": "storage/HAMCOLOCK.img"
     },
     {
-      "name": "HOLO/HAMCOLOCK/A.WAV",
-      "url": "assets/A.WAV"
+      "pipboy": "HOLO/HAMCOLOCK/A.WAV",
+      "source": "storage/A.wav"
     },
     {
-      "name": "HOLO/HAMCOLOCK/G.AVI",
-      "url": "assets/G.AVI"
+      "pipboy": "HOLO/HAMCOLOCK/G.AVI",
+      "source": "storage/G.avi"
     },
     {
-      "name": "HOLO/HAMCOLOCK/ATOMCATS.BIN",
-      "url": "assets/ATOMCATS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/ATOMCATS.BIN",
+      "source": "storage/ATOMCATS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/BIGMT.BIN",
-      "url": "assets/BIGMT.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/BIGMT.BIN",
+      "source": "storage/BIGMT.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/BROTHERHOOD.BIN",
-      "url": "assets/BROTHERHOOD.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/BROTHERHOOD.BIN",
+      "source": "storage/BROTHERHOOD.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/ENCLAVE.BIN",
-      "url": "assets/ENCLAVE.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/ENCLAVE.BIN",
+      "source": "storage/ENCLAVE.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/ENCLAVE1.BIN",
-      "url": "assets/ENCLAVE1.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/ENCLAVE1.BIN",
+      "source": "storage/ENCLAVE1.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/FIENDS.BIN",
-      "url": "assets/FIENDS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/FIENDS.BIN",
+      "source": "storage/FIENDS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/FOLLOWERS.BIN",
-      "url": "assets/FOLLOWERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/FOLLOWERS.BIN",
+      "source": "storage/FOLLOWERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/GREATKHANS.BIN",
-      "url": "assets/GREATKHANS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/GREATKHANS.BIN",
+      "source": "storage/GREATKHANS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/GUNNERS.BIN",
-      "url": "assets/GUNNERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/GUNNERS.BIN",
+      "source": "storage/GUNNERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/HAM.BIN",
-      "url": "assets/HAM.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/HAM.BIN",
+      "source": "storage/HAM.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/INTERSTATE80.BIN",
-      "url": "assets/INTERSTATE80.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/INTERSTATE80.BIN",
+      "source": "storage/INTERSTATE80.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/KINGS.BIN",
-      "url": "assets/KINGS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/KINGS.BIN",
+      "source": "storage/KINGS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/LEGION.BIN",
-      "url": "assets/LEGION.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/LEGION.BIN",
+      "source": "storage/LEGION.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/MOTHMAN.BIN",
-      "url": "assets/MOTHMAN.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/MOTHMAN.BIN",
+      "source": "storage/MOTHMAN.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/NCR.BIN",
-      "url": "assets/NCR.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/NCR.BIN",
+      "source": "storage/NCR.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/NCRSEAL.BIN",
-      "url": "assets/NCRSEAL.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/NCRSEAL.BIN",
+      "source": "storage/NCRSEAL.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/OPERATORS.BIN",
-      "url": "assets/OPERATORS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/OPERATORS.BIN",
+      "source": "storage/OPERATORS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/RANGERS.BIN",
-      "url": "assets/RANGERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/RANGERS.BIN",
+      "source": "storage/RANGERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/REDTALON.BIN",
-      "url": "assets/REDTALON.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/REDTALON.BIN",
+      "source": "storage/REDTALON.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/RESPONDERS.BIN",
-      "url": "assets/RESPONDERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/RESPONDERS.BIN",
+      "source": "storage/RESPONDERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/SMUGGLERS.BIN",
-      "url": "assets/SMUGGLERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/SMUGGLERS.BIN",
+      "source": "storage/SMUGGLERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/TUNNELSNAKES.BIN",
-      "url": "assets/TUNNELSNAKES.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/TUNNELSNAKES.BIN",
+      "source": "storage/TUNNELSNAKES.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/VANGRAFFS.BIN",
-      "url": "assets/VANGRAFFS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/VANGRAFFS.BIN",
+      "source": "storage/VANGRAFFS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/VAULTTEC.BIN",
-      "url": "assets/VAULTTEC.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/VAULTTEC.BIN",
+      "source": "storage/VAULTTEC.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/VIPERS.BIN",
-      "url": "assets/VIPERS.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/VIPERS.BIN",
+      "source": "storage/VIPERS.bin"
     },
     {
-      "name": "HOLO/HAMCOLOCK/WHITEGLOVE.BIN",
-      "url": "assets/WHITEGLOVE.BIN"
+      "pipboy": "HOLO/HAMCOLOCK/WHITEGLOVE.BIN",
+      "source": "storage/WHITEGLOVE.bin"
     }
   ],
   "storageOptional": []

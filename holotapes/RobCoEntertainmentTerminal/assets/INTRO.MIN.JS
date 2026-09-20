@@ -1,13 +1,0 @@
-(ª(n){®e=ÑnROBCO INDUSTRIES UNIFIED OPERATING SYSTEM
-COPYRIGHT 2075-2077 ROBCO INDUSTRIES
-
-ROBCO ENTERTAINMENT TERMINAL V+n.version+Ñ± INITIALIZING... §
-
-CONNECTING TO MEDIA BUS... §
-PIP-BOY LINK ONLINE
-UPLINK ONLINE
-
-MOUNTING MUSIC/ VIDEOS/ IMAGES/ ARCHIVES... §
-MEDIA INDEX ONLINE
-
-MEDIA PLAYBACK READY... §§§;­I=!Ô;ªt(){I (I=!Ó,N(),n.gc(),n.go(n.scenes.MENU ÑMENU.JS))}ªi(n){n t()}ªo(){}ªN(){Pip.timersžPip.timers.typeTextž(clearTimeout(Pip.timers.typeText),Pip.timers.typeText=Ó),Pip.removeListener(Ñknob1,i),Pip.removeListener(Ñknob2,o)}ªT(){N(),Pip.audioStop()}Pip.audioStop(),Pip.onExclusive(Ñknob1,i),Pip.onExclusive(Ñknob2,o),h.clear(Ó);±{Pip.typeText(e,Ô,Ô,Õ¼,Õ,ÑMonofonto16).then(t)}²(n){t()}«{remove:T}});

@@ -1,25 +1,58 @@
 {
-  "id": "BATTLEPIP",
+  "id": "battlepip",
   "name": "Battle-Pip",
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "Place your airships, and blow up the enemies with the fog of war hiding them from you!",
-  "icon": "assets/AIRSHIP.IMG",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/AIRSHIP.img",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/BATTLEPIP/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/BATTLEPIP/GOLOSE.WAV", "url": "assets/GOLOSE.WAV" },
-    { "name": "HOLO/BATTLEPIP/GOWIN.WAV", "url": "assets/GOWIN.WAV" },
-    { "name": "HOLO/BATTLEPIP/HIT.WAV", "url": "assets/HIT.WAV" },
-    { "name": "HOLO/BATTLEPIP/LOSE.WAV", "url": "assets/LOSE.WAV" },
-    { "name": "HOLO/BATTLEPIP/MISS.WAV", "url": "assets/MISS.WAV" },
-    { "name": "HOLO/BATTLEPIP/SONAR1.WAV", "url": "assets/SONAR1.WAV" },
-    { "name": "HOLO/BATTLEPIP/SONAR2.WAV", "url": "assets/SONAR2.WAV" },
-    { "name": "HOLO/BATTLEPIP/TITLE.BIN", "url": "assets/TITLE.BIN" },
-    { "name": "HOLO/BATTLEPIP/TITLE.WAV", "url": "assets/TITLE.WAV" },
-    { "name": "HOLO/BATTLEPIP/WIN.WAV", "url": "assets/WIN.WAV" }
+    {
+      "pipboy": "HOLO/BATTLEPIP/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/GOLOSE.WAV",
+      "source": "storage/GOLOSE.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/GOWIN.WAV",
+      "source": "storage/GOWIN.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/HIT.WAV",
+      "source": "storage/HIT.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/LOSE.WAV",
+      "source": "storage/LOSE.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/MISS.WAV",
+      "source": "storage/MISS.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/SONAR1.WAV",
+      "source": "storage/SONAR1.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/SONAR2.WAV",
+      "source": "storage/SONAR2.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/TITLE.BIN",
+      "source": "storage/TITLE.bin"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/TITLE.WAV",
+      "source": "storage/TITLE.wav"
+    },
+    {
+      "pipboy": "HOLO/BATTLEPIP/WIN.WAV",
+      "source": "storage/WIN.wav"
+    }
   ],
   "storageOptional": []
 }

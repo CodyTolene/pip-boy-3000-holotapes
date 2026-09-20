@@ -1,0 +1,88 @@
+name: Deploy Holotapes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy.yml'
+      - '.scripts/**'
+      - 'holotapes/**'
+      - 'types/**'
+      - 'eslint.config.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'prettier.config.cjs'
+      - 'tsconfig.json'
+
+concurrency:
+  group: holotapes-deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and publish production release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify sources and production build
+        run: npm run verify
+
+      - name: Reject committed build output
+        shell: bash
+        run: |
+          # Holotapes must stay TypeScript sources in git; JS + registry are build artifacts only.
+          # Fail the job if any .js/.JS (or registry.json) slipped into holotapes/.
+          if find holotapes -type f \( -iname '*.js' -o -name 'registry.json' \) -print -quit | grep -q .; then
+            echo 'Generated JavaScript and registry.json must not be committed.' >&2
+            exit 1
+          fi
+
+      - name: Package production output
+        working-directory: dist
+        run: zip -q -r pip-boy-3000-holotapes.zip pip-boy-3000-holotapes
+
+      # No Actions artifact here: those expire. The lasting zip lives on the
+      # "production" GitHub Release (never expires; always exactly one asset).
+      - name: Publish rolling production release
+        # GITHUB_TOKEN is enough to create/update releases in this repo.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        # Zip lives next to the unpacked dist tree from the package step.
+        working-directory: dist
+        run: |
+          # Reuse the fixed "production" release tag if it already exists.
+          if gh release view production --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            # Drop every existing release asset so only the new zip remains.
+            gh release view production --repo "$GITHUB_REPOSITORY" --json assets \
+              --jq '.assets[].name' | while IFS= read -r asset; do
+              [ -n "$asset" ] || continue
+              gh release delete-asset production "$asset" --yes --repo "$GITHUB_REPOSITORY"
+            done
+            # Attach the fresh zip (permanent; GitHub Releases do not expire assets).
+            gh release upload production pip-boy-3000-holotapes.zip --repo "$GITHUB_REPOSITORY"
+            # Refresh release notes with the commit that produced this build.
+            gh release edit production --notes "Production build from $GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
+          else
+            # First deploy: create the rolling "production" release and attach the zip.
+            # --target: point the release tag at this commit
+            # --title / --notes: human-readable release metadata
+            # --latest=false: keep this from becoming the repo's "Latest" release
+            gh release create production pip-boy-3000-holotapes.zip \
+              --target "$GITHUB_SHA" \
+              --title 'Holotapes production build' \
+              --notes "Production build from $GITHUB_SHA" \
+              --latest=false \
+              --repo "$GITHUB_REPOSITORY"
+          fi

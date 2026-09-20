@@ -1,15 +1,5 @@
-# Ignore everything...
-/*
+# Generated production artifact.
+dist/
 
-# Except these files and directories:
-!.github/
-!.scripts/
-!.vscode/
-!README.md
-!package.json
-!holotapes/
-
-# Re-ignore
-**/*.min.css
-**/*.min.js
+node_modules/
 ChangeLog

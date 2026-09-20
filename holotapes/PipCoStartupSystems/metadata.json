@@ -4,114 +4,120 @@
   "author": "@LlamaYeYe",
   "version": "1.4.0",
   "description": "Pick a custom Pip-Boy startup animation from Special, Faction, NPC, and Custom Bootup categories, with a low-RAM persistent runtime that swaps the stock boot video for your choice and restores it automatically when reset to Default.",
-  "icon": "assets/PIP_CO_STARTUP_SYSTEMS.IMG",
+  "icon": "storage/PIP_CO_STARTUP_SYSTEMS.img",
   "previews": [],
   "type": "app",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/STARTUP_ANIMATIONS/APP.JS", "url": "assets/APP.MIN.JS" },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/PIP_CO_STARTUP_SYSTEMS.IMG",
-      "url": "assets/PIP_CO_STARTUP_SYSTEMS.IMG"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/APP.JS",
+      "source": "storage/APP.ts"
     },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
-      "url": "assets/SELECT.JSON"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/PIP_CO_STARTUP_SYSTEMS.IMG",
+      "source": "storage/PIP_CO_STARTUP_SYSTEMS.img"
     },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_RUNTIME.JS",
-      "url": "assets/STARTUP_RUNTIME.MIN.JS"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/SELECT.JSON",
+      "source": "storage/SELECT.json"
     },
     {
-      "name": "HOLO/STARTUP_ANIMATIONS/STARTUP_WAKE.JS",
-      "url": "assets/STARTUP_WAKE.MIN.JS"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/STARTUP_RUNTIME.JS",
+      "source": "storage/STARTUP_RUNTIME.ts"
     },
-    { "name": "HOLO/STARTUP_ANIMATIONS/TITLE.BIN", "url": "assets/TITLE.BIN" }
+    {
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/STARTUP_WAKE.JS",
+      "source": "storage/STARTUP_WAKE.ts"
+    },
+    {
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/TITLE.BIN",
+      "source": "storage/TITLE.bin"
+    }
   ],
   "storageOptional": [
     {
       "label": "Classic Mr. House Animated",
-      "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_ANIMATED.AVI",
       "sizeKB": 2235,
-      "url": "optional/CLASSIC_MRHOUSE_ANIMATED.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_ANIMATED.AVI",
+      "source": "optional/CLASSIC_MRHOUSE_ANIMATED.avi"
     },
     {
       "label": "Classic Mr. House Fully Animated",
-      "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
       "sizeKB": 2063,
-      "url": "optional/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE_FULLY_ANIMATED.AVI",
+      "source": "optional/CLASSIC_MRHOUSE_FULLY_ANIMATED.avi"
     },
     {
       "label": "Classic Mr. House",
-      "name": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE.AVI",
       "sizeKB": 1875,
-      "url": "optional/CLASSIC_MRHOUSE.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/CLASSIC_MRHOUSE.AVI",
+      "source": "optional/CLASSIC_MRHOUSE.avi"
     },
     {
       "label": "Deathclaw Vault Experiment",
-      "name": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
       "sizeKB": 361,
-      "url": "optional/DEATHCLAW.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/DEATHCLAW.AVI",
+      "source": "optional/DEATHCLAW.avi"
     },
     {
       "label": "Dogmeat",
-      "name": "HOLO/STARTUP_ANIMATIONS/DOGMEAT.AVI",
       "sizeKB": 1820,
-      "url": "optional/DOGMEAT.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/DOGMEAT.AVI",
+      "source": "optional/DOGMEAT.avi"
     },
     {
       "label": "Enclave PIP-BOY",
-      "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
       "sizeKB": 5563,
-      "url": "optional/ENCLAVE_PIPBOY.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/ENCLAVE_PIPBOY.AVI",
+      "source": "optional/ENCLAVE_PIPBOY.avi"
     },
     {
       "label": "Mister Handy",
-      "name": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
       "sizeKB": 2143,
-      "url": "optional/MISTER.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/MISTER.AVI",
+      "source": "optional/MISTER.avi"
     },
     {
       "label": "Mothman",
-      "name": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
       "sizeKB": 821,
-      "url": "optional/MOTHMAN.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/MOTHMAN.AVI",
+      "source": "optional/MOTHMAN.avi"
     },
     {
       "label": "Mr. House",
-      "name": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
       "sizeKB": 2559,
-      "url": "optional/MRHOUSE.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/MRHOUSE.AVI",
+      "source": "optional/MRHOUSE.avi"
     },
     {
       "label": "The Brotherhood of Steel",
-      "name": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
       "sizeKB": 916,
-      "url": "optional/BOS.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/BOS.AVI",
+      "source": "optional/BOS.avi"
     },
     {
       "label": "The Enclave",
-      "name": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
       "sizeKB": 161,
-      "url": "optional/ENCLAVE.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/ENCLAVE.AVI",
+      "source": "optional/ENCLAVE.avi"
     },
     {
       "label": "The Minutemen",
-      "name": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
       "sizeKB": 1668,
-      "url": "optional/MINUTEMEN.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/MINUTEMEN.AVI",
+      "source": "optional/MINUTEMEN.avi"
     },
     {
       "label": "Vault Girl",
-      "name": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
       "sizeKB": 686,
-      "url": "optional/VAULTGIRL.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/VAULTGIRL.AVI",
+      "source": "optional/VAULTGIRL.avi"
     },
     {
       "label": "YES MAN",
-      "name": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
       "sizeKB": 200,
-      "url": "optional/YESMAN.AVI"
+      "pipboy": "HOLO/STARTUP_ANIMATIONS/YESMAN.AVI",
+      "source": "optional/YESMAN.avi"
     }
   ]
 }

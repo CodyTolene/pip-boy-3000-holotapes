@@ -4,34 +4,67 @@
   "author": "@Theeohn @CodyTolene",
   "version": "2.1.1",
   "description": "A version of the internet famous Horse Race Tests game now for your Pip-boy. Start the game up, choose a map, 5 seconds to place your bets and they're off! Using logic similar to the DVD bouncing logo to race to the mutfruit at the end, who will win? 5 Roaches, 16 seperate tracks. Endless hours of fun watching, betting, and forming your own headcanons!",
-  "icon": "assets/RACES.IMG",
-  "previews": ["previews/menu.bmp", "previews/game.bmp", "previews/start.bmp"],
+  "icon": "storage/RACES.img",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp", "previews/START.bmp"],
   "type": "game",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/RADROACH_RACES/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/RADROACH_RACES/BUGLE.WAV", "url": "assets/BUGLE.WAV" },
-    { "name": "HOLO/RADROACH_RACES/CIRCLEW.BIN", "url": "assets/CIRCLEW.BIN" },
-    { "name": "HOLO/RADROACH_RACES/DELTAW.BIN", "url": "assets/DELTAW.BIN" },
     {
-      "name": "HOLO/RADROACH_RACES/DIAMONDW.BIN",
-      "url": "assets/DIAMONDW.BIN"
-    },
-    { "name": "HOLO/RADROACH_RACES/FLAP.WAV", "url": "assets/FLAP.WAV" },
-    { "name": "HOLO/RADROACH_RACES/MAPS.JS", "url": "assets/MAPS.MIN.JS" },
-    { "name": "HOLO/RADROACH_RACES/RACE.JS", "url": "assets/RACE.MIN.JS" },
-    { "name": "HOLO/RADROACH_RACES/ROACH.JSON", "url": "assets/ROACH.JSON" },
-    { "name": "HOLO/RADROACH_RACES/SQUAREW.BIN", "url": "assets/SQUAREW.BIN" },
-    { "name": "HOLO/RADROACH_RACES/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
-    {
-      "name": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
-      "url": "assets/TITLEIMG.BIN"
+      "pipboy": "HOLO/RADROACH_RACES/APP.JS",
+      "source": "storage/APP.ts"
     },
     {
-      "name": "HOLO/RADROACH_RACES/TRIANGLEW.BIN",
-      "url": "assets/TRIANGLEW.BIN"
+      "pipboy": "HOLO/RADROACH_RACES/BUGLE.WAV",
+      "source": "storage/BUGLE.wav"
     },
-    { "name": "HOLO/RADROACH_RACES/WINNER.WAV", "url": "assets/WINNER.WAV" }
+    {
+      "pipboy": "HOLO/RADROACH_RACES/CIRCLEW.BIN",
+      "source": "storage/CIRCLEW.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/DELTAW.BIN",
+      "source": "storage/DELTAW.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/DIAMONDW.BIN",
+      "source": "storage/DIAMONDW.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/FLAP.WAV",
+      "source": "storage/FLAP.wav"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/MAPS.JS",
+      "source": "storage/MAPS.ts"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/RACE.JS",
+      "source": "storage/RACE.ts"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/ROACH.JSON",
+      "source": "storage/ROACH.json"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/SQUAREW.BIN",
+      "source": "storage/SQUAREW.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/TITLE.JS",
+      "source": "storage/TITLE.ts"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/TITLEIMG.BIN",
+      "source": "storage/TITLEIMG.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/TRIANGLEW.BIN",
+      "source": "storage/TRIANGLEW.bin"
+    },
+    {
+      "pipboy": "HOLO/RADROACH_RACES/WINNER.WAV",
+      "source": "storage/WINNER.wav"
+    }
   ],
   "storageOptional": []
 }

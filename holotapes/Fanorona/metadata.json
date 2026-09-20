@@ -4,10 +4,15 @@
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "An abstract strategy board game for 2 players, similar to checkers. Originates from Madagascar.",
-  "icon": "previews/fanorona.png",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/FANORONA.png",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/FANORONA/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    {
+      "pipboy": "HOLO/FANORONA/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
   "storageOptional": []
 }

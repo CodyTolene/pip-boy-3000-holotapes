@@ -1,21 +1,39 @@
 {
   "name": "pip-boy-3000-holotapes",
-  "private": true,
   "version": "1.0.0",
+  "description": "TypeScript sources for Pip-Boy 3000 holotapes.",
+  "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
-    "build": "node --experimental-strip-types .scripts/build.ts",
-    "check-files": "node --experimental-strip-types .scripts/check-files.ts",
+    "audit:legacy": "node .scripts/audit-legacy-parity.ts",
+    "build": "node .scripts/build.ts",
     "format": "prettier --write .",
     "prepare": "husky",
-    "typecheck": "tsc --noEmit",
-    "validate-metadata": "ajv validate -s .scripts/metadata.schema.json -d \"holotapes/*/metadata.json\" --all-errors"
+    "verify": "node .scripts/verify.ts"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodyTolene/pip-boy-3000-holotapes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CodyTolene/pip-boy-3000-holotapes/issues"
+  },
+  "homepage": "https://github.com/CodyTolene/pip-boy-3000-holotapes#readme",
   "devDependencies": {
-    "@types/node": "^25.5.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.2.0",
+    "@types/pngjs": "^6.0.5",
     "ajv-cli": "^5.0.0",
+    "eslint": "^10.8.1",
     "husky": "^9.1.7",
-    "prettier": "^3.8.1",
-    "typescript": "^7.0.2"
+    "pngjs": "^7.0.0",
+    "prettier": "^3.9.6",
+    "terser": "^5.50.0",
+    "ts-blank-space": "^0.9.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0"
   }
 }

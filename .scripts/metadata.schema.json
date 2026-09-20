@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://github.com/CodyTolene/pip-boy-3000-holotapes/holotape-metadata.schema.json",
   "title": "Holotape metadata",
-  "description": "Metadata fora Holotape published to Pip-Boy.com",
+  "description": "Metadata for a Holotape published to Pip-Boy.com",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -21,7 +21,7 @@
     "id": {
       "description": "Unique registry id.",
       "type": "string",
-      "pattern": "^[A-Za-z0-9-]+$"
+      "pattern": "^[a-z0-9-]+$"
     },
     "name": {
       "description": "Display name on pip-boy.com.",
@@ -74,9 +74,6 @@
     },
     "storageOptional": {
       "$ref": "#/definitions/storageList"
-    },
-    "customFirmwareFiles": {
-      "$ref": "#/definitions/storageList"
     }
   },
   "definitions": {
@@ -95,14 +92,15 @@
     "storageEntry": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "url"],
+      "required": ["pipboy", "source"],
       "properties": {
-        "name": {
-          "description": "Destination path on the device, e.g. HOLO/MYAPP/APP.JS.",
+        "pipboy": {
+          "description": "Destination path on the device, e.g. HOLO/MYAPP/APP.JS. Production output name — not the TypeScript source.",
           "type": "string",
           "minLength": 1
         },
-        "url": {
+        "source": {
+          "description": "Repo-relative file under storage/ or optional/. Script entries point at the .ts source; the build emits .JS/.MIN.JS for production.",
           "$ref": "#/definitions/relativePath"
         },
         "label": {

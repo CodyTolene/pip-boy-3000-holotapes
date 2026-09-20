@@ -2,8 +2,8 @@
   <img align="center" src=".github/images/logo.png" height="400" />
   <h1 align="center">Pip-Boy 3000 Holotapes</h1>
   <p align="center">
-    A community driven repository of custom applications and games for the 
-    <a href="https://www.thewandcompany.com/pip-boy-3000/" target="_blank">Pip-Boy 3000</a>, 
+    TypeScript sources for community apps and games on the
+    <a href="https://www.thewandcompany.com/pip-boy-3000/" target="_blank">Pip-Boy 3000</a>,
     hosted on <a href="https://www.pip-boy.com/" target="_blank">pip-boy.com</a>.
   </p>
   <p align="center">
@@ -51,9 +51,13 @@
 
 Pip-Boy 3000 Holotapes by the community, for the community.
 
+This repo is written in **TypeScript**. Write `.ts` under `storage/`.
+`npm run build` strips the types and emits the Espruino `.JS` / `.MIN.JS` the
+device runs (minified and pretokenised for you).
+
 Install on: [pip-boy.com][link-pip-boy]
 
-Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
+Agent / review rules live in [agents.md](agents.md).
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
@@ -63,38 +67,42 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
 
 ## Creating a new Holotape <a name="create"></a>
 
-1. Create a directory for the app or game under `holotapes/`. Every Holotape
-   must use this structure:
+1. Create a directory under `holotapes/`:
 
-   ```text
+   ```bash
    holotapes/<YourHolotape>/
-   ├── APP.JS
-   ├── APP.MIN.JS
-   ├── metadata.json
-   ├── README.md
-   ├── ChangeLog
-   └── assets/
+     storage/           # Required files + uppercase stems, lowercase extensions
+       APP.ts           # Main TypeScript source for the Holotape
+     optional/          # Optional install files, if any
+     previews/          # Preview images, if any
+     metadata.json      # Metadata for the Holotape
+     README.md          # Documentation for the Holotape
+     ChangeLog          # Change log for the Holotape
    ```
 
-2. Write the unminified source in `APP.JS`. The app must be an anonymous
-   function expression that the Pip-Boy OS invokes; do not invoke it yourself
-   with a trailing `()`. It must return an uppercase alphanumeric `id` and a
-   `remove` function.
+   > ![img-info][img-info] Every file under `storage/`, `optional/`, and
+   > `previews/` must use an uppercase filename stem and lowercase extension,
+   > for example `APP.ts`, `DATA.json`, `ICON.png`. On-device `pipboy` paths
+   > remain fully uppercase. `npm run verify` enforces both conventions.
 
-   Example app:
+2. Write `storage/APP.ts`. The app is an anonymous function expression the
+   Pip-Boy OS invokes; do not call it with a trailing `()`. It must return an
+   uppercase alphanumeric `id` and a `remove` function.
+
+   Example:
 
    <details>
    <summary>Expand/Collapse</summary>
 
-   ```js
-   (function () {
+   ```ts
+   (function (): HolotapeApp {
      const W = h.getWidth(),
        H = h.getHeight();
      let leftWheel = 0,
        rightWheel = 0,
        lastInput = 'NONE';
 
-     function draw() {
+     function draw(): void {
        h.clear(0);
        h.setColor(3)
          .setFontMonofonto28()
@@ -109,7 +117,7 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
          .drawString('PRESS THE LEFT WHEEL TO RESET', 80, H - 40);
      }
 
-     function onKnob1(dir, long) {
+     function onKnob1(dir: KnobDirection, long?: boolean): void {
        if (dir) {
          leftWheel += dir;
          lastInput = dir < 0 ? 'LEFT UP' : 'LEFT DOWN';
@@ -122,7 +130,7 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
        draw();
      }
 
-     function onKnob2(dir) {
+     function onKnob2(dir: KnobDirection): void {
        if (dir) {
          rightWheel += dir;
          lastInput = dir < 0 ? 'RIGHT UP' : 'RIGHT DOWN';
@@ -131,13 +139,14 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
        draw();
      }
 
+     // Init last, Espruino does not hoist functions.
      Pip.audioStop();
      Pip.onExclusive('knob1', onKnob1);
      Pip.onExclusive('knob2', onKnob2);
      draw();
 
      return {
-       id: 'EXAMPLE',
+       id: 'example',
        notDefault: true,
        fullscreen: true,
        remove: function () {
@@ -152,45 +161,80 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
 
    </details>
 
-3. Add `metadata.json`. Asset paths and storage URLs are relative to the
-   Holotape directory. The storage directory is the metadata `id` converted to
-   uppercase, with underscores replacing hyphens.
+3. Add `metadata.json`. Paths are relative to the Holotape directory. `pipboy`
+   is the on-device path; `source` is the file in this repo. Script sources
+   point at `.ts`; the build emits `.MIN.JS` into the production artifact.
 
    ```json
    {
      "id": "example",
      "name": "Example Holotape",
-     "author": "@your-github-username",
+     "author": "@your-github-username @another-github-username",
      "version": "1.0.0",
      "description": "A short, one-sentence description.",
-     "icon": "assets/icon.png",
+     "icon": "storage/ICON.img",
      "previews": [],
      "type": "app",
      "readme": "README.md",
-     "storage": [{ "name": "HOLO/EXAMPLE/APP.JS", "url": "APP.MIN.JS" }],
-     "storageOptional": []
+     "storage": [
+       { "pipboy": "HOLO/EXAMPLE/APP.JS", "source": "storage/APP.ts" },
+       {
+         "pipboy": "HOLO/EXAMPLE/CONFIG.JSON",
+         "source": "storage/CONFIG.json"
+       },
+       { "pipboy": "HOLO/EXAMPLE/IMAGE.IMG", "source": "storage/IMAGE.img" },
+       { "pipboy": "HOLO/EXAMPLE/OTHER.JS", "source": "storage/OTHER.ts" }
+     ],
+     "storageOptional": [
+       {
+         "label": "Example BIN Image",
+         "sizeKB": 38,
+         "pipboy": "HOLO/EXAMPLE/IMAGE.BIN",
+         "source": "optional/IMAGE.bin"
+       },
+       {
+         "label": "Example AVI Video",
+         "sizeKB": 1234,
+         "pipboy": "HOLO/EXAMPLE/VIDEO.AVI",
+         "previewMp4": "previews/VIDEO.mp4",
+         "source": "optional/VIDEO.avi"
+       },
+       {
+         "label": "Example WAV Audio",
+         "sizeKB": 543,
+         "pipboy": "HOLO/EXAMPLE/AUDIO.WAV",
+         "previewMp3": "previews/AUDIO.mp3",
+         "source": "optional/AUDIO.wav"
+       }
+     ]
    }
    ```
 
-   The metadata `id` must contain only lowercase letters, numbers, and hyphens;
-   `version` must use semantic versioning; and `type` must be exactly `app` or
-   `game`. Do not edit `holotapes/registry.json` manually. `npm run build`
-   generates it from each `metadata.json` file.
+   > ![img-info][img-info] `icon` can also be a PNG, but it will only be
+   > displayed on the website. PNG files cannot be used on the device as the
+   > Holotape image.
 
-4. Document the description, controls, installation, tested firmware, and
-   credits in the Holotape's `README.md`.
+   > ![img-info][img-info] `id` is lowercase letters, numbers, and hyphens;
+   > `version` is semver; `type` is `app` or `game`. Use `previousId` if your
+   > Holotape ID has changed from a previous version. This helps the website
+   > find the old files for uninstall and reinstall.
 
-5. Add at least one `ChangeLog` entry in this format:
+4. Documents for your Holotape should go in its readme file:
+   `holotapes/<YourHolotape>/README.md`.
+
+5. Add a `ChangeLog` file:
 
    ```text
    1.0.0 (yyyy-mm-dd)
-   <pull-request-or-change-link>
    - Initial release
    ```
 
-6. Generate `APP.MIN.JS` from `APP.JS` as described in
-   [Build and minification](#build-minification). Both files must behave
-   identically.
+6. Build and check:
+
+   ```sh
+   npm install
+   npm run verify
+   ```
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
@@ -200,6 +244,10 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
 
 ## Development Workflow <a name="development"></a>
 
+For this repo, keep sources as TypeScript under
+`holotapes/<YourHolotape>/storage/` and let `npm run build` build the JS. Do not
+commit generated `.JS` / `.MIN.JS` under `holotapes/`.
+
 ### Using Pip-Boy.com
 
 <details>
@@ -207,22 +255,13 @@ Follow the guide below to create your own custom Holotapes for the Pip-Boy 3000!
 
 1. Open the [Pip-Boy 3000 Holotape Creator/Editor][link-holotape-creator].
 
-2. Create a new Holotape and give it a name.
+2. Create or edit a Holotape in the built-in editor as JavaScript.
 
-3. Create or edit the Holotape code in the built-in editor.
+3. Test on the device with **Save & Test**.
 
-4. Test your Holotape on the device using the "Save & Test" button.
-
-   > ![img-info][img-info] The editor's "Encode" button can prepare code for
-   > testing. Keep the readable source as `APP.JS` and the encoded/minified
-   > output as `APP.MIN.JS`.
-
-5. Download your files and add them to this repository.
 </details>
 
 ### Using the Espruino Web IDE
-
-You can use one of the two methods below to upload and test your Holotape:
 
 <details>
 <summary>Expand/Collapse</summary>
@@ -230,70 +269,42 @@ You can use one of the two methods below to upload and test your Holotape:
 1. Open the [Espruino Web IDE](https://www.espruino.com/ide/) or its
    [GitHub-hosted version](https://espruino.github.io/EspruinoWebIDE).
 
-2. Open your file:
-
-   ![img-open-file](.github/images/screenshots/open-file.png)
-
-3. Enable **Watch File**.
-
-   ![img-watch-file](.github/images/screenshots/watch-file.png)
-
-4. Edit the app in VS Code or the Web IDE's built-in editor.
-
-5. Enable **Settings > Minification > Esprima: Mangle**.
-
-6. Set **Settings > Minification > Pretokenise code before upload** to
-   **Yes/Always**.
-
-7. Upload to the device for testing.
-
-> ![img-info][img-info] You can use a boot code file to boot straight into the
-> app.
+2. Build first (`npm run build`), then upload the generated files from
+   `dist/pip-boy-3000-holotapes/`.
 
 </details>
 
-### Build and minification <a name="build-minification"></a>
-
-Minify and Encode your Holotape here:
-
-https://www.pip-boy.com/3000/holotapes/create
-
-This will give you a proper `APP.MIN.JS` from `APP.JS`.
-
-Run the repository build after adding or changing metadata:
+### Build <a name="build"></a>
 
 ```sh
 npm install
 npm run build
 ```
 
-This rebuilds `holotapes/registry.json`, rewrites relative file paths for the
-registry, and rejects metadata whose `type` is not `app` or `game`. It does not
-generate `APP.MIN.JS` or perform all of the submission checks for you.
+Writes readable `.JS`, pretokenised `.MIN.JS`, and a generated `registry.json`
+(catalog index for pip-boy.com) under `dist/pip-boy-3000-holotapes/`
+(gitignored). Types are erased only - no transpile or polyfills. See
+[agents.md](agents.md) for TypeScript rules.
 
-### Validation <a name="validation"></a>
+### Commands <a name="commands"></a>
 
-Pull requests that touch `holotapes/` are validated automatically. These checks
-run locally with the same commands CI uses:
+That is most of what you need day to day:
 
 ```sh
-npm run typecheck
-npm run validate-metadata
-npm run check-files
+npm install          # Install dependencies (once)
+npm run build        # Build for Pip-Boy, Outputs to `dist/`
+npm run verify       # Verify all files
 ```
 
-`typecheck` checks the build and validation scripts in `.scripts/` for type
-errors. It does not look at any Holotape.
+`npm run verify` is what husky runs on commit and what CI runs on PRs / deploy.
+It fails the commit or job if any step fails. Formatting is required: run
+`npm run format` before you commit (verify also checks Prettier and fails if
+files are not formatted).
 
-`validate-metadata` checks every `metadata.json` against
-`.scripts/metadata.schema.json` for required fields, formats, and fields for a
-Holotape.
+Pull requests use `.github/workflows/validate.yml`. Merges to `main` use
+`.github/workflows/deploy.yml` (verify, then publish the production zip).
 
-`check-files` checks that every file a `metadata.json` references exists,
-matches filename casing, and unique `id`s.
-
-Schema is wired up in `.vscode/settings.json` so you'll get IDE errors and
-warnings.
+Schema for `metadata.json` is in `.vscode/settings.json`.
 
 <p align="right">[ <a href="#index">Index</a> ]</p>
 
@@ -306,11 +317,14 @@ warnings.
 <details>
 <summary>Expand/Collapse</summary>
 
-Holotape images must be bitmaps with a maximum color depth of 4bpp. Convert
+Holotape images must be bitmaps with a maximum color depth of 1bpp. Convert
 source artwork with the
 [Image Converter](https://www.pip-boy.com/tools/image-converter).
 
-Prefer one `h.drawImage()` call over many procedural drawing calls for sprites.
+The metadata icon is a transparent PNG or IMG, exactly 120x120, under
+`storage/`.
+
+Prefer one `h.drawImage()` call over many procedural draws for sprites.
 
 Small sprites can be stored inline:
 
@@ -319,8 +333,8 @@ const sprites = { icon: atob('...') };
 h.drawImage(sprites.icon, 120, 80);
 ```
 
-Larger collections can be stored separately and loaded from the SD card. Defer
-large asset loads with `setTimeout(..., 0)` and call `E.defrag()` first:
+Larger collections can load from the SD card. Defer with `setTimeout(..., 0)`
+and call `E.defrag()` first:
 
 ```js
 let sprites,
@@ -331,9 +345,8 @@ let sprites,
   }, 0);
 ```
 
-Any asset timeout must be cleared in `remove()`. Very large backgrounds can be
-streamed into `h.buffer` with `E.openFile()` and `Uint8Array` instead of being
-held as another complete image in memory.
+Clear any asset timeout in `remove()`. Very large backgrounds can stream into
+`h.buffer` with `E.openFile()` instead of holding another full image in RAM.
 
 </details>
 
@@ -348,7 +361,7 @@ held as another complete image in memory.
 <details>
 <summary>Expand/Collapse</summary>
 
-Use `Pip.onExclusive()` when an app needs exclusive control input handling:
+Use `Pip.onExclusive()` when the app needs exclusive input:
 
 ```js
 function onKnob1(dir, long) {
@@ -366,32 +379,17 @@ function onKnob1(dir, long) {
 Pip.onExclusive('knob1', onKnob1);
 ```
 
-`Pip.onExclusive()` is the preferred default. Use `Pip.on()` only when the app
-intentionally needs to coexist with another handler. A `setWatch()` on
-`ENC1_PRESS` is reserved for unusually latency-sensitive press handling. A
-direct watch on a button such as `BTN_DATA` is appropriate only when no
-`Pip.on()` event exists.
+Prefer `Pip.onExclusive()`. Use `Pip.on()` only when handlers must coexist.
+Remove every listener and watch in `remove()`.
 
-Remove every listener and watch when the app exits:
-
-```js
-Pip.removeListener('knob1', onKnob1);
-clearWatch(buttonWatch);
-```
-
-For text entry, firmware 1.1.4 and later provides a built-in on-screen keyboard:
+Firmware 1.1.4+ has a built-in keyboard:
 
 ```js
 Pip.createKeyboard(initialText, description, callback);
 ```
 
-The keyboard takes exclusive control of both knobs and the callback receives the
-current text when the user selects Enter. It does not close itself: the call
-returns an object with a `remove()` method, and you must call `.remove()` on it
-(typically inside the callback) before drawing your next screen. On older
-firmware there is no global keyboard API; see [agents.md](agents.md) for a
-`showTextEntry`-style implementation you can copy if you need to support
-pre-1.1.4 devices.
+Call `.remove()` on the returned object (usually inside the callback) before
+drawing the next screen. Older firmware: see [agents.md](agents.md).
 
 </details>
 
@@ -408,56 +406,26 @@ pre-1.1.4 devices.
 
 Main rules:
 
-- The display is always 480×320. If dimensions are needed repeatedly, declare
-  them once as `const W = h.getWidth(), H = h.getHeight()`.
-- Every variable consumes a scarce Espruino block. Use `const` for constants,
-  `let` for mutable state, never `var`, and inline single-use values.
-- Always use the global `h` graphics object directly and chain graphics calls.
-  Do not spend a variable block on an alias for `h`.
-- Use `h.clearRect()`, clipping, cached wrapped text, and dirty flags to redraw
-  only changed regions.
-- Timer-driven apps normally rely on the OS auto-flush. Do not call `h.flip()`
-  from a `setInterval()` loop. For `Pip.onFrame` rendering, set
-  `Pip.lastFlip = getTime()` before drawing and call `h.flip()` after drawing.
-- Use `"ram"` for performance-critical frame functions and `"jit"` for small,
-  numeric tight loops. Do not use either without a measured need.
-- Use `Math.randInt(n)` instead of `Math.random()`, and use typed arrays for
-  dense numeric data.
-- Espruino does not support `async`/`await`, ES modules, template literals,
-  `fetch()`, `XMLHttpRequest`, or `requestAnimationFrame()`.
-- Keep the app scoped:
+- Display is always 480x320. Cache once:
+  `const W = h.getWidth(), H = h.getHeight()` or simply use
+  `const W = 480, H = 320` since these will never change.
+- Every variable costs a scarce Espruino block. Prefer `const` / `let`, never
+  `var`, inline single-use values.
+- Use global `h` directly and chain graphics calls. Do not alias `h`.
+- Redraw only what changed (`clearRect`, clipping, dirty flags).
+- Interval-driven apps rely on OS auto-flush - do not `h.flip()` from a
+  `setInterval` loop. For `Pip.onFrame`, set `Pip.lastFlip = getTime()` before
+  drawing and `h.flip()` after.
+- `"ram"` for hot frame functions, `"jit"` for small numeric loops - only with a
+  measured need.
+- Use `Math.randInt(n)` instead of `Math.random()`.
+- No `async`/`await`, ES modules, template literals, `fetch()`, or
+  `requestAnimationFrame()`.
+- Keep the app scoped as a function expression that returns `{ id, remove }`.
+- Tear down every listener, interval, timeout, watch, and audio/video in
+  `remove()`. Never call `load()` or `E.reboot()` from `remove()`.
 
-  ```js
-  (function () {
-    // App code here
-    return {
-      id: 'APPID',
-      notDefault: true,
-      fullscreen: true,
-      remove: function () {
-        /* clean up app resources */
-      },
-    };
-  });
-  ```
-
-- Clean up every resource created by the app in `remove()`:
-
-  ```js
-  remove: function() {
-    Pip.removeListener("knob1", onKnob1);
-    clearInterval(intervalId);
-    clearTimeout(timeoutId);
-    clearWatch(watchId);
-    Pip.audioStop();
-    h.clear();
-  }
-  ```
-
-- Never call `load()` or `E.reboot()` from `remove()`, call `Pip.remove()` at
-  the top of the app, use a bare `clearWatch()`, or delete/reassign OS globals.
-
-Useful memory checks:
+Useful checks:
 
 ```js
 process.memory();
@@ -465,10 +433,6 @@ print(E.getSizeOf(this, 1).sort((a, b) => a.size - b.size));
 print(E.getSizeOf(Pip, 1).sort((a, b) => a.size - b.size));
 print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 ```
-
-`this['\xFF']` shows timers, watches, and internal runtime state.
-
-`Pip.CURRENT` can hold the current page or app code.
 
 </details>
 
@@ -487,95 +451,53 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 
    https://github.com/CodyTolene/pip-boy-3000-holotapes/fork
 
-2. Clone your fork and enter the repository:
+2. Clone your fork:
 
    ```sh
    git clone https://github.com/<my-username>/pip-boy-3000-holotapes.git
    cd pip-boy-3000-holotapes
+   npm install
    ```
 
-   > ![Info][img-info] Replace `<my-username>` with your GitHub username.
+   > ![img-info][img-info] Replace `<my-username>` with your GitHub username.
 
-3. Sync your fork before starting. On your fork's GitHub page, select **Sync
-   fork > Update branch**. Then update local `main` and merge it into your
-   working branch:
+3. Sync with upstream `main`, then branch:
 
    ```sh
    git checkout main
    git pull origin main
    git checkout -b <my-branch>
-   git merge main
-   git push origin <my-branch>
    ```
 
-   To merge all the new updates from the original repository's `main` branch
-   directly into your checked out working branch:
-
-   ```sh
-   git checkout <my-branch>
-   git pull https://github.com/CodyTolene/pip-boy-3000-holotapes.git main
-   git push origin <my-branch>
-   ```
-
-   Replace `<my-branch>` with your branch name. If the branch does not exist
-   yet, create it from the updated `main` branch with:
-
-   ```sh
-   git checkout -b my-holotape
-   ```
-
-4. Make the change. New Holotapes must include all files described in
+4. Make the change. New Holotapes need every file in
    [Creating a new Holotape](#create).
 
-   > ![Warn][img-warn] Submissions must include the original, human-readable
-   > source code (`APP.JS`). Pull requests containing only minified code
-   > (`APP.MIN.JS`) will be rejected. This is an open source project, and
-   > readable source is essential so the community can review changes, maintain
-   > and update apps over time, fix bugs, and learn from each other's work.
+   > ![Warn][img-warn] Submit TypeScript sources under `storage/`. Do not commit
+   > generated `.JS`, `.MIN.JS`, or the generated `registry.json`. Readable
+   > source is required so the community can review and maintain apps.
 
-5. Run the repository build and test the Holotape on the device:
+5. Verify and test on a real Pip-Boy:
 
    ```sh
-   npm install
-   npm run build
+   npm run verify
    ```
 
-   Then run the same validation the pull request will run. See
-   [Validation](#validation) for what each check covers:
+6. Before opening a pull request:
+   - `npm run verify` passes; no generated build output is committed.
+   - Source is a function expression that is never invoked; return has a literal
+     uppercase `id` and a `remove` function.
+   - Every listener, interval, timeout, and watch is cleared; audio stopped if
+     used.
+   - No `any` / `unknown`; use real interfaces (see [agents.md](agents.md)).
+   - Metadata: unique lowercase id, semver, valid type, matching fully uppercase
+     `HOLO/<APP_ID>/` `pipboy` paths, with `source` pointing at `.ts` for
+     scripts.
+   - `README.md` documents controls; `ChangeLog` has an entry.
+   - App opens, closes, and reopens cleanly on hardware.
 
-   ```sh
-   npm run typecheck
-   npm run validate-metadata
-   npm run check-files
-   ```
-
-6. Before opening a pull request, verify:
-   - The original unminified source (`APP.JS`) is included; minified code alone
-     is not accepted.
-   - `APP.JS` starts with `(function() {`, ends with `});`, and is not invoked.
-   - The return object contains a literal uppercase alphanumeric `id` and a
-     `remove` function.
-   - Every listener, interval, timeout, and watch is removed or cleared; audio
-     is stopped if used.
-   - `remove()` exits cleanly without `load()` or `E.reboot()`.
-   - No unsupported language/runtime features or OS-global mutations are used.
-   - `APP.MIN.JS` exists and behaves exactly like `APP.JS`.
-   - Metadata uses a unique lowercase ID, semantic version, valid type, valid
-     relative paths, and the matching `HOLO/<APP_ID>/` storage prefix.
-   - `README.md` documents controls and `ChangeLog` contains an entry.
-   - Images are converted bitmaps at 4bpp or less.
-   - The app can be opened, closed, and opened again without leaking resources.
-   - Memory usage is acceptable before, during, and after the app runs.
-
-7. Stage, commit, and push your changes. For a branch named `<my-branch>`:
-
-   ```sh
-   git add -A && git commit -m "My change description" && git push origin <my-branch>
-   ```
-
-8. [Open a pull request](https://github.com/CodyTolene/pip-boy-3000-holotapes/pulls)
-   from your working branch to this repository's `main` branch. Describe the
-   change and include screenshots, GIFs, or video previews when the UI changed.
+7. Push and
+   [open a pull request](https://github.com/CodyTolene/pip-boy-3000-holotapes/pulls)
+   into `main`. Include screenshots or video when the UI changed.
 
 </details>
 
@@ -587,18 +509,21 @@ print(E.getSizeOf(this['\xFF'], 1).sort((a, b) => a.size - b.size));
 
 ## License <a name="licenses"></a>
 
-This repository is licensed under the MIT License.
+This repository is licensed under the MIT License by default. See
+[LICENSE](LICENSE).
 
-All code, holotapes, apps, games, scripts, metadata, documentation, and other
-contributions submitted to this repository must be licensed under the MIT
-License unless explicitly stated otherwise by the repository maintainer in
-writing.
+All code, holotapes, apps, games, scripts, metadata, documentation, assets, and
+other contributions submitted to this repository (including pull requests and
+issue attachments) must be MIT-licensed unless the repository maintainer states
+otherwise in writing. By submitting a contribution, you agree it is provided
+under the MIT License. Do not submit material you do not have the right to
+license under MIT. Contributions with incompatible terms may be rejected or
+removed.
 
-By submitting a pull request or contribution, you agree that your contribution
-is provided under the MIT License. See [CONTRIBUTING.md](CONTRIBUTING.md) for
-details.
-
-See the [LICENSE](LICENSE) file for details.
+Some individual files or assets may carry their own rights. When that happens it
+is noted in that file's source and/or the holotape's `README.md`. Pip-Boy.com
+has been given explicit permission to use those materials; that permission is
+documented on a per-case basis in the same places.
 
 `SPDX-License-Identifier: MIT`
 

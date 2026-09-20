@@ -4,10 +4,15 @@
   "author": "@McBeefy34",
   "version": "1.0.1",
   "description": "PipMan is a Pac-Man inspired arcade game built for the Pip-Boy 3000, blending retro gaming nostalgia with the iconic wasteland aesthetic. Navigate the vault, dodge ghouls, and collect every bottle caps, all from the wrist-mounted terminal of the Commonwealth.",
-  "icon": "previews/pipman_logo.png",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/PIPMAN_LOGO.png",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/PIPMAN/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    {
+      "pipboy": "HOLO/PIPMAN/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
   "storageOptional": []
 }

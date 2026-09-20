@@ -1,943 +1,654 @@
-# Agents.md — LLM Instructions for Holotape Development & Review
+# agents.md
 
-This file governs how LLM-powered agents behave when generating holotape code or auditing merge requests in this repository. Follow these rules strictly.
+Instructions for LLM agents writing or reviewing holotapes in this repository.
+Follow these rules strictly. A review fails on any violation of the mandatory
+checks in section 7.
 
----
+Human contributors: [README.md](README.md) is the short guide (setup, create,
+build, contribute). This file holds the detailed TypeScript, device, and review
+rules - including notes that used to live in the README.
 
-## Table of Contents
+-
 
-- [1. Project Context](#1-project-context)
-- [2. Holotape File Structure](#2-holotape-file-structure)
-- [3. Code Generation Rules](#3-code-generation-rules)
-- [4. Registration & Metadata](#4-registration--metadata)
-- [5. Review & Audit Rules](#5-review--audit-rules)
-- [6. Anti-Patterns (Do Not Generate)](#6-anti-patterns-do-not-generate)
-- [7. Build & Minification Process](#7-build--minification-process)
+## Table of contents
 
----
+- [1. Project context](#1-project-context)
+- [2. Repository layout](#2-repository-layout)
+- [3. TypeScript rules](#3-typescript-rules)
+- [4. App structure](#4-app-structure)
+- [5. Device programming rules](#5-device-programming-rules)
+- [6. Registration and metadata](#6-registration-and-metadata)
+- [7. Review and audit](#7-review-and-audit)
+- [8. Anti-patterns](#8-anti-patterns)
+- [9. Tooling notes](#9-tooling-notes)
 
-## 1. Project Context
+-
 
-- **Platform:** Pip-Boy 3000 replica device running Espruino (a JavaScript interpreter for microcontrollers).
-- **Display:** 480×320 pixels.
-- **Input:** Two scroll wheels (knob1 / knob2). Press events are handled either via `setWatch` on `ENC1_PRESS` or by checking for `dir === 0` in the knob1 handler — both patterns are used in production code.
-- **Memory:** Extremely constrained. Every variable allocation consumes a scarce block. Minimize declarations. Hardcode constant values (screen dimensions, magic numbers) rather than assigning them to variables. Single-use expressions should be inlined.
-- **Language:** JavaScript (Espruino subset — supports `class`, arrow functions, `Promise`, typed arrays, `Math.randInt`, `E.clip`, `E.defrag`, etc. Does NOT support ES6+ modules, `async`/`await`, or template literals).
-- **Graphics API:** Global `h` object with method chaining (`h.setColor(n).setFontMonofonto16().drawString(...)`). Double-buffered. The device auto-flushes periodically. For dynamic apps (games, animations) that need immediate display updates, use `h.flip()` followed by `Pip.lastFlip = getTime()` to force an instant refresh. See [Espruino Graphics Reference](https://www.espruino.com/Reference#Graphics) for all available methods.
-- **Sound:** `Pip.audioStart(path)` and `Pip.audioStartVar(buffer, options)` for WAV playback; `Pip.playSound('TAB' | 'SCROLL')` for simple UI sounds.
-- **Pip API:** All available methods documented at [RobCo Pip-Boy 3000 API](https://robco-industries.org/documentation/pipboy/3000/api).
+## 1. Project context
 
----
+- **Platform:** Pip-Boy 3000 replica running Espruino, a JavaScript interpreter
+  for microcontrollers. Not the older Pip-Boy 3000 Mk V; some APIs differ.
+- **Display:** 480x320, 4bpp. Color indices 0 (black) to 3 (white), with 1 and 2
+  as intermediate greys.
+- **Input:** two scroll wheels (`knob1`, `knob2`), each of which also presses.
+- **Memory:** extremely constrained. Every variable allocation consumes a scarce
+  block.
+- **Language:** the Espruino subset. It has `class`, arrow functions, `Promise`,
+  typed arrays, `Math.randInt`, `E.clip`, `E.defrag`. It does **not** have ES
+  modules, `async`/`await`, or template literals.
+- **Source language here is TypeScript.** The build strips types and emits the
+  JavaScript the device runs. See section 3.
+- **The API is documented in the types, not here.** `types/*.d.ts` carries JSDoc
+  on every member of `Pip`, `h` (Graphics), `E`, `fs`, `Storage`, `player`,
+  `DataFile`, and `InvFile`, including argument meanings, value ranges, and
+  gotchas. Read the declaration rather than guessing, and never invent a method
+  that is not declared.
 
-## 2. Holotape File Structure
+-
 
-Every holotape directory under `holotapes/` must contain:
+## 2. Repository layout
 
-```
+Every holotape lives in its own directory:
+
+```text
 holotapes/<YourHolotape>/
-├── app.js          # Source code (unminified)
-├── app.min.js      # Minified version (manually or tool-generated)
-├── metadata.json   # Registration entry for the build system
-├── README.md       # Description, controls, installation, credits
-├── ChangeLog       # Version history with dates and PR links
-└── assets/         # Images, sounds, icons, data files
-    └── ...
+  storage/          Required files, uppercase stems, lowercase extensions
+    APP.ts          Main source
+    TYPES.d.ts      Local types, when needed
+  optional/         storageOptional files, when used
+  previews/         Preview media, when used
+  metadata.json     Registration entry (hand-written)
+  README.md         Description, controls, credits
+  ChangeLog         Version history
 ```
 
-**Rules:**
+Rules:
 
-- `app.min.js` must be functionally identical to `app.js` — only whitespace, comments, and variable mangling differ.
-- `metadata.json` icon and preview paths are relative to the holotape directory (e.g. `assets/myicon.png`). The build script automatically rewrites these to `holotapes/`-relative paths.
-- `ChangeLog` format (one entry per version):
-  ```
+- **Never add `.js`, `.min.js`, or `registry.json` under `holotapes/`.** They
+  are generated only under `dist/pip-boy-3000-holotapes/`. `.min.js` is binary;
+  formatting or editing it corrupts it. Regenerate with `npm run build`.
+- **`metadata.json` is hand-maintained and nothing generates it.** No script in
+  this repository writes a `metadata.json`, adds a `storage` entry, or invents
+  an asset path. If a change needs a new file on the device, add its `storage`
+  entry yourself and say so in your summary, because the developer is the only
+  one who knows whether a file is required or optional and what it should be
+  called on the device. The same applies to icons, `README.md`, and `ChangeLog`.
+- Repository files under `storage/`, `optional/`, and `previews/` use uppercase
+  filename stems and lowercase extensions. `storage/APP.ts` emits
+  `storage/APP.JS` and `storage/APP.MIN.JS`. On-device paths remain fully
+  uppercase to match the Pip-Boy development team's SD card convention.
+- Every metadata `storage` `source` is directly under `storage/`, every
+  `storageOptional` `source` is directly under `optional/`, and every preview is
+  directly under `previews/`. The metadata icon is directly under `storage/` (no
+  `assets/` folder).
+- Every holotape has exactly one metadata icon: a transparent PNG or IMG that is
+  exactly 120 by 120 pixels. Layout validation rejects anything else.
+- Types used by one holotape go in that holotape's `TYPES.d.ts`. Only things the
+  device itself provides belong in the shared `types/`.
+- `ChangeLog` entries are:
+
+  ```text
   <version> (<yyyy-mm-dd>)
-  <PR-or-changelink>
   - <change description>
   ```
 
----
+-
 
-## 3. Code Generation Rules
+## 3. TypeScript rules
 
-When writing or modifying `app.js`, the agent **must** follow every rule below. Violations are rejected during review.
+### 3.1 Only erasable syntax
 
-### 3.1 IIFE Wrapping
+`tsconfig.json` sets `erasableSyntaxOnly`. The build strips annotations and
+changes nothing else: no transpiling, no downlevelling, no polyfills. Do not use
+`enum`, a `namespace` with a runtime body, or constructor parameter properties.
+Interfaces, type aliases, generics, and annotations are all fine.
 
-The entire app must be wrapped in an **anonymous function expression** (IIFE). This scopes all variables away from the global namespace.
+### 3.2 No typechecking escapes
 
-```js
-(function() {
-  // All code here
+`@ts-nocheck`, bare `@ts-ignore`, unexplained `@ts-expect-error`, `any`, and
+`unknown` are rejected by ESLint. Declare a concrete type (or a named interface
+in a local `TYPES.d.ts`). Return types on functions are required and are
+erasable.
+
+### 3.3 Type syntax is free, code changes are not
+
+This is the most important rule in the file.
+
+Annotations, `as` casts, `!` non-null assertions, and `!:` definite assignment
+assertions all erase to nothing, so they cannot change device behaviour. Adding
+an initializer, a guard, or a temporary variable **does** change it, even when
+it looks equivalent:
+
+```ts
+// Free: erases to `let winner;`
+let winner!: string | null;
+
+// Not free: emits `let winner = null;`
+let winner: string | null = null;
+```
+
+When satisfying the type checker on code that already works on hardware, reach
+for the erasable form first. If a real code change is genuinely the right fix,
+make it deliberately, say so, and flag that it needs a device retest.
+
+Useful erasable idioms:
+
+- `let x!: T;` definite assignment when the value is filled before use and you
+  do not want an initializer in the emitted JS.
+- `x = null as never;` (or a typed sentinel) for teardown that clears a value.
+- `function F(this: Shape, ...)` types a constructor-style function. Prefer a
+  named constructor type over casting through `any`/`unknown`.
+
+### 3.4 Never use `any` or `unknown`
+
+Both are banned under `holotapes/**` and the linter enforces it. Declare a
+concrete type or a named interface in a local `TYPES.d.ts`. For eval'd scene
+factories, cast to a named factory type - do not leave the value as `unknown`.
+
+### 3.5 Type the shapes, not just the leaves
+
+Give a holotape's records real interfaces in its `types.d.ts`, with a JSDoc line
+on every member explaining what it holds. A game's piece, its player record, its
+save file, and its scene contract are all worth naming. Prefer that over
+inlining an anonymous object type at each use.
+
+### 3.6 Write annotations yourself
+
+Write return types, parameter types, and named shapes by hand. Do not leave them
+for inference or for a helper script. Object shapes built up property by
+property, state variables filled in by a later `reset()`, and parameters with no
+obvious call site still need judgement. Prefer a concrete annotation over
+loosening a type to silence an error.
+
+### 3.7 Build and verify
+
+```bash
+npm run verify
+```
+
+Layout, typecheck, lint, format check, metadata schema, production build, and
+dist file checks. Run it before claiming a change is done, and report the result
+honestly. `npm run build` alone emits `.js`, `.min.js`, and the registry under
+`dist/pip-boy-3000-holotapes/` (registry is part of build, not a separate npm
+script). Generated output must never be committed.
+
+If the registry step reports a metadata problem, do not attempt to repair the
+`metadata.json` on the developer's behalf unless they asked for it. Report which
+file it named and what it said.
+
+-
+
+## 4. App structure
+
+### 4.1 Function expression, not invoked
+
+The whole app is an anonymous function expression. The Pip-Boy OS evaluates the
+file and calls it. Do **not** add a trailing `()`.
+
+```ts
+(function (): HolotapeApp {
+  // App code
 });
 ```
 
-**Do NOT** invoke the IIFE immediately — the Pip-Boy OS invokes it. **Do NOT** add trailing `()`. Note the style: no space between `function` and `()` — this is the convention used in production holotape code.
+### 4.2 Return object
 
-### 3.2 Required Return Object
+The function must return an object with at least `id` and `remove`:
 
-The IIFE must return an object with at minimum an `id` and `remove`:
+| Field        | Type       | Required | Description                                  |
+| ------------ | ---------- | -------- | -------------------------------------------- |
+| `id`         | `string`   | Yes      | Uppercase alphanumeric, no spaces or hyphens |
+| `remove`     | `function` | Yes      | Cleanup, see 4.3                             |
+| `notDefault` | `boolean`  | No       | Pressing any mode button exits the app       |
+| `fullscreen` | `boolean`  | No       | Hides the OS header and footer               |
 
-| Field    | Type       | Required | Description                                      |
-|----------|------------|----------|--------------------------------------------------|
-| `id`     | `string`   | Yes      | Uppercase alphanumeric ID (no spaces/hyphens)    |
-| `remove` | `function` | Yes      | Cleanup function (see [3.3](#33-remove-function))|
+Put the id string literally in the return object; do not spend a variable on an
+`APP_ID` constant.
 
-Optional fields like `notDefault`, `fullscreen` may be added as needed. These are handled by `Pip.CURRENT`:
-- `notDefault: true` — pressing any mode button navigates away to the original app.
-- `fullscreen: true` — hides OS headers and footers.
+### 4.3 `remove()` must tear down everything
 
-Do not waste a variable on `APP_ID` — put the string literal directly in the return object.
+Everything the app created, or it leaks into the OS and the next app:
 
-```js
-return {
-  id: "MYAPP",
-  notDefault: true,
-  fullscreen: true,
-  remove : function() {
-    clearInterval(frameInterval);
-    Pip.removeListener("knob1", onKnob1);
-    Pip.removeListener("knob2", onKnob2);
-    clearWatch(clickWatch);
-    Pip.audioStop();
-  }
-};
+1. Every `Pip.on` / `Pip.onExclusive` listener, via `Pip.removeListener`.
+2. Every `setInterval` / `setTimeout` handle.
+3. Every `setWatch` handle, via `clearWatch`.
+4. `Pip.audioStop()` if the app played audio, `Pip.videoStop()` if it played
+   video.
+5. `h.clear()` if the app drew over non-app screen content.
+6. Any setting the app changed (brightness, volume, palette, blit options),
+   restored to the value captured on load.
+
+It does not need a double-removal guard.
+
+`remove()` must **never** call `load()` or `E.reboot()`. The app exits cleanly
+so the OS can restore what was there before.
+
+### 4.4 Declaration order
+
+**Espruino does not hoist function declarations.** Statements run in source
+order and a `function name() {}` only exists once its line has executed.
+Referencing it earlier, including passing it to `setInterval`, `setTimeout`,
+`Pip.on`, `Pip.onExclusive`, or `setWatch`, throws `ReferenceError` on the
+device.
+
+Declare all functions first, then initialization last: state, functions,
+listener registration, first draw, timers, return object.
+
+Node and browsers do hoist, so this bug is invisible to any off-device check.
+The exception is a reference inside a callback body that runs later; by then the
+whole file has finished executing.
+
+### 4.5 Lazy scene loading
+
+To keep RAM small, split rarely-active screens into separate files loaded from
+the SD card only while in use. Each is a function expression, like an app:
+
+```ts
+(function (app: MyApp, params?: MySceneParams): MyScene {
+  return { remove: removeScene };
+});
 ```
 
-### 3.3 `remove()` Function
+The parent loads, uses, and drops it:
 
-The `remove` function **must** clean up anything the app created that could leak into other apps or the OS:
-
-1. Remove all `Pip.on` / `Pip.onExclusive` listeners.
-2. Clear all `setInterval` / `setTimeout` handles.
-3. Clear all `setWatch` handles.
-4. Call `Pip.audioStop()` if the app plays audio.
-5. Call `h.clear()` if the app scribbled over non-app screen content (optional for fullscreen apps).
-
-It does **not** need to guard against double removal (no `removed` flag needed).
-
-**Critical:** The `remove` function must **never** call `load()` or `E.reboot()`. The app must exit cleanly so the Pip-Boy OS can restore the state that existed before the app was invoked. Rebooting the device on exit is poor practice and disrupts the user experience.
-
-The `remove` function can be declared as a named function or inlined in the return object:
-
-```js
-return {
-  id: "MYAPP",
-  notDefault: true,
-  fullscreen: true,
-  remove : function() {
-    clearInterval(frameInterval);
-    clearInterval(gameInterval);
-    Pip.removeListener("knob1", onKnob1);
-    Pip.removeListener("knob2", onKnob2);
-    clearWatch(clickWatch);
-    Pip.audioStop();
-    h.clear();
-  }
-};
+```ts
+const scene = (eval(fs.readFileSync('HOLO/MYAPP/SCENE.JS')) as MySceneFactory)(
+  app,
+  params,
+);
+// later:
+scene.remove();
+process.memory(true); // force GC to reclaim the code
 ```
 
-### 3.4 Variable Declarations
-
-- Use `const` for constants, `let` for mutable variables. **Never use `var`** — while `var` inside an IIFE doesn't leak globally, it still wastes variable blocks unnecessarily and `const`/`let` are clearer.
-- **Espruino does NOT block-scope `let`/`const`.** A `for (let i = 0; ...)` loop variable leaks to function scope and behaves like `var`. Never reuse a name inside a block if a variable of the same name is still needed after the block; the inner assignment clobbers the outer value. This also constrains minification (see [7.1](#71-minification)).
-- **Minimize the number of variables declared.** Every variable consumes a scarce Espruino block. If a value never changes (e.g. screen dimensions, grid sizes), hardcode the literal number instead of assigning it to a constant.
-- **Screen dimensions are constant.** Use `const W = h.getWidth(), H = h.getHeight()` — the display never changes size at runtime. Do NOT declare `W`/`H` as `let` and reassign them in a `resetGame()` function.
-- Do not declare an `APP_ID` constant — put the ID string directly in the return object.
-- Do NOT create a local alias for `h` (e.g. `let C = h`). Always reference the global `h` object directly. This saves a variable block and follows the chaining convention in §3.5.
-- Group related constants into a single object (`const C = { ... }`) rather than declaring many individual `const`s.
-
-### 3.5 Graphics (`h`) Usage
-
-- Always chain methods on the global `h` object: `h.setColor(n).setFontMonofonto16().setFontAlign(x, y).drawString(text, x, y)`.
-- **`h.flip()` followed by `Pip.lastFlip = getTime()` is an optimization for apps that use `Pip.onFrame`-style callbacks** (where the OS timer drives rendering). The flip sends the frame buffer to the display, and setting `Pip.lastFlip` tells the OS timer to skip its next auto-blit. For apps driven by `setInterval` (most games), the default OS auto-flush every 50ms is already synchronized and explicit `flip()` is unnecessary — adding manual flips causes tearing because they fire at arbitrary times relative to display scanout. Only use explicit `h.flip()` when you are driving rendering from `Pip.onFrame`, not `setInterval`.
-- For apps that DO need manual flips, set `Pip.lastFlip = getTime()` **before** drawing to suppress the OS auto-flip during the draw phase, then call `h.flip()` **after** all drawing is complete to send the finished frame.
-- **Minimize pixels written per frame.** Every pixel written adds latency. Use targeted clearing with `h.clearRect()` and dirty flags to only redraw changed regions.
-- Dirty flag pattern — set a flag when something changes, then redraw only flagged sections:
-  ```js
-  let redrawHeader = 0, redrawList = 0;
-
-  function onFrame() {
-    // ... game logic, set flags when state changes ...
-    if (redrawHeader) drawHeader();
-    if (redrawList) drawList();
-    h.flip();
-    Pip.lastFlip = getTime();
-  }
-  ```
-- Available color indices (4bpp): `0` (black), `1` (grey), `2` (grey), `3` (white). Negative values like `-1` act as transparent/no-op in some contexts (e.g. `h.setColor(-1)`).
-- **`h.setColor(n)` persists globally** — once set, all subsequent draw calls use that color until changed, even across unchained statements and function boundaries. Always explicitly set the color before any draw operation where the color matters.
-- Available fonts: `Fixedsys16`, `Monofonto14`, `Monofonto16`, `Monofonto18`, `Monofonto23`, `Monofonto28`, `Monofonto36`, `Monofonto96`, `Monofonto120`, plus custom fonts via `h.setFont(name)`. Both `h.setFont("Monofonto14")` and `h.setFontMonofonto14()` forms are valid.
-- `h.wrapString(text, maxWidth)` wraps text to a given width, returning an array of lines. Pre-wrap and cache the result rather than re-wrapping on every frame — text wrapping is expensive.
-- `h.setBgColor(index)` sets the background color for subsequent text drawing. Also controls the fill color used by `h.clearRect()`.
-- `h.setClipRect(x1, y1, x2, y2)` restricts all drawing to the given bounding box. Use it to prevent overdraw when rendering within a sub-region.
-- `Pip.blitOptions.y1` / `Pip.blitOptions.y2` can be set before `h.flip()` to perform a **partial screen update** — only the rows between `y1` and `y2` are sent to the display. This is a major optimization for scrollers and lists:
-  ```js
-  Pip.blitOptions.y1 = renderTop;
-  Pip.blitOptions.y2 = renderBtm;
-  h.flip();
-  Pip.lastFlip = getTime();
-  delete Pip.blitOptions.y1; // revert to full-screen updates
-  delete Pip.blitOptions.y2;
-  ```
-- `setFontAlign(x, y)`: `-1` = left/top, `0` = center, `1` = right/bottom.
-- Use `Pip.shadeBox(x1, y1, x2, y2)` for highlighted/selected areas.
-- `h.drawImage(image, x, y, options)` supports rotation and scaling via `{rotate: radians, scale: factor}`.
-- `h.drawLineAA(x1, y1, x2, y2)` draws anti-aliased lines.
-- `h.imageMetrics(image)` returns `{width, height}` — avoids manual dimension tracking.
-- `h.reset()` resets all graphics state — used by skilled developers when transitioning between drastically different screens.
-- `h.buffer` provides direct access to the frame buffer as a `Uint8Array` for bulk pixel operations (e.g., streaming images from disk).
-
-### 3.6 Input Handling
-
-- Use `Pip.on('knob1', callback)` or `Pip.onExclusive('knob1', callback)` for the left scroll wheel.
-- Use `Pip.on('knob2', callback)` or `Pip.onExclusive('knob2', callback)` for the right scroll wheel.
-- `Pip.on` adds a handler without removing others. `Pip.onExclusive` removes any other handlers and ensures the registered one is the sole listener — this is the preferred default. Use `Pip.on` only when you need multiple handlers on the same input.
-- The knob callback receives a direction integer:
-  - `1` — down / clockwise rotation.
-  - `-1` — up / counter-clockwise rotation.
-  - `0` — press event. The OS may also pass a second parameter: `true` for a long press, `undefined`/`false` for a normal press. Handle long presses by checking the second argument: `function onKnob1(dir, long) { if (dir === 0 && long) { ... } }`.
-- **`setWatch` on `ENC1_PRESS`** is a specialized pattern for cases where press detection needs to be extremely responsive (e.g., shooting in a game). For most apps the `dir === 0` event via `Pip.on`/`Pip.onExclusive` is sufficient. For buttons that lack a `Pip.on` event (e.g. `BTN_DATA`), `setWatch` with `edge: 'rising'` is appropriate — this is the exception, not the default.
-- Remove all listeners in `remove()` via `Pip.removeListener` and `clearWatch`.
-
-```js
-function onKnob1(dir) {
-  if (dir) {
-    // Scroll event — navigate, adjust value, etc.
-  } else {
-    // dir === 0 — press/confirm event
-  }
-}
-
-Pip.on("knob1", onKnob1);
-```
-
-### 3.7 Game Loop & Frame Timing
-
-Use a `setInterval` at your app's target frame rate (e.g. 50ms) to drive animation and game logic.
-
-```js
-let frameInterval = setInterval(onFrame, 50, h);
-```
-
-- Pass the graphics context `h` as an argument to avoid closure lookups.
-- The frame callback is the central update point: process inputs, update game state, redraw changed regions, call `h.flip()`.
-- Do NOT use `requestAnimationFrame` — it is not available on Espruino.
-- Some apps also use a secondary `setInterval` for slower periodic logic (e.g. spawning enemies once every few seconds).
-- Always clear all intervals in `remove()`.
-
-### 3.8 The `"ram"` and `"jit"` Directives
-
-For performance-critical functions, add a directive string as the first statement:
-
-- **`"ram"`** — executes the function from RAM instead of flash. Also triggers automatic pretokenisation (whitespace stripped, tokens converted to numeric values for 10-20% speed improvement). Note: pretokenised functions lose source-level line numbers in stack traces.
-- **`"jit"`** — enables JIT (Just-In-Time) compilation of the function to native ARM code. Significantly faster for math-heavy loop code. If a function cannot be JIT compiled, it falls back to plain JS execution without error.
-
-```js
-function onFrame(h) {  "ram";
-  // game logic
-}
-
-function drawTicks() {  "jit";
-  // math-heavy loop code - much faster than ram alone
-}
-```
-
-**JIT details:**
-- JIT collects all variable lookups at the start of the function. If you use `digitalWrite` multiple times, it is only searched for once. Under JIT, `digitalWrite(pin, X)` may be faster than `pin.write(X)` because method lookups are costlier.
-- JIT does not fold constant arithmetic (`1 + 2` stays `1 + 2`, not `3`).
-- JIT is intended for small, self-contained functions — not entire apps.
-- Functions can be dynamically generated with `eval()` and then JIT compiled: `eval('(function() { "jit"; return ' + expr + '; })')`.
-- Debug JIT output: `E.setFlags({jitDebug: 1})` shows the generated assembly.
-- Use `"jit"` for tight numeric loops. Use `"ram"` for the main frame loop. Only one directive per function — `"jit"` takes priority if both apply.
-
-**Whitespace matters:** Espruino executes directly from source. Whitespace and comments inside loop bodies cost time on every iteration. Keep comments outside hot loops and minimize whitespace between loop statements.
-
-### 3.9 Sound, Volume & Brightness
-
-- `Pip.playSound('TAB')` — confirm/select sound.
-- `Pip.playSound('SCROLL')` — navigation/scroll sound.
-- `Pip.playSound('SELECT')` — alternate select sound.
-- `Pip.playSound('HIGHLIGHT')` — value-change highlight sound.
-- `Pip.audioStart(path)` — start playing a WAV file from storage. Supports looping with `{repeat: true}`. **Note:** `Pip.audioStart()` automatically stops any currently-playing audio — there is no need to call `Pip.audioStop()` before starting a new sound.
-- `Pip.audioStartVar(buffer, options)` — start playing an in-memory audio buffer. Options include `{encoding: "adpcm", sampleRate: 8000, blockAlign: 256, overlap: true}`.
-- `Pip.audioRead(path)` — load a WAV file into an in-memory buffer for rapid replay. Pass an optional object as the second parameter to receive `encoding` and `blockAlign` values for `Pip.audioStartVar`.
-- `Pip.audioBuiltin(name)` — returns a byte array for a built-in sound (`"OK"`, `"OK2"`, `"PREV"`, `"NEXT"`, `"COLUMN"`, `"CLICK"`). Use with `Pip.audioStartVar`.
-- `Pip.typeText(text, x, y, W, H, fontName)` — typewriter-style text reveal effect. Returns a `Promise` that resolves when complete. Default font is `"Monofonto16"`. Note the uppercase `W` and `H` parameters.
-- `Pip.audioStop()` — immediately stop all audio playback.
-- `Pip.setVol(volume)` — set output volume, range `0`-`33` (the firmware's own settings UI stays within `3`-`27`).
-- `Pip.setBrightness(v)`: set screen brightness; `v` is a float from roughly `0.001` (near off) to `1` (max). The current value is readable as the property `Pip.brightness` (guard with `typeof Pip.brightness === "number"`).
-- **Scale gotcha:** `Pip.settings.brightness` is the firmware UI integer scale `1`-`20`, NOT the `0`-`1` float scale used by `Pip.setBrightness()`. Never feed one into the other. For capture/restore, read and write the live `Pip.brightness` float so the values stay self-consistent. `Pip.settings.volume` is an integer `3`-`27` and IS directly compatible with `Pip.setVol()`.
-- If an app changes brightness or volume, capture the initial values on load (`Pip.brightness` for brightness, `Pip.settings.volume` for volume) and restore them in `remove()` so in-app changes are session-only and never override the system settings after exit.
-
-### 3.10 Math & Utilities
-
-- `Math.randInt(n)` — returns a random integer in `[0, n-1]`. Use instead of `Math.floor(Math.random() * n)`.
-- `E.clip(value, min, max)` — clamp a value between min and max.
-- `E.defrag()` — defragment memory. Call before loading large assets.
-- `Math.atan2(y, x)` — available for angle calculations.
-- `Math.sqrt()`, `Math.sin()`, `Math.cos()` — all standard Math functions are available.
-
-### 3.11 App Initialization
-
-**Declaration order is critical: Espruino does NOT hoist function declarations.** Statements run strictly in source order, and a `function name() {}` only exists once its declaration line has executed. Referencing a function by name before that line runs (calling it, or passing it to `setInterval`, `setTimeout`, `Pip.on`, `Pip.onExclusive`, `setWatch`, etc.) throws `ReferenceError: "name" is not defined` on the device. Declare ALL functions first, then put initialization and side-effect code (listener registration, intervals, the first `draw()`) at the bottom of the file. Node and browsers DO hoist, so this bug is invisible to any off-device syntax check or simulation; it only surfaces on real hardware. Exception: a not-yet-declared function may safely be referenced inside a callback body that runs later (for example inside a `setTimeout(fn, 0)` callback), because the whole file has finished executing by the time the callback fires. Only the first synchronous pass through the file is affected.
-
-App initialization code runs at the top level of the IIFE. There is no requirement for a `start()` function. Common initialization patterns:
-
-1. Declare state variables and constants.
-2. Call `Pip.audioStop()` to ensure a clean audio state.
-3. Load initial screen assets (stream from disk if needed).
-4. Register input handlers.
-5. Draw the initial screen.
-6. Start the frame interval.
-
-For loading large assets (images, sounds), defer the work to the event loop using `setTimeout(callback, 0)` so the app initializes and returns its object first.
-
-```js
-setTimeout(() => {
-  E.defrag();
-  IM = eval(require("fs").readFileSync("HOLO/MYAPP/APP_IMG.JS"));
-  SND = {
-    fire: Pip.audioRead("HOLO/MYAPP/FIRE.WAV"),
-  };
-}, 0);
-```
-
-### 3.12 Asset Loading & Streaming
-
-- Load assets from the SD card using `require("fs").readFileSync(path)`.
-- For large images, stream directly into the frame buffer using `E.openFile()` and `Uint8Array`:
-  ```js
-  let f = E.openFile("HOLO/MYAPP/MYIMAGE.IMG", "r");
-  let a = new Uint8Array(h.buffer);
-  let b = f.read(2048);
-  while (b) {
-    a.set(b, offset);
-    offset += b.length;
-    b = f.read(2048);
-  }
-  f.close();
-  ```
-- Use `eval()` to parse JSON-like data files: `eval(require("fs").readFileSync(path))`.
-- Use `JSON.parse()` / `JSON.stringify()` for settings and save data.
-
-### 3.13 Targeted Redrawing with Dirty Flags
-
-Rather than redrawing the entire screen every frame, use boolean/integer flags to track which regions need updating:
-
-```js
-let redrawHeader = 0, redrawBody = 0;
-
-function onFrame(h) {  "ram";
-  // ... update game state, set flags when something changes ...
-  if (playerMoved) redrawBody = 1;
-  if (scoreChanged) redrawHeader = 1;
-
-  if (redrawHeader) drawHeader();
-  if (redrawBody) drawBody();
-
-  h.flip();
-  Pip.lastFlip = getTime();
-}
-```
-
-This minimizes pixel writes and keeps latency low.
-
-### 3.14 Debounced Rendering
-
-For continuous inputs like knob scrolling, debounce the redraw so it only fires after movement settles:
-
-```js
-let drawTimeout;
-function onKnob2(dir) {
-  value = E.clip(value + dir, min, max);
-  if (drawTimeout) clearTimeout(drawTimeout);
-  drawTimeout = setTimeout(function() {
-    drawTimeout = undefined;
-    draw();
-    h.flip();
-    Pip.lastFlip = getTime();
-  }, 10);
-}
-```
-
-### 3.15 Method Binding for Tight Loops
-
-In performance-critical loops with many iterations, bind graphics methods to local variables to avoid repeated property lookups. Only do this for loops with 50+ iterations — for small loops the variable block cost outweighs the lookup savings:
-
-```js
-function drawTicks() {  "jit";
-  let r = h.fillRect.bind(h);
-  for (let i = 0; i < 100; i++) r(x, y, x + w, y + 1);
-}
-```
-
-### 3.16 Menu Pattern
-
-Menus are a common UI pattern. A well-structured menu returns `{ draw, select, move, remove }` and supports actions, toggles, and numeric editing:
-
-```js
-function showMenu(items) {
-  let options = items[""], menuItems = Object.keys(items).filter(k => k !== "");
-  const menu = {
-    draw() { /* draw title + each item with highlight/shadeBox */ },
-    select() {
-      const item = items[menuItems[options.selected]];
-      if (typeof item === "function") item(menu);
-      else if (item.value !== undefined) { /* toggle bool, or enter edit for numeric */ }
-    },
-    move(dir) {
-      if (menu.selectEdit) { /* modify numeric value */ }
-      else options.selected = E.clip(options.selected + dir, 0, menuItems.length - 1);
-      menu.draw();
-    },
-    remove() { Pip.removeListener("knob1", onKnob1); }
-  };
-  function onKnob1(dir) { if (dir) menu.move(dir); else menu.select(); }
-  Pip.onExclusive("knob1", onKnob1);
-  menu.draw();
-  return menu;
-}
-```
-
-The `""` key holds options: `{ title, selected, rowHeight, wrapSelection, predraw }`. Menu items are functions (actions) or objects with `value` (booleans toggle, numbers edit inline with `min`/`max`/`step`/`onchange`). Confirmation dialogs are just a sub-menu: `{ "": { title: "Delete?", back: fn }, Yes: fn }`.
-
-**Text entry:** since firmware 1.1.4 there is a global keyboard API: `Pip.createKeyboard(initialText, description, callback)`. It draws a full-screen QWERTY keyboard with the `description` string above the text box, takes exclusive control of both knobs (knob2 selects the column, knob1 selects the row and its press types the key; long press repeats, shift toggles upper/lower case), and returns an object with `draw()` and `remove()`. The callback receives the current text when the user selects Enter, but the keyboard does NOT close itself: call `.remove()` on the returned object inside the callback (or your cleanup path) before drawing the next screen, exactly like a menu. `remove()` detaches both knob listeners and clears the cursor-blink interval. Note the input line is capped at the visible width (~415 px); extra characters are silently dropped. On older firmware there is no global keyboard API (even the firmware's bundled holotapes shipped their own), so if you need to support pre-1.1.4 devices you can copy the firmware's `showTextEntry` design instead: a KEYMAP grid of 4 rows by 14 columns (lower/upper variants, with control characters `\b` backspace, `\x02` shift, `\x03` enter), same knob scheme as above, and a `setInterval` blinks the cursor (clear that interval on remove).
-
-Firmware 1.1.4 also adds a matching date/time picker: `Pip.createDateTimePicker(date, includeDate, title, callback)`. It edits the passed `Date` in place (knob2 moves between fields, knob1 turns to change a value and presses to advance; selecting SET fires `callback(date)`), and returns an object with `remove()`; like the keyboard, it does not close itself, so call `.remove()` in the callback.
-
-### 3.17 Text Wrapping & Caching
-
-Text wrapping via `h.wrapString()` is expensive on constrained hardware. Always pre-wrap and cache the result:
-
-```js
-let cache = [];
-const getItem = (i) => {
-  if (cache[i]) return cache[i];
-  const txt = h.setFont("Monofonto14").wrapString(items[i].txt, maxWidth);
-  return (cache[i] = { txt, h: 10 + 14 * txt.length });
-};
-```
-
-Store the pre-computed height alongside the wrapped lines. This avoids re-measuring on every scroll/layout pass.
-
-### 3.18 Image Format & Conversion
-
-All images used by holotapes must be **bitmaps at a maximum of 4 bits per pixel (4bpp)**. Larger images or higher bit depths waste scarce storage and memory.
-
-**Prefer bitmaps over procedural drawing for sprites.** Drawing a sprite with many individual `fillRect`/`drawLine` calls (e.g. 10+ calls per frame for a small character) is wasteful — each call adds overhead. A single `h.drawImage(bitmap, x, y)` call replaces all of them. If the sprite has animated parts, draw a static base as a bitmap and overlay only the animated portions procedurally, or use a multi-frame bitmap with the `{frame: n}` option.
-
-- Convert images using the online [Espruino Image Converter](https://www.espruino.com/Image+Converter) or the [Pip-Boy.com Image Converter](https://www.pip-boy.com/tools/image-converter).
-- Alternatively, use the [imageconverter.js](https://github.com/espruino/EspruinoWebTools/blob/master/imageconverter.js) tool programmatically.
-- The converter outputs a format that can be loaded via `eval(require("fs").readFileSync(...))` or `require(...)`.
-
-Images can be defined **inline** in the app code or stored as **separate files** on the SD card:
-
-```js
-// Inline — embedded directly in app code (small sprites)
-const sprites = { block: atob('...'), icon: atob('...') };
-h.drawImage(sprites.icon, 120, 80);
-
-// External file — loaded from SD card (larger assets, loaded once)
-const IM = eval(require("fs").readFileSync("HOLO/MYAPP/APP_IMG.JS"));
-h.drawImage(IM.icon, 120, 80);
-
-// Streaming — for large background images, stream directly to frame buffer
-let f = E.openFile("HOLO/MYAPP/TITLE.IMG", "r");
-let a = new Uint8Array(h.buffer);
-let b = f.read(2048), offset = 0;
-while (b) { a.set(b, offset); offset += b.length; b = f.read(2048); }
-f.close();
-```
-
-### 3.19 Audio & Video Format
-
-All audio and video assets must follow these constraints:
-
-**Audio (.wav):**
-- Single channel (mono).
-- 16 kHz sample rate (`-ar 16000`).
-- PCM (`pcm_s16le`) or ADPCM (`adpcm_ima_wav`). Prefer ADPCM — it produces much smaller files.
+Rules:
+
+- Type the factory (`MySceneFactory`) and cast the `eval` result to it. Never
+  use `any` or `unknown`.
+- The scene registers its own `Pip.onExclusive` handlers, displacing the
+  parent's; the parent re-registers on unload.
+- Pass state and write-back callbacks through the shared app object.
+- The parent gates its own draws while a scene is loaded, so background events
+  do not paint over the child screen.
+- Every extra file needs its own `storage` entry in `metadata.json`, or loading
+  fails with `NO_FILE`.
+
+-
+
+## 5. Device programming rules
+
+### 5.1 Variables and memory
+
+- `const` for constants, `let` for mutable state. **Never `var`** in new code.
+- **Espruino does not block-scope `let`/`const`.** A `for (let i ...)` loop
+  variable leaks to function scope. Never reuse a name inside a block if the
+  outer value is still needed after it.
+- Minimize declarations. Every one costs a scarce block. Hardcode constants that
+  never change and inline single-use values.
+- Group related constants into one object (`const C = { ... }`) rather than many
+  individual declarations.
+- Never alias the global `h`. Use it directly.
+- Dense numeric data belongs in typed arrays, which are contiguous and far
+  faster for random access than Espruino's linked-list arrays.
+
+### 5.2 Graphics
+
+- Chain calls on `h`:
+  `h.setColor(3).setFontMonofonto16().setFontAlign(0, 0).drawString(...)`.
+- **`h.setColor()` persists globally**, across statements and function
+  boundaries. Set it explicitly before any draw where the color matters.
+- Minimize pixels written per frame. Use `h.clearRect()`, `h.setClipRect()`, and
+  dirty flags so only changed regions redraw.
+- Cache wrapped text. `h.wrapString()` is expensive; wrap once and store the
+  lines and their height.
+- Interval-driven apps rely on the OS auto-flush every 50ms. Do **not** add
+  manual `h.flip()` calls to a `setInterval` loop; they fire at arbitrary times
+  relative to scanout and cause tearing. For `Pip.onFrame`-style rendering, set
+  `Pip.lastFlip = getTime()` before drawing and call `h.flip()` after.
+- `Pip.blitOptions.y1` / `.y2` blit only a band of rows, a large win for
+  scrolling lists. `delete` both afterwards to restore full-screen updates.
+- Prefer one `h.drawImage()` over many `fillRect`/`drawLine` calls for a sprite.
+
+### 5.3 Input
+
+- `Pip.onExclusive('knob1', handler)` is the default: it displaces any other
+  listener so the app is the sole handler. Use `Pip.on` only when handlers must
+  coexist.
+- The handler receives a direction: `1` down/clockwise, `-1` up/counter-
+  clockwise, `0` a press. A press may pass `true` as a second argument for a
+  long press.
+- `setWatch` on `ENC1_PRESS` is for unusually latency-sensitive presses only. A
+  direct watch on a button such as `BTN_DATA` is appropriate only because no
+  `Pip.on` event exists for it.
+- An empty knob handler is legitimate: registering one claims the exclusive slot
+  for a wheel the app deliberately ignores.
+
+#### Keyboard and date/time overlays
+
+Firmware 1.1.4 and later provides
+`Pip.createKeyboard(initialText, description, callback)`. It claims both knobs
+and returns an object with `draw()` and `remove()`. The keyboard does not close
+itself: call `.remove()` in its callback or cleanup path before drawing the next
+screen. Its `remove()` detaches both knob listeners and clears its cursor timer.
+
+Pre-1.1.4 firmware has no global keyboard API. To support it, provide a local
+text-entry scene modelled on the firmware's `showTextEntry`: a 4-row by
+14-column lower/upper `KEYMAP`, with `\b` for backspace, `\x02` for shift, and
+`\x03` for enter. Knob2 selects the column and knob1 selects the row and types
+on press. Clear the cursor-blink interval and remove both knob listeners when
+the scene closes.
+
+`Pip.createDateTimePicker(date, includeDate, title, callback)` is also available
+on firmware 1.1.4 and later. It edits the supplied `Date` in place and likewise
+returns an object whose `remove()` must be called explicitly.
+
+### 5.4 Timing and directives
+
+- Drive animation with `setInterval` at the target frame rate, commonly 50ms.
+  `requestAnimationFrame` does not exist.
+- `"ram"` as the first statement of a function runs it from RAM instead of
+  flash, and pretokenises it. Use it for the main frame loop.
+- `"jit"` compiles a function to native ARM. Use it for small, self-contained,
+  math-heavy loops. One directive per function.
+- Do not add either without a measured need. The linter is configured not to
+  strip them; the minifier preserves them.
+- Whitespace and comments inside hot loops cost time on every iteration, since
+  Espruino executes from source.
+
+### 5.5 Files, assets, and audio
+
+- `fs` is a global; `require("fs")` is optional. Paths take no leading slash:
+  `fs.readFileSync("HOLO/MYAPP/DATA.JSON")`.
+- **`fs.statSync()` returns `undefined` for a missing path, it does not throw.**
+  A `try`/`catch` around it never fires. Check the return value.
+- `fs.mkdir()` does not create parent directories; walk and create each level.
+- Defer heavy asset loading with `setTimeout(fn, 0)` so the app returns its
+  object first, and call `E.defrag()` before large allocations. Clear that
+  timeout in `remove()`.
+- Stream large images into `h.buffer` with `E.openFile()` rather than holding a
+  second full copy in memory.
+- Images must be 4bpp or less, converted with the
+  [Image Converter](https://www.pip-boy.com/tools/image-converter).
+- `Pip.audioStart()` stops any current playback already; a preceding
+  `Pip.audioStop()` is redundant.
+- Audio is 16kHz mono WAV, PCM or ADPCM. Video is MS RLE AVI only; an mpeg4 AVI
+  will not decode.
+
+Media conversion requirements:
+
+- WAV audio must be mono at 16kHz. PCM (`pcm_s16le`) works; prefer IMA ADPCM
+  (`adpcm_ima_wav`) when file size matters.
+- AVI video must be no wider than 480 pixels, grayscale, 12fps, MS RLE, and
+  8-bit paletted. Its audio must be mono 16kHz IMA ADPCM.
+- MS RLE compresses flat runs well but performs badly on noise and dithering.
+  Limit video to about 16 gray levels and disable dithering.
 
 ```sh
-# PCM audio
-ffmpeg -i "input.mp3" -ac 1 -ar 16000 -sample_fmt s16 -c:a pcm_s16le -f wav output.wav
-```
+# PCM WAV
+ffmpeg -i "input.mp3" -ac 1 -ar 16000 -sample_fmt s16 \
+  -c:a pcm_s16le -f wav output.wav
 
-**Video (.avi):**
-- Max 480px wide (display width), scaled proportionally.
-- Grayscale (`format=gray`).
-- 12 fps (`-r 12`).
-- MS RLE codec (`-c:v msrle`), 8-bit paletted (`-pix_fmt pal8`).
-- Audio: ADPCM mono 16 kHz (`-c:a adpcm_ima_wav -ac 1 -ar 16000`).
-
-```sh
-# AVI video
-ffmpeg -i "input.mp4" -vf "scale=480:-1,format=gray,format=rgb555le" \
+# Device-compatible AVI
+ffmpeg -i "input.mp4" \
+  -vf "scale=480:-1,format=gray,split[a][b];[a]palettegen=max_colors=16:reserve_transparent=0[p];[b][p]paletteuse=dither=none" \
   -r 12 -c:v msrle -pix_fmt pal8 \
   -c:a adpcm_ima_wav -ac 1 -ar 16000 output.AVI
 ```
 
-**Video playback:**
+Video playback is non-blocking. Pair `Pip.videoStart()` with a removable
+`videoStopped` listener and provide a knob-press skip path because a clip that
+fails to decode may never emit the event. For a manual skip, remove the listener
+before calling `Pip.videoStop()` so a synchronous stop cannot run the transition
+twice.
 
-- `Pip.videoStart(path, { x, y, repeat })` plays an AVI, non-blocking. For a full-screen 480×320 clip use `{ x: 0, y: 0 }`.
-- `Pip.on("videoStopped", cb)` fires when the clip finishes. Pair with `Pip.removeListener("videoStopped", cb)` in cleanup.
-- `Pip.videoStop()` stops playback early. When skipping, remove the `videoStopped` listener BEFORE calling `videoStop()` so a synchronous stop event cannot re-trigger your transition.
-- Always provide a knob-press skip path. A clip that fails to decode may never fire `videoStopped`, so the user must be able to escape.
-- **Format gotcha:** only MS RLE AVI decodes on-device. An mpeg4/yuv420p AVI will NOT play.
-- **Size gotcha:** MS RLE is lossless run-length encoding, so detailed or noisy grayscale content produces huge files (a plain `pal8` palette can reach 256 colors and an 8 MB file for a few seconds of video). Constrain the palette to about 16 gray levels with no dithering (dithering breaks RLE runs and bloats size) to cut file size roughly 2.6x:
+### 5.6 Settings the app changes
 
-  ```sh
-  ffmpeg -i in.avi -vf "format=gray,split[a][b];[a]palettegen=max_colors=16:reserve_transparent=0[p];[b][p]paletteuse=dither=none" \
-    -c:v msrle -c:a adpcm_ima_wav -ac 1 -ar 16000 out.avi
-  ```
+If the app changes brightness or volume, capture the live values on load
+(`Pip.brightness` for brightness, `Pip.settings.volume` for volume) and restore
+them in `remove()`, so in-app changes are session-only.
 
-  For reference, the device's own boot animation is 2.65 MB (385×320, 12 fps, 10.6 s), so a ~3 MB full-screen intro is normal and playable.
+Note the scale trap: `Pip.settings.brightness` is the firmware UI's integer 1-20
+scale, **not** the 0-1 float that `Pip.setBrightness()` takes. Never feed one
+into the other. `Pip.settings.volume` is 3-27 and is directly compatible with
+`Pip.setVol()`.
 
----
+-
 
-## 4. Registration & Metadata
+## 6. Registration and metadata
 
-### 4.1 `metadata.json` Schema
+`metadata.json` is written and maintained by the developer. Treat it as input
+you read, not output you produce. Do not create one, do not add or reorder
+`storage` entries, and do not rewrite asset paths, unless the developer asks for
+that specifically. When your change adds a file the device needs, say plainly in
+your summary which `storage` entry has to be added and what it should look like,
+and leave the edit to them.
+
+The one piece of automation here is the artifact's `holotapes/registry.json`,
+which is generated by reading every `metadata.json`. That file never exists in
+the source tree.
 
 ```json
 {
   "id": "myholotape",
+  "previousId": "old-holotape-id",
   "name": "My Holotape Name",
   "author": "@your-username",
   "version": "1.0.0",
   "description": "A brief description of the holotape.",
-  "icon": "assets/my-icon.png",
-  "previews": [],
+  "icon": "storage/ICON.png",
+  "previews": ["previews/SCREEN.png"],
   "type": "game",
   "readme": "README.md",
-  "storage": [
-    { "name": "HOLO/MYAPP/APP.JS", "url": "app.min.js" }
-  ],
+  "storage": [{ "pipboy": "HOLO/MYAPP/APP.JS", "source": "storage/APP.ts" }],
   "storageOptional": []
 }
 ```
 
-**Validation rules for `metadata.json`:**
+| Field             | Rules                                                                                                                   |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Lowercase alphanumeric and hyphens only. Unique in the registry.                                                        |
+| `previousId`      | Optional. When `id` changes, preserve the former registry id so the website can find old files for uninstall/reinstall. |
+| `name`            | Human-readable name shown on pip-boy.com.                                                                               |
+| `author`          | GitHub username(s) prefixed with `@`, space separated.                                                                  |
+| `version`         | [Semver](https://semver.org).                                                                                           |
+| `description`     | One sentence.                                                                                                           |
+| `icon`            | Transparent 120x120 PNG/IMG directly under `storage/`.                                                                  |
+| `previews`        | PNG, MP4, or GIF files directly under `previews/`.                                                                      |
+| `type`            | Exactly `app` or `game`. Nothing else.                                                                                  |
+| `readme`          | Usually `README.md`.                                                                                                    |
+| `storage`         | `{ pipboy, source }` pairs. `pipboy` is the on-device path; `source` is the repo file (`.ts` for scripts).              |
+| `storageOptional` | Same shape, for files the user can choose to install.                                                                   |
 
-| Field             | Rules                                                                 |
-|-------------------|-----------------------------------------------------------------------|
-| `id`              | Lowercase alphanumeric + hyphens only. Must be unique in registry.    |
-| `name`            | Human-readable name for display on pip-boy.com.                      |
-| `author`          | GitHub username(s) prefixed with `@`. Separate multiple with spaces.  |
-| `version`         | [Semver](https://semver.org/) format.                                |
-| `description`     | Short, one-sentence description.                                     |
-| `icon`            | Path relative to the holotape's directory. Must be a PNG.            |
-| `previews`        | Array of paths (PNG, MP4, or GIF) relative to the holotape directory.|
-| `type`            | Must be exactly `"app"` or `"game"`. No other values allowed.        |
-| `readme`          | Usually `"README.md"`.                                               |
-| `storage`         | Array of `{ name, url }` objects. `name` is the Espruino storage path (e.g. `HOLO/MYAPP/APP.JS`). `url` is the file path relative to the holotape directory. |
-| `storageOptional` | Same shape as `storage`. Optional files the user can choose to install. |
+`previousId` is migration metadata, not an alias for a new holotape. Omit it for
+a holotape that has never changed id. When renaming an existing id, copy the
+former value exactly, including its casing; historical ids are not necessarily
+valid under today's lowercase `id` rule. Do not remove or replace it merely to
+match the new id: pip-boy.com uses it to locate files installed under the old
+registry entry during uninstall and reinstall.
 
-### 4.2 Storage Name Convention
+`pipboy` paths follow `HOLO/<APP_ID>/<FILENAME>`, where `<APP_ID>` is the
+metadata `id` uppercased with underscores replacing hyphens. That prefix is a
+filesystem convention only; it has no relationship to any variable in the code.
+Script `source` entries use uppercase stems and lowercase extensions (e.g.
+`storage/APP.ts`). The build emits `APP.JS` / `APP.MIN.JS` and rewrites
+production metadata/registry `source` values to the `.MIN.JS` artifact; `pipboy`
+stays the on-device `.JS` name. Uppercase filenames match the Pip-Boy
+development team's on-device convention.
 
-`name` fields in storage entries follow the pattern `HOLO/<APP_ID>/<FILENAME>` where `<APP_ID>` is derived from the metadata `id` converted to uppercase (underscores replace hyphens).
+-
 
-The `APP_ID` in storage names has no relationship to any JavaScript variable — it is purely a filesystem path convention. Do not declare an `APP_ID` constant in code.
+## 7. Review and audit
 
----
+When reviewing a change, first list all changed files and identify every new or
+modified holotape. Run every mandatory and recommended check for each affected
+holotape, report failures by rule ID, and give each holotape its own verdict.
 
-## 5. Review & Audit Rules
+### 7.1 Mandatory
 
-When an LLM agent audits a pull request or holotape submission, it **must** check every item below. Flag any violation with the rule reference number.
+| #   | Check                                                                                                                                                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R01 | Source is a function expression, not invoked, no trailing `()`.                                                                                      |
+| R02 | Return object has a literal uppercase `id` and a `remove` function.                                                                                  |
+| R03 | Every `Pip.on`/`onExclusive` listener is removed in `remove()`.                                                                                      |
+| R04 | Every `setInterval`/`setTimeout` handle is cleared in `remove()`.                                                                                    |
+| R05 | Every `setWatch` handle is cleared in `remove()`.                                                                                                    |
+| R06 | `remove()` does not call `load()` or `E.reboot()`.                                                                                                   |
+| R07 | No function is referenced before its declaration line (4.4).                                                                                         |
+| R08 | No `let`/`const` name is reused inside a block while the outer value is still needed.                                                                |
+| R09 | No `any` or `unknown`. Use concrete types / local `TYPES.d.ts` interfaces.                                                                           |
+| R10 | Only erasable TypeScript syntax is used.                                                                                                             |
+| R11 | No unsupported runtime features: `async`/`await`, modules, template literals, `fetch`.                                                               |
+| R12 | `Math.randInt(n)` rather than `Math.floor(Math.random() * n)`.                                                                                       |
+| R13 | No OS global is deleted or reassigned, except a documented, restored patch.                                                                          |
+| R14 | `metadata.json` has a unique lowercase id, semver version, and `type` of `app` or `game`; an id rename preserves the former value in `previousId`.   |
+| R15 | Storage `pipboy` paths use the `HOLO/<APP_ID>/` prefix matching the metadata id.                                                                     |
+| R16 | Every file in `storage` exists in the production artifact after `npm run build`.                                                                     |
+| R17 | Every file the app loads at runtime has a `storage` entry, or it fails with `NO_FILE`.                                                               |
+| R18 | `README.md` documents the controls; `ChangeLog` has an entry for the change.                                                                         |
+| R19 | `npm run verify` passes and no generated `.js`, `.min.js`, or registry is committed.                                                                 |
+| R20 | Files under `storage/`, `optional/`, and `previews/` use uppercase stems and lowercase extensions. TypeScript lives under `storage/` or `optional/`. |
+| R21 | Every `storage` `source` is directly under `storage/`.                                                                                               |
+| R22 | Every `storageOptional` `source` is directly under `optional/`.                                                                                      |
+| R23 | Every preview is directly under `previews/`; the metadata icon is directly under `storage/`.                                                         |
+| R24 | The icon is a transparent PNG or IMG and exactly 120x120 pixels.                                                                                     |
 
-### 5.1 Mandatory Checks (Hard Requirements)
+### 7.2 Recommended
 
-| #   | Check                                                              | How to Verify                                                          |
-|-----|---------------------------------------------------------------------|------------------------------------------------------------------------|
-| R01 | IIFE wrapping, no trailing `()` invocation.                        | Read `app.js` — must start with `(function() {` and end with `});`     |
-| R02 | Return object has `id` (string) and `remove` (function).           | Find the `return` statement before the closing `});`.                  |
-| R03 | All `Pip.on`/`Pip.onExclusive` listeners cleared in `remove()`.    | Cross-reference every registration — each must have a matching `Pip.removeListener`. |
-| R04 | All `setInterval`/`setTimeout` handles cleared in `remove()`.      | Cross-reference every timer — each must have a `clearInterval`/`clearTimeout`. |
-| R05 | All `setWatch` handles cleared in `remove()`.                      | Every `setWatch` must have a matching `clearWatch`.                    |
-| R06 | `metadata.json` type is `"app"` or `"game"`.                       | Validate the `type` field.                                             |
-| R07 | `metadata.json` has valid semver version.                          | Check `version` field format.                                          |
-| R08 | `app.min.js` exists and is a minified version of `app.js`.         | Spot-check key identifiers are mangled but structure matches.          |
-| R09 | `ChangeLog` exists with at least one entry.                        | Read the file.                                                         |
-| R10 | `README.md` exists with controls and description.                  | Read the file.                                                         |
-| R11 | No unsupported ES6+ features (no `async/await`, no modules, no template literals). | `grep` for `async`, template literals `` `...` ``. |
-| R12 | Uses `Math.randInt(n)`, not `Math.floor(Math.random() * n)`.       | `grep` for `Math.random` — should be zero matches.                     |
-| R13 | No OS globals deleted or overwritten.                              | Check for risky assignments to known globals.                          |
-| R14 | `metadata.json` storage names follow `HOLO/<ID>/` convention.      | Compare `id` with the storage name prefix. |
-| R15 | Input events use `Pip.on`/`Pip.onExclusive` or `setWatch` — no bare `setWatch` on arbitrary pins. | Verify all watches are on `ENC1_PRESS` and all knob handlers use `Pip.on`/`Pip.onExclusive`. |
+| #   | Check                                                                      |
+| --- | -------------------------------------------------------------------------- |
+| S01 | Dirty flags or clip rects limit redraw to changed regions.                 |
+| S02 | `"ram"` on the frame loop, `"jit"` on tight numeric loops, where measured. |
+| S03 | Heavy asset loading deferred with `setTimeout(fn, 0)`.                     |
+| S04 | `E.defrag()` before large allocations.                                     |
+| S05 | Single-use values inlined; constants grouped into one object.              |
+| S06 | The app opens, closes, and reopens without leaking or crashing.            |
+| S07 | Record types are named and documented in the holotape's `types.d.ts`.      |
+| S08 | Images are 4bpp or less and converted, not raw.                            |
 
-### 5.2 Soft Checks (Recommendations)
-
-| #   | Check                                                              | Rationale                                                                 |
-|-----|---------------------------------------------------------------------|---------------------------------------------------------------------------|
-| S01 | Dirty flag pattern for targeted redrawing.                         | Avoids full-screen redraws on every frame; reduces latency.               |
-| S02 | `"ram"` directive on performance-critical functions.               | Faster execution from RAM vs flash.                                       |
-| S03 | Heavy asset loading deferred with `setTimeout(0)`.                 | Prevents blocking the event loop during initialization.                   |
-| S04 | `E.defrag()` called before loading large assets.                   | Maximizes contiguous free memory for large allocations.                   |
-| S05 | No unnecessary variable allocations (single-use values inlined).   | Every variable consumes a block; hardcode constants where possible.       |
-| S06 | App can be opened and closed multiple times without crashing.      | Verifies `remove()` correctly resets all state.                           |
-| S07 | Grouped constants object rather than many individual declarations. | Reduces variable block count.                                             |
-| S08 | Images are ≤ 4bpp bitmaps converted via Espruino Image Converter. | Higher bit depths waste storage and memory; use the converter.             |
-
-### 5.3 Review Procedure
-
-For each PR, the LLM agent should:
-
-1. **List all changed files** — identify new/modified holotapes.
-2. **For each new/modified holotape, run through all Mandatory Checks (R01–R15).**
-3. **Flag any failures** with the specific rule ID and a one-line explanation.
-4. **Run through Soft Checks (S01–S08)** and note recommendations without blocking the PR.
-5. **Verify `metadata.json` produces a valid registry entry** by confirming the `id`, storage name, and file paths are consistent.
-6. **Provide a summary:** Pass/Fail/Pass-with-notes.
-
-**Review output template:**
+### 7.3 Verdict format
 
 ```markdown
-## Holotape Review: `<Holotape Name>`
+## Holotape Review: `<Name>`
 
-### Mandatory Checks
-- [x] R01 — IIFE wrapped, no `()` invocation
-- [ ] R02 — Missing `id` or `remove` in return object
-- ...
+### Mandatory
 
-### Soft Checks
-- [x] S01 — Dirty flags used for targeted redraw
-- [ ] S05 — Unnecessary variable allocation for single-use value
-- ...
+- [x] R01 - function expression, not invoked
+- [ ] R04 - `frameInterval` is never cleared in `remove()`
 
-### Verdict: **FAIL** — 1 mandatory check failed.
+### Recommended
+
+- [x] S01 - dirty flags used
+- [ ] S05 - `W`/`H` recomputed each frame
+
+### Verdict: FAIL - 1 mandatory check failed.
 ```
 
----
+### 7.4 What a review cannot conclude
 
-## 6. Anti-Patterns (Do Not Generate)
+Static review does not prove an app works. Espruino's lack of hoisting and its
+flat `let` scoping mean a file can read correctly and still fail on hardware.
+Say so: recommend a device test rather than implying the change is verified.
 
-The following must **never** appear in generated code:
+-
 
-| Anti-Pattern                         | Why It's Wrong                                                    |
-|--------------------------------------|-------------------------------------------------------------------|
-| `var` keyword                        | Wastes variable blocks; `const`/`let` are clearer.               |
-| `async/await`                        | Not available in Espruino.                                        |
-| `fetch()`, `XMLHttpRequest`          | No network APIs on the device.                                    |
-| ES modules (`import`/`export`)       | Not supported.                                                    |
-| Template literals (backtick strings) | Not supported in Espruino.                                        |
-| `Math.random()`                      | Use `Math.randInt(n)` instead — it's faster and deterministic.    |
-| `requestAnimationFrame`              | Not available on Espruino.                                        |
-| Deleting/reassigning OS globals      | Corrupts the Pip-Boy OS and prevents returning to the menu.       |
-| `load()` or `E.reboot()` in `remove()`| Rebooting on app exit is poor practice. Apps must clean up and return to the prior state cleanly — let the OS handle navigation. |
-| `Pip.remove()` at top of IIFE         | The Pip-Boy OS cleans up the previous app before invoking a new one. Calling `Pip.remove()` at the top of a new IIFE removes nothing useful and wastes cycles. |
-| Bare `clearWatch()` at init            | Clears ALL hardware watches including OS/system watches. The OS restores them, but this is destructive and unnecessary — no app watches exist at init time. |
-| `let h_alias = h` or similar           | Always use the global `h` object directly (§3.5). Wrapping it in a local variable wastes a variable block and adds indirection for no benefit. |
-| `Pip.audioStop()` before `Pip.audioStart()` | `Pip.audioStart()` automatically stops any currently-playing audio. Calling `Pip.audioStop()` first is redundant. |
-| Single-call function wrappers            | `function playSound(n) { Pip.audioStart(n); }` wastes a function block. If a function body is just one call with the same arguments, inline the call at every call site. Only wrap if there is additional logic (debounce, error handling, state tracking). |
-| Try/catch that only calls `Pip.errorBox(e)` | Espruino's global uncaught-exception handler already displays an error box for all exceptions. Catching just to re-display the same error adds overhead with no benefit. Only catch if you need custom recovery logic. |
-| Referencing a function before its declaration line | Espruino does not hoist function declarations (§3.11). Throws `ReferenceError` on-device. Declare all functions first, init code last. |
-| Reusing a `let` name that an outer variable still needs | Espruino's `let` is function-scoped, not block-scoped (§3.4). The inner assignment clobbers the outer value. |
-| Global variables outside the IIFE    | Pollutes global namespace; conflicts with other holotapes.        |
-| Storing functions in arrays/objects  | Consumes excessive memory blocks on Espruino.                     |
-| Deep object/array nesting (>4 levels)| Wastes variable blocks and hurts performance.                     |
-| Strings longer than ~256 chars       | Each string consumes a variable block; keep strings short.        |
-| Images > 4bpp or unconverted         | Use Espruino Image Converter for 4bpp bitmaps; raw images waste memory. |
+## 8. Anti-patterns
 
----
+Never generate these.
 
-## 7. Build & Minification Process
+| Anti-pattern                                  | Why                                                             |
+| --------------------------------------------- | --------------------------------------------------------------- |
+| `any` / `unknown`                             | Banned under `holotapes/**`. Use concrete types.                |
+| `enum`, runtime `namespace`, param properties | Not erasable; the build rejects them.                           |
+| Adding or editing `.js` or `.min.js`          | Generated artifact files; `.min.js` is binary and will corrupt. |
+| Adding or editing `registry.json`             | Generated only in the production artifact.                      |
+| Writing or "fixing" `metadata.json` unasked   | Developer-owned. Report what needs adding instead.              |
+| `async`/`await`, `import`/`export`            | Not available in Espruino.                                      |
+| Template literals                             | Not supported.                                                  |
+| `fetch()`, `XMLHttpRequest`                   | No network on the device.                                       |
+| `requestAnimationFrame`                       | Not available. Use `setInterval`.                               |
+| `Math.random()`                               | Use `Math.randInt(n)`.                                          |
+| `var`                                         | Wastes blocks and is less clear than `const`/`let`.             |
+| Referencing a function before its declaration | Espruino does not hoist; throws on device.                      |
+| Reusing a `let` name a block still needs      | Espruino's `let` is function-scoped; the inner write clobbers.  |
+| `load()` or `E.reboot()` in `remove()`        | Rebooting on exit is hostile. Exit cleanly.                     |
+| `Pip.remove()` at the top of an app           | The OS already cleaned up the previous app.                     |
+| Bare `clearWatch()`                           | Clears the OS's watches too. Always pass the id.                |
+| `let c = h`                                   | Wastes a variable block. Use `h` directly.                      |
+| `Pip.audioStop()` before `Pip.audioStart()`   | `audioStart` already stops current playback.                    |
+| A function wrapping a single call             | Wastes a block. Inline it unless it adds real logic.            |
+| `try`/`catch` that only calls `Pip.errorBox`  | The global handler already shows an error box.                  |
+| Manual `h.flip()` inside a `setInterval` loop | Causes tearing. Rely on the OS auto-flush.                      |
+| Globals outside the app's function            | Pollutes the namespace every holotape shares.                   |
+| Storing many functions in arrays or objects   | Consumes excessive memory blocks.                               |
+| Object or array nesting deeper than 4 levels  | Wastes blocks and slows access.                                 |
+| Strings longer than ~256 characters           | Each consumes a variable block.                                 |
+| Images above 4bpp, or unconverted             | Wastes storage and memory.                                      |
+| Files outside their metadata layout directory | Rejected by the layout step in `npm run verify`.                |
 
-The `app.min.js` is produced from `app.js` using a two-pass pipeline:
+-
 
-### 7.1 Minification
+## 9. Tooling notes
 
-Strip whitespace, comments, and shorten identifiers. One suggested tool is [Terser](https://github.com/terser/terser):
+Notes that are too detailed for the README.
 
-```sh
-terser app.js -c negate_iife=false,side_effects=false,directives=false -o app.min.js
-```
+### 9.1 npm scripts
 
-- `negate_iife=false` — preserves the IIFE wrapper (required by rule R01).
-- `side_effects=false` — disables dead-code removal that could strip side-effectful calls (e.g. `setWatch`, `Pip.on`).
-- `directives=false`: prevents terser from treating the `"ram"` / `"jit"` directive strings (§3.8) as removable no-op expressions. Without it the directives are stripped and the performance benefit is silently lost.
+Day-to-day scripts in `package.json`:
 
-Any minifier that preserves the IIFE structure, keeps the directive strings, and avoids stripping side-effectful calls is acceptable.
+- `npm install` - dependencies
+- `npm run build` - `.scripts/build.ts` (helpers under `.scripts/build/`)
+- `npm run verify` - `.scripts/verify.ts` (husky pre-commit + CI)
+- `npm run format` - Prettier write
+- `npm prepare` - husky install
 
-**Name mangling (`-m`) caveat:** terser's mangler legitimately reuses identifier names across block scopes, relying on spec-correct block scoping. Espruino treats `let` as function-scoped (§3.4), so a mangled `for(let C=0;...)` can clobber a still-live variable that terser renamed to `C` (classically a function parameter), producing runtime failures like `Function not found!` after the loop. Consequences:
+Build helpers live under `.scripts/build/`. Verification steps live under
+`.scripts/verify/`. Do not re-add one-off npm scripts for those steps without a
+strong reason.
 
-- Files that are **eval'd as modules or data builders** (§3.24) must be built WITHOUT `-m`: keep the `-c` flags above and drop mangling. They load transiently, so the unmangled size has zero resident-RAM cost.
-- Mangling the main `app.js` is only safe when every loop either references the would-be-clobbered variable inside the loop body (keeping it live so terser won't reuse the name) or the variable is not used after the loop. When in doubt, don't mangle.
-- After minifying an eval'd module file, verify it still starts with `(function(`.
+### 9.2 What the build emits
 
-### 7.2 Espruino CLI (Pretokenisation)
+Under `dist/pip-boy-3000-holotapes/`:
 
-Second pass: run the output through the Espruino CLI to pretokenise the source. Pretokenisation converts JavaScript tokens to numeric bytecode for faster parsing and 10–20% execution speed improvement on-device.
+- `APP.JS` - type-stripped, readable
+- `APP.MIN.JS` - Terser + Espruino pretokenise (binary; never hand-edit)
+- `holotapes/registry.json` - generated from every `metadata.json`
 
-```sh
-espruino app.min.js --config PRETOKENISE=2 --config SET_TIME_ON_WRITE=false -o app.min.js
-```
+Script `metadata` `source` values point at `.ts` in the repo. The production
+artifact rewrites those `source` paths to `.MIN.JS`. `pipboy` stays the
+on-device `.JS` path.
 
-- `--config PRETOKENISE=2` — strips whitespace and converts tokens to numeric values.
-- `--config SET_TIME_ON_WRITE=false` — prevents timestamp embedding for reproducible builds.
+#### Terser name-mangling hazard
 
-**Note:** Pretokenised functions declared with the `"ram"` directive also benefit from automatic pretokenisation at runtime. The CLI pretokenisation step additionally covers code outside `"ram"` functions and strips toplevel whitespace.
+Terser follows standard JavaScript block scoping and may legitimately reuse a
+name in an inner block. Espruino does not block-scope `let` or `const`, so
+minification can turn otherwise distinct source names into one function-scoped
+name. A loop variable can then overwrite a parameter or local that is used after
+the loop, causing hardware-only failures such as `Function not found!`. R08
+catches collisions already present in source but cannot catch collisions
+introduced by the minifier.
 
----
+Build tooling must not enable name mangling for an eval-loaded scene or data
+builder unless it proves that the generated names are safe under Espruino's flat
+scoping. When changing Terser options, add a regression case containing a
+function parameter, a nested `for (let ...)` loop, and a use of the parameter
+after the loop. Verify that the production output does not reuse the parameter's
+name for the loop variable. After minifying an eval-loaded file, also verify
+that it still evaluates to a bare function expression.
 
-## Appendix: Quick Reference
+### 9.3 CI
 
-### Espruino Graphics (`h`) Method Reference
+- **Validate** (`.github/workflows/validate.yml`): PRs into `main`. Runs
+  `npm run verify`, rejects committed `.js` / `registry.json` under
+  `holotapes/`, uploads a short-lived zip artifact.
+- **Deploy** (`.github/workflows/deploy.yml`): push to `main`. Same verify, then
+  publishes one permanent zip on the rolling GitHub Release tag `production`.
 
-```js
-h.clear(colorIndex);                       // Clear screen with color (0-3)
-h.clearRect(x1, y1, x2, y2);              // Clear a specific region
-h.setColor(colorIndex);                    // Set drawing color (0-3)
-h.setFont(name);                           // Set a custom font by name
-h.wrapString(text, maxWidth);              // Wrap text, returns array of lines
-h.setBgColor(index);                       // Set background color (0-3)
-h.setFontFixedsys16();                     // Fixedsys 16px
-h.setFontMonofonto14();                    // Monofonto 14px
-h.setFontMonofonto16();                    // Monofonto 16px
-h.setFontMonofonto18();                    // Monofonto 18px
-h.setFontMonofonto23();                    // Monofonto 23px
-h.setFontMonofonto28();                    // Monofonto 28px
-h.setFontMonofonto36();                    // Monofonto 36px
-h.setFontMonofonto96();                    // Monofonto 96px
-h.setFontMonofonto120();                   // Monofonto 120px
-h.setFontAlign(x, y);                      // -1/0/1 for x and y
-h.drawString(text, x, y);                  // Draw text
-h.drawString(text, x, y, true);            // XOR draw (for flicker effects)
-h.drawLine(x1, y1, x2, y2);               // Line
-h.drawLineAA(x1, y1, x2, y2);             // Anti-aliased line
-h.drawRect(x1, y1, x2, y2);               // Rectangle outline
-h.fillRect(x1, y1, x2, y2);               // Filled rectangle
-h.drawCircle(x, y, rad);                   // Circle outline
-h.fillCircle(x, y, rad);                   // Filled circle
-h.drawEllipse(x1, y1, x2, y2);            // Ellipse outline (bounding box)
-h.fillEllipse(x1, y1, x2, y2);            // Filled ellipse (bounding box)
-h.drawImage(image, x, y);                  // Draw an image/sprite
-h.drawImage(image, x, y, {rotate:r, scale:s});  // Rotated/scaled image
-h.drawPoly(poly, closed);                  // Polygon
-h.drawPolyAA(poly, closed);                // Anti-aliased polygon
-h.stringMetrics(text);                     // Get {width, height} of rendered text
-h.stringWidth(text);                       // Get width of rendered text
-h.imageMetrics(image);                     // Get {width, height} of image
-h.getPixel(x, y);                          // Get pixel color at position
-h.setClipRect(x1, y1, x2, y2);            // Restrict drawing to region
-h.scroll(x, y);                            // Scroll display by dx, dy
-h.getModified(reset);                      // Get dirty rect since last call
-h.getWidth();                              // Display width (480)
-h.getHeight();                             // Display height (320)
-h.reset();                                 // Reset all graphics state
-h.flip();                                  // Flush buffer, calls Pip.blitScreen()
-Pip.blitScreen(h, Pip.blitOptions);         // Manual screen render (auto-called by flip)
-Pip.lastFlip = getTime();                  // Tell Pip.timers.flip screen is current
-```
+### 9.4 Troubleshooting
 
-See the full Espruino Graphics reference at [https://www.espruino.com/Reference#Graphics](https://www.espruino.com/Reference#Graphics).
-
-### Pip Object Reference
-
-```js
-Pip.on('knob1', callback);                 // Add knob1 listener
-Pip.on('knob2', callback);                 // Add knob2 listener
-Pip.onExclusive('knob1', callback);        // Exclusive knob1 listener
-Pip.onExclusive('knob2', callback);        // Exclusive knob2 listener
-Pip.removeListener('knob1', callback);     // Remove knob1 listener
-Pip.removeListener('knob2', callback);     // Remove knob2 listener
-Pip.playSound('TAB');                      // Confirm sound
-Pip.playSound('SCROLL');                   // Scroll sound
-Pip.audioStart(path);                      // Play WAV from storage
-Pip.audioStartVar(buffer, options);        // Play in-memory audio buffer
-Pip.audioRead(path);                       // Load WAV into memory buffer
-Pip.audioStop();                           // Stop all audio
-Pip.shadeBox(x1, y1, x2, y2);             // Shaded highlight box
-Pip.blitOptions;                           // Object for .y1/.y2 partial flips
-Pip.typeText(txt, x, y, W, H, font);       // Typewriter text, returns Promise
-Pip.createKeyboard(txt, desc, cb);         // On-screen keyboard (fw 1.1.4+); cb(text) on Enter; returns {draw,remove}; caller must .remove()
-Pip.createDateTimePicker(d, date, t, cb);  // Date/time picker (fw 1.1.4+); edits Date d in place, date=include date fields, t=title; cb(d) on SET; returns {remove}
-Pip.screenGlitch();                        // Random CRT glitch effect + sound
-Pip.errorBox(err);                          // Standard error display
-Pip.log(txt, logFile);                     // Log to console + SD card LOGS/
-Pip.videoStart(path, options);              // Play AVI video (MS RLE only)
-Pip.videoStop();                           // Stop AVI playback
-Pip.on('videoStopped', callback);          // Fires when AVI playback finishes
-Pip.setVol(volume);                        // Set volume, 0-33
-Pip.setBrightness(v);                      // Set brightness, float ~0.001-1
-Pip.brightness;                            // Current brightness (0-1 float)
-Pip.settings.brightness;                   // Firmware UI scale 1-20 (NOT the 0-1 float!)
-Pip.settings.volume;                       // 3-27 int, compatible with setVol()
-Pip.remove();                               // Call CURRENT.remove() safely
-Pip.lastFlip = getTime();                  // Tell Pip.timers.flip screen is current
-```
-
-See the full Pip API reference at [https://robco-industries.org/documentation/pipboy/3000/api](https://robco-industries.org/documentation/pipboy/3000/api).
-
-### Espruino Utility Reference
-
-```js
-E.clip(value, min, max);                   // Clamp value
-E.defrag();                                // Defragment memory
-Math.randInt(n);                           // Random int [0, n-1]
-Math.atan2(y, x);                          // Arc tangent
-fs.readFileSync(path);                     // Read file (fs is a global; require("fs") optional)
-fs.rename('OLD_NAME', 'NEW_NAME');         // Rename a file or folder
-fs.writeFileSync(path, data);              // Write file to storage
-fs.readdir(path);                          // List directory entries
-fs.statSync(path);                         // Stat; returns undefined if missing (does NOT throw)
-fs.mkdir(path);                            // Create directory (does NOT create parents)
-fs.unlink(path);                           // Delete a file
-E.openFile(path, mode);                    // Open file for streaming
-JSON.parse(string);                        // Parse JSON
-JSON.stringify(value);                     // Serialize to JSON
-E.sum(array);                              // Optimized array sum
-E.variance(array);                         // Optimized array variance
-E.getSizeOf(value, depth);                 // Storage units used by object
-process.memory();                          // Free blocks and memory info; Passing false retrieves memory usage without a GC pass.
-E.toFlatString(data);                      // Allocate flat contiguous string
-debug(msg);                                // Log debug message
-EMU;                                       // true if running in emulator
-```
-
-### Minimal Holotape Template
-
-```js
-(function() {
-  let score = 0, clickWatch;
-
-  function draw() {
-    h.clearRect(0, 120, 479, 200);
-    h.setColor(3).setFontMonofonto28().setFontAlign(0, 0)
-      .drawString("Score: " + score, 240, 160);
-  }
-
-  function onKnob1(dir) {
-    if (dir) {
-      score = E.clip(score + dir, 0, 999);
-      draw();
-    } else {
-      score = 0;
-      draw();
-    }
-  }
-
-  Pip.onExclusive("knob1", onKnob1);
-  draw();
-
-  return {
-    id: "MYAPP",
-    remove: function() {
-      clearWatch(clickWatch);
-      Pip.removeListener("knob1", onKnob1);
-    },
-  };
-});
-```
-
-### 3.20 Variable Lookup & Scope
-
-Espruino searches the scope chain to find variables on every access. **Global variables are slower to find than local variables.** For frequently-accessed values:
-
-- Keep variables in the closest enclosing scope.
-- Assign globally-referenced functions to local variables: `let d = someGlobalFn;`
-- Short variable names look up slightly faster than long ones.
-- Use `.bind()` to pre-bind arguments and avoid repeated lookups (see 3.15).
-
-```js
-// Slower — full lookup chain on each call
-for (let i = 0; i < 1000; i++) someGlobalFn(LED1, 1);
-
-// Faster — cached local reference
-let d = someGlobalFn;
-for (let i = 0; i < 1000; i++) d(LED1, 1);
-```
-
-### 3.21 Arrays, Objects & Typed Arrays
-
-Espruino stores normal arrays and objects as **linked lists**. Element count directly affects access time. For performance-critical data:
-
-- Use `Array.forEach`, `Array.map`, `Array.reduce`, `for (i of ...)` — these iterate the linked list efficiently.
-- **Dense numeric data belongs in Typed Arrays** (`Uint8Array`, `Int16Array`, `Float32Array`, etc.). Typed arrays use contiguous flat memory and are vastly faster for random access.
-- Use `TypedArray.set(src, offset)` for bulk copies.
-- Pre-allocate typed arrays once and reuse them — allocation is slow and requires a contiguous memory block.
-- 2D data: a 2D array-of-arrays is faster than a flat 1D array indexing via `[y * width + x]`.
-- `E.sum(array)` and `E.variance(array)` are optimized built-ins for array math.
-- Use `DataView` to access an `ArrayBuffer` with multiple types without copying:
-  ```js
-  let b = new ArrayBuffer(8);
-  let v = new DataView(b);
-  v.setUint16(0, 0x1234);
-  v.setUint8(3, 0x56);
-  v.getUint32(0); // 0x12340056
-  ```
-- Create TypedArray views on existing buffers for zero-copy reinterpretation:
-  ```js
-  let a = new Uint8Array([1,2,3,4,5,6,7,8]);
-  let b = new Uint16Array(a.buffer); // [513,1027,1541,2055]
-  let c = new Uint8Array(a.buffer, 2, 5); // [3,4,5,6,7]
-  ```
-
-### 3.22 Memory Measurement
-
-Use these tools to profile memory usage:
-
-- `process.memory()` — free blocks and total memory.
-- `E.getSizeOf(value, 1)` — shows storage unit usage per property, sorted by size.
-- `process.memory().blocksize` — size of each storage unit (typically 10-16 bytes depending on device).
-
-### 3.23 Saving Data to SD Card
-
-For read-heavy data that doesn't change often, write to the SD card:
-
-```js
-// Write to SD card
-require("fs").writeFileSync("SETTINGS/MYAPP.JSON", JSON.stringify(data));
-
-// Read from SD card
-let data = require("fs").readFileSync("SETTINGS/MYAPP.JSON");
-```
-
-**Filesystem details:**
-
-- `fs` is a **global** on the device; `require("fs")` is optional. Firmware code calls `fs.statSync`, `fs.readdir`, `fs.readFileSync` etc. directly.
-- **Path convention:** prefer NO leading slash (`fs.readFileSync("HOLO/MYAPP/DATA.JSON")`). This is the firmware idiom everywhere. Leading-slash variants often work too, but code that eval-loads sibling module files should match the firmware exactly.
-- `fs.mkdir(path)` creates a directory synchronously (throws on error). It does **not** create parent directories; for a nested path like `HOLO/MYAPP/SAVES`, walk and create each level, skipping levels that already exist.
-- **`fs.statSync(path)` returns `undefined` for a missing path; it does NOT throw.** So `try { fs.statSync(p) } catch (e) { fs.mkdir(p) }` is a bug: the catch never fires and the directory is never created. Check the return value instead:
-
-  ```js
-  let st = fs.statSync(p);
-  if (!st || !st.dir) fs.mkdir(p);
-  ```
-
-- `fs.unlink(path)` deletes a file.
-- Error meanings: `NO_FILE` means the path resolved but the file is missing (commonly a `storage` entry that was never installed to the SD card); `NO_PATH` means an intermediate directory is missing.
-
-When the firmware loads app code, function bodies and `const` declarations inside functions may be stored more efficiently than top-level variables. The `"ram"` directive loads a function into RAM for faster execution.
-
-### 3.24 Lazy Module Loading (On-Demand Files)
-
-To keep a holotape's RAM footprint small, split rarely-active screens (settings pages, editors, keyboards) into separate files that are loaded from the SD card only while in use, then dropped. This mirrors how the firmware itself loads its menu screens.
-
-Each module file is a single **function expression** (not invoked, no trailing `()`), just like an app:
-
-```js
-// SETTINGS.JS evaluates to a function; calling it returns the module object
-(function (api) {
-  // ... module code ...
-  return { id: "SETTINGS", select: doSelect, remove: doRemove };
-});
-```
-
-The parent loads, uses, and unloads it:
-
-```js
-let mod = eval(fs.readFileSync("HOLO/MYAPP/SETTINGS.JS"))(api);
-// ... later, on close:
-mod.remove();
-mod = null;
-process.memory(true); // force a GC pass to reclaim the code
-```
-
-Rules for this pattern:
-
-- The module registers its own `Pip.onExclusive("knob1"/"knob2", ...)` handlers (displacing the parent's); on unload the parent re-registers its own. The parent keeps owning any `ENC1_PRESS` `setWatch` and delegates presses to `mod.select()`.
-- Pass state and write-back callbacks through the `api` object. Globals (`h`, `Pip`, `getTime`, `fs`) are usable directly inside the module.
-- The parent gates its own draws with `if (mod) return;` so background events don't paint over the child's screen.
-- Modules can nest: a child may eval-load its own children. Each parent must `remove()` its child on exit (which in turn removes any grandchild), then run `process.memory(true)`.
-- **Packaging:** every extra file needs its own `storage` entry in `metadata.json`, e.g. `{ "name": "HOLO/MYAPP/SETTINGS.JS", "url": "settings.min.js" }`. Every storage entry must actually be installed to the SD card or loading fails with `NO_FILE`.
-- **Minification caveat:** the minified module file must still begin with `(function(` (a bare function expression). See [7.1](#71-minification) for the terser flags this requires, including why eval'd module files should not be name-mangled.
+- **Build: unsupported TypeScript syntax** - erasable-only: no `enum`, no
+  runtime `namespace`, no constructor parameter properties.
+- **`ReferenceError` on device, fine elsewhere** - function used before its
+  declaration line. Init last.
+- **Works once, breaks on reopen** - incomplete `remove()`.
+- **Typecheck fails on hardware-proven code** - prefer erasable fixes (`!:`,
+  `as`, annotations) over runtime changes.

@@ -1,19 +1,0 @@
-(ª(e){ªc(e,c,o,r,n){«[Ô,e,c,o,r,n]}ªo(e,c,o){«[Ô,e,c,o Ô@]}£(Ñprofile‹e.screenDescriptor.code)«[ÑPROFILE,[[Ñ< BACK,Ñback]],[o(ÑNAME,[Ñname],Ô),o(ÑORIGIN,[Ñorigin]),c(ÑLEVEL,[Ñlevel],Ô,Ôc,Ô),c(Ñ	XP EARNED,[ÑxpEarned],Ó,99999,Ô),c(Ñ
-XP TO NEXT,[ÑxpNext],Ó,99999,Ô)]];£(Ñspecial‹e.screenDescriptor.code){®e=[ÑSTRENGTH,Ñ
-PERCEPTION,Ñ	ENDURANCE,ÑCHARISMA,ÑINTELLIGENCE,ÑAGILITY,ÑLUCK],o=[];§(­r=Ó;r<Ô;r˜)o.push(c(e[r],[Ñspecial,r],Ô,Ô
-,Ô));«o.push(c(ÑLUCK POINTS,[Ñ
-luckPoints],Ó,Ô
-,Ô)),[ÑS.P.E.C.I.A.L.,[[Ñ< BACK,Ñback]],o]}«Ñcombat‹e.screenDescriptor.code?[ÑCOMBAT,[[Ñ< BACK,Ñback]],[c(ÑMELEE DAMAGE,[Ñcombat,Ó],Ó,Ôc,Ô),c(ÑDEFENSE,[Ñcombat,Ô],Ó,Ôc,Ô),c(Ñ
-INITIATIVE,[Ñcombat,Ô],Ó,Ôc,Ô),c(Ñ	POISON DR,[Ñcombat,Ô],Ó,Ôc,Ô),c(ÑMAX HP,[Ñcombat,Ô],Ó,Õç,Ô),c(Ñ
-CURRENT HP,[Ñcombat,Ô],Ó,Õç,Ô),c(ÑCURRENT RAD,[ÑradCur],Ó,Õç,Ô)]]:Ñequip‹e.screenDescriptor.code?[Ñ	EQUIPMENT,[[Ñ< BACK,Ñback]],[o(ÑARMOR,[Ñarmor]),o(ÑHELMET,[Ñhelmet])]]:Ñ
-conditions‹e.screenDescriptor.code?[Ñ
-CONDITIONS,[[Ñ< BACK,Ñback]],[o(Ñ
-ADDICTIONS,[Ñ
-addictions]),o(ÑDISEASES,[Ñdiseases])]]:Ñ
-companions‹e.screenDescriptor.code?[Ñ
-COMPANIONS,[[Ñ< BACK,Ñback]],[o(ÑCOMPANION 1,[Ñ
-companions,Ó]),o(ÑCOMPANION 2,[Ñ
-companions,Ô]),o(ÑCOMPANION 3,[Ñ
-companions,Ô])]]:Ñnotes‹e.screenDescriptor.code?[ÑNOTES,[[Ñ< BACK,Ñback]],[o(ÑFACTION REP,[Ñ
-factionRep]),o(ÑSETTLEMENT REP,[ÑsettlementRep]),o(ÑQUEST NOTES,[Ñ
-questNotes]),o(ÑCHARACTER NOTES,[Ñ	charNotes])]]:[ÑCAPS & CARRY,[[Ñ< BACK,Ñback]],[c(ÑCAPS,[Ñcaps],Ó,99999,Ô),c(ÑCURRENT CARRY,[ÑcarryCur],Ó,Õç,Ô),c(Ñ	MAX CARRY,[ÑcarryMax],Ó,Õç,Ô)]]});

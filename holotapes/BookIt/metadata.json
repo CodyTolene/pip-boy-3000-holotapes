@@ -1,16 +1,22 @@
 {
-  "id": "BOOKIT",
+  "id": "bookit",
   "name": "Book-It",
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "A .txt file reader for your Pip-Boy. Auto-bookmarking per page change, supports subfolders to help organize, and brightness control with the left wheel while reading.",
-  "icon": "assets/BOOKIT.IMG",
-  "previews": ["previews/menu.bmp"],
+  "icon": "storage/BOOKIT.img",
+  "previews": ["previews/MENU.bmp"],
   "type": "app",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/BOOK_IT/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/BOOK_IT/SUBS.JS", "url": "assets/SUBS.MIN.JS" }
+    {
+      "pipboy": "HOLO/BOOK_IT/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/BOOK_IT/SUBS.JS",
+      "source": "storage/SUBS.ts"
+    }
   ],
   "storageOptional": []
 }

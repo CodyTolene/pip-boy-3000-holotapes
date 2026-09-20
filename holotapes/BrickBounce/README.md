@@ -43,8 +43,8 @@ installed under `HOLO/BRKBNCE/`.
 
 For repository development, place this directory at `holotapes/BrickBounce/`,
 run `npm install`, then run `npm run build` from the repository root. The
-repository build generates the registry entry; do not hand-edit
-`holotapes/registry.json`.
+repository build generates the registry entry under
+`dist/pip-boy-3000-holotapes/`; generated registries are not committed.
 
 ## Firmware Tested
 

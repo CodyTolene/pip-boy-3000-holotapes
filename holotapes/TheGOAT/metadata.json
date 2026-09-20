@@ -1,13 +1,18 @@
 {
-  "id": "GOATTEST",
+  "id": "goattest",
   "name": "G.O.A.T.",
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "A text-based recreation of the Vault 101 Generalized Occupational Aptitude Test (G.O.A.T.) from Fallout 3. This holotape recreates all 10 original test questions and answers. Your answers are tallied by skill, and at the end of the test you're assigned a Vault job.",
-  "icon": "previews/GOAT.png",
-  "previews": ["previews/menu.bmp", "previews/game.bmp"],
+  "icon": "storage/GOAT.png",
+  "previews": ["previews/MENU.bmp", "previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/THEGOAT/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    {
+      "pipboy": "HOLO/THEGOAT/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
   "storageOptional": []
 }

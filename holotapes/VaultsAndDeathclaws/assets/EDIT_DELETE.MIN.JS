@@ -1,4 +1,0 @@
-(ª(app){®CHARACTER_DIR=ÑHOLO/VND/CHAR/,CONFIRM=ÑHOLO/VND/CONFIRM.JS;­confirmation=¶,loadTimeout=setTimeout(ª(){loadTimeout=¶;±{process.memory(!Ó),E.defrag()}²(o){}confirmation=eval(fs.readFileSync(CONFIRM))(app,{name:app.editor.data.name Ñ
-CHARACTER +(app.editor.number<Ô
-?Ñ0:"")+app.editor.number,onCancel:ª(){app.go(app.scenes.EDIT_MENU)},onConfirm:ª(){±{fs.unlink(CHARACTER_DIR+(app.editor.number<Ô
-?Ñ0:"")+app.editor.number+Ñ.JSON)}²(o){}app.editor=¶;±{process.memory(!Ó),E.defrag()}²(o){}app.go(app.scenes.LIST)}})},Ó);«{remove:ª(){loadTimeoutžclearTimeout(loadTimeout),confirmationžconfirmation.remove()}}});

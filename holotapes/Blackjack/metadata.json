@@ -4,10 +4,15 @@
   "author": "@trekker87 @Theeohn",
   "version": "1.1.0",
   "description": "A single-player Blackjack game for the Pip-Boy 3000. Play against the dealer using a single shuffled deck, with variable betting and standard casino rules.",
-  "icon": "previews/blackjack.png",
-  "previews": ["previews/game.bmp"],
+  "icon": "storage/BLACKJACK.png",
+  "previews": ["previews/GAME.bmp"],
   "type": "game",
   "readme": "README.md",
-  "storage": [{ "name": "HOLO/BLACKJACK/APP.JS", "url": "app.min.js" }],
+  "storage": [
+    {
+      "pipboy": "HOLO/BLACKJACK/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
   "storageOptional": []
 }

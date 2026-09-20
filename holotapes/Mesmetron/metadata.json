@@ -1,30 +1,78 @@
 {
-  "id": "MESMETRON",
+  "id": "mesmetron",
   "name": "Mesmetron",
   "author": "@Theeohn",
   "version": "1.0.0",
   "description": "Screensavers of all kinds rendered locally, no videos. Modular so you can make and add your own!",
-  "icon": "assets/HYPNO.IMG",
-  "previews": ["previews/cap1.bmp", "previews/cap2.bmp", "previews/cap3.bmp"],
+  "icon": "storage/HYPNO.img",
+  "previews": ["previews/CAP1.bmp", "previews/CAP2.bmp", "previews/CAP3.bmp"],
   "type": "app",
   "readme": "README.md",
   "storage": [
-    { "name": "HOLO/MESMETRON/APP.JS", "url": "assets/APP.MIN.JS" },
-    { "name": "HOLO/MESMETRON/MSMR.BIN", "url": "assets/MSMR.BIN" },
-    { "name": "HOLO/MESMETRON/RC.JSON", "url": "assets/RC.JSON" },
-    { "name": "HOLO/MESMETRON/ROACH.JSON", "url": "assets/ROACH.JSON" },
-    { "name": "HOLO/MESMETRON/TITLE.JS", "url": "assets/TITLE.MIN.JS" },
-    { "name": "HOLO/MESMETRON/bouncer.js", "url": "assets/bouncer.min.js" },
-    { "name": "HOLO/MESMETRON/burst.js", "url": "assets/burst.min.js" },
-    { "name": "HOLO/MESMETRON/fireworks.js", "url": "assets/fireworks.min.js" },
-    { "name": "HOLO/MESMETRON/matrix.js", "url": "assets/matrix.min.js" },
-    { "name": "HOLO/MESMETRON/ribbon.js", "url": "assets/ribbon.min.js" },
-    { "name": "HOLO/MESMETRON/shapes.js", "url": "assets/shapes.min.js" },
-    { "name": "HOLO/MESMETRON/spiral.js", "url": "assets/spiral.min.js" },
-    { "name": "HOLO/MESMETRON/vortex.js", "url": "assets/vortex.min.js" },
-    { "name": "HOLO/MESMETRON/warp.js", "url": "assets/warp.min.js" },
-    { "name": "HOLO/MESMETRON/web.js", "url": "assets/web.min.js" },
-    { "name": "HOLO/MESMETRON/wild.wav", "url": "assets/wild.wav" }
+    {
+      "pipboy": "HOLO/MESMETRON/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/MSMR.BIN",
+      "source": "storage/MSMR.bin"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/RC.JSON",
+      "source": "storage/RC.json"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/ROACH.JSON",
+      "source": "storage/ROACH.json"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/TITLE.JS",
+      "source": "storage/TITLE.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/BOUNCER.JS",
+      "source": "storage/BOUNCER.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/BURST.JS",
+      "source": "storage/BURST.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/FIREWORKS.JS",
+      "source": "storage/FIREWORKS.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/MATRIX.JS",
+      "source": "storage/MATRIX.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/RIBBON.JS",
+      "source": "storage/RIBBON.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/SHAPES.JS",
+      "source": "storage/SHAPES.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/SPIRAL.JS",
+      "source": "storage/SPIRAL.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/VORTEX.JS",
+      "source": "storage/VORTEX.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/WARP.JS",
+      "source": "storage/WARP.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/WEB.JS",
+      "source": "storage/WEB.ts"
+    },
+    {
+      "pipboy": "HOLO/MESMETRON/WILD.WAV",
+      "source": "storage/WILD.wav"
+    }
   ],
   "storageOptional": []
 }
