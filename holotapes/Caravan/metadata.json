@@ -1,0 +1,134 @@
+{
+  "id": "caravan",
+  "name": "Caravan",
+  "author": "@LlamaYeYe",
+  "version": "1.0.0",
+  "description": "Playable Fallout: New Vegas Caravan for The Wand Company Pip-Boy 3000, with low-memory resident Engine/Audio runtime for stable repeated play.",
+  "icon": "storage/CARAVAN.img",
+  "previews": [],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/CARAVAN/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/BOTTLE_CAP_PREVIEW.WAV",
+      "source": "storage/BOTTLE_CAP_PREVIEW.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/BOTTLE_CAP_RESULT1.WAV",
+      "source": "storage/BOTTLE_CAP_RESULT1.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/BOTTLE_CAP_RESULT2.WAV",
+      "source": "storage/BOTTLE_CAP_RESULT2.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/BOTTLE_CAP_RESULT3.WAV",
+      "source": "storage/BOTTLE_CAP_RESULT3.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN.IMG",
+      "source": "storage/CARAVAN.img"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_CONTROLS.MIN.JS",
+      "source": "storage/CARAVAN_CONTROLS.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_DRAW_SCREEN.MIN.JS",
+      "source": "storage/CARAVAN_DRAW_SCREEN.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_GAME.MIN.JS",
+      "source": "storage/CARAVAN_GAME.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_GAME_AUDIO.MIN.JS",
+      "source": "storage/CARAVAN_GAME_AUDIO.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_GAME_ENGINE.MIN.JS",
+      "source": "storage/CARAVAN_GAME_ENGINE.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_GRAPHICS.BIN",
+      "source": "storage/CARAVAN_GRAPHICS.bin"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_MENU_INTERFACE.MIN.JS",
+      "source": "storage/CARAVAN_MENU_INTERFACE.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_PLAY_MENU.MIN.JS",
+      "source": "storage/CARAVAN_PLAY_MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_RESULT_CAPS.BIN",
+      "source": "storage/CARAVAN_RESULT_CAPS.bin"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_RESULT_MENU.MIN.JS",
+      "source": "storage/CARAVAN_RESULT_MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_RETURN_MENU.MIN.JS",
+      "source": "storage/CARAVAN_RETURN_MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_SFX.BIN",
+      "source": "storage/CARAVAN_SFX.bin"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_SFX.IDX",
+      "source": "storage/CARAVAN_SFX.idx"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_SFX_ENGINE.MIN.JS",
+      "source": "storage/CARAVAN_SFX_ENGINE.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_TUTORIAL.MIN.JS",
+      "source": "storage/CARAVAN_TUTORIAL.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_VOLUME.BIN",
+      "source": "storage/CARAVAN_VOLUME.bin"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_VOLUME_APPLY.MIN.JS",
+      "source": "storage/CARAVAN_VOLUME_APPLY.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_VOLUME_PREVIEW.MIN.JS",
+      "source": "storage/CARAVAN_VOLUME_PREVIEW.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_VOLUME_SOUND.MIN.JS",
+      "source": "storage/CARAVAN_VOLUME_SOUND.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/CARAVAN_WIN_AUDIO.MIN.JS",
+      "source": "storage/CARAVAN_WIN_AUDIO.ts"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/GAME_OVER_WIN.WAV",
+      "source": "storage/GAME_OVER_WIN.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/LAZY_DAYS-TIRED_PREVIEW.WAV",
+      "source": "storage/LAZY_DAYS-TIRED_PREVIEW.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/LAZY_DAYZ-TIRED.WAV",
+      "source": "storage/LAZY_DAYZ-TIRED.wav"
+    },
+    {
+      "pipboy": "HOLO/CARAVAN/VOLUME_SOUND.CFG",
+      "source": "storage/VOLUME_SOUND.cfg"
+    }
+  ],
+  "storageOptional": []
+}
