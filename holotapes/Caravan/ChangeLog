@@ -1,0 +1,184 @@
+1.0.0 (2026-09-19)
+- Finalized the repository package for the merged TypeScript main branch after PR #113: all storage filenames now use uppercase stems with lowercase extensions while device `pipboy` paths remain uppercase.
+- Converted Caravan repository source to the PR #113 TypeScript layout under storage/.
+- Added concrete local TYPES.d.ts contracts for Caravan's lazy Engine, Renderer, audio, menu, Results, and preview modules.
+- Kept all 30 device-facing HOLO/CARAVAN paths unchanged; generated JavaScript is now a build artifact rather than committed source.
+- Conversion is type-only for the 16 readable runtime modules: after type erasure, each module matches the existing hardware-tested JavaScript behavior.
+- Removed APPINFO/CARAVAN.info from repository source because the TypeScript-era installer/build flow generates installation metadata.
+- Version remains Caravan v1.0.0.
+
+2026-09-19 - Cody cleanup, hardware-compatible
+- Applied Cody's PR cleanup style to metadata/README organization without changing the tested Caravan runtime.
+- Preserved root APP.MIN.JS, APPINFO/CARAVAN.info, and readable root source files because the direct Pip-Boy hardware-test loader requires the known-good 53-file layout.
+- Kept Engine-resident / Audio-resident menu-cycle stability fix unchanged; Renderer remains the only large gameplay module unloaded for the compact post-game menu.
+- Development logging folder remains local-only and must not be included in the eventual public PR.
+
+
+v1.0.0 - 2026-09-19
+- Deferred Results -> Back cleanup until after the Results knob callback fully returns, then unload/GC/defrag before loading the compact Caravan menu. This targets the fixed ~106-block loss that occurs only on Back-to-menu cycles while pure Rematch remains flat.
+- Menu-cycle stability: fully clear exclusive knob listener properties and sever post-game menu callback references before returning to gameplay.
+- Targets the exact ~106-block loss observed once per Results -> Caravan menu -> Play cycle while leaving the now-flat Rematch runtime unchanged.
+Caravan v1.0.0 - menu suspend headroom fix
+- Keep the stable persistent outer Game controller and clean audio controller across post-game menu visits.
+- Before loading the post-game menu, unload only the large Engine and Renderer modules and hard-defrag.
+- Reload Engine/Renderer lazily on the next Play while reusing the same idled audio controller, avoiding the old ~106-block audio-module cycle leak.
+- No changes to card sound bytes/settings, gameplay rules, Results, Game Over Win, betting, or zero-cap behavior.
+
+Caravan v1.0.0 - lean post-game shell stability fix
+- Keep the proven persistent match runtime and clean card-audio path unchanged.
+- Revert the split-menu routing out of the always-resident APP so live gameplay regains the headroom from the stable build.
+- APP now makes only one small choice: initial full menu or lightweight post-game shell.
+- Move Play/Bet, Demo, Volume, Rules, and Back routing into CARAVAN_RETURN_MENU so that logic exists only while the post-game menu is open.
+- Keep the post-game shell at ~3.1 KB and lazy-load the separate ~2.6 KB Bet/Deck module only when Play Caravan is selected.
+- Preserve the player-zero and opponent-zero reset popup paths and 500/500 reset behavior.
+- Fix one installed low-memory main-menu mangle typo where the ante-limit helper referenced an undefined `funds` identifier when player funds were below opponent funds.
+- No changes to Game rules, Engine, Renderer, clean Play/Discard audio, Game Over Win, Results, or persistent rematch cleanup.
+
+Caravan v1.0.0 - split post-game menu memory fix
+- Keep the persistent match runtime that proved flat across consecutive rematches.
+- Stop eval-loading the 6.7 KB all-in-one Caravan menu after Results.
+- Add a 1.9 KB post-game main-menu shell with the same visible main choices and Rules screen.
+- Add a separate 2.6 KB Bet/Deck/Reset module that loads only when Play Caravan is selected from the post-game menu.
+- Preserve exact 0-cap reset messages and behavior in the split Bet/Deck module.
+- Keep the original full menu unchanged for initial holotape entry.
+- Demo/Tutorial and Volume Adjustment remain lazy-loaded only when selected.
+- No changes to gameplay rules, persistent Engine/Renderer/Audio behavior, card SFX, Game Over Win, Results, or match cleanup.
+
+Caravan v1.0.0 - low-memory menu runtime fix
+- Keep the proven persistent match runtime unchanged: repeated rematches continue reusing Engine, Renderer, and Audio while releasing all per-match data and the 2.5 KB card SFX buffer.
+- Keep the post-Results hard defrag before returning to the Caravan menu.
+- Reduce the installed CARAVAN_MENU_INTERFACE.MIN.JS runtime from 9,838 bytes to 6,692 bytes by shortening private identifiers only.
+- Preserve the menu logic, visible text, betting/deck flow, Demo/Tutorial, Rules/Controls, Volume Adjustment, both zero-cap reset paths, and Play handoff unchanged.
+- No changes to gameplay rules, card audio, Game Over Win, Results audio, renderer, engine, or persistent match lifecycle.
+
+Caravan v1.0.0 - menu-return hard-defrag stability fix
+- Keep the proven leak-free persistent match runtime used by Rematch and menu-return Play.
+- After Results fully unwinds, run one hard E.defrag() before reading/evaluating the full Caravan menu.
+- This targets the plain MEMORY crash seen after DATAFREE F1038 when returning to the menu with the reusable Engine/Renderer/Audio modules still resident.
+- No changes to game rules, card audio, Game Over Win, Results, betting state, zero-cap behavior, or match runtime cleanup.
+
+Caravan v1.0.0 - menu-return persistent runtime stability fix
+- Hardware logs proved Rematch is now stable: G1/G2/G3 all returned to the exact same DATAFREE F1036.
+- The remaining ~105-block loss happened only after Results -> Back -> Caravan menu -> Play, when the stable game controller was fully destroyed and recreated.
+- Results -> Back now leaves the already-cleaned game controller dormant while the Caravan menu is open; selecting Play reuses the same controller, matching the stable rematch lifecycle.
+- Finished-match data is still released before Results: decks/hands/caravans/render state are cleared and audio idle stops music, closes CARAVAN_SFX.BIN, and releases the 2.5 KB SFX buffer.
+- Final holotape exit still performs a full game-runtime removal.
+- No changes to card audio bytes/settings, Game Over Win, Results, Joker/face-card rules, betting, or either 0-cap terminal state.
+
+
+Caravan v1.0.0 - Persistent Match Runtime Stability Fix
+- Reuses the stateless game Engine and Renderer across matches instead of eval-loading them every game.
+- Reuses the clean in-game audio controller across matches while idle() still stops music, closes the SFX bank, and releases the 2.5 KB card buffer after every result.
+- Attaches the existing game knob handlers directly instead of eval-loading the tiny Controls wrapper each match.
+- Per-match decks, hands, caravans, direction arrays, render state, and card-audio buffer are still released/rebuilt normally.
+- Final holotape removal still fully destroys Engine/Renderer/Audio resources.
+- Results -> Back and both terminal zero-cap exits also fully release the persistent match runtime before returning to the Caravan menu.
+- No card-sound data, ADPCM settings, game rules, Results behavior, or zero-cap behavior changed.
+Caravan v1.0.0 - persistent match controller / repeated-game leak fix
+- Keep one lightweight CARAVAN_GAME controller alive for the whole Caravan holotape session instead of eval-loading a new outer game controller after every match.
+- Heavy Engine, Renderer, Audio, decks, hands, caravans, and render state are still fully released before Game Over Win / Results.
+- Rematch, New Opponent, and returning through either zero-cap reset path rebuild only the heavy match modules inside the existing controller.
+- Skip CARAVAN_VOLUME_APPLY eval-loading when the requested background-music level is already applied.
+- Release the Game Over Win callback reference before entering Results.
+- No changes to Caravan rules, card engine, Game startup defrag sequence, audio formats, Results behavior, or either zero-cap state.
+
+Caravan v1.0.0 - repeated-match handoff cleanup fix
+- Break the menu -> APP start callback reference immediately after the one-shot game handoff.
+- Reclaim only temporary APP game-source/eval objects after the game factory is created and before its existing boot timer runs.
+- Leaves the game module's established startup/defrag sequence, gameplay, both zero-cap states, Results, audio, and aggressive post-match cleanup unchanged.
+
+1.0.0 - 2026-09-19
+- Keep the menu-to-game onStartGame handoff callback intact during menu teardown.
+- Preserve aggressive finished-match cleanup that recovered substantial free memory.
+- Fix second-match LOADING GAME stall introduced by over-aggressive callback cycle breaking.
+
+- Fixed face-card/Joker crash on firmware 1.1.6 by avoiding direct Array.length mutation in the in-place caravan helpers.
+- Replaced Bottle Cap Short/Medium/Long audio with the newest supplied WAVs; Medium remains the preview.
+- Fixed Results cap audio tail clipping: animation cadence is matched to the actual clip length and the safety audio stop now runs only after natural playback has ended.
+Test build - post-game Game Over Win low-memory handoff
+- Plays Game Over Win only after the gameplay runtime is fully unloaded.
+- Results loads only after the 1.53 s win cue completes.
+- Restores Game Over Win ON/OFF, Volume 0-15, Preview, and MK V TV-Series attribution.
+- Keeps the winner/Results low-memory unload fix intact.
+
+
+Caravan v1.0.0 opponent roster test - 2026-09-15
+- Added all 14 Fallout: New Vegas Caravan players to the real-match randomized opponent pool.
+- Results now offers Rematch, Challenge New Opponent, and Back.
+- Rematch preserves the current opponent; Challenge New Opponent selects a different player and reuses the resident game runtime instead of reloading Engine/Renderer/Audio.
+- Kept Tutorial fixed to Ringo.
+Caravan v1.0.0 - 2026-09-13
+- Removed the custom screen-off/wake-resume system and all Caravan `Pip.wakeUp`/framebuffer/LCD interception. Manual Power sleep now follows stock firmware behavior and does not preserve a live match.
+- Disabled automatic idle sleep only while a match is active; the user's original idle timeout is restored on every game cleanup path.
+- Removed the game's suspended/pending wake state and gameplay-audio suspend/resume code to reduce resident memory and lifecycle complexity.
+- Added stronger game/menu/results transition cleanup with reference release, garbage collection, and defragmentation before loading the next large module.
+- Replaced the gameplay codec-reset start/stop hack with direct DAC power/output initialization when supported by firmware.
+- Kept Playing Card and Discard as one-time cached ADPCM buffers with no per-card bank reads or retry loops.
+- Kept readable source identifiers human-friendly; short identifiers are reserved for intentionally minified runtime files.
+- Re-minified the installed APP.JS runtime identifiers aggressively after the reviewer-facing cleanup so descriptive source names do not consume extra Espruino memory during match launch.
+- Removed the pre-launch full-screen clear; the renderer now clears only when the game has successfully reached its first draw, preventing a failed/low-memory launch from leaving a permanent black screen.
+- Removed manual DAC power/mode forcing between Results and Rematch; audio now resets through the normal Pip audio API to prevent stale/scratchy SFX after idle result screens.
+
+- Added invisible every-match Rematch cleanup/defrag and permanent opening-complete state to prevent late 5-to-4 hand regression.
+- Added a file-audio roundabout diagnostic after the third-match scratch survived both every-match cleanup and `Pip.initDAC()`.
+- Playing Card and Discard now materialize their exact selected-volume gameplay slices as tiny WAV files and play through `Pip.audioStart()`; no custom gameplay `audioStartVar()` path remains.
+- Bottle-cap Results audio now uses a normal WAV file instead of custom variable-audio queue pumping.
+- Temporarily disabled active-match Lazy Days playback for the three-match long-Rematch isolation test; music preview/settings are retained.
+- Removed the failed native DAC reset from Rematch; normal cleanup/defrag remains.
+
+Test build note (2026-09-14):
+- File-audio roundabout Play/Discard WAVs now retain one quiet ADPCM block before and after each active effect to remove the low click/thump heard at card playback startup/shutdown.
+- CARD_SFX.APPLIED marker schema advanced so existing generated WAVs are rebuilt automatically.
+
+v1.0.0 test - guaranteed card SFX block stream / Results renderer headroom
+- Play/Discard stream in 256-byte native ADPCM blocks over continuous music.
+- One flat 256-byte block is reserved between callbacks; no full card SFX is resident.
+- Renderer is released before Results and reloaded only on Rematch.
+
+- Test rules pass: Disband Caravan action, opening discard/redraw, deck-exhaustion loss, tutorial/rules updates.
+- Increased the readability of the small top-left rank/letter text on placed caravan cards only, while keeping the larger suit art clear and avoiding overlap.
+- Reduced the placed-card corner rank/letter enlargement to a middle-size treatment after hardware readability testing; hand cards and suit graphics remain unchanged.
+- Reworked placed-card top-left rank rendering to be crisp and readable instead of overdrawn/blurry, while keeping hand cards unchanged.
+- Trimmed the crisp placed-card top-left rank rendering by about 2 pixels while keeping the cleaner sharp look.
+- Added "Will Be Applied In-Game" notes beside the Sound Effects and Background Music headings in Volume Adjustment.
+- Matched the full Volume Adjustment heading notes to the same Monofonto16 font and size as SOUND EFFECTS and BACKGROUND MUSIC.
+- Added zero-funds Caravan bankroll handling: rematch/challenge lockout, highlighted reset flow back to 500 total funds, and hard bet caps so wagers can never exceed available funds.
+- Zero-cap Results now has exactly one highlighted option in every result path: "Not enough bottle caps to play...EXIT GAME!"; no separate Back option is shown.
+- Reset Total Ante popup now overlays the CARAVAN - BET screen instead of clearing the full display, leaving the Play Caravan background visible around the popup.
+- Centered the highlighted "Reset Total Ante" text horizontally inside the RESET popup.
+- Added a live opponent bankroll: opponents now start at 500 caps, gain/lose the exact wager opposite the player, can reach 1000 if they win the player's full 500, and wagers are capped by both sides' remaining caps.
+- Restored the bottle-cap graphic on the results screen by reclaiming/defragmenting before the low-memory image load and avoiding the previous over-conservative skip.
+- Reset Total Ante now resets both the player and the current opponent bankrolls to 500 before returning to the normal bet controls.
+- Reduced results-screen cap-image memory usage with a dedicated compact result-cap bank to prevent LOW_MEMORY during later matches.
+- Preserved bottle-cap result audio for all loss amounts, including losing the full remaining bankroll.
+- Reset Total Ante continues to restore both player and current opponent bankrolls to 500.
+Development fix (2026-09-18): unload the completed Game/Engine/Renderer/Audio runtime before loading Results; rematches reload a fresh game runtime to avoid the winner-transition LOW_MEMORY crash.
+
+- Bottle Cap result/preview audio fully replaced with the supplied Short, Medium, and Long cap WAVs.
+- Results timing now matches the new clips: Short = 10 counter steps, Medium = 20, Long = 30; cap audio is explicitly stopped on the final movement step.
+- Bottle Cap Preview now uses the supplied Medium clip.
+
+- Dev test: reverted session-resident card-SFX buffer; Game Over Win now explicitly stops/releases firmware audio before Results to prevent per-match heap loss and second-game loading stalls.
+
+2026-09-19 - Multi-match/Joker memory fix
+- New matches now use a two-stage teardown/load handoff so old Result/Menu callbacks fully unwind before GC/defrag and game module evaluation.
+- Joker and face-card group mutations now compact/insert arrays in place instead of repeated Array.splice allocations.
+- Joker performs a garbage collection immediately before its board-wide removal pass.
+Cleanup stability test:
+- Break APP<->Menu, APP<->Game, and APP<->Results callback reference cycles during teardown.
+- Release audio, renderer, engine, render state, decks, hands, caravans, and direction buffers before handing Results back to APP.
+- Avoid allocating replacement empty arrays during finished-game cleanup.
+- Results now detaches its listener/audio/timers before invoking Rematch/New Opponent/Back.
+- Stability: simplified the menu-to-game handoff to a single APP-owned timer chain. The menu now sends the bet state immediately; APP draws LOADING GAME, tears down the old screen on the next tick, reclaims memory, and starts the game. This removes the duplicate loading-animation timer/callback relay that could leave later matches stuck on LOADING GAME even with ample free memory.
+- Restored the direct, hardware-proven menu-to-game startup handoff. Removed the recently-added nested 20 ms game-loader timer while preserving aggressive post-match cleanup and all in-game startup defrags.
+1.0.0-stability-cache (2026-09-19)
+- Cache only the CARAVAN_GAME_AUDIO factory across matches so repeated matches do not re-evaluate its 1.7 KB runtime source.
+- Keep a fresh clean audio instance per match; the original music/SFX controller and resident card-sound buffer lifecycle are unchanged.
+- Mangle only private identifiers in the installed CARAVAN_GAME.MIN.JS runtime to reduce its resident source footprint by about 5 KB and preserve gameplay headroom.
+- No changes to rules, Results, 0-cap terminal states, card-sound bytes, ADPCM settings, timing, pitch, or volume.
+
+- Hardware-test packaging restored to the last known-good direct-test layout; post-win Results loading is deferred one event turn so the completed win callback can be reclaimed before Results eval.
+
+- Kept the already-loaded game Engine resident across Results -> menu -> Play cycles; hardware A/B testing showed the fixed ~106-block loss persisted when only Engine was re-evaluated, while pure rematches stayed flat.
+- Menu suspension now unloads only Renderer (plus per-match data already released) while preserving Engine and the idled clean Audio controller; Renderer still supplies the large menu headroom recovery.
+- Retained deferred Results Back cleanup so Results fully unwinds before menu suspension/GC.
