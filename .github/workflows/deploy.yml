@@ -64,6 +64,13 @@ jobs:
         run: |
           # Reuse the fixed "production" release tag if it already exists.
           if gh release view production --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            # GitHub generates the release's "Source code" archives from the tag
+            # itself, not from anything uploaded here, so the rolling tag has to
+            # be re-pointed or those archives stay frozen at the commit that
+            # first created the release. Tag pushes do not match the `branches`
+            # filter above, so this cannot retrigger the workflow.
+            git -C "$GITHUB_WORKSPACE" tag -f production "$GITHUB_SHA"
+            git -C "$GITHUB_WORKSPACE" push -f origin refs/tags/production
             # Drop every existing release asset so only the new zip remains.
             gh release view production --repo "$GITHUB_REPOSITORY" --json assets \
               --jq '.assets[].name' | while IFS= read -r asset; do
