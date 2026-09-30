@@ -4,7 +4,7 @@
 
 **Author(s):**
 
-- [@pavlo-chipak](https://github.com/pavlo-chipak)
+- [@reket](https://github.com/reket)
 
 ### Description
 
