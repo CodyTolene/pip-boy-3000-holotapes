@@ -1,7 +1,7 @@
 {
   "id": "sudoku",
   "name": "Sudoku",
-  "author": "@pavlo-chipak",
+  "author": "@reket",
   "version": "1.0.0",
   "description": "A full 9x9 Sudoku in easy, normal, and hard difficulties, with clash highlighting, hints, and a solve timer.",
   "icon": "storage/SUDOKU.img",
