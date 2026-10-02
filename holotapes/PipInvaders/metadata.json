@@ -1,0 +1,16 @@
+{
+  "id": "pipinvaders",
+  "name": "Pip Invaders",
+  "author": "@reket",
+  "version": "1.0.0",
+  "description": "Wasteland creatures march on the vault in ranks while you hold the line with a turret, four eroding bunkers, and a saved high score.",
+  "icon": "storage/PIPINVADERS.img",
+  "previews": ["previews/GAME.bmp"],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    { "pipboy": "HOLO/PIPINVADERS/APP.JS", "source": "storage/APP.ts" },
+    { "pipboy": "HOLO/PIPINVADERS/SCORE.TXT", "source": "storage/SCORE.txt" }
+  ],
+  "storageOptional": []
+}
