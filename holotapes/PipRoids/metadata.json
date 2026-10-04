@@ -1,0 +1,22 @@
+{
+  "id": "piproids",
+  "name": "PipRoids",
+  "author": "@reket",
+  "version": "1.0.0",
+  "description": "A vector-style asteroid shooter with wheel steering, inertia, wrapping space, splitting rocks, and a saved high score.",
+  "icon": "storage/PIPROIDS.img",
+  "previews": ["previews/GAME1.bmp", "previews/GAME2.bmp"],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/PIPROIDS/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/PIPROIDS/SCORE.TXT",
+      "source": "storage/SCORE.txt"
+    }
+  ],
+  "storageOptional": []
+}
