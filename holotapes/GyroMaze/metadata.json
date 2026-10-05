@@ -1,0 +1,13 @@
+{
+  "id": "gyromaze",
+  "name": "Gyro Maze",
+  "author": "@reket",
+  "version": "1.0.0",
+  "description": "Tilt the Pip-Boy to roll a ball through a randomly generated maze and find the exit.",
+  "icon": "storage/GYROMAZE.img",
+  "previews": ["previews/GAME.bmp"],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [{ "pipboy": "HOLO/GYROMAZE/APP.JS", "source": "storage/APP.ts" }],
+  "storageOptional": []
+}
