@@ -57,6 +57,10 @@ device runs (minified and pretokenised for you).
 
 Install on: [pip-boy.com][link-pip-boy]
 
+The
+[production release](https://github.com/CodyTolene/pip-boy-3000-holotapes/releases/tag/production)
+contains the latest build ZIP.
+
 Agent / review rules live in [agents.md](agents.md).
 
 <p align="right">[ <a href="#index">Index</a> ]</p>

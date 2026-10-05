@@ -62,34 +62,66 @@ jobs:
         # Zip lives next to the unpacked dist tree from the package step.
         working-directory: dist
         run: |
-          # Reuse the fixed "production" release tag if it already exists.
-          if gh release view production --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            # GitHub generates the release's "Source code" archives from the tag
-            # itself, not from anything uploaded here, so the rolling tag has to
-            # be re-pointed or those archives stay frozen at the commit that
-            # first created the release. Tag pushes do not match the `branches`
-            # filter above, so this cannot retrigger the workflow.
-            git -C "$GITHUB_WORKSPACE" tag -f production "$GITHUB_SHA"
-            git -C "$GITHUB_WORKSPACE" push -f origin refs/tags/production
-            # Drop every existing release asset so only the new zip remains.
-            gh release view production --repo "$GITHUB_REPOSITORY" --json assets \
-              --jq '.assets[].name' | while IFS= read -r asset; do
-              [ -n "$asset" ] || continue
-              gh release delete-asset production "$asset" --yes --repo "$GITHUB_REPOSITORY"
-            done
-            # Attach the fresh zip (permanent; GitHub Releases do not expire assets).
-            gh release upload production pip-boy-3000-holotapes.zip --repo "$GITHUB_REPOSITORY"
-            # Refresh release notes with the commit that produced this build.
-            gh release edit production --notes "Production build from $GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
-          else
-            # First deploy: create the rolling "production" release and attach the zip.
-            # --target: point the release tag at this commit
-            # --title / --notes: human-readable release metadata
-            # --latest=false: keep this from becoming the repo's "Latest" release
-            gh release create production pip-boy-3000-holotapes.zip \
-              --target "$GITHUB_SHA" \
-              --title 'Holotapes production build' \
-              --notes "Production build from $GITHUB_SHA" \
-              --latest=false \
-              --repo "$GITHUB_REPOSITORY"
+          set -euo pipefail
+
+          # Query successfully before changing anything: API errors are not a
+          # missing release. Include drafts so an interrupted publish can resume.
+          releases=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq '.[] | select(.tag_name == "production" or .tag_name == "production-pending")')
+          production_name=$(jq -sr 'map(select(.tag_name == "production"))[0].name // empty' <<< "$releases")
+          pending_name=$(jq -sr 'map(select(.tag_name == "production-pending"))[0].name // empty' <<< "$releases")
+
+          # Start at count 115 (current release count on 10/5/2026)
+          build_number=115
+          if [[ "$production_name" =~ ^Build\ ([1-9][0-9]{0,4})$ ]]; then
+            build_number=$((BASH_REMATCH[1] + 1))
+          elif [[ -n "$production_name" && "$production_name" != 'Holotapes production build' ]]; then
+            echo "Unrecognized production release title: $production_name" >&2
+            exit 1
           fi
+
+          # Keep a prepared draft until publication succeeds, including across
+          # retries after the old release was deleted. Drafts do not create tags.
+          if [[ -n "$pending_name" ]]; then
+            if [[ ! "$pending_name" =~ ^Build\ ([1-9][0-9]{0,4})$ ]]; then
+              echo "Unrecognized pending release title: $pending_name" >&2
+              exit 1
+            fi
+            pending_number=${BASH_REMATCH[1]}
+            if [[ -n "$production_name" && "$pending_number" -ne "$build_number" ]]; then
+              echo 'Pending build number does not follow the production release.' >&2
+              exit 1
+            fi
+            build_number=$pending_number
+          fi
+          if (( build_number > 99999 )); then
+            echo 'Production build numbering has reached Build 99999.' >&2
+            exit 1
+          fi
+
+          title="Build $build_number"
+          notes=$(printf 'Production build from %s\n\nBuilt at %s' "$GITHUB_SHA" "$(date -u +'%Y-%m-%d %H:%M:%S UTC')")
+          if [[ -n "$pending_name" ]]; then
+            gh release edit production-pending --title "$title" --notes "$notes" \
+              --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create production-pending --draft --target "$GITHUB_SHA" \
+              --title "$title" --notes "$notes" --repo "$GITHUB_REPOSITORY"
+          fi
+          # Finish uploading before replacing the public release. --clobber
+          # also replaces a partial/stale draft asset when retrying a failed run.
+          gh release upload production-pending pip-boy-3000-holotapes.zip \
+            --clobber --repo "$GITHUB_REPOSITORY"
+
+          # GitHub's source archives follow the tag, so move it to this commit.
+          # Tag pushes do not match this workflow's branches filter.
+          git -C "$GITHUB_WORKSPACE" tag -f production "$GITHUB_SHA"
+          git -C "$GITHUB_WORKSPACE" push -f origin refs/tags/production
+
+          # published_at is read-only. Replace the release, retaining the tag
+          # and download URL, then publish the prepared zip with a fresh date.
+          if [[ -n "$production_name" ]]; then
+            gh release delete production --yes --repo "$GITHUB_REPOSITORY"
+          fi
+          gh release edit production-pending --tag production --draft=false \
+            --latest=false --repo "$GITHUB_REPOSITORY"
