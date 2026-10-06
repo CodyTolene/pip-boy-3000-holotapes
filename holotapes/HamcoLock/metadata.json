@@ -2,7 +2,7 @@
   "id": "hamcolock",
   "name": "HAMCo Lock",
   "author": "@joemto20-tech",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A PIN lock screen for your Pip-Boy. Set a 4-digit access code, pick a faction logo, and choose whether it locks on startup, on wake from sleep, or both.",
   "icon": "storage/HAMCOLOCK.img",
   "previews": ["previews/SETTINGS.bmp"],
