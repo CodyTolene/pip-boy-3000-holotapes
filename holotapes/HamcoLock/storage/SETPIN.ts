@@ -58,7 +58,7 @@
     h.drawString(text, x, y);
   }
   function resetDigits(): void {
-    digits = 0 as never;
+    digits = [0, 0, 0, 0];
     slot = 0;
   }
   function draw(): void {
