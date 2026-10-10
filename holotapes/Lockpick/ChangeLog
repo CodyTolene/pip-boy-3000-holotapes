@@ -1,0 +1,8 @@
+1.0.0 (2026-10-05)
+- Initial release of Lockpick, with five lock levels, breakable bobby pins, forcing, and saved progress.
+- Use only the SCROLL, TAB and SELECT UI sounds, which every firmware provides.
+- Each new bobby pin starts at the top of the lock.
+- The outer ring of the lock shakes harder the closer the pin is to breaking.
+- The right wheel moves the bobby pin and turning the left wheel either way tries the lock.
+- Runs: start with 8 pins, earn pins and score by picking locks, and the run ends when the pins run out. Best score is saved.
+- Very Easy locks pay score but no pins.
