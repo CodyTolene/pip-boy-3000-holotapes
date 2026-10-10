@@ -1,0 +1,18 @@
+{
+  "id": "atomic-slots",
+  "name": "Atomic Slots",
+  "author": "@Radiomaru7",
+  "version": "1.0.0",
+  "description": "A three-reel casino slot machine that plays for caps, with a saved wallet and best win.",
+  "icon": "storage/ATOMIC-SLOTS.png",
+  "previews": ["previews/MACHINE.png", "previews/PAYOUTS.png"],
+  "type": "game",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/ATOMIC_SLOTS/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
+  "storageOptional": []
+}
