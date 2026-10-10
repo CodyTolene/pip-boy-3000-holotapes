@@ -1,3 +1,6 @@
+1.1.0 (2026-10-09)
+- Secret Tumbler mode, unlocked by cleanly picking a Very Hard lock: a realistic pin-tumbler lock with binding order, tension, oversetting and spool pins.
+
 1.0.0 (2026-10-05)
 - Initial release of Lockpick, with five lock levels, breakable bobby pins, forcing, and saved progress.
 - Use only the SCROLL, TAB and SELECT UI sounds, which every firmware provides.

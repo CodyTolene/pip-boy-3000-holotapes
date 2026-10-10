@@ -13,6 +13,11 @@
     IDLE_MS: 260,
     START_PINS: 8,
     D2R: 0.0174533,
+    TUMBLER: 'HOLO/LOCKPICK/TUMBLER.JS',
+    // Tumbler mode per lock level: pin stacks, spool pins, spool slack.
+    T_PINS: [3, 4, 5, 5, 6],
+    T_SPOOLS: [0, 0, 0, 1, 2],
+    T_TOL: [2, 2, 1, 1, 1],
   };
   const LEVELS: LockpickLevel[] = [
     { name: 'VERY EASY', tol: 22, hp: 6, force: 90, pts: 1, win: 0 },
@@ -25,10 +30,23 @@
   // Scratch buffer for polygons, reused to avoid allocating every frame.
   const pts = new Float32Array(8);
 
-  let save: LockpickSave = { p: C.START_PINS, n: 0, s: 0, b: 0, d: 2 };
+  let save: LockpickSave = {
+    p: C.START_PINS,
+    n: 0,
+    s: 0,
+    b: 0,
+    d: 2,
+    u: 0,
+    m: 0,
+  };
 
-  // 0 menu, 1 picking, 2 unlocked, 3 pin snapped, 4 jammed, 5 run over.
+  // 0 menu, 1 picking, 2 unlocked, 3 pin snapped, 4 jammed, 5 run over,
+  // 6 in the Tumbler scene, 7 Tumbler lock opened.
   let phase = 0;
+  // Menu cursor: 0-4 lock levels, 5 the mode switch once unlocked.
+  let sel = 0;
+  let scene: LockpickTumblerScene | undefined;
+  let secret = false;
   let sweet = 0;
   let pinAng = 90;
   let lockAng = 0;
@@ -48,6 +66,8 @@
       if (s.n >= 0) save.n = s.n;
       if (s.s >= 0) save.s = s.s;
       if (s.b >= 0) save.b = s.b;
+      if (s.u === 1) save.u = 1;
+      if (s.m === 1) save.m = 1;
       if (s.d >= 0 && s.d < LEVELS.length) save.d = s.d;
     } catch (e) {
       // Corrupt save: keep the defaults.
@@ -208,32 +228,38 @@
 
   function drawMenu(): void {
     let i = 0;
+    let y = 0;
     h.setBgColor(0).clear();
-    drawHeader('SELECT LOCK');
+    drawHeader(save.m ? 'TUMBLER MODE' : 'SELECT LOCK');
     h.setColor(2)
       .setFontMonofonto16()
       .setFontAlign(0, -1)
       .drawString(
         'PINS ' + save.p + '    SCORE ' + save.s + '    BEST ' + save.b,
         240,
-        52,
+        48,
       );
-    for (i = 0; i < LEVELS.length; i++) {
-      if (i === save.d) {
-        h.setColor(3).fillRect(140, 88 + i * 34, 340, 116 + i * 34);
+    for (i = 0; i < (save.u ? 6 : 5); i++) {
+      y = 92 + i * 30;
+      if (i === sel) {
+        h.setColor(3).fillRect(130, y - 13, 350, y + 13);
         h.setColor(0);
       } else {
-        h.setColor(3);
+        h.setColor(i === 5 ? 2 : 3);
       }
       h.setFontMonofonto23()
         .setFontAlign(0, 0)
-        .drawString(LEVELS[i].name, 240, 103 + i * 34);
+        .drawString(
+          i < 5 ? LEVELS[i].name : save.m ? 'MODE: TUMBLER' : 'MODE: CLASSIC',
+          240,
+          y,
+        );
     }
     h.setColor(2)
       .setFontMonofonto14()
       .setFontAlign(0, -1)
-      .drawString('TURN LEFT WHEEL TO CHOOSE, PRESS TO START', 240, 268)
-      .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 288);
+      .drawString('TURN LEFT WHEEL TO CHOOSE, PRESS TO START', 240, 274)
+      .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 292);
   }
 
   // End of a run: the last bobby pin is gone.
@@ -305,6 +331,11 @@
       save.p += LEVELS[save.d].win;
       save.s += LEVELS[save.d].pts;
       if (save.s > save.b) save.b = save.s;
+      // Picking a Very Hard lock cleanly reveals the secret Tumbler mode.
+      if (save.d === 4 && !save.u) {
+        save.u = 1;
+        secret = true;
+      }
     }
     store();
     Pip.playSound('SELECT');
@@ -318,8 +349,82 @@
             ? '+' + LEVELS[save.d].win + ' PINS   +'
             : 'NO PINS   +') +
             LEVELS[save.d].pts +
-            ' SCORE\nPRESS FOR NEXT LOCK',
+            (secret
+              ? ' SCORE\nTUMBLER MODE UNLOCKED!'
+              : ' SCORE\nPRESS FOR NEXT LOCK'),
     );
+    secret = false;
+  }
+
+  function drawTumblerWin(): void {
+    h.setBgColor(0).clear();
+    drawHeader('TUMBLER ' + LEVELS[save.d].name);
+    h.setColor(3)
+      .setFontMonofonto28()
+      .setFontAlign(0, 0)
+      .drawString('LOCK OPENED', 240, 96)
+      .setFontMonofonto23()
+      .drawString(
+        (LEVELS[save.d].win ? '+' + LEVELS[save.d].win + ' PINS   ' : '') +
+          '+' +
+          LEVELS[save.d].pts * 2 +
+          ' SCORE',
+        240,
+        146,
+      )
+      .setColor(2)
+      .drawString('PINS ' + save.p + '   SCORE ' + save.s, 240, 190)
+      .setFontMonofonto14()
+      .drawString('PRESS LEFT WHEEL FOR THE NEXT LOCK', 240, 268)
+      .drawString('HOLD LEFT WHEEL FOR THE MENU', 240, 288);
+  }
+
+  // Leaves the Tumbler scene: 0 back to the menu, 1 opened, 2 out of pins.
+  function endTumbler(result: number): void {
+    if (scene) scene.remove();
+    scene = undefined;
+    process.memory(true);
+    Pip.onExclusive('knob1', onKnob1);
+    Pip.onExclusive('knob2', onKnob2);
+    if (result === 2) {
+      phase = 5;
+      drawRunOver();
+      return;
+    }
+    if (result === 1) {
+      // Tumbler locks pay double score; pins found are the same.
+      save.n++;
+      save.p += LEVELS[save.d].win;
+      save.s += LEVELS[save.d].pts * 2;
+      if (save.s > save.b) save.b = save.s;
+      store();
+      phase = 7;
+      drawTumblerWin();
+      return;
+    }
+    store();
+    phase = 0;
+    drawMenu();
+  }
+
+  // Loads the Tumbler scene from the SD card only while it is in use.
+  function startTumbler(): void {
+    phase = 6;
+    E.defrag();
+    scene = (eval(fs.readFileSync(C.TUMBLER)) as LockpickTumblerFactory)({
+      name: LEVELS[save.d].name,
+      pins: C.T_PINS[save.d],
+      spools: C.T_SPOOLS[save.d],
+      tol: C.T_TOL[save.d],
+      hp: LEVELS[save.d].hp,
+      hint: save.d < 2,
+      snap: function (): number {
+        save.p--;
+        store();
+        return save.p;
+      },
+      end: endTumbler,
+    });
   }
 
   function forceLock(): void {
@@ -376,15 +481,37 @@
   function onKnob1(dir: KnobDirection, long?: boolean): void {
     if (phase === 0) {
       if (dir) {
-        save.d = E.clip(save.d + dir, 0, LEVELS.length - 1);
+        sel = E.clip(sel + dir, 0, save.u ? 5 : 4);
+        if (sel < 5) save.d = sel;
         Pip.playSound('SCROLL');
         drawMenu();
         return;
       }
-      store();
       Pip.playSound('TAB');
+      if (sel === 5) {
+        save.m = save.m ? 0 : 1;
+        store();
+        drawMenu();
+        return;
+      }
+      store();
+      if (save.m) {
+        startTumbler();
+        return;
+      }
       newLock();
       drawGame();
+      return;
+    }
+    if (phase === 7) {
+      if (dir) return;
+      Pip.playSound('TAB');
+      if (long) {
+        phase = 0;
+        drawMenu();
+      } else {
+        startTumbler();
+      }
       return;
     }
     if (phase === 2 || phase === 4) {
@@ -432,6 +559,7 @@
   // Init. A save left with no pins (the app was closed on the last snap)
   // starts a fresh run.
   load();
+  sel = save.d;
   if (save.p <= 0) {
     save.p = C.START_PINS;
     save.n = 0;
@@ -447,6 +575,7 @@
     notDefault: true,
     fullscreen: true,
     remove: function (): void {
+      if (scene) scene.remove();
       clearInterval(tick);
       if (msgTimer) clearTimeout(msgTimer);
       Pip.removeListener('knob1', onKnob1);
