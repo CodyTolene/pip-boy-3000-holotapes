@@ -1,3 +1,6 @@
+2.2.3 (2026-10-12)
+- Fixed a blinking cursor that stayed on screen after skipping the startup sequence.
+
 2.2.2
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/92
 - Quick patch to support the new Pip-Boy OS v1.1.6 update regarding persistent audio.

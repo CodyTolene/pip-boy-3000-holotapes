@@ -21,6 +21,14 @@
 
   let done = false;
 
+  const origSetInterval = setInterval;
+  const typeIntervals: number[] = [];
+  global.setInterval = function (fn: () => void, ms: number): number {
+    const id = origSetInterval(fn, ms);
+    typeIntervals.push(id);
+    return id;
+  } as typeof setInterval;
+
   function finishIntro(): void {
     if (done) return;
     done = true;
@@ -42,6 +50,8 @@
       clearTimeout(Pip.timers.typeText);
       Pip.timers.typeText = 0;
     }
+    global.setInterval = origSetInterval;
+    while (typeIntervals.length) clearInterval(typeIntervals.pop());
     Pip.removeListener('knob1', onKnob1);
     Pip.removeListener('knob2', onKnob2);
   }
