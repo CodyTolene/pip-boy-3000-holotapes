@@ -1,2 +1,6 @@
-1.0.0 (2026-10-09)
-- Initial release of Holotape Case: launch any holotape, favourites, letter jumping, and storing holotapes out of ITEMS > MISC.
+1.1.0 (2026-10-12)
+- Hides holotapes from ITEMS > MISC with a CFW patch instead of moving .info files, so pip-boy.com still sees every holotape.
+- Changes show the next time ITEMS > MISC opens, without a reboot.
+- "Store all others" is now "Hide all but favourites".
+- Tapes stored by 1.0 are moved back into APPINFO and kept hidden.
+

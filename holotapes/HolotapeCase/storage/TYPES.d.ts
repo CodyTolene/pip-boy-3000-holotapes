@@ -8,7 +8,7 @@ interface CaseTape {
   i: string;
   /** The .info file's own name. */
   f: string;
-  /** 1 when stored in the case (hidden from ITEMS > MISC). */
+  /** 1 when hidden from ITEMS > MISC. */
   h: number;
   /** 1 when marked as a favourite. */
   v: number;
@@ -25,3 +25,6 @@ interface CaseInfo {
   /** Icon image path. */
   icon?: string;
 }
+
+/** The firmware's MISC screen: JS/MISC.JS evaluates to one of these. */
+type MiscScreen = (params: object) => HolotapeApp;

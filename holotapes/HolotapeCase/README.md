@@ -2,8 +2,8 @@
 
 With fifty holotapes installed, ITEMS > MISC gets long. Holotape Case lists
 every holotape on the card in one place, alphabetical with favourites on top,
-and plays any of them. It can also store holotapes in the case so they stop
-crowding ITEMS > MISC, and put them back whenever you like.
+and plays any of them. It can also hide holotapes so they stop crowding ITEMS >
+MISC, and show them again whenever you like.
 
 ### Info
 
@@ -13,31 +13,34 @@ crowding ITEMS > MISC, and put them back whenever you like.
 
 ### Controls
 
-| Input                | Action                                              |
-| -------------------- | --------------------------------------------------- |
-| Left wheel (rotate)  | Scroll the list                                     |
-| Right wheel (rotate) | Jump to the next or previous letter                 |
-| Left wheel (press)   | Play the highlighted holotape                       |
-| Left wheel (hold)    | Actions: favourite, store / show, store or show all |
-| STATS, ITEMS or DATA | Leave the holotape                                  |
+| Input                | Action                                            |
+| -------------------- | ------------------------------------------------- |
+| Left wheel (rotate)  | Scroll the list                                   |
+| Right wheel (rotate) | Jump to the next or previous letter               |
+| Left wheel (press)   | Play the highlighted holotape                     |
+| Left wheel (hold)    | Actions: favourite, hide / show, hide or show all |
+| STATS, ITEMS or DATA | Leave the holotape                                |
 
-### Storing holotapes
+### Hiding holotapes from ITEMS > MISC
 
-ITEMS > MISC is built from the `.info` files in `APPINFO/` when the Pip-Boy
-boots. Storing a holotape moves its `.info` file into
-`HOLO/HOLOTAPE_CASE/STORED/`, so after a reboot it no longer appears in ITEMS >
-MISC, but it is still listed and playable here. Showing it moves the file back.
-Nothing else is touched: the holotape's own files stay where they are.
+ITEMS > MISC lists every `.info` file in `APPINFO/` each time you open it.
+Holotape Case comes with a small patch, `CFW/52_RADIOMARU_MISC.JS`, that the
+pip-boy.com bootloader runs at every boot. While the MISC screen builds its
+list, the patch leaves out the holotapes you have hidden. Nothing is moved or
+deleted, so pip-boy.com and other apps still see every holotape as installed.
 
-**Store all others** is the quick tidy-up: everything except the highlighted
-holotape (and the case itself) goes into the case. **Show all in MISC** puts
-everything back.
+- **Hide from MISC** / **Show in ITEMS > MISC** toggles the highlighted tape.
+- **Hide all but favourites** is the quick tidy-up: only your favourites (and
+  the case itself) stay in ITEMS > MISC.
+- **Show all in MISC** puts everything back.
 
-Reboot after storing or showing to see the change in ITEMS > MISC.
+Changes show up the next time you open ITEMS > MISC; no reboot needed. The patch
+itself takes effect after a reboot, and without it nothing is hidden. The hidden
+list is saved in `HOLO/HOLOTAPE_CASE/HIDDEN.JSON`.
 
-**Before installing, updating or removing holotapes on pip-boy.com, use Show all
-in MISC first.** The website finds installed holotapes by their `.info` files in
-`APPINFO/`, so a stored holotape looks uninstalled to it.
+Version 1.0 hid tapes by moving their `.info` files into
+`HOLO/HOLOTAPE_CASE/STORED/`. Version 1.1 moves any it finds there back into
+`APPINFO/` and keeps them hidden.
 
 Favourites are saved in `HOLO/HOLOTAPE_CASE/FAVS.JSON`.
 

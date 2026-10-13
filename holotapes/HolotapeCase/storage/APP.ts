@@ -1,8 +1,11 @@
 (function (): HolotapeApp {
   const C = {
     LIVE: 'APPINFO',
+    // Where 1.0 moved stored tapes; 1.1 moves any found there back.
     STORE: 'HOLO/HOLOTAPE_CASE/STORED',
     FAVS: 'HOLO/HOLOTAPE_CASE/FAVS.JSON',
+    HIDDEN: 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON',
+    PATCH: 'CFW/52_RADIOMARU_MISC.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
     ROWS: 9,
     ROW_H: 24,
@@ -10,7 +13,7 @@
     ACTIONS: [
       'FAVOURITE',
       'MISC',
-      'STORE ALL OTHERS',
+      'HIDE ALL BUT FAVOURITES',
       'SHOW ALL IN MISC',
       'BACK',
     ],
@@ -18,6 +21,9 @@
 
   let tapes: CaseTape[] = [];
   let favs: string[] = [];
+  // Upper-case .info names hidden from ITEMS > MISC by the CFW patch.
+  let hidden: string[] = [];
+  let patched = false;
   let sel = 0;
   let top = 0;
   // Action menu over the list: -1 closed, else the highlighted action.
@@ -42,7 +48,53 @@
     fs.writeFileSync(C.FAVS, JSON.stringify(favs));
   }
 
-  function list(dir: string, hidden: number): void {
+  function loadHidden(): void {
+    if (!fs.statSync(C.HIDDEN)) return;
+    try {
+      hidden = JSON.parse(fs.readFileSync(C.HIDDEN)) as string[];
+    } catch (e) {
+      hidden = [];
+    }
+  }
+
+  function saveHidden(): void {
+    fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
+  }
+
+  // Version 1.0 hid tapes by moving their .info files into the case. Put any
+  // still there back in APPINFO, marked hidden, so nothing is out of place.
+  function migrate(): void {
+    let i = 0;
+    let names: string[] = [];
+    let ok = false;
+    if (!fs.statSync(C.STORE)) return;
+    try {
+      names = fs.readdirSync(C.STORE);
+    } catch (e) {
+      return;
+    }
+    for (i = 0; i < names.length; i++) {
+      if (!isInfo(names[i])) continue;
+      try {
+        ok = fs.rename(C.STORE + '/' + names[i], C.LIVE + '/' + names[i]);
+      } catch (e) {
+        ok = false;
+      }
+      if (!ok) {
+        fs.writeFileSync(
+          C.LIVE + '/' + names[i],
+          fs.readFileSync(C.STORE + '/' + names[i]),
+        );
+        fs.unlink(C.STORE + '/' + names[i]);
+      }
+      if (hidden.indexOf(names[i].toUpperCase()) < 0) {
+        hidden.push(names[i].toUpperCase());
+      }
+    }
+    saveHidden();
+  }
+
+  function list(dir: string): void {
     let i = 0;
     let names: string[] = [];
     let info!: CaseInfo;
@@ -64,7 +116,7 @@
         s: info.src,
         i: info.icon || '',
         f: names[i],
-        h: hidden,
+        h: hidden.indexOf(names[i].toUpperCase()) >= 0 ? 1 : 0,
         v: favs.indexOf(names[i]) >= 0 ? 1 : 0,
       });
     }
@@ -73,9 +125,7 @@
   // Favourites first, then alphabetical.
   function scan(): void {
     tapes = [];
-    if (!fs.statSync(C.STORE)) fs.mkdir(C.STORE);
-    list(C.LIVE, 0);
-    list(C.STORE, 1);
+    list(C.LIVE);
     tapes.sort(function (a: CaseTape, b: CaseTape): number {
       if (a.v !== b.v) return b.v - a.v;
       return a.n < b.n ? -1 : a.n > b.n ? 1 : 0;
@@ -83,23 +133,13 @@
     sel = E.clip(sel, 0, Math.max(0, tapes.length - 1));
   }
 
-  // Moves a tape's .info between APPINFO (shown in ITEMS > MISC) and the
-  // case's store (hidden). The firmware only reads APPINFO at boot.
-  function move(t: CaseTape, hide: number): void {
-    const from = (t.h ? C.STORE : C.LIVE) + '/' + t.f;
-    const to = (hide ? C.STORE : C.LIVE) + '/' + t.f;
+  // Hides a tape from ITEMS > MISC, or shows it again. Only the hidden list
+  // changes; the .info file stays in APPINFO.
+  function setHidden(t: CaseTape, hide: number): void {
+    const k = hidden.indexOf(t.f.toUpperCase());
     if (t.h === hide) return;
-    let ok = false;
-    try {
-      ok = fs.rename(from, to);
-    } catch (e) {
-      ok = false;
-    }
-    if (!ok) {
-      // No rename on this firmware: copy, then remove the original.
-      fs.writeFileSync(to, fs.readFileSync(from));
-      fs.unlink(from);
-    }
+    if (hide && k < 0) hidden.push(t.f.toUpperCase());
+    if (!hide && k >= 0) hidden.splice(k, 1);
     t.h = hide;
     changed = true;
   }
@@ -142,7 +182,15 @@
       .drawString(h.wrapString(t.n, 160).slice(0, 3).join('\n'), 322, 178)
       .setColor(2)
       .setFontMonofonto14()
-      .drawString(t.h ? 'STORED IN CASE' : 'IN ITEMS > MISC', 322, 230)
+      .drawString(
+        t.h
+          ? patched
+            ? 'HIDDEN FROM MISC'
+            : 'HIDDEN (NEEDS PATCH)'
+          : 'IN ITEMS > MISC',
+        322,
+        230,
+      )
       .drawString(t.v ? 'FAVOURITE' : '', 322, 246);
   }
 
@@ -174,13 +222,15 @@
       .setFontMonofonto14()
       .setFontAlign(0, -1)
       .drawString(
-        changed
-          ? 'REBOOT THE PIP-BOY TO UPDATE ITEMS > MISC'
-          : 'L TURN: SCROLL   R TURN: NEXT LETTER   L PRESS: PLAY',
+        !patched
+          ? 'COPY CFW/52_RADIOMARU_MISC.JS AND REBOOT TO HIDE TAPES'
+          : changed
+            ? 'ITEMS > MISC IS UPDATED NEXT TIME YOU OPEN IT'
+            : 'L TURN: SCROLL   R TURN: NEXT LETTER   L PRESS: PLAY',
         240,
         272,
       )
-      .drawString('L HOLD: FAVOURITE / STORE / SHOW', 240, 292);
+      .drawString('L HOLD: FAVOURITE / HIDE / SHOW', 240, 292);
   }
 
   function drawActions(): void {
@@ -198,7 +248,7 @@
     for (i = 0; i < C.ACTIONS.length; i++) {
       label = C.ACTIONS[i];
       if (i === 0) label = t && t.v ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
-      if (i === 1) label = t && t.h ? 'SHOW IN ITEMS > MISC' : 'STORE IN CASE';
+      if (i === 1) label = t && t.h ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
       if (i === act) {
         h.setColor(3).fillRect(80, 108 + i * 26, 400, 130 + i * 26);
         h.setColor(0);
@@ -242,12 +292,14 @@
       else favs.push(t.f);
       saveFavs();
     } else if (act === 1 && t) {
-      move(t, t.h ? 0 : 1);
+      setHidden(t, t.h ? 0 : 1);
     } else if (act === 2) {
-      for (i = 0; i < tapes.length; i++) if (i !== sel) move(tapes[i], 1);
+      for (i = 0; i < tapes.length; i++)
+        setHidden(tapes[i], tapes[i].v ? 0 : 1);
     } else if (act === 3) {
-      for (i = 0; i < tapes.length; i++) move(tapes[i], 0);
+      for (i = 0; i < tapes.length; i++) setHidden(tapes[i], 0);
     }
+    if (changed) saveHidden();
     act = -1;
     scan();
     // Keep the same tape selected after the list re-sorts.
@@ -302,6 +354,9 @@
 
   // Init.
   loadFavs();
+  loadHidden();
+  migrate();
+  patched = !!fs.statSync(C.PATCH);
   scan();
   draw();
   Pip.onExclusive('knob1', onKnob1);
