@@ -43,6 +43,9 @@
   let flash = 0;
 
   let tick!: number;
+  // Art from the Pip-Boy's own data: a real bottle cap, and Vault Boy (Luck).
+  let capArt: string | undefined;
+  let luckArt: string | undefined;
 
   function build(): void {
     let i = 0;
@@ -85,6 +88,37 @@
 
   function store(): void {
     fs.writeFileSync(C.SAVE, JSON.stringify(save));
+  }
+
+  // Reads one picture from the Pip-Boy's own game data (DATA/F3 or DATA/NV),
+  // by the record id used in both games. Undefined if it is not there.
+  function art(cat: string, id: number): string | undefined {
+    const dir = 'DATA/' + (NV ? 'NV' : 'F3') + '/' + cat;
+    let f: EspruinoFile | undefined;
+    let r!: ArtRecord;
+    let img: string | Uint8Array | undefined;
+    try {
+      f = E.openFile(dir + '.DAT', 'r');
+      const head = new Uint32Array(E.toArrayBuffer(f.read(8) || ''));
+      const ids = new Uint32Array(E.toArrayBuffer(f.read(4 * head[0]) || ''));
+      const k = ids.indexOf(id);
+      if (k >= 0) {
+        f.seek(8 + 4 * head[0] + k * head[1]);
+        const t = String(f.read(head[1]));
+        r = JSON.parse(t.indexOf('\0') >= 0 ? t.slice(0, t.indexOf('\0')) : t);
+      }
+      f.close();
+      f = undefined;
+      if (!r || !r.il) return undefined;
+      f = E.openFile(dir + '.IMG', 'r');
+      f.seek(r.io || 0);
+      img = f.read(r.il);
+      f.close();
+    } catch (e) {
+      if (f) f.close();
+      return undefined;
+    }
+    return typeof img === 'string' ? img : undefined;
   }
 
   // Copies n points from src (starting at float index off) into out,
@@ -130,6 +164,8 @@
         .fillPoly(place(bell, 0, 8, x, y, o16))
         .fillCircle(x, y + 17, 4)
         .fillRect(x - 2, y - 24, x + 2, y - 20);
+    } else if (id === 4 && capArt) {
+      h.drawImage(capArt, x - 28, y - 18, { scale: 0.5 });
     } else if (id === 4) {
       h.setColor(3)
         .fillPoly(place(cap, 0, 16, x, y, o32))
@@ -198,6 +234,11 @@
       .drawString('CAPS ' + save.caps, 468, 8)
       .setColor(2)
       .drawLine(0, 33, 479, 33);
+    if (capArt) {
+      h.drawImage(capArt, 462 - h.stringWidth('CAPS ' + save.caps) - 36, 6, {
+        scale: 0.3,
+      });
+    }
     h.clearRect(0, 240, 479, 276)
       .setColor(3)
       .setFontMonofonto23()
@@ -271,6 +312,7 @@
       .setFontMonofonto14()
       .setFontAlign(0, -1)
       .drawString('PRESS LEFT WHEEL TO RETURN', 240, 292);
+    if (luckArt) h.drawImage(luckArt, 372, 96, { scale: 0.85 });
   }
 
   function drawBroke(): void {
@@ -404,6 +446,9 @@
   // Init.
   build();
   load();
+  // Same record ids in Fallout 3 and New Vegas: Bottle Cap, and Luck.
+  capArt = art('MISC', 0xf);
+  luckArt = art('SPECIAL', 0x3ee);
   pos[0] = 0;
   pos[1] = 9;
   pos[2] = 17;

@@ -7,3 +7,11 @@ interface AtomicSlotsSave {
   /** Biggest single win so far, in caps. */
   best: number;
 }
+
+/** The part of a game-data record that says where its picture is. */
+interface ArtRecord {
+  /** Offset of the picture in the matching .IMG file. */
+  io?: number;
+  /** Length of the picture in bytes. */
+  il?: number;
+}

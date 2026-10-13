@@ -1,2 +1,5 @@
+1.1.0 (2026-10-12)
+- The CAP symbol and the caps counter use a real bottle cap, and the payout table shows Vault Boy (Luck), drawn from the Pip-Boy's own game data in Fallout 3 or New Vegas mode. Falls back to the plain look if the data is missing.
+
 1.0.0 (2026-10-05)
 - Initial release of Atomic Slots, a three-reel slot machine with five bet sizes, a payout table, and a saved wallet.
