@@ -1,3 +1,6 @@
+1.2.0 (2026-10-12)
+- Draws Vault Boy picking a lock and a real bobby pin from the Pip-Boy's own game data (Fallout 3 or New Vegas mode) on the menu, the lock screen and the run-over screen. Falls back to the plain look if the data is missing.
+
 1.1.0 (2026-10-09)
 - Secret Tumbler mode, unlocked by cleanly picking a Very Hard lock: a realistic pin-tumbler lock with binding order, tension, oversetting and spool pins.
 

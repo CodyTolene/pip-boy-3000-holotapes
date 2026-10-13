@@ -60,3 +60,11 @@ interface LockpickTumblerScene {
 
 /** Shape of TUMBLER.JS once evaluated. */
 type LockpickTumblerFactory = (api: LockpickTumblerApi) => LockpickTumblerScene;
+
+/** The part of a game-data record that says where its picture is. */
+interface ArtRecord {
+  /** Offset of the picture in the matching .IMG file. */
+  io?: number;
+  /** Length of the picture in bytes. */
+  il?: number;
+}

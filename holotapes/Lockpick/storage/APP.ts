@@ -57,6 +57,9 @@
 
   let tick!: number;
   let msgTimer: number | undefined;
+  // Art from the Pip-Boy's own data: Vault Boy picking a lock, a bobby pin.
+  let boyArt: string | undefined;
+  let pinArt: string | undefined;
 
   function load(): void {
     if (!fs.statSync(C.SAVE)) return;
@@ -76,6 +79,37 @@
 
   function store(): void {
     fs.writeFileSync(C.SAVE, JSON.stringify(save));
+  }
+
+  // Reads one picture from the Pip-Boy's own game data (DATA/F3 or DATA/NV),
+  // by the record id used in both games. Undefined if it is not there.
+  function art(cat: string, id: number): string | undefined {
+    const dir = 'DATA/' + (NV ? 'NV' : 'F3') + '/' + cat;
+    let f: EspruinoFile | undefined;
+    let r!: ArtRecord;
+    let img: string | Uint8Array | undefined;
+    try {
+      f = E.openFile(dir + '.DAT', 'r');
+      const head = new Uint32Array(E.toArrayBuffer(f.read(8) || ''));
+      const ids = new Uint32Array(E.toArrayBuffer(f.read(4 * head[0]) || ''));
+      const k = ids.indexOf(id);
+      if (k >= 0) {
+        f.seek(8 + 4 * head[0] + k * head[1]);
+        const t = String(f.read(head[1]));
+        r = JSON.parse(t.indexOf('\0') >= 0 ? t.slice(0, t.indexOf('\0')) : t);
+      }
+      f.close();
+      f = undefined;
+      if (!r || !r.il) return undefined;
+      f = E.openFile(dir + '.IMG', 'r');
+      f.seek(r.io || 0);
+      img = f.read(r.il);
+      f.close();
+    } catch (e) {
+      if (f) f.close();
+      return undefined;
+    }
+    return typeof img === 'string' ? img : undefined;
   }
 
   // How far the lock may turn for the current pin position, 0 to 90.
@@ -184,7 +218,7 @@
       .setFontMonofonto14()
       .setFontAlign(-1, -1)
       .drawString('LOCK', 8, 44)
-      .drawString('BOBBY PINS', 388, 44)
+      .drawString(pinArt ? '' : 'BOBBY PINS', 388, 44)
       .drawString('SCORE', 388, 108)
       .drawString('BEST', 388, 168)
       .drawString('L TURN:\n LOCK\nL HOLD:\n FORCE\nL PRESS:\n MENU', 8, 212)
@@ -193,10 +227,11 @@
       .setFontMonofonto16()
       .drawString(LEVELS[save.d].name.replace(' ', '\n'), 8, 62)
       .setFontMonofonto28()
-      .drawString(String(save.p), 388, 62)
+      .drawString(String(save.p), 388, pinArt ? 68 : 62)
       .drawString(String(save.s), 388, 126)
       .setFontMonofonto18()
       .drawString(String(save.b), 388, 186);
+    if (pinArt) h.drawImage(pinArt, 388, 40, { scale: 0.6 });
   }
 
   function drawHeader(text: string): void {
@@ -260,6 +295,8 @@
       .setFontAlign(0, -1)
       .drawString('TURN LEFT WHEEL TO CHOOSE, PRESS TO START', 240, 274)
       .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 292);
+    if (boyArt) h.drawImage(boyArt, 10, 128, { scale: 0.82 });
+    if (pinArt) h.drawImage(pinArt, 364, 140, { scale: 0.75 });
   }
 
   // End of a run: the last bobby pin is gone.
@@ -279,6 +316,8 @@
       .setColor(2)
       .setFontMonofonto14()
       .drawString('PRESS LEFT WHEEL FOR A NEW RUN', 240, 280);
+    if (boyArt) h.drawImage(boyArt, 10, 112, { scale: 0.75 });
+    if (pinArt) h.drawImage(pinArt, 372, 150, { scale: 0.68 });
   }
 
   function drawGame(): void {
@@ -559,6 +598,9 @@
   // Init. A save left with no pins (the app was closed on the last snap)
   // starts a fresh run.
   load();
+  // Same record ids in Fallout 3 and New Vegas: Lockpick skill, Bobby Pin.
+  boyArt = art('SKILLS', 0x4b4);
+  pinArt = art('MISC', 0xa);
   sel = save.d;
   if (save.p <= 0) {
     save.p = C.START_PINS;
