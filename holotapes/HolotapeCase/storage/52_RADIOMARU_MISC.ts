@@ -9,6 +9,12 @@
 // while MISC.JS is building its list. Nothing is moved or deleted: APPINFO
 // keeps every .info file, so pip-boy.com and other apps still see them all.
 (function () {
+  // Status for the RM Check holotape.
+  const status = (global.RM_PATCH = global.RM_PATCH || {}) as Record<
+    string,
+    string
+  >;
+  status.misc = 'start';
   const HIDDEN = 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON';
   const origRead = fs.readFileSync;
   const origDir = fs.readdirSync;
@@ -57,4 +63,5 @@
     // The screen file is one function expression; hand it through the wrapper.
     return 'RM_wrapMisc(' + src.replace(/[;\s]+$/, '') + ')';
   };
+  status.misc = 'ok';
 })();
