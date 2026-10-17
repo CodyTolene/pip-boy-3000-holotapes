@@ -35,6 +35,10 @@ your holotapes in the same order, with Holotape Case first. Holotapes installed
 later go at the end. Until you first move or sort something, the case lists
 favourites first and then by file name, and ITEMS > MISC keeps its usual order.
 
+Atomic Command and Grelok count as the Pip-Boy's own holotapes. The case leaves
+them out, Hide all never hides them, and ITEMS > MISC lists them right after the
+case.
+
 ### Hiding holotapes from ITEMS > MISC
 
 ITEMS > MISC lists every `.info` file in `APPINFO/` each time you open it.

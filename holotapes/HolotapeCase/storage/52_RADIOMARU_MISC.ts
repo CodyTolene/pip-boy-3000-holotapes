@@ -19,6 +19,9 @@
   const HIDDEN = 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON';
   const ORDER = 'HOLO/HOLOTAPE_CASE/ORDER.JSON';
   const SELF = 'HOLOTAPE-CASE.INFO';
+  // Holotapes treated like the Pip-Boy's own: never hidden, listed first with
+  // the case. Keep in step with C.STOCK in APP.ts.
+  const STOCK = ['ATOMIC.INFO', 'GRELOK.INFO'];
   const origRead = fs.readFileSync;
   const origDir = fs.readdirSync;
   let inMisc = false;
@@ -41,7 +44,8 @@
     const hide = readList(HIDDEN);
     const order = readList(ORDER);
     const shown = names.filter(function (n: string): boolean {
-      return hide.indexOf(n.toUpperCase()) < 0;
+      const u = n.toUpperCase();
+      return STOCK.indexOf(u) >= 0 || hide.indexOf(u) < 0;
     });
     if (!order.length) return shown;
     // The case first, then the case's order; anything new keeps its place at
@@ -49,7 +53,7 @@
     const rank: number[] = shown.map(function (n: string, i: number): number {
       const u = n.toUpperCase();
       const p = order.indexOf(u);
-      return u === SELF ? -1 : p < 0 ? 100000 + i : p;
+      return u === SELF ? -2 : STOCK.indexOf(u) >= 0 ? -1 : p < 0 ? 100000 + i : p;
     });
     const idx: number[] = shown.map(function (n: string, i: number): number {
       return i;

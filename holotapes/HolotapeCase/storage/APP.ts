@@ -9,6 +9,9 @@
     ORDER: 'HOLO/HOLOTAPE_CASE/ORDER.JSON',
     PATCH: 'CFW/52_RADIOMARU_MISC.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
+    // Holotapes treated like the Pip-Boy's own: left out of the case, never
+    // hidden. Keep in step with STOCK in 52_RADIOMARU_MISC.ts.
+    STOCK: ['ATOMIC.INFO', 'GRELOK.INFO'],
     // The Pip-Boy's own list: same width as ITEMS > MISC.
     LIST_W: 185,
     // Right-hand panel, beside the list.
@@ -172,7 +175,13 @@
     }
     files = [];
     for (i = 0; i < all.length; i++) {
-      if (isInfo(all[i]) && all[i].toUpperCase() !== C.SELF) files.push(all[i]);
+      if (
+        isInfo(all[i]) &&
+        all[i].toUpperCase() !== C.SELF &&
+        C.STOCK.indexOf(all[i].toUpperCase()) < 0
+      ) {
+        files.push(all[i]);
+      }
     }
     all = [];
     flags = new Uint8Array(files.length);
