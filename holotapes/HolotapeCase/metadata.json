@@ -4,7 +4,7 @@
   "author": "@Radiomaru7",
   "version": "1.4.0",
   "description": "A launcher for every holotape on the card, with favourites, and a way to tidy holotapes out of ITEMS > MISC.",
-  "icon": "storage/HOLOTAPE-CASE.png",
+  "icon": "storage/HOLOTAPE-CASE.img",
   "previews": ["previews/LIST.png", "previews/ACTIONS.png"],
   "type": "app",
   "readme": "README.md",
