@@ -34,6 +34,7 @@
   let act = -1;
   let actTape = -1;
   let launchTimer: number | undefined;
+  let actTimer: number | undefined;
   let cleanedUp = false;
 
   function isInfo(f: string): boolean {
@@ -213,7 +214,7 @@
       .setColor(2)
       .drawString(flags[k] & FAV ? 'FAVOURITE' : '', C.PX + 10, 208)
       .drawString(
-        changed ? 'MISC UPDATES NEXT TIME' : 'HOLD: FAVOURITE / HIDE',
+        changed ? 'MISC UPDATES NEXT TIME' : 'PRESS: OPTIONS  HOLD: PLAY',
         C.PX + 10,
         238,
       )
@@ -273,19 +274,31 @@
       render: function (item: PipScrollerItem): void {
         if (item && item.k !== undefined) drawPanel(item.k);
       },
+      // Press opens the options; a hold plays the tape, so a stray press
+      // never starts a game by accident.
       onClick: function (i: number): void {
-        launch(i);
+        // The list redraws itself right after onClick, so open the options
+        // once it has finished.
+        actTimer = setTimeout(function (): void {
+          actTimer = undefined;
+          openActions(i);
+        }, 0);
       },
       onLongClick: function (i: number): void {
-        if (list) list.remove();
-        list = undefined;
-        actTape = i;
-        act = 0;
-        Pip.playSound('TAB');
-        Pip.onExclusive('knob1', onAction);
-        drawActions();
+        launch(i);
       },
     });
+  }
+
+  function openActions(i: number): void {
+    if (cleanedUp) return;
+    if (list) list.remove();
+    list = undefined;
+    actTape = i;
+    act = 0;
+    Pip.playSound('TAB');
+    Pip.onExclusive('knob1', onAction);
+    drawActions();
   }
 
   function doAction(): void {
@@ -325,6 +338,7 @@
     if (cleanedUp) return;
     cleanedUp = true;
     if (launchTimer) clearTimeout(launchTimer);
+    if (actTimer) clearTimeout(actTimer);
     if (list) list.remove();
     list = undefined;
     Pip.removeListener('knob1', onAction);

@@ -1,3 +1,6 @@
+1.2.1 (2026-10-17)
+- Press the left wheel for the options and hold it to play, so a stray press no longer starts a holotape.
+
 1.2.0 (2026-10-17)
 - Now a submenu of ITEMS > MISC built on the Pip-Boy's own scrolling list, with the ITEMS header and tabs, instead of a separate full-screen app.
 - Uses far less memory: only the .info file names are kept, and each tape's name and icon are read as its row comes on screen.

@@ -18,8 +18,8 @@ them again whenever you like.
 | -------------------- | ------------------------------------------------- |
 | Left wheel (rotate)  | Scroll the list                                   |
 | Right wheel (rotate) | Switch ITEMS tabs, as on any ITEMS screen         |
-| Left wheel (press)   | Play the highlighted holotape                     |
-| Left wheel (hold)    | Actions: favourite, hide / show, hide or show all |
+| Left wheel (press)   | Options: favourite, hide / show, hide or show all |
+| Left wheel (hold)    | Play the highlighted holotape                     |
 | STATS, ITEMS or DATA | Leave the case                                    |
 
 ### Hiding holotapes from ITEMS > MISC
