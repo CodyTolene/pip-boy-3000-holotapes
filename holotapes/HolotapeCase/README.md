@@ -1,9 +1,10 @@
 # Holotape Case
 
-With fifty holotapes installed, ITEMS > MISC gets long. Holotape Case lists
-every holotape on the card in one place, alphabetical with favourites on top,
-and plays any of them. It can also hide holotapes so they stop crowding ITEMS >
-MISC, and show them again whenever you like.
+With fifty holotapes installed, ITEMS > MISC gets long. Holotape Case is a
+submenu of ITEMS > MISC that lists every holotape on the card in the Pip-Boy's
+own list style, favourites on top (marked like equipped items), and plays any of
+them. It can also hide holotapes so they stop crowding ITEMS > MISC, and show
+them again whenever you like.
 
 ### Info
 
@@ -16,10 +17,10 @@ MISC, and show them again whenever you like.
 | Input                | Action                                            |
 | -------------------- | ------------------------------------------------- |
 | Left wheel (rotate)  | Scroll the list                                   |
-| Right wheel (rotate) | Jump to the next or previous letter               |
+| Right wheel (rotate) | Switch ITEMS tabs, as on any ITEMS screen         |
 | Left wheel (press)   | Play the highlighted holotape                     |
 | Left wheel (hold)    | Actions: favourite, hide / show, hide or show all |
-| STATS, ITEMS or DATA | Leave the holotape                                |
+| STATS, ITEMS or DATA | Leave the case                                    |
 
 ### Hiding holotapes from ITEMS > MISC
 

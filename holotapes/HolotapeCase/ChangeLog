@@ -1,5 +1,9 @@
-1.1.0 (2026-10-17)
-- Uses far less memory: only each tape's name and file name are kept, and the rest is read from its .info when needed, so a card with lots of holotapes no longer runs low.
+1.2.0 (2026-10-17)
+- Now a submenu of ITEMS > MISC built on the Pip-Boy's own scrolling list, with the ITEMS header and tabs, instead of a separate full-screen app.
+- Uses far less memory: only the .info file names are kept, and each tape's name and icon are read as its row comes on screen.
+- Favourites show the filled box the Pip-Boy uses for equipped items. Hold the left wheel for the options.
+
+1.1.0 (2026-10-12)
 - Hides holotapes from ITEMS > MISC with a CFW patch instead of moving .info files, so pip-boy.com still sees every holotape.
 - Changes show the next time ITEMS > MISC opens, without a reboot.
 - "Store all others" is now "Hide all but favourites".

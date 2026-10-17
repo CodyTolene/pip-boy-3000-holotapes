@@ -7,11 +7,10 @@
     HIDDEN: 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON',
     PATCH: 'CFW/52_RADIOMARU_MISC.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
-    ROWS: 9,
-    ROW_H: 24,
-    TOP: 44,
-    // Longest name kept in memory; enough for the list and the menu title.
-    NAME_LEN: 30,
+    // The Pip-Boy's own list: same width as ITEMS > MISC.
+    LIST_W: 185,
+    // Right-hand panel, beside the list.
+    PX: 214,
     ACTIONS: [
       'FAVOURITE',
       'MISC',
@@ -23,20 +22,18 @@
   const HIDE = 1;
   const FAV = 2;
 
-  // Only a short name and the .info file name are kept per tape, plus one
-  // byte of flags. Everything else is read from the .info when it is needed,
-  // so a card full of holotapes still fits in memory.
-  let names: string[] = [];
+  // Built like a submenu of ITEMS > MISC, on the firmware's own scrolling
+  // list. Only the .info file names and one byte of flags per tape are kept;
+  // names and icons are read from each .info as its row comes on screen.
   let files: string[] = [];
   let flags = new Uint8Array(0);
-  // Display order: favourites first, then alphabetical.
-  let order = new Uint16Array(0);
+  let list: PipScroller | undefined;
   let patched = false;
-  let sel = 0;
-  let top = 0;
-  // Action menu over the list: -1 closed, else the highlighted action.
-  let act = -1;
   let changed = false;
+  // Options box over the right panel: -1 closed, else the highlighted action.
+  let act = -1;
+  let actTape = -1;
+  let launchTimer: number | undefined;
   let cleanedUp = false;
 
   function isInfo(f: string): boolean {
@@ -108,43 +105,46 @@
     }
   }
 
-  function sortOrder(): void {
+  function nameOf(k: number): string {
+    const t = info(k);
+    return String((t && (t.name || t.id)) || files[k].slice(0, -5));
+  }
+
+  // Favourites first, then by file name (which nearly always follows the
+  // tape's name), so nothing has to be read from the .info files to sort.
+  function sortFiles(): void {
     let i = 0;
     const idx: number[] = [];
-    for (i = 0; i < names.length; i++) idx.push(i);
+    for (i = 0; i < files.length; i++) idx.push(i);
     idx.sort(function (a: number, b: number): number {
       const fa = flags[a] & FAV;
       const fb = flags[b] & FAV;
+      const na = files[a].toUpperCase();
+      const nb = files[b].toUpperCase();
       if (fa !== fb) return fb - fa;
-      return names[a] < names[b] ? -1 : names[a] > names[b] ? 1 : 0;
+      return na < nb ? -1 : na > nb ? 1 : 0;
     });
-    order = new Uint16Array(idx);
+    const f2: string[] = [];
+    const g2 = new Uint8Array(files.length);
+    for (i = 0; i < idx.length; i++) {
+      f2.push(files[idx[i]]);
+      g2[i] = flags[idx[i]];
+    }
+    files = f2;
+    flags = g2;
   }
 
   function scan(): void {
     let i = 0;
     let all: string[] = [];
-    let t: CaseInfo | undefined;
     try {
       all = fs.readdirSync(C.LIVE);
     } catch (e) {
       all = [];
     }
-    names = [];
     files = [];
     for (i = 0; i < all.length; i++) {
-      if (!isInfo(all[i]) || all[i].toUpperCase() === C.SELF) continue;
-      files.push(all[i]);
-      t = info(files.length - 1);
-      if (!t || !t.src) {
-        files.pop();
-        continue;
-      }
-      names.push(
-        String(t.name || t.id || all[i])
-          .toUpperCase()
-          .substr(0, C.NAME_LEN),
-      );
+      if (isInfo(all[i]) && all[i].toUpperCase() !== C.SELF) files.push(all[i]);
     }
     all = [];
     flags = new Uint8Array(files.length);
@@ -154,8 +154,7 @@
       if (favs.indexOf(files[i]) >= 0) flags[i] |= FAV;
       if (hidden.indexOf(files[i].toUpperCase()) >= 0) flags[i] |= HIDE;
     }
-    sortOrder();
-    sel = E.clip(sel, 0, Math.max(0, files.length - 1));
+    sortFiles();
   }
 
   // Hides a tape from ITEMS > MISC, or shows it again. Only the hidden list
@@ -166,13 +165,21 @@
     changed = true;
   }
 
-  function drawIcon(icon: string): void {
+  function clearPanel(): void {
+    h.setBgColor(0).clearRect(C.PX, 40, 479, 280);
+  }
+
+  // Right-hand panel for the highlighted tape, like an item's details.
+  function drawPanel(k: number): void {
     let ok = false;
+    const t = info(k);
+    const icon = t && t.icon ? t.icon : '';
+    clearPanel();
     if (icon && icon.toUpperCase().slice(-4) === '.IMG') {
       try {
         h.drawImage(
           fs.readFileSync(icon.charAt(0) === '/' ? icon.slice(1) : icon),
-          330,
+          290,
           52,
         );
         ok = true;
@@ -183,222 +190,165 @@
     if (!ok) {
       // A plain holotape cassette when the tape has no usable icon.
       h.setColor(2)
-        .drawRect(334, 62, 444, 122)
-        .drawRect(336, 64, 442, 120)
-        .fillCircle(366, 92, 9)
-        .fillCircle(412, 92, 9)
+        .drawRect(294, 72, 404, 132)
+        .drawRect(296, 74, 402, 130)
+        .fillCircle(326, 102, 9)
+        .fillCircle(372, 102, 9)
         .setColor(0)
-        .fillCircle(366, 92, 3)
-        .fillCircle(412, 92, 3);
+        .fillCircle(326, 102, 3)
+        .fillCircle(372, 102, 3);
     }
-  }
-
-  function drawDetail(): void {
-    h.clearRect(312, 40, 479, 262);
-    if (!files.length) return;
-    const k = order[sel];
-    const t = info(k);
-    drawIcon(t && t.icon ? t.icon : '');
     h.setColor(3)
-      .setFontMonofonto16()
-      .setFontAlign(-1, -1)
-      .drawString(h.wrapString(names[k], 160).slice(0, 3).join('\n'), 322, 178)
-      .setColor(2)
       .setFontMonofonto14()
+      .setFontAlign(-1, -1)
       .drawString(
         flags[k] & HIDE
           ? patched
             ? 'HIDDEN FROM MISC'
             : 'HIDDEN (NEEDS PATCH)'
           : 'IN ITEMS > MISC',
-        322,
-        230,
+        C.PX + 10,
+        190,
       )
-      .drawString(flags[k] & FAV ? 'FAVOURITE' : '', 322, 246);
-  }
-
-  function drawList(): void {
-    let i = 0;
-    let k = 0;
-    let y = 0;
-    h.clearRect(0, 40, 310, 262);
-    if (sel < top) top = sel;
-    if (sel >= top + C.ROWS) top = sel - C.ROWS + 1;
-    h.setFontMonofonto16().setFontAlign(-1, -1);
-    for (i = top; i < files.length && i < top + C.ROWS; i++) {
-      k = order[i];
-      y = C.TOP + (i - top) * C.ROW_H;
-      if (i === sel) {
-        h.setColor(3).fillRect(8, y - 2, 304, y + C.ROW_H - 6);
-        h.setColor(0);
-      } else h.setColor(flags[k] & HIDE ? 2 : 3);
-      h.drawString(
-        (flags[k] & FAV ? '* ' : '  ') + names[k].substr(0, 26),
-        12,
-        y,
-      );
-    }
-    if (!files.length) {
-      h.setColor(2).drawString('NO HOLOTAPES FOUND IN APPINFO', 12, C.TOP);
-    }
-  }
-
-  function drawFooter(): void {
-    h.clearRect(0, 264, 479, 319)
       .setColor(2)
-      .setFontMonofonto14()
-      .setFontAlign(0, -1)
+      .drawString(flags[k] & FAV ? 'FAVOURITE' : '', C.PX + 10, 208)
       .drawString(
-        !patched
-          ? 'COPY CFW/52_RADIOMARU_MISC.JS AND REBOOT TO HIDE TAPES'
-          : changed
-            ? 'ITEMS > MISC IS UPDATED NEXT TIME YOU OPEN IT'
-            : 'L TURN: SCROLL   R TURN: NEXT LETTER   L PRESS: PLAY',
-        240,
-        272,
+        changed ? 'MISC UPDATES NEXT TIME' : 'HOLD: FAVOURITE / HIDE',
+        C.PX + 10,
+        238,
       )
-      .drawString('L HOLD: FAVOURITE / HIDE / SHOW', 240, 292);
+      .drawString(
+        changed ? 'YOU OPEN IT' : files.length + ' HOLOTAPES',
+        C.PX + 10,
+        254,
+      );
   }
 
   function drawActions(): void {
     let i = 0;
     let label = '';
-    const k = files.length ? order[sel] : -1;
-    h.setColor(0)
-      .fillRect(60, 70, 420, 250)
-      .setColor(3)
-      .drawRect(60, 70, 420, 250)
-      .drawRect(62, 72, 418, 248)
-      .setFontMonofonto16()
-      .setFontAlign(0, -1)
-      .drawString(k >= 0 ? names[k] : '', 240, 80);
+    const k = actTape;
+    clearPanel();
+    h.setColor(3)
+      .drawRect(C.PX + 4, 52, 470, 270)
+      .setFontMonofonto14()
+      .setFontAlign(-1, -1)
+      .drawString(nameOf(k).substr(0, 28), C.PX + 12, 60);
     for (i = 0; i < C.ACTIONS.length; i++) {
       label = C.ACTIONS[i];
-      if (i === 0) {
-        label =
-          k >= 0 && flags[k] & FAV ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
-      }
+      if (i === 0)
+        label = flags[k] & FAV ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
       if (i === 1) {
-        label =
-          k >= 0 && flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
+        label = flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
       }
-      if (i === act) {
-        h.setColor(3).fillRect(80, 108 + i * 26, 400, 130 + i * 26);
-        h.setColor(0);
-      } else h.setColor(3);
-      h.drawString(label, 240, 110 + i * 26);
+      if (i === act) Pip.shadeBox(C.PX + 10, 88 + i * 34, 464, 112 + i * 34);
+      h.setColor(3).drawString(label, C.PX + 18, 94 + i * 34);
     }
+    h.flip();
   }
 
-  function draw(): void {
-    h.setBgColor(0)
-      .clear()
-      .setColor(3)
-      .setFontMonofonto18()
-      .setFontAlign(-1, -1)
-      .drawString('HOLOTAPE CASE', 12, 8)
-      .setFontAlign(1, -1)
-      .drawString(files.length + ' TAPES', 468, 8)
-      .setColor(2)
-      .drawLine(0, 33, 479, 33)
-      .drawLine(312, 40, 312, 256);
-    drawList();
-    drawDetail();
-    drawFooter();
-    if (act >= 0) drawActions();
+  function launch(k: number): void {
+    const t = info(k);
+    if (!t || !t.src) return;
+    const src = t.src.charAt(0) === '/' ? t.src : '/' + t.src;
+    Pip.playSound('SELECT');
+    // Let the list finish drawing before the new holotape takes the screen.
+    launchTimer = setTimeout(function (): void {
+      launchTimer = undefined;
+      cleanup();
+      Pip.loadHolotape(src);
+    }, 10);
   }
 
-  function cleanup(): void {
-    if (cleanedUp) return;
-    cleanedUp = true;
-    Pip.removeListener('knob1', onKnob1);
-    Pip.removeListener('knob2', onKnob2);
-    h.clear();
+  function openList(start: number): void {
+    list = Pip.createScroller({
+      itemCount: files.length,
+      width: C.LIST_W,
+      hasEquipStates: true,
+      scrollStart: start,
+      // Favourites get the filled box the Pip-Boy uses for equipped items.
+      getItem: function (i: number): PipScrollerItem {
+        return { txt: nameOf(i), activ: !!(flags[i] & FAV), k: i };
+      },
+      render: function (item: PipScrollerItem): void {
+        if (item && item.k !== undefined) drawPanel(item.k);
+      },
+      onClick: function (i: number): void {
+        launch(i);
+      },
+      onLongClick: function (i: number): void {
+        if (list) list.remove();
+        list = undefined;
+        actTape = i;
+        act = 0;
+        Pip.playSound('TAB');
+        Pip.onExclusive('knob1', onAction);
+        drawActions();
+      },
+    });
   }
 
   function doAction(): void {
     let i = 0;
-    const k = files.length ? order[sel] : -1;
+    const name = files[actTape];
     let saved = false;
-    if (act === 0 && k >= 0) {
-      flags[k] ^= FAV;
+    if (act === 0) {
+      flags[actTape] ^= FAV;
       saved = true;
-    } else if (act === 1 && k >= 0) {
-      setHidden(k, !(flags[k] & HIDE));
+    } else if (act === 1) {
+      setHidden(actTape, !(flags[actTape] & HIDE));
     } else if (act === 2) {
       for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
     } else if (act === 3) {
       for (i = 0; i < files.length; i++) setHidden(i, false);
     }
     if (changed || saved) saveLists();
+    sortFiles();
     act = -1;
-    sortOrder();
-    // Keep the same tape selected after the list re-sorts.
-    for (i = 0; i < order.length; i++) if (order[i] === k) sel = i;
+    Pip.removeListener('knob1', onAction);
     Pip.playSound('TAB');
-    draw();
+    // Reopen the list on the same tape, wherever it sorted to.
+    openList(Math.max(0, files.indexOf(name)));
   }
 
-  function onKnob1(dir: KnobDirection, long?: boolean): void {
-    if (act >= 0) {
-      if (dir) {
-        act = E.clip(act + dir, 0, C.ACTIONS.length - 1);
-        Pip.playSound('SCROLL');
-        drawActions();
-      } else doAction();
-      return;
-    }
+  function onAction(dir: KnobDirection): void {
     if (dir) {
-      sel = E.clip(sel + dir, 0, Math.max(0, files.length - 1));
+      act = E.clip(act + dir, 0, C.ACTIONS.length - 1);
       Pip.playSound('SCROLL');
-      drawList();
-      drawDetail();
-      return;
-    }
-    if (!files.length) return;
-    if (long) {
-      act = 0;
-      Pip.playSound('TAB');
       drawActions();
       return;
     }
-    const t = info(order[sel]);
-    if (!t || !t.src) return;
-    const src = t.src;
-    Pip.playSound('SELECT');
-    cleanup();
-    Pip.loadHolotape(src.charAt(0) === '/' ? src : '/' + src);
+    doAction();
   }
 
-  // Jumps to the next (or previous) tape that starts with a new letter.
-  function onKnob2(dir: KnobDirection): void {
-    let i = sel;
-    if (!dir || act >= 0 || !files.length) return;
-    const c = names[order[sel]].charAt(0);
-    while (i + dir >= 0 && i + dir < files.length) {
-      i += dir;
-      if (names[order[i]].charAt(0) !== c && !(flags[order[i]] & FAV)) {
-        break;
-      }
-    }
-    sel = i;
-    Pip.playSound('SCROLL');
-    drawList();
-    drawDetail();
+  function cleanup(): void {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    if (launchTimer) clearTimeout(launchTimer);
+    if (list) list.remove();
+    list = undefined;
+    Pip.removeListener('knob1', onAction);
   }
 
-  // Init.
+  // Init: draw the ITEMS header and tabs, then the list beneath them.
   migrate();
   patched = !!fs.statSync(C.PATCH);
   scan();
-  draw();
-  Pip.onExclusive('knob1', onKnob1);
-  Pip.onExclusive('knob2', onKnob2);
+  h.setBgColor(0).clear();
+  Pip.renderHeader();
+  Pip.renderFooter();
+  if (files.length) {
+    openList(0);
+  } else {
+    h.setColor(2)
+      .setFontMonofonto14()
+      .setFontAlign(0, 0)
+      .drawString('NO HOLOTAPES FOUND IN APPINFO', 240, 160);
+  }
 
   return {
     id: 'HOLOTAPECASE',
     notDefault: true,
-    fullscreen: true,
     remove: cleanup,
   };
 });
