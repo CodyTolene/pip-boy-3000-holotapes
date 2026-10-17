@@ -1,0 +1,7 @@
+1.0.1 (2026-10-17)
+- Header drawn in the Pip-Boy's own layout (title on the line, info underneath), so nothing is cut off by the rounded corners of the screen.
+- Icon is now a Pip-Boy .img, so it shows in ITEMS > MISC.
+
+1.0.0 (2026-10-05)
+- Initial release of Bubble Level, with surface and edge modes, saved calibration, and reading freeze.
+- Controls use only the left wheel press, since the Pip-Boy 3000 right wheel does not press.

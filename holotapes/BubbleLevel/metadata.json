@@ -1,0 +1,18 @@
+{
+  "id": "bubble-level",
+  "name": "Bubble Level",
+  "author": "@Radiomaru7",
+  "version": "1.0.1",
+  "description": "A spirit level that uses the Pip-Boy's accelerometer, with a bullseye for flat surfaces and a vial for edges.",
+  "icon": "storage/BUBBLE-LEVEL.img",
+  "previews": ["previews/SURFACE.png", "previews/EDGE.png"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/BUBBLE_LEVEL/APP.JS",
+      "source": "storage/APP.ts"
+    }
+  ],
+  "storageOptional": []
+}
