@@ -5,8 +5,9 @@
 //
 // The firmware's MISC screen (JS/MISC.JS) lists every .info file it finds with
 // fs.readdirSync('APPINFO') each time the screen opens. This patch hides the
-// tapes named in HOLO/HOLOTAPE_CASE/HIDDEN.JSON from that one listing, and only
-// while MISC.JS is building its list. Nothing is moved or deleted: APPINFO
+// tapes named in HOLO/HOLOTAPE_CASE/HIDDEN.JSON from that one listing and puts
+// the rest in the case's order (HOLO/HOLOTAPE_CASE/ORDER.JSON), with Holotape
+// Case itself first, and only while MISC.JS is building its list. Nothing is moved or deleted: APPINFO
 // keeps every .info file, so pip-boy.com and other apps still see them all.
 (function () {
   // Status for the RM Check holotape.
@@ -16,13 +17,16 @@
   >;
   status.misc = 'start';
   const HIDDEN = 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON';
+  const ORDER = 'HOLO/HOLOTAPE_CASE/ORDER.JSON';
+  const SELF = 'HOLOTAPE-CASE.INFO';
   const origRead = fs.readFileSync;
   const origDir = fs.readdirSync;
   let inMisc = false;
 
-  function hidden(): string[] {
+  function readList(path: string): string[] {
     try {
-      return JSON.parse(origRead.call(fs, HIDDEN)) as string[];
+      const l = JSON.parse(origRead.call(fs, path)) as string[];
+      return Array.isArray(l) ? l : [];
     } catch (e) {
       return [];
     }
@@ -34,10 +38,27 @@
     if (String(path).toUpperCase().replace(/\/+$/, '') !== 'APPINFO') {
       return names;
     }
-    const hide = hidden();
-    if (!hide.length) return names;
-    return names.filter(function (n: string): boolean {
+    const hide = readList(HIDDEN);
+    const order = readList(ORDER);
+    const shown = names.filter(function (n: string): boolean {
       return hide.indexOf(n.toUpperCase()) < 0;
+    });
+    if (!order.length) return shown;
+    // The case first, then the case's order; anything new keeps its place at
+    // the end.
+    const rank: number[] = shown.map(function (n: string, i: number): number {
+      const u = n.toUpperCase();
+      const p = order.indexOf(u);
+      return u === SELF ? -1 : p < 0 ? 100000 + i : p;
+    });
+    const idx: number[] = shown.map(function (n: string, i: number): number {
+      return i;
+    });
+    idx.sort(function (a: number, b: number): number {
+      return rank[a] - rank[b];
+    });
+    return idx.map(function (i: number): string {
+      return shown[i];
     });
   };
 

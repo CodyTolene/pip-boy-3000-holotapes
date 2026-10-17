@@ -15,13 +15,25 @@ like.
 
 ### Controls
 
-| Input                | Action                                          |
-| -------------------- | ----------------------------------------------- |
-| Left wheel (rotate)  | Scroll the list                                 |
-| Right wheel (rotate) | Switch ITEMS tabs, as on any ITEMS screen       |
-| Left wheel (press)   | Options: play, favourite, hide / show, hide all |
-| Left wheel (hold)    | Options, same as a press                        |
-| STATS, ITEMS or DATA | Leave the case                                  |
+| Input                | Action                                     |
+| -------------------- | ------------------------------------------ |
+| Left wheel (rotate)  | Scroll the list                            |
+| Right wheel (rotate) | Switch ITEMS tabs, as on any ITEMS screen  |
+| Left wheel (press)   | Options: play, move, favourite, hide, sort |
+| Left wheel (hold)    | Options, same as a press                   |
+| STATS, ITEMS or DATA | Leave the case                             |
+
+### Organising your case
+
+- **Move in list** picks the tape up: turn the left wheel to carry it up or
+  down, and press to put it down.
+- **Sort the case** sorts everything A to Z, puts favourites at the top, or puts
+  hidden tapes at the bottom.
+
+The order is saved in `HOLO/HOLOTAPE_CASE/ORDER.JSON`, and ITEMS > MISC lists
+your holotapes in the same order, with Holotape Case first. Holotapes installed
+later go at the end. Until you first move or sort something, the case lists
+favourites first and then by file name, and ITEMS > MISC keeps its usual order.
 
 ### Hiding holotapes from ITEMS > MISC
 

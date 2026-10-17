@@ -1,3 +1,10 @@
+1.4.0 (2026-10-17)
+- Organise your case: Move in list carries a tape up or down as you turn the left wheel; press to put it down.
+- Sort the case A to Z, favourites to the top, or hidden to the bottom.
+- ITEMS > MISC uses the same order (needs the updated CFW/52_RADIOMARU_MISC.JS and a reboot), with Holotape Case first.
+- Making a tape a favourite no longer moves it; use Favourites to the top.
+- Options are grouped: Sort the case and Hide or show all open their own menus.
+
 1.3.1 (2026-10-17)
 - Holotapes now only play from the new Play holotape option. Pressing or holding the left wheel opens the options, so no stray press can start a game.
 

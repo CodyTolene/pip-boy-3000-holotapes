@@ -61,8 +61,16 @@ interface PipScrollerOptions {
 
 /** The list widget returned by Pip.createScroller. */
 interface PipScroller {
-  /** Redraws the list. */
-  render(): void;
+  /** Highlighted row. */
+  selectedIndex: number;
+  /** First row on screen. */
+  scrollIndex: number;
+  /** Pixel offset of the first row. */
+  scrollY: number;
+  /** Sets the row count and forgets the rows already drawn. */
+  updateItemCount(n: number): void;
+  /** Redraws the list; listOnly skips the right-hand panel. */
+  render(opts?: { listOnly?: boolean }): void;
   /** Stops listening to the left wheel. */
   remove(): void;
 }

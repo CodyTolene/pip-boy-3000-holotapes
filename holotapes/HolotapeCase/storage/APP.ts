@@ -5,21 +5,36 @@
     STORE: 'HOLO/HOLOTAPE_CASE/STORED',
     FAVS: 'HOLO/HOLOTAPE_CASE/FAVS.JSON',
     HIDDEN: 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON',
+    // The case's order; the MISC patch lists APPINFO in the same order.
+    ORDER: 'HOLO/HOLOTAPE_CASE/ORDER.JSON',
     PATCH: 'CFW/52_RADIOMARU_MISC.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
     // The Pip-Boy's own list: same width as ITEMS > MISC.
     LIST_W: 185,
     // Right-hand panel, beside the list.
     PX: 214,
-    ACTIONS: [
-      'PLAY HOLOTAPE',
-      'FAVOURITE',
-      'MISC',
-      'HIDE ALL BUT FAVOURITES',
-      'HIDE ALL CUSTOM HOLOTAPES',
-      'SHOW ALL IN MISC',
-      'BACK',
+    // The options box: the main menu and its two sub-menus.
+    MENUS: [
+      [
+        'PLAY HOLOTAPE',
+        'MOVE IN LIST',
+        'FAVOURITE',
+        'MISC',
+        'SORT THE CASE >',
+        'HIDE OR SHOW ALL >',
+        'BACK',
+      ],
+      ['A TO Z', 'FAVOURITES TO THE TOP', 'HIDDEN TO THE BOTTOM', 'BACK'],
+      [
+        'HIDE ALL BUT FAVOURITES',
+        'HIDE ALL CUSTOM HOLOTAPES',
+        'SHOW ALL IN MISC',
+        'BACK',
+      ],
     ],
+    TITLES: ['', 'SORT THE CASE', 'HIDE OR SHOW ALL'],
+    // Height of the list area the firmware scrolls through.
+    LIST_H: 216,
   };
   const HIDE = 1;
   const FAV = 2;
@@ -34,7 +49,10 @@
   let changed = false;
   // Options box over the right panel: -1 closed, else the highlighted action.
   let act = -1;
+  let menu = 0;
   let actTape = -1;
+  // Tape being carried up or down the list, or -1.
+  let moving = -1;
   let launchTimer: number | undefined;
   let actTimer: number | undefined;
   let cleanedUp = false;
@@ -64,6 +82,14 @@
     }
     fs.writeFileSync(C.FAVS, JSON.stringify(favs));
     fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
+  }
+
+  function saveOrder(): void {
+    let i = 0;
+    const order: string[] = [];
+    for (i = 0; i < files.length; i++) order.push(files[i].toUpperCase());
+    fs.writeFileSync(C.ORDER, JSON.stringify(order));
+    changed = true;
   }
 
   // Version 1.0 hid tapes by moving their .info files into the case. Put any
@@ -113,19 +139,18 @@
     return String((t && (t.name || t.id)) || files[k].slice(0, -5));
   }
 
-  // Favourites first, then by file name (which nearly always follows the
-  // tape's name), so nothing has to be read from the .info files to sort.
-  function sortFiles(): void {
+  // Puts the tapes in order of rank, keeping the current order for equal
+  // ranks.
+  function reorder(rank: (k: number) => number | string): void {
     let i = 0;
     const idx: number[] = [];
-    for (i = 0; i < files.length; i++) idx.push(i);
+    const r: (number | string)[] = [];
+    for (i = 0; i < files.length; i++) {
+      idx.push(i);
+      r.push(rank(i));
+    }
     idx.sort(function (a: number, b: number): number {
-      const fa = flags[a] & FAV;
-      const fb = flags[b] & FAV;
-      const na = files[a].toUpperCase();
-      const nb = files[b].toUpperCase();
-      if (fa !== fb) return fb - fa;
-      return na < nb ? -1 : na > nb ? 1 : 0;
+      return r[a] < r[b] ? -1 : r[a] > r[b] ? 1 : a - b;
     });
     const f2: string[] = [];
     const g2 = new Uint8Array(files.length);
@@ -157,7 +182,19 @@
       if (favs.indexOf(files[i]) >= 0) flags[i] |= FAV;
       if (hidden.indexOf(files[i].toUpperCase()) >= 0) flags[i] |= HIDE;
     }
-    sortFiles();
+    const order = readList(C.ORDER);
+    if (order.length) {
+      // The saved order; tapes installed since go at the end.
+      reorder(function (k: number): number {
+        const p = order.indexOf(files[k].toUpperCase());
+        return p < 0 ? 100000 + k : p;
+      });
+    } else {
+      // Never sorted yet: favourites first, then by file name.
+      reorder(function (k: number): string {
+        return (flags[k] & FAV ? '0' : '1') + files[k].toUpperCase();
+      });
+    }
   }
 
   // Hides a tape from ITEMS > MISC, or shows it again. Only the hidden list
@@ -231,17 +268,22 @@
     let i = 0;
     let label = '';
     const k = actTape;
+    const items = C.MENUS[menu];
     clearPanel();
     h.setColor(3)
       .drawRect(C.PX + 4, 52, 470, 270)
       .setFontMonofonto14()
       .setFontAlign(-1, -1)
-      .drawString(nameOf(k).substr(0, 28), C.PX + 12, 60);
-    for (i = 0; i < C.ACTIONS.length; i++) {
-      label = C.ACTIONS[i];
-      if (i === 1)
+      .drawString(
+        menu ? C.TITLES[menu] : nameOf(k).substr(0, 28),
+        C.PX + 12,
+        60,
+      );
+    for (i = 0; i < items.length; i++) {
+      label = items[i];
+      if (menu === 0 && i === 2)
         label = flags[k] & FAV ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
-      if (i === 2) {
+      if (menu === 0 && i === 3) {
         label = flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
       }
       if (i === act) Pip.shadeBox(C.PX + 10, 80 + i * 27, 464, 102 + i * 27);
@@ -298,8 +340,26 @@
     list = undefined;
     actTape = i;
     act = 0;
+    menu = 0;
     Pip.playSound('TAB');
     Pip.onExclusive('knob1', onAction);
+    drawActions();
+  }
+
+  // Leaves the options and reopens the list on the same tape, wherever it
+  // has moved to.
+  function closeActions(name: string): void {
+    act = -1;
+    menu = 0;
+    Pip.removeListener('knob1', onAction);
+    Pip.playSound('TAB');
+    openList(Math.max(0, files.indexOf(name)));
+  }
+
+  function openMenu(m: number, at: number): void {
+    menu = m;
+    act = at;
+    Pip.playSound('TAB');
     drawActions();
   }
 
@@ -307,38 +367,142 @@
     let i = 0;
     const name = files[actTape];
     let saved = false;
-    if (act === 0) {
-      // Stays on the options if the tape has nowhere to load from.
-      launch(actTape);
-      return;
-    }
-    if (act === 1) {
-      flags[actTape] ^= FAV;
-      saved = true;
-    } else if (act === 2) {
-      setHidden(actTape, !(flags[actTape] & HIDE));
-    } else if (act === 3) {
-      for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
-    } else if (act === 4) {
-      // Everything in APPINFO was installed from pip-boy.com; the Pip-Boy's
-      // own MISC items come from its data files and stay. The case is not in
-      // the list, so it always stays too.
-      for (i = 0; i < files.length; i++) setHidden(i, true);
-    } else if (act === 5) {
-      for (i = 0; i < files.length; i++) setHidden(i, false);
+    let sorted = false;
+    if (menu === 0) {
+      if (act === 0) {
+        // Stays on the options if the tape has nowhere to load from.
+        launch(actTape);
+        return;
+      }
+      if (act === 1) {
+        act = -1;
+        Pip.removeListener('knob1', onAction);
+        startMove(actTape);
+        return;
+      }
+      if (act === 4) return openMenu(1, 0);
+      if (act === 5) return openMenu(2, 0);
+      if (act === 2) {
+        flags[actTape] ^= FAV;
+        saved = true;
+      } else if (act === 3) {
+        setHidden(actTape, !(flags[actTape] & HIDE));
+      }
+    } else if (menu === 1) {
+      if (act === 3) return openMenu(0, 4);
+      if (act === 0) {
+        // By the name shown in the list.
+        const names: string[] = [];
+        for (i = 0; i < files.length; i++) names.push(nameOf(i).toUpperCase());
+        reorder(function (k: number): string {
+          return names[k];
+        });
+      } else if (act === 1) {
+        reorder(function (k: number): number {
+          return flags[k] & FAV ? 0 : 1;
+        });
+      } else if (act === 2) {
+        reorder(function (k: number): number {
+          return flags[k] & HIDE ? 1 : 0;
+        });
+      }
+      sorted = true;
+    } else {
+      if (act === 3) return openMenu(0, 5);
+      if (act === 0) {
+        for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
+      } else if (act === 1) {
+        // Everything in APPINFO was installed from pip-boy.com; the Pip-Boy's
+        // own MISC items come from its data files and stay. The case is not
+        // in the list, so it always stays too.
+        for (i = 0; i < files.length; i++) setHidden(i, true);
+      } else {
+        for (i = 0; i < files.length; i++) setHidden(i, false);
+      }
     }
     if (changed || saved) saveLists();
-    sortFiles();
-    act = -1;
-    Pip.removeListener('knob1', onAction);
+    if (sorted) saveOrder();
+    closeActions(name);
+  }
+
+  // Height of a list row, the way the firmware's list measures it.
+  function rowH(k: number): number {
+    return 10 + 14 * h.setFontMonofonto14().wrapString(nameOf(k), C.LIST_W - 40).length;
+  }
+
+  function drawMovePanel(): void {
+    clearPanel();
+    h.setColor(3)
+      .setFontMonofonto14()
+      .setFontAlign(-1, -1)
+      .drawString('MOVING', C.PX + 10, 120)
+      .drawString(nameOf(moving).substr(0, 28), C.PX + 10, 140)
+      .setColor(2)
+      .drawString('TURN TO MOVE IT', C.PX + 10, 190)
+      .drawString('PRESS TO PUT IT HERE', C.PX + 10, 208);
+    h.flip();
+  }
+
+  // Carries a tape up or down the list. The firmware's list draws the rows;
+  // this takes the left wheel from it while the tape is moving.
+  function startMove(k: number): void {
+    moving = k;
     Pip.playSound('TAB');
-    // Reopen the list on the same tape, wherever it sorted to.
-    openList(Math.max(0, files.indexOf(name)));
+    openList(k);
+    if (list) list.remove();
+    Pip.onExclusive('knob1', onMove);
+    drawMovePanel();
+  }
+
+  function onMove(dir: KnobDirection): void {
+    const l = list;
+    if (!l) return;
+    if (!dir) {
+      const k = moving;
+      moving = -1;
+      Pip.removeListener('knob1', onMove);
+      saveOrder();
+      Pip.playSound('TAB');
+      const top = l.scrollIndex;
+      openList(k);
+      // Keep the view where it was rather than jumping the tape to the top.
+      if (list && top !== k) {
+        list.scrollIndex = top;
+        list.render({ listOnly: true });
+      }
+      return;
+    }
+    const j = moving + dir;
+    if (j < 0 || j >= files.length) return;
+    const f = files[j];
+    const g = flags[j];
+    files[j] = files[moving];
+    flags[j] = flags[moving];
+    files[moving] = f;
+    flags[moving] = g;
+    moving = j;
+    Pip.playSound('SCROLL');
+    // Forget the drawn rows, then keep the moving tape on screen.
+    l.updateItemCount(files.length);
+    l.selectedIndex = j;
+    l.scrollY = 0;
+    if (j < l.scrollIndex) {
+      l.scrollIndex = j;
+    } else {
+      let i = 0;
+      let sum = 0;
+      for (i = l.scrollIndex; i <= j; i++) sum += rowH(i);
+      while (sum > C.LIST_H && l.scrollIndex < j) {
+        sum -= rowH(l.scrollIndex);
+        l.scrollIndex++;
+      }
+    }
+    l.render({ listOnly: true });
   }
 
   function onAction(dir: KnobDirection): void {
     if (dir) {
-      act = E.clip(act + dir, 0, C.ACTIONS.length - 1);
+      act = E.clip(act + dir, 0, C.MENUS[menu].length - 1);
       Pip.playSound('SCROLL');
       drawActions();
       return;
@@ -354,6 +518,7 @@
     if (list) list.remove();
     list = undefined;
     Pip.removeListener('knob1', onAction);
+    Pip.removeListener('knob1', onMove);
   }
 
   // Init: draw the ITEMS header and tabs, then the list beneath them.
