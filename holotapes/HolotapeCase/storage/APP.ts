@@ -12,6 +12,7 @@
     // Right-hand panel, beside the list.
     PX: 214,
     ACTIONS: [
+      'PLAY HOLOTAPE',
       'FAVOURITE',
       'MISC',
       'HIDE ALL BUT FAVOURITES',
@@ -215,7 +216,7 @@
       .setColor(2)
       .drawString(flags[k] & FAV ? 'FAVOURITE' : '', C.PX + 10, 208)
       .drawString(
-        changed ? 'MISC UPDATES NEXT TIME' : 'PRESS: OPTIONS  HOLD: PLAY',
+        changed ? 'MISC UPDATES NEXT TIME' : 'PRESS FOR OPTIONS',
         C.PX + 10,
         238,
       )
@@ -238,13 +239,13 @@
       .drawString(nameOf(k).substr(0, 28), C.PX + 12, 60);
     for (i = 0; i < C.ACTIONS.length; i++) {
       label = C.ACTIONS[i];
-      if (i === 0)
+      if (i === 1)
         label = flags[k] & FAV ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
-      if (i === 1) {
+      if (i === 2) {
         label = flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
       }
-      if (i === act) Pip.shadeBox(C.PX + 10, 84 + i * 30, 464, 108 + i * 30);
-      h.setColor(3).drawString(label, C.PX + 18, 90 + i * 30);
+      if (i === act) Pip.shadeBox(C.PX + 10, 80 + i * 27, 464, 102 + i * 27);
+      h.setColor(3).drawString(label, C.PX + 18, 85 + i * 27);
     }
     h.flip();
   }
@@ -275,8 +276,8 @@
       render: function (item: PipScrollerItem): void {
         if (item && item.k !== undefined) drawPanel(item.k);
       },
-      // Press opens the options; a hold plays the tape, so a stray press
-      // never starts a game by accident.
+      // Press or hold opens the options; a tape only plays when PLAY
+      // HOLOTAPE is picked there, so a stray press never starts a game.
       onClick: function (i: number): void {
         // The list redraws itself right after onClick, so open the options
         // once it has finished.
@@ -286,7 +287,7 @@
         }, 0);
       },
       onLongClick: function (i: number): void {
-        launch(i);
+        openActions(i);
       },
     });
   }
@@ -307,18 +308,23 @@
     const name = files[actTape];
     let saved = false;
     if (act === 0) {
+      // Stays on the options if the tape has nowhere to load from.
+      launch(actTape);
+      return;
+    }
+    if (act === 1) {
       flags[actTape] ^= FAV;
       saved = true;
-    } else if (act === 1) {
-      setHidden(actTape, !(flags[actTape] & HIDE));
     } else if (act === 2) {
-      for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
+      setHidden(actTape, !(flags[actTape] & HIDE));
     } else if (act === 3) {
+      for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
+    } else if (act === 4) {
       // Everything in APPINFO was installed from pip-boy.com; the Pip-Boy's
       // own MISC items come from its data files and stay. The case is not in
       // the list, so it always stays too.
       for (i = 0; i < files.length; i++) setHidden(i, true);
-    } else if (act === 4) {
+    } else if (act === 5) {
       for (i = 0; i < files.length; i++) setHidden(i, false);
     }
     if (changed || saved) saveLists();

@@ -1,3 +1,6 @@
+1.3.1 (2026-10-17)
+- Holotapes now only play from the new Play holotape option. Pressing or holding the left wheel opens the options, so no stray press can start a game.
+
 1.3.0 (2026-10-17)
 - New option: Hide all custom holotapes. Hides every holotape installed from pip-boy.com, leaving only the Pip-Boy's own MISC items and the case.
 
