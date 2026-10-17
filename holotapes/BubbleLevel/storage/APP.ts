@@ -175,17 +175,25 @@
       .drawString('RANGE +/-' + C.RANGES[cal.r], C.PX, 200);
   }
 
-  function drawScreen(): void {
-    h.setBgColor(0)
-      .clear()
+  // The Pip-Boy's own header layout (as Pip.renderHeader draws it): title on
+  // the line, info underneath on the right, all inside the rounded corners of
+  // the screen.
+  function header(title: string, info: string): void {
+    h.clearRect(0, 0, 479, 39)
       .setColor(3)
       .setFontMonofonto18()
-      .setFontAlign(-1, -1)
-      .drawString('BUBBLE LEVEL', 12, 7)
-      .setFontAlign(1, -1)
-      .drawString(mode === 0 ? 'SURFACE' : 'EDGE', 468, 7)
-      .setColor(2)
-      .drawLine(0, 30, 479, 30)
+      .setFontAlign(-1, 0)
+      .drawString(title, 57, 18);
+    h.drawLine(15, 18, 47, 18).drawLine(67 + h.stringWidth(title), 18, 465, 18);
+    if (info) {
+      h.setFontMonofonto14().setFontAlign(1, 0).drawString(info, 461, 32);
+    }
+  }
+
+  function drawScreen(): void {
+    h.setBgColor(0).clear();
+    header('BUBBLE LEVEL', mode === 0 ? 'SURFACE' : 'EDGE');
+    h.setColor(2)
       .drawLine(C.PX - 10, 36, C.PX - 10, 316)
       .setFontMonofonto16()
       .setFontAlign(-1, -1)
