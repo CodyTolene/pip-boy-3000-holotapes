@@ -216,17 +216,25 @@
     }
   }
 
-  function drawFrame(): void {
-    h.clearRect(0, 0, 479, 35)
-      .clearRect(0, 263, 479, 319)
+  // The Pip-Boy's own header layout (as Pip.renderHeader draws it): title on
+  // the line, info underneath on the right, all inside the rounded corners of
+  // the screen.
+  function header(title: string, info: string): void {
+    h.clearRect(0, 0, 479, 39)
       .setColor(3)
       .setFontMonofonto18()
-      .setFontAlign(-1, -1)
-      .drawString('LOCKPICK', 12, 8)
-      .setFontAlign(1, -1)
-      .drawString('TUMBLER ' + api.name, 468, 8)
-      .setColor(2)
-      .drawLine(0, 33, 479, 33)
+      .setFontAlign(-1, 0)
+      .drawString(title, 57, 18);
+    h.drawLine(15, 18, 47, 18).drawLine(67 + h.stringWidth(title), 18, 465, 18);
+    if (info) {
+      h.setFontMonofonto14().setFontAlign(1, 0).drawString(info, 461, 32);
+    }
+  }
+
+  function drawFrame(): void {
+    h.clearRect(0, 263, 479, 319);
+    header('LOCKPICK', 'TUMBLER ' + api.name);
+    h.setColor(2)
       .setFontMonofonto14()
       .setFontAlign(0, -1)
       .drawString(

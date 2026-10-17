@@ -1,3 +1,7 @@
+1.2.1 (2026-10-17)
+- Header drawn in the Pip-Boy's own layout (title on the line, info underneath), so nothing is cut off by the rounded corners of the screen.
+- Icon is now a Pip-Boy .img, so it shows in ITEMS > MISC.
+
 1.2.0 (2026-10-12)
 - Draws Vault Boy picking a lock and a real bobby pin from the Pip-Boy's own game data (Fallout 3 or New Vegas mode) on the menu, the lock screen and the run-over screen. Falls back to the plain look if the data is missing.
 
