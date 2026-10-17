@@ -15,6 +15,7 @@
       'FAVOURITE',
       'MISC',
       'HIDE ALL BUT FAVOURITES',
+      'HIDE ALL CUSTOM HOLOTAPES',
       'SHOW ALL IN MISC',
       'BACK',
     ],
@@ -242,8 +243,8 @@
       if (i === 1) {
         label = flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
       }
-      if (i === act) Pip.shadeBox(C.PX + 10, 88 + i * 34, 464, 112 + i * 34);
-      h.setColor(3).drawString(label, C.PX + 18, 94 + i * 34);
+      if (i === act) Pip.shadeBox(C.PX + 10, 84 + i * 30, 464, 108 + i * 30);
+      h.setColor(3).drawString(label, C.PX + 18, 90 + i * 30);
     }
     h.flip();
   }
@@ -313,6 +314,11 @@
     } else if (act === 2) {
       for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
     } else if (act === 3) {
+      // Everything in APPINFO was installed from pip-boy.com; the Pip-Boy's
+      // own MISC items come from its data files and stay. The case is not in
+      // the list, so it always stays too.
+      for (i = 0; i < files.length; i++) setHidden(i, true);
+    } else if (act === 4) {
       for (i = 0; i < files.length; i++) setHidden(i, false);
     }
     if (changed || saved) saveLists();

@@ -33,6 +33,9 @@ deleted, so pip-boy.com and other apps still see every holotape as installed.
 - **Hide from MISC** / **Show in ITEMS > MISC** toggles the highlighted tape.
 - **Hide all but favourites** is the quick tidy-up: only your favourites (and
   the case itself) stay in ITEMS > MISC.
+- **Hide all custom holotapes** hides every holotape installed from pip-boy.com.
+  The Pip-Boy's own MISC items come from its data files, so they stay, and so
+  does the case.
 - **Show all in MISC** puts everything back.
 
 Changes show up the next time you open ITEMS > MISC; no reboot needed. The patch
