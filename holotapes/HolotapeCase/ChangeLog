@@ -4,6 +4,7 @@
 - ITEMS > MISC uses the same order (needs the updated CFW/52_RADIOMARU_MISC.JS and a reboot), with Holotape Case first.
 - Making a tape a favourite no longer moves it; use Favourites to the top.
 - Atomic Command and Grelok count as the Pip-Boy's own holotapes: the case leaves them out, Hide all never hides them, and ITEMS > MISC lists them first after the case.
+- Holotapes whose icon is missing from the card show the Pip-Boy's own holotape picture (APPINFO/HOLO.IMG) instead of a drawn cassette.
 - Options are grouped: Sort the case and Hide or show all open their own menus.
 
 1.3.1 (2026-10-17)

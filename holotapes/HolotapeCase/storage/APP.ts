@@ -9,6 +9,8 @@
     ORDER: 'HOLO/HOLOTAPE_CASE/ORDER.JSON',
     PATCH: 'CFW/52_RADIOMARU_MISC.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
+    // The Pip-Boy's own holotape picture, as Grelok and Atomic Command use.
+    HOLO_IMG: 'APPINFO/HOLO.IMG',
     // Holotapes treated like the Pip-Boy's own: left out of the case, never
     // hidden. Keep in step with STOCK in 52_RADIOMARU_MISC.ts.
     STOCK: ['ATOMIC.INFO', 'GRELOK.INFO'],
@@ -218,26 +220,28 @@
     h.setBgColor(0).clearRect(C.PX, 40, 479, 280);
   }
 
+  // Draws an .IMG icon beside the list; false when it can't be read.
+  function drawIcon(path: string): boolean {
+    if (!path || path.toUpperCase().slice(-4) !== '.IMG') return false;
+    try {
+      const d = fs.readFileSync(path.charAt(0) === '/' ? path.slice(1) : path);
+      if (!d) return false;
+      h.drawImage(d, 290, 52);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // Right-hand panel for the highlighted tape, like an item's details.
   function drawPanel(k: number): void {
-    let ok = false;
     const t = info(k);
-    const icon = t && t.icon ? t.icon : '';
     clearPanel();
-    if (icon && icon.toUpperCase().slice(-4) === '.IMG') {
-      try {
-        h.drawImage(
-          fs.readFileSync(icon.charAt(0) === '/' ? icon.slice(1) : icon),
-          290,
-          52,
-        );
-        ok = true;
-      } catch (e) {
-        ok = false;
-      }
-    }
+    // The tape's own icon, else the Pip-Boy's holotape picture (pip-boy.com
+    // doesn't always copy a tape's icon onto the card).
+    const ok = drawIcon(t && t.icon ? t.icon : '') || drawIcon(C.HOLO_IMG);
     if (!ok) {
-      // A plain holotape cassette when the tape has no usable icon.
+      // A plain holotape cassette when neither picture can be read.
       h.setColor(2)
         .drawRect(294, 72, 404, 132)
         .drawRect(296, 74, 402, 130)
