@@ -1,4 +1,5 @@
-1.1.0 (2026-10-12)
+1.1.0 (2026-10-17)
+- Uses far less memory: only each tape's name and file name are kept, and the rest is read from its .info when needed, so a card with lots of holotapes no longer runs low.
 - Hides holotapes from ITEMS > MISC with a CFW patch instead of moving .info files, so pip-boy.com still sees every holotape.
 - Changes show the next time ITEMS > MISC opens, without a reboot.
 - "Store all others" is now "Hide all but favourites".

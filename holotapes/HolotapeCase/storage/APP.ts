@@ -10,6 +10,8 @@
     ROWS: 9,
     ROW_H: 24,
     TOP: 44,
+    // Longest name kept in memory; enough for the list and the menu title.
+    NAME_LEN: 30,
     ACTIONS: [
       'FAVOURITE',
       'MISC',
@@ -18,11 +20,17 @@
       'BACK',
     ],
   };
+  const HIDE = 1;
+  const FAV = 2;
 
-  let tapes: CaseTape[] = [];
-  let favs: string[] = [];
-  // Upper-case .info names hidden from ITEMS > MISC by the CFW patch.
-  let hidden: string[] = [];
+  // Only a short name and the .info file name are kept per tape, plus one
+  // byte of flags. Everything else is read from the .info when it is needed,
+  // so a card full of holotapes still fits in memory.
+  let names: string[] = [];
+  let files: string[] = [];
+  let flags = new Uint8Array(0);
+  // Display order: favourites first, then alphabetical.
+  let order = new Uint16Array(0);
   let patched = false;
   let sel = 0;
   let top = 0;
@@ -35,29 +43,26 @@
     return f.toUpperCase().slice(-5) === '.INFO';
   }
 
-  function loadFavs(): void {
-    if (!fs.statSync(C.FAVS)) return;
+  function readList(path: string): string[] {
+    if (!fs.statSync(path)) return [];
     try {
-      favs = JSON.parse(fs.readFileSync(C.FAVS)) as string[];
+      const l = JSON.parse(fs.readFileSync(path)) as string[];
+      return Array.isArray(l) ? l : [];
     } catch (e) {
-      favs = [];
+      return [];
     }
   }
 
-  function saveFavs(): void {
+  // Favourites keep the file name as listed; hidden names are upper case.
+  function saveLists(): void {
+    let i = 0;
+    const favs: string[] = [];
+    const hidden: string[] = [];
+    for (i = 0; i < files.length; i++) {
+      if (flags[i] & FAV) favs.push(files[i]);
+      if (flags[i] & HIDE) hidden.push(files[i].toUpperCase());
+    }
     fs.writeFileSync(C.FAVS, JSON.stringify(favs));
-  }
-
-  function loadHidden(): void {
-    if (!fs.statSync(C.HIDDEN)) return;
-    try {
-      hidden = JSON.parse(fs.readFileSync(C.HIDDEN)) as string[];
-    } catch (e) {
-      hidden = [];
-    }
-  }
-
-  function saveHidden(): void {
     fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
   }
 
@@ -65,91 +70,108 @@
   // still there back in APPINFO, marked hidden, so nothing is out of place.
   function migrate(): void {
     let i = 0;
-    let names: string[] = [];
+    let moved: string[] = [];
     let ok = false;
     if (!fs.statSync(C.STORE)) return;
     try {
-      names = fs.readdirSync(C.STORE);
+      moved = fs.readdirSync(C.STORE);
     } catch (e) {
       return;
     }
-    for (i = 0; i < names.length; i++) {
-      if (!isInfo(names[i])) continue;
+    const hidden = readList(C.HIDDEN);
+    for (i = 0; i < moved.length; i++) {
+      if (!isInfo(moved[i])) continue;
       try {
-        ok = fs.rename(C.STORE + '/' + names[i], C.LIVE + '/' + names[i]);
+        ok = fs.rename(C.STORE + '/' + moved[i], C.LIVE + '/' + moved[i]);
       } catch (e) {
         ok = false;
       }
       if (!ok) {
         fs.writeFileSync(
-          C.LIVE + '/' + names[i],
-          fs.readFileSync(C.STORE + '/' + names[i]),
+          C.LIVE + '/' + moved[i],
+          fs.readFileSync(C.STORE + '/' + moved[i]),
         );
-        fs.unlink(C.STORE + '/' + names[i]);
+        fs.unlink(C.STORE + '/' + moved[i]);
       }
-      if (hidden.indexOf(names[i].toUpperCase()) < 0) {
-        hidden.push(names[i].toUpperCase());
+      if (hidden.indexOf(moved[i].toUpperCase()) < 0) {
+        hidden.push(moved[i].toUpperCase());
       }
     }
-    saveHidden();
+    fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
   }
 
-  function list(dir: string): void {
-    let i = 0;
-    let names: string[] = [];
-    let info!: CaseInfo;
+  function info(k: number): CaseInfo | undefined {
     try {
-      names = fs.readdirSync(dir);
+      return JSON.parse(fs.readFileSync(C.LIVE + '/' + files[k])) as CaseInfo;
     } catch (e) {
-      return;
+      return undefined;
     }
-    for (i = 0; i < names.length; i++) {
-      if (!isInfo(names[i]) || names[i].toUpperCase() === C.SELF) continue;
-      try {
-        info = JSON.parse(fs.readFileSync(dir + '/' + names[i])) as CaseInfo;
-      } catch (e) {
+  }
+
+  function sortOrder(): void {
+    let i = 0;
+    const idx: number[] = [];
+    for (i = 0; i < names.length; i++) idx.push(i);
+    idx.sort(function (a: number, b: number): number {
+      const fa = flags[a] & FAV;
+      const fb = flags[b] & FAV;
+      if (fa !== fb) return fb - fa;
+      return names[a] < names[b] ? -1 : names[a] > names[b] ? 1 : 0;
+    });
+    order = new Uint16Array(idx);
+  }
+
+  function scan(): void {
+    let i = 0;
+    let all: string[] = [];
+    let t: CaseInfo | undefined;
+    try {
+      all = fs.readdirSync(C.LIVE);
+    } catch (e) {
+      all = [];
+    }
+    names = [];
+    files = [];
+    for (i = 0; i < all.length; i++) {
+      if (!isInfo(all[i]) || all[i].toUpperCase() === C.SELF) continue;
+      files.push(all[i]);
+      t = info(files.length - 1);
+      if (!t || !t.src) {
+        files.pop();
         continue;
       }
-      if (!info || !info.src) continue;
-      tapes.push({
-        n: String(info.name || info.id || names[i]).toUpperCase(),
-        s: info.src,
-        i: info.icon || '',
-        f: names[i],
-        h: hidden.indexOf(names[i].toUpperCase()) >= 0 ? 1 : 0,
-        v: favs.indexOf(names[i]) >= 0 ? 1 : 0,
-      });
+      names.push(
+        String(t.name || t.id || all[i])
+          .toUpperCase()
+          .substr(0, C.NAME_LEN),
+      );
     }
-  }
-
-  // Favourites first, then alphabetical.
-  function scan(): void {
-    tapes = [];
-    list(C.LIVE);
-    tapes.sort(function (a: CaseTape, b: CaseTape): number {
-      if (a.v !== b.v) return b.v - a.v;
-      return a.n < b.n ? -1 : a.n > b.n ? 1 : 0;
-    });
-    sel = E.clip(sel, 0, Math.max(0, tapes.length - 1));
+    all = [];
+    flags = new Uint8Array(files.length);
+    const favs = readList(C.FAVS);
+    const hidden = readList(C.HIDDEN);
+    for (i = 0; i < files.length; i++) {
+      if (favs.indexOf(files[i]) >= 0) flags[i] |= FAV;
+      if (hidden.indexOf(files[i].toUpperCase()) >= 0) flags[i] |= HIDE;
+    }
+    sortOrder();
+    sel = E.clip(sel, 0, Math.max(0, files.length - 1));
   }
 
   // Hides a tape from ITEMS > MISC, or shows it again. Only the hidden list
   // changes; the .info file stays in APPINFO.
-  function setHidden(t: CaseTape, hide: number): void {
-    const k = hidden.indexOf(t.f.toUpperCase());
-    if (t.h === hide) return;
-    if (hide && k < 0) hidden.push(t.f.toUpperCase());
-    if (!hide && k >= 0) hidden.splice(k, 1);
-    t.h = hide;
+  function setHidden(k: number, hide: boolean): void {
+    if (!!(flags[k] & HIDE) === hide) return;
+    flags[k] = hide ? flags[k] | HIDE : flags[k] & ~HIDE;
     changed = true;
   }
 
-  function drawIcon(t: CaseTape): void {
+  function drawIcon(icon: string): void {
     let ok = false;
-    if (t.i && t.i.toUpperCase().slice(-4) === '.IMG') {
+    if (icon && icon.toUpperCase().slice(-4) === '.IMG') {
       try {
         h.drawImage(
-          fs.readFileSync(t.i.charAt(0) === '/' ? t.i.slice(1) : t.i),
+          fs.readFileSync(icon.charAt(0) === '/' ? icon.slice(1) : icon),
           330,
           52,
         );
@@ -172,18 +194,19 @@
   }
 
   function drawDetail(): void {
-    const t = tapes[sel];
     h.clearRect(312, 40, 479, 262);
-    if (!t) return;
-    drawIcon(t);
+    if (!files.length) return;
+    const k = order[sel];
+    const t = info(k);
+    drawIcon(t && t.icon ? t.icon : '');
     h.setColor(3)
       .setFontMonofonto16()
       .setFontAlign(-1, -1)
-      .drawString(h.wrapString(t.n, 160).slice(0, 3).join('\n'), 322, 178)
+      .drawString(h.wrapString(names[k], 160).slice(0, 3).join('\n'), 322, 178)
       .setColor(2)
       .setFontMonofonto14()
       .drawString(
-        t.h
+        flags[k] & HIDE
           ? patched
             ? 'HIDDEN FROM MISC'
             : 'HIDDEN (NEEDS PATCH)'
@@ -191,27 +214,31 @@
         322,
         230,
       )
-      .drawString(t.v ? 'FAVOURITE' : '', 322, 246);
+      .drawString(flags[k] & FAV ? 'FAVOURITE' : '', 322, 246);
   }
 
   function drawList(): void {
     let i = 0;
-    let t!: CaseTape;
+    let k = 0;
     let y = 0;
     h.clearRect(0, 40, 310, 262);
     if (sel < top) top = sel;
     if (sel >= top + C.ROWS) top = sel - C.ROWS + 1;
     h.setFontMonofonto16().setFontAlign(-1, -1);
-    for (i = top; i < tapes.length && i < top + C.ROWS; i++) {
-      t = tapes[i];
+    for (i = top; i < files.length && i < top + C.ROWS; i++) {
+      k = order[i];
       y = C.TOP + (i - top) * C.ROW_H;
       if (i === sel) {
         h.setColor(3).fillRect(8, y - 2, 304, y + C.ROW_H - 6);
         h.setColor(0);
-      } else h.setColor(t.h ? 2 : 3);
-      h.drawString((t.v ? '* ' : '  ') + t.n.substr(0, 26), 12, y);
+      } else h.setColor(flags[k] & HIDE ? 2 : 3);
+      h.drawString(
+        (flags[k] & FAV ? '* ' : '  ') + names[k].substr(0, 26),
+        12,
+        y,
+      );
     }
-    if (!tapes.length) {
+    if (!files.length) {
       h.setColor(2).drawString('NO HOLOTAPES FOUND IN APPINFO', 12, C.TOP);
     }
   }
@@ -236,7 +263,7 @@
   function drawActions(): void {
     let i = 0;
     let label = '';
-    const t = tapes[sel];
+    const k = files.length ? order[sel] : -1;
     h.setColor(0)
       .fillRect(60, 70, 420, 250)
       .setColor(3)
@@ -244,11 +271,17 @@
       .drawRect(62, 72, 418, 248)
       .setFontMonofonto16()
       .setFontAlign(0, -1)
-      .drawString(t ? t.n.substr(0, 30) : '', 240, 80);
+      .drawString(k >= 0 ? names[k] : '', 240, 80);
     for (i = 0; i < C.ACTIONS.length; i++) {
       label = C.ACTIONS[i];
-      if (i === 0) label = t && t.v ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
-      if (i === 1) label = t && t.h ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
+      if (i === 0) {
+        label =
+          k >= 0 && flags[k] & FAV ? 'REMOVE FAVOURITE' : 'MAKE FAVOURITE';
+      }
+      if (i === 1) {
+        label =
+          k >= 0 && flags[k] & HIDE ? 'SHOW IN ITEMS > MISC' : 'HIDE FROM MISC';
+      }
       if (i === act) {
         h.setColor(3).fillRect(80, 108 + i * 26, 400, 130 + i * 26);
         h.setColor(0);
@@ -265,7 +298,7 @@
       .setFontAlign(-1, -1)
       .drawString('HOLOTAPE CASE', 12, 8)
       .setFontAlign(1, -1)
-      .drawString(tapes.length + ' TAPES', 468, 8)
+      .drawString(files.length + ' TAPES', 468, 8)
       .setColor(2)
       .drawLine(0, 33, 479, 33)
       .drawLine(312, 40, 312, 256);
@@ -285,25 +318,23 @@
 
   function doAction(): void {
     let i = 0;
-    const t = tapes[sel];
-    const name = t ? t.f : '';
-    if (act === 0 && t) {
-      if (t.v) favs.splice(favs.indexOf(t.f), 1);
-      else favs.push(t.f);
-      saveFavs();
-    } else if (act === 1 && t) {
-      setHidden(t, t.h ? 0 : 1);
+    const k = files.length ? order[sel] : -1;
+    let saved = false;
+    if (act === 0 && k >= 0) {
+      flags[k] ^= FAV;
+      saved = true;
+    } else if (act === 1 && k >= 0) {
+      setHidden(k, !(flags[k] & HIDE));
     } else if (act === 2) {
-      for (i = 0; i < tapes.length; i++)
-        setHidden(tapes[i], tapes[i].v ? 0 : 1);
+      for (i = 0; i < files.length; i++) setHidden(i, !(flags[i] & FAV));
     } else if (act === 3) {
-      for (i = 0; i < tapes.length; i++) setHidden(tapes[i], 0);
+      for (i = 0; i < files.length; i++) setHidden(i, false);
     }
-    if (changed) saveHidden();
+    if (changed || saved) saveLists();
     act = -1;
-    scan();
+    sortOrder();
     // Keep the same tape selected after the list re-sorts.
-    for (i = 0; i < tapes.length; i++) if (tapes[i].f === name) sel = i;
+    for (i = 0; i < order.length; i++) if (order[i] === k) sel = i;
     Pip.playSound('TAB');
     draw();
   }
@@ -318,20 +349,22 @@
       return;
     }
     if (dir) {
-      sel = E.clip(sel + dir, 0, Math.max(0, tapes.length - 1));
+      sel = E.clip(sel + dir, 0, Math.max(0, files.length - 1));
       Pip.playSound('SCROLL');
       drawList();
       drawDetail();
       return;
     }
-    if (!tapes.length) return;
+    if (!files.length) return;
     if (long) {
       act = 0;
       Pip.playSound('TAB');
       drawActions();
       return;
     }
-    const src = tapes[sel].s;
+    const t = info(order[sel]);
+    if (!t || !t.src) return;
+    const src = t.src;
     Pip.playSound('SELECT');
     cleanup();
     Pip.loadHolotape(src.charAt(0) === '/' ? src : '/' + src);
@@ -340,11 +373,13 @@
   // Jumps to the next (or previous) tape that starts with a new letter.
   function onKnob2(dir: KnobDirection): void {
     let i = sel;
-    if (!dir || act >= 0 || !tapes.length) return;
-    const c = tapes[sel].n.charAt(0);
-    while (i + dir >= 0 && i + dir < tapes.length) {
+    if (!dir || act >= 0 || !files.length) return;
+    const c = names[order[sel]].charAt(0);
+    while (i + dir >= 0 && i + dir < files.length) {
       i += dir;
-      if (tapes[i].n.charAt(0) !== c && !tapes[i].v) break;
+      if (names[order[i]].charAt(0) !== c && !(flags[order[i]] & FAV)) {
+        break;
+      }
     }
     sel = i;
     Pip.playSound('SCROLL');
@@ -353,8 +388,6 @@
   }
 
   // Init.
-  loadFavs();
-  loadHidden();
   migrate();
   patched = !!fs.statSync(C.PATCH);
   scan();
