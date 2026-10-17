@@ -4,7 +4,7 @@
   "author": "@Radiomaru7",
   "version": "1.0.0",
   "description": "A spirit level that uses the Pip-Boy's accelerometer, with a bullseye for flat surfaces and a vial for edges.",
-  "icon": "storage/BUBBLE-LEVEL.png",
+  "icon": "storage/BUBBLE-LEVEL.img",
   "previews": ["previews/SURFACE.png", "previews/EDGE.png"],
   "type": "app",
   "readme": "README.md",
