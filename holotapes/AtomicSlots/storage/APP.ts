@@ -224,18 +224,26 @@
       );
   }
 
-  function drawStatus(): void {
-    h.clearRect(0, 0, 479, 35)
+  // The Pip-Boy's own header layout (as Pip.renderHeader draws it): title on
+  // the line, info underneath on the right, all inside the rounded corners of
+  // the screen.
+  function header(title: string, info: string): void {
+    h.clearRect(0, 0, 479, 39)
       .setColor(3)
       .setFontMonofonto18()
-      .setFontAlign(-1, -1)
-      .drawString('ATOMIC SLOTS', 12, 8)
-      .setFontAlign(1, -1)
-      .drawString('CAPS ' + save.caps, 468, 8)
-      .setColor(2)
-      .drawLine(0, 33, 479, 33);
+      .setFontAlign(-1, 0)
+      .drawString(title, 57, 18);
+    h.drawLine(15, 18, 47, 18).drawLine(67 + h.stringWidth(title), 18, 465, 18);
+    if (info) {
+      h.setFontMonofonto14().setFontAlign(1, 0).drawString(info, 461, 32);
+    }
+  }
+
+  function drawStatus(): void {
+    header('ATOMIC SLOTS', 'CAPS ' + save.caps);
     if (capArt) {
-      h.drawImage(capArt, 462 - h.stringWidth('CAPS ' + save.caps) - 36, 6, {
+      // Beside the caps count, on the header's info line.
+      h.drawImage(capArt, 461 - h.stringWidth('CAPS ' + save.caps) - 40, 22, {
         scale: 0.3,
       });
     }
