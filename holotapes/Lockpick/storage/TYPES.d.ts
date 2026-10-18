@@ -68,3 +68,20 @@ interface ArtRecord {
   /** Length of the picture in bytes. */
   il?: number;
 }
+
+/** Adds a game's rows to STATS > GENERAL (see STATS_HOOK.ts). */
+type StatsRowFn = (o: Record<string, PipValue>) => void;
+
+/** The fields the stats hook reads from a game's save. */
+interface StatsSave {
+  /** Best score, round, field or level. */
+  b?: number;
+  /** Quickdraw duels won. */
+  w?: number;
+  /** Wasteland Walker all-time steps. */
+  t?: number;
+  /** Atomic Slots biggest win. */
+  best?: number;
+  /** Telegraph mastery string, one digit per character. */
+  s?: string;
+}

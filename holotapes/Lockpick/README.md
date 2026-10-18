@@ -98,6 +98,14 @@ share your run's bobby pins.
 
 </details>
 
+### STATS > GENERAL
+
+Your record shows on the Pip-Boy's own STATS > GENERAL screen as Lockpick Best
+Run, once there is one. The holotape ships a small hook,
+`HOLO/LOCKPICK/STATS_HOOK.JS`, that switches on the first time you open it and
+registers itself in one shared startup slot (`.boot1`-`.boot3`, never `.boot0`),
+so it keeps working after a full restart. No CFW file or boot loader needed.
+
 ### License(s)
 
 This game is licensed under the MIT License. See

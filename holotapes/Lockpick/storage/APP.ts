@@ -645,6 +645,28 @@
   Pip.onExclusive('knob2', onKnob2);
   tick = setInterval(onFrame, 50);
 
+  // Your record in STATS > GENERAL, now and after a full restart (see
+  // STATS_HOOK.ts). Nothing to do when the hook is already running and
+  // listed for startup; otherwise it runs at the top level (new Function) so
+  // it keeps nothing of this holotape in memory once it is closed.
+  (function (): void {
+    const hook = 'HOLO/LOCKPICK/STATS_HOOK.JS';
+    const rows = global.RM_STATS as Record<string, StatsRowFn> | undefined;
+    let listed = false;
+    try {
+      listed =
+        String(fs.readFileSync('USER/RADIOMARU_BOOT.JSON')).indexOf(hook) >= 0;
+    } catch (e) {
+      listed = false;
+    }
+    if (rows && rows.lockpick && listed) return;
+    try {
+      new Function(String(fs.readFileSync(hook)))();
+    } catch (e) {
+      // STATS just won't show the row; the game itself still works.
+    }
+  })();
+
   return {
     id: 'LOCKPICK',
     notDefault: true,
