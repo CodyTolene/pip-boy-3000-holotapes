@@ -1,3 +1,6 @@
+1.6.1 (2026-10-18)
+- Fixes a low-memory error: the hook is skipped when it is already running and listed for startup, and otherwise runs at the top level (new Function) so it keeps nothing of the app in memory after the app closes.
+
 1.6.0 (2026-10-18)
 - No CFW file or boot loader needed: the MISC hook now ships with the holotape as HOLO/HOLOTAPE_CASE/MISC_HOOK.JS. It switches on when you open the case and registers itself in one shared boot slot (.boot1-.boot3, never .boot0) so it keeps working after a full restart.
 - The hook does nothing if it is already active.

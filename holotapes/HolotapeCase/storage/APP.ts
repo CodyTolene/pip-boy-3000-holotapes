@@ -9,6 +9,8 @@
     OPTIONS: 'HOLO/HOLOTAPE_CASE/OPTIONS.JS',
     // Hides and orders tapes in ITEMS > MISC (see MISC_HOOK.ts).
     HOOK: 'HOLO/HOLOTAPE_CASE/MISC_HOOK.JS',
+    // Hooks the shared startup slot runs (see MISC_HOOK.ts).
+    BOOT_LIST: 'USER/RADIOMARU_BOOT.JSON',
     SELF: 'HOLOTAPE-CASE.INFO',
     // The Pip-Boy's own holotape picture, as Grelok and Atomic Command use.
     HOLO_IMG: 'APPINFO/HOLO.IMG',
@@ -312,14 +314,25 @@
 
   // Init: draw the ITEMS header and tabs, then the list beneath them.
   // Switch on hiding and ordering in ITEMS > MISC, now and after a full
-  // restart. The hook registers itself for startup and does nothing more if
-  // it is already active.
+  // restart. Nothing to do when the hook is already running and listed for
+  // startup (the usual case). Otherwise it runs through new Function, at the
+  // top level, so it holds nothing of the case once it is closed; the hook
+  // then registers itself for startup.
+  let st = global.RM_PATCH as Record<string, string> | undefined;
+  let listed = false;
   try {
-    eval(fs.readFileSync(C.HOOK));
+    listed = String(fs.readFileSync(C.BOOT_LIST)).indexOf(C.HOOK) >= 0;
   } catch (e) {
-    // MISC just stays unchanged; the case itself still works.
+    listed = false;
   }
-  const st = global.RM_PATCH as Record<string, string> | undefined;
+  if (!(st && st.misc === 'ok' && listed)) {
+    try {
+      new Function(String(fs.readFileSync(C.HOOK)))();
+    } catch (e) {
+      // MISC just stays unchanged; the case itself still works.
+    }
+    st = global.RM_PATCH as Record<string, string> | undefined;
+  }
   patched = !!st && st.misc === 'ok';
   scan();
   h.setBgColor(0).clear();
