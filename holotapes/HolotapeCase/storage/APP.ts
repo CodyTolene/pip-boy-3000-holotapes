@@ -7,7 +7,8 @@
     ORDER: 'HOLO/HOLOTAPE_CASE/ORDER.JSON',
     // The options menus, loaded only while they are open (see OPTIONS.ts).
     OPTIONS: 'HOLO/HOLOTAPE_CASE/OPTIONS.JS',
-    PATCH: 'CFW/52_RADIOMARU_MISC.JS',
+    // Hides and orders tapes in ITEMS > MISC (see MISC_HOOK.ts).
+    HOOK: 'HOLO/HOLOTAPE_CASE/MISC_HOOK.JS',
     SELF: 'HOLOTAPE-CASE.INFO',
     // The Pip-Boy's own holotape picture, as Grelok and Atomic Command use.
     HOLO_IMG: 'APPINFO/HOLO.IMG',
@@ -195,7 +196,7 @@
         s.flags[k] & HIDE
           ? patched
             ? 'HIDDEN FROM MISC'
-            : 'HIDDEN (NEEDS PATCH)'
+            : 'HIDDEN (HOOK FILE MISSING)'
           : 'IN ITEMS > MISC',
         C.PX + 10,
         190,
@@ -310,7 +311,16 @@
   }
 
   // Init: draw the ITEMS header and tabs, then the list beneath them.
-  patched = !!fs.statSync(C.PATCH);
+  // Switch on hiding and ordering in ITEMS > MISC, now and after a full
+  // restart. The hook registers itself for startup and does nothing more if
+  // it is already active.
+  try {
+    eval(fs.readFileSync(C.HOOK));
+  } catch (e) {
+    // MISC just stays unchanged; the case itself still works.
+  }
+  const st = global.RM_PATCH as Record<string, string> | undefined;
+  patched = !!st && st.misc === 'ok';
   scan();
   h.setBgColor(0).clear();
   Pip.renderHeader();

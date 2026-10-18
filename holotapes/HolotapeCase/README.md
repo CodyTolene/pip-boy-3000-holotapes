@@ -42,10 +42,19 @@ case.
 ### Hiding holotapes from ITEMS > MISC
 
 ITEMS > MISC lists every `.info` file in `APPINFO/` each time you open it.
-Holotape Case comes with a small patch, `CFW/52_RADIOMARU_MISC.JS`, that the
-pip-boy.com bootloader runs at every boot. While the MISC screen builds its
-list, the patch leaves out the holotapes you have hidden. Nothing is moved or
-deleted, so pip-boy.com and other apps still see every holotape as installed.
+Holotape Case comes with a small hook, `HOLO/HOLOTAPE_CASE/MISC_HOOK.JS`, that
+switches on the first time you open the case. While the MISC screen builds its
+list, the hook leaves out the holotapes you have hidden and puts the rest in the
+case's order. Nothing is moved or deleted, so pip-boy.com and other apps still
+see every holotape as installed.
+
+It keeps working after a full restart: the hook adds itself to
+`USER/RADIOMARU_BOOT.JSON`, and one small boot script shared by Radiomaru7's
+holotapes runs the files listed there at startup. Like the Character Switcher,
+it only uses a free slot among `.boot1`-`.boot3` (never `.boot0`, which belongs
+to the Fallout companion app) and only writes when something is missing. If all
+three slots are already taken, it still works until the next full restart, and
+opening the holotape again switches it back on.
 
 - **Hide from MISC** / **Show in ITEMS > MISC** toggles the highlighted tape.
 - **Hide all but favourites** is the quick tidy-up: only your favourites (and
@@ -55,13 +64,9 @@ deleted, so pip-boy.com and other apps still see every holotape as installed.
   does the case.
 - **Show all in MISC** puts everything back.
 
-Changes show up the next time you open ITEMS > MISC; no reboot needed. The patch
-itself takes effect after a reboot, and without it nothing is hidden. The hidden
-list is saved in `HOLO/HOLOTAPE_CASE/HIDDEN.JSON`.
-
-Version 1.0 hid tapes by moving their `.info` files into
-`HOLO/HOLOTAPE_CASE/STORED/`. Version 1.1 moves any it finds there back into
-`APPINFO/` and keeps them hidden.
+Changes show up the next time you open ITEMS > MISC; no reboot needed. The
+hidden list is saved in `HOLO/HOLOTAPE_CASE/HIDDEN.JSON`. **Show all in MISC**
+turns hiding off.
 
 Favourites are saved in `HOLO/HOLOTAPE_CASE/FAVS.JSON`.
 

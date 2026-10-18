@@ -1,3 +1,7 @@
+1.6.0 (2026-10-18)
+- No CFW file or boot loader needed: the MISC hook now ships with the holotape as HOLO/HOLOTAPE_CASE/MISC_HOOK.JS. It switches on when you open the case and registers itself in one shared boot slot (.boot1-.boot3, never .boot0) so it keeps working after a full restart.
+- The hook does nothing if it is already active.
+
 1.5.0 (2026-10-17)
 - Uses less memory while you browse: the options menus, sorting and Move in list are now a second file, OPTIONS.JS, loaded only while the options are open. The main file is about 40% smaller.
 - Dropped the one-time move of tapes back from 1.0's STORED folder (any 1.1 or later has already done it).
