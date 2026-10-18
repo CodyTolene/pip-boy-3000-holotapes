@@ -37,6 +37,8 @@ interface PipScrollerItem {
   activ?: boolean;
   /** Holotape Case: index of the tape in its file list. */
   k?: number;
+  /** MISC rows for holotapes: the file the row starts. */
+  exec?: string;
 }
 
 /** Options for the firmware's scrolling list (as used by JS/MISC.JS). */

@@ -1,3 +1,6 @@
+1.6.3 (2026-10-18)
+- Starting a tape from ITEMS > MISC is now a full hand-off too: MISC is cleared from memory before the tape loads. With many tapes shown in MISC, bigger tapes like Lockpick could run out of memory when started from there.
+
 1.6.2 (2026-10-18)
 - PLAY HOLOTAPE does a full hand-off: the tape starts once the case has fully closed, so the case no longer takes up memory the tape needs (fixes low memory when opening bigger tapes like My Journal from the case).
 

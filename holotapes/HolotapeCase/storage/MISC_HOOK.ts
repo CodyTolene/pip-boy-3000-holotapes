@@ -11,6 +11,9 @@
 // Case itself first, and only while MISC.JS is building its list. Nothing is
 // moved or deleted: APPINFO keeps every .info file, so pip-boy.com and other
 // apps still see them all.
+//
+// It also makes starting a tape from MISC a full hand-off (see below), so a
+// long MISC list no longer takes memory away from the tape being started.
 (function () {
   // Status for the RM Check holotape.
   const status = (global.RM_PATCH = global.RM_PATCH || {}) as Record<
@@ -121,6 +124,41 @@
   };
 
   // Runs the MISC screen with the filter switched on while it builds.
+  // Starting a tape from MISC: the firmware's MISC loads the tape from a timer
+  // inside its own screen, so its whole list (every visible tape) is still in
+  // memory while the tape loads, and bigger tapes run out of memory when many
+  // tapes are shown. While MISC builds its list, its press handler is swapped
+  // for a full hand-off: only the tape's path is kept and the tape is started
+  // from the top level, so MISC can be freed first. Rows without a tape (the
+  // game's own MISC items) keep the firmware's handler.
+  const origCreate = Pip.createScroller;
+  Pip.createScroller = function (o: PipScrollerOptions): PipScroller {
+    if (inMisc && o && o.onClick && o.getItem) {
+      const click = o.onClick;
+      const get = o.getItem;
+      o.onClick = function (i: number): void {
+        let path = '';
+        try {
+          const it = get(i);
+          path = it && it.exec ? String(it.exec) : '';
+        } catch (e) {
+          path = '';
+        }
+        if (!path) {
+          click(i);
+          return;
+        }
+        setTimeout(
+          new Function(
+            'Pip.loadHolotape(' + JSON.stringify(path) + ')',
+          ) as () => void,
+          10,
+        );
+      };
+    }
+    return origCreate.call(Pip, o);
+  };
+
   global.RM_wrapMisc = function (screen: MiscScreen): MiscScreen {
     return function (params: object): HolotapeApp {
       let r!: HolotapeApp;
