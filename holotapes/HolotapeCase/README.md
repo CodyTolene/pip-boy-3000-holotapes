@@ -67,6 +67,9 @@ Favourites are saved in `HOLO/HOLOTAPE_CASE/FAVS.JSON`.
 
 ### Notes
 
+The options menus are a second file, `OPTIONS.JS`, that the case loads only
+while they are open, so the list uses less memory the rest of the time.
+
 Holotapes are launched with `Pip.loadHolotape` (firmware 1.1.5 and later). Icons
 are shown when the `.info` file points at a converted `.IMG` icon; other
 holotapes get a plain cassette.

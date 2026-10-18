@@ -79,3 +79,42 @@ interface PipController {
   /** The firmware's scrolling list, the one ITEMS > MISC uses. */
   createScroller(options: PipScrollerOptions): PipScroller;
 }
+
+/** The tapes in the case, shared by APP.ts and OPTIONS.ts. */
+interface CaseState {
+  /** The .info file names, in list order. */
+  files: string[];
+  /** One byte per tape: 1 hidden from MISC, 2 favourite. */
+  flags: Uint8Array;
+  /** True once something changed that ITEMS > MISC shows next time. */
+  changed: boolean;
+}
+
+/** What APP.ts hands the options file (OPTIONS.ts). */
+interface CaseApi {
+  s: CaseState;
+  /** Index of the tape the options are for. */
+  tape: number;
+  /** Left edge of the right-hand panel. */
+  px: number;
+  /** Width of the list. */
+  listW: number;
+  nameOf(k: number): string;
+  reorder(rank: (k: number) => number | string): void;
+  setHidden(k: number, hide: boolean): void;
+  saveLists(): void;
+  saveOrder(): void;
+  launch(k: number): void;
+  clearPanel(): void;
+  openList(start: number): PipScroller;
+  /** Back to the list on the named tape; top is the first row shown, or -1. */
+  close(name: string, top: number): void;
+}
+
+/** The loaded options file. */
+interface CaseOptions {
+  remove(): void;
+}
+
+/** OPTIONS.JS evaluates to one of these. */
+type CaseOptionsFactory = (api: CaseApi) => CaseOptions;

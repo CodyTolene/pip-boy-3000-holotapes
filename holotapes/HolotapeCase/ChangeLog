@@ -1,3 +1,7 @@
+1.5.0 (2026-10-17)
+- Uses less memory while you browse: the options menus, sorting and Move in list are now a second file, OPTIONS.JS, loaded only while the options are open. The main file is about 40% smaller.
+- Dropped the one-time move of tapes back from 1.0's STORED folder (any 1.1 or later has already done it).
+
 1.4.0 (2026-10-17)
 - Organise your case: Move in list carries a tape up or down as you turn the left wheel; press to put it down.
 - Sort the case A to Z, favourites to the top, or hidden to the bottom.
