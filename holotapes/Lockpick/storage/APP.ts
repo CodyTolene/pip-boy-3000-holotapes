@@ -304,9 +304,21 @@
       const lv = LEVELS[sel];
       if (boyArt) h.drawImage(boyArt, 270, 44, { scale: 0.82 });
       if (pinArt) h.drawImage(pinArt, 368, 74, { scale: 0.6 });
-      stat(146, 'PIN STRENGTH', lv.hp + ' SNAPS');
-      stat(172, 'SWEET SPOT', lv.tol + ' DEG');
-      stat(198, 'POINTS PER LOCK', String(lv.pts));
+      if (save.m) {
+        // Tumbler locks: what is inside this lock, not the Classic sweet spot.
+        const sp = C.T_SPOOLS[sel];
+        stat(
+          146,
+          'PINS IN LOCK',
+          C.T_PINS[sel] + (sp ? ' (' + sp + ' SPOOL)' : ''),
+        );
+        stat(172, 'BINDING PIN', sel < 2 ? 'MARKED' : 'BY FEEL');
+        stat(198, 'POINTS PER LOCK', String(lv.pts * 2));
+      } else {
+        stat(146, 'PIN STRENGTH', lv.hp + ' SNAPS');
+        stat(172, 'SWEET SPOT', lv.tol + ' DEG');
+        stat(198, 'POINTS PER LOCK', String(lv.pts));
+      }
     } else {
       const lines = h
         .setFontMonofonto14()
