@@ -216,21 +216,23 @@
     }
   }
 
+  // The left column sits in from the screen's curved edge (x 28), and the
+  // controls end higher up, clear of the rounded bottom corner.
   function drawHud(): void {
     h.clearRect(0, 36, 99, 319)
       .clearRect(380, 36, 479, 319)
       .setColor(2)
       .setFontMonofonto14()
       .setFontAlign(-1, -1)
-      .drawString('LOCK', 8, 44)
+      .drawString('LOCK', 28, 44)
       .drawString(pinArt ? '' : 'BOBBY PINS', 388, 44)
       .drawString('SCORE', 388, 108)
       .drawString('BEST', 388, 168)
-      .drawString('L TURN:\n LOCK\nL HOLD:\n FORCE\nL PRESS:\n MENU', 8, 212)
+      .drawString('L TURN:\n LOCK\nL HOLD:\n FORCE\nL PRESS:\n MENU', 28, 196)
       .drawString('R TURN:\n PIN', 388, 238)
       .setColor(3)
       .setFontMonofonto16()
-      .drawString(LEVELS[save.d].name.replace(' ', '\n'), 8, 62)
+      .drawString(LEVELS[save.d].name.replace(' ', '\n'), 28, 62)
       .setFontMonofonto28()
       .drawString(String(save.p), 388, pinArt ? 68 : 62)
       .drawString(String(save.s), 388, 126)

@@ -1,5 +1,6 @@
 1.4.0 (2026-10-18)
 - README tidied up.
+- While picking, the lock level and controls on the left sit clear of the screen's curved edge and rounded corner.
 - The lock details panel only shows details that apply to the lock you are about to pick.
 - Your record shows in the Pip-Boy's own STATS > GENERAL screen. The hook ships with the holotape as HOLO/LOCKPICK/STATS_HOOK.JS; it switches on when you open Lockpick and registers itself in one shared boot slot (.boot1-.boot3, never .boot0) so it keeps working after a full restart. No CFW file or Service Records holotape needed.
 
