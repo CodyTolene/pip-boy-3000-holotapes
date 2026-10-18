@@ -32,7 +32,6 @@
   let list: PipScroller | undefined;
   let opts: CaseOptions | undefined;
   let patched = false;
-  let launchTimer: number | undefined;
   let optsTimer: number | undefined;
   let cleanedUp = false;
 
@@ -222,12 +221,16 @@
     if (!t || !t.src) return;
     const src = t.src.charAt(0) === '/' ? t.src : '/' + t.src;
     Pip.playSound('SELECT');
-    // Let the screen finish drawing before the new holotape takes it.
-    launchTimer = setTimeout(function (): void {
-      launchTimer = undefined;
-      cleanup();
-      Pip.loadHolotape(src);
-    }, 10);
+    cleanup();
+    // Full hand-off: the tape is started from the top level once the case
+    // has returned, so nothing of the case (or its options) is still held in
+    // memory while the tape loads.
+    setTimeout(
+      new Function(
+        'Pip.loadHolotape(' + JSON.stringify(src) + ')',
+      ) as () => void,
+      20,
+    );
   }
 
   function openList(start: number): PipScroller {
@@ -304,7 +307,6 @@
   function cleanup(): void {
     if (cleanedUp) return;
     cleanedUp = true;
-    if (launchTimer) clearTimeout(launchTimer);
     if (optsTimer) clearTimeout(optsTimer);
     if (opts) opts.remove();
     opts = undefined;

@@ -1,3 +1,6 @@
+1.6.2 (2026-10-18)
+- PLAY HOLOTAPE does a full hand-off: the tape starts once the case has fully closed, so the case no longer takes up memory the tape needs (fixes low memory when opening bigger tapes like My Journal from the case).
+
 1.6.1 (2026-10-18)
 - Fixes a low-memory error: the hook is skipped when it is already running and listed for startup, and otherwise runs at the top level (new Function) so it keeps nothing of the app in memory after the app closes.
 
