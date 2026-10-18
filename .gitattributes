@@ -1,0 +1,19 @@
+# Normalize text files to LF in the repository and in working trees.
+* text=auto eol=lf
+
+# Binary assets.
+*.avi binary
+*.bin binary
+*.bmp binary
+*.gif binary
+*.ico binary
+*.idx binary
+*.img binary
+*.jpg binary
+*.jpeg binary
+*.mp3 binary
+*.mp4 binary
+*.png binary
+*.raw binary
+*.wav binary
+*.xcf binary
