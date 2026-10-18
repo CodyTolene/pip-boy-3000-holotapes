@@ -14,6 +14,11 @@
     START_PINS: 8,
     D2R: 0.0174533,
     TUMBLER: 'HOLO/LOCKPICK/TUMBLER.JS',
+    // The lock menu, laid out like the Pip-Boy's own lists.
+    LIST_Y: 50,
+    ROW_H: 24,
+    LIST_W: 190,
+    PANEL_X: 240,
     // Tumbler mode per lock level: pin stacks, spool pins, spool slack.
     T_PINS: [3, 4, 5, 5, 6],
     T_SPOOLS: [0, 0, 0, 1, 2],
@@ -268,42 +273,63 @@
       .drawString(sub, 240, 198);
   }
 
+  // One labelled value in the details panel, drawn by the Pip-Boy's own
+  // stat block (the WG and VAL boxes in ITEMS).
+  function stat(y: number, label: string, value: string): void {
+    h.setColor(3);
+    Pip.renderBlock(C.PANEL_X, y, 225, label, value);
+  }
+
+  // The lock menu in the Pip-Boy's own list style (the same rows and
+  // highlight as ITEMS), with the highlighted lock's details on the right.
   function drawMenu(): void {
     let i = 0;
     let y = 0;
+    const rows = save.u ? 6 : 5;
     h.setBgColor(0).clear();
     drawHeader(save.m ? 'TUMBLER MODE' : 'SELECT LOCK');
-    h.setColor(2)
-      .setFontMonofonto16()
-      .setFontAlign(0, -1)
-      .drawString(
-        'PINS ' + save.p + '    SCORE ' + save.s + '    BEST ' + save.b,
-        240,
-        48,
-      );
-    for (i = 0; i < (save.u ? 6 : 5); i++) {
-      y = 92 + i * 30;
-      if (i === sel) {
-        h.setColor(3).fillRect(130, y - 13, 350, y + 13);
-        h.setColor(0);
-      } else {
-        h.setColor(i === 5 ? 2 : 3);
-      }
-      h.setFontMonofonto23()
-        .setFontAlign(0, 0)
+    h.setFontMonofonto14();
+    for (i = 0; i < rows; i++) {
+      y = C.LIST_Y + i * C.ROW_H;
+      if (i === sel) Pip.shadeBox(24, y, 24 + C.LIST_W, y + C.ROW_H);
+      h.setColor(i === 5 && i !== sel ? 2 : 3)
+        .setFontAlign(-1, 0)
         .drawString(
           i < 5 ? LEVELS[i].name : save.m ? 'MODE: TUMBLER' : 'MODE: CLASSIC',
-          240,
-          y,
+          46,
+          y + 14,
         );
     }
-    h.setColor(2)
-      .setFontMonofonto14()
-      .setFontAlign(0, -1)
-      .drawString('TURN LEFT WHEEL TO CHOOSE, PRESS TO START', 240, 274)
-      .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 292);
-    if (boyArt) h.drawImage(boyArt, 10, 128, { scale: 0.82 });
-    if (pinArt) h.drawImage(pinArt, 364, 140, { scale: 0.75 });
+    if (sel < 5) {
+      const lv = LEVELS[sel];
+      if (boyArt) h.drawImage(boyArt, 270, 44, { scale: 0.82 });
+      if (pinArt) h.drawImage(pinArt, 368, 74, { scale: 0.6 });
+      stat(146, 'PIN STRENGTH', lv.hp + ' SNAPS');
+      stat(172, 'SWEET SPOT', lv.tol + ' DEG');
+      stat(198, 'POINTS PER LOCK', String(lv.pts));
+    } else {
+      const lines = h
+        .setFontMonofonto14()
+        .wrapString(
+          save.m
+            ? 'TUMBLER: SET EACH PIN IN THE LOCK ONE BY ONE WITH THE RIGHT WHEEL, THEN TURN. PRESS TO SWITCH BACK TO CLASSIC.'
+            : 'CLASSIC: FIND THE SWEET SPOT WITH THE BOBBY PIN AND TURN THE LOCK, AS IN THE GAMES. PRESS TO SWITCH TO TUMBLER.',
+          225,
+        );
+      h.setColor(3)
+        .setFontAlign(-1, -1)
+        .drawString(lines.join('\n'), C.PANEL_X, 60);
+    }
+    // This run, in three blocks side by side like WG and VAL in ITEMS.
+    h.setColor(3);
+    Pip.renderBlock(C.PANEL_X, 226, 70, 'PINS', String(save.p));
+    Pip.renderBlock(C.PANEL_X + 76, 226, 72, 'SCORE', String(save.s));
+    Pip.renderBlock(C.PANEL_X + 154, 226, 71, 'BEST', String(save.b));
+    h.setFontMonofonto14()
+      .setColor(2)
+      .setFontAlign(0, 0)
+      .drawString('TURN: CHOOSE    PRESS: START', 240, 280)
+      .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 298);
   }
 
   // End of a run: the last bobby pin is gone.
