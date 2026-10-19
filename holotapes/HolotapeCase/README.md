@@ -70,6 +70,15 @@ turns hiding off.
 
 Favourites are saved in `HOLO/HOLOTAPE_CASE/FAVS.JSON`.
 
+### Faster, lighter launching from MISC
+
+The Pip-Boy's own MISC screen starts a holotape while its whole list (every
+visible tape) is still in memory, so with many tapes installed, bigger holotapes
+can fail to start with a low-memory error. While the hook is on, starting a
+holotape from ITEMS > MISC is a full hand-off instead: MISC is cleared first and
+then the holotape loads, the same way the case's own **Play holotape** works.
+The Pip-Boy's own MISC items are not affected.
+
 ### Notes
 
 The options menus are a second file, `OPTIONS.JS`, that the case loads only
