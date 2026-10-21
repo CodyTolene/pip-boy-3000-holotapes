@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -18,7 +18,7 @@
 //    selected = 2+: config rows
 // =============================================================================
 
-(function (app: VndApp) {
+(function (app: DndcApp) {
   let selected = 0; // 0 = BACK, 1 = ROLL, 2.. = other config rows
   let selectedButton = 0; // Remember the button to return to from the rows
 

@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -8,7 +8,7 @@
 //  Descriotion: A reusable confirmation dialog with CANCEL / DELETE buttons.
 // =============================================================================
 
-(function (app: VndApp, options: VndConfirmOptions) {
+(function (app: DndcApp, options: DndcConfirmOptions) {
   const BUTTONS = {
     count: 2,
     gap: 16,

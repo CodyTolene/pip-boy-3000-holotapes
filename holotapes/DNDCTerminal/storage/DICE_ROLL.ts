@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -11,8 +11,8 @@
 //    Press to roll and hold to keep the dice moving
 // =============================================================================
 
-(function (app: VndApp) {
-  const DICE_AUDIO = 'HOLO/VND/DICE_THROW.WAV';
+(function (app: DndcApp) {
+  const DICE_AUDIO = 'HOLO/DNDC_TERMINAL/DICE_THROW.WAV';
 
   let animationInterval: number | null = null; // Dice movement loop
   let dice: number[][] = []; // Current dice

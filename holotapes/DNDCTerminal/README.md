@@ -1,4 +1,4 @@
-# Vaults & Deathclaws
+# Dice & Deathclaws Terminal
 
 ### Info
 
@@ -6,8 +6,8 @@
 
 ### Description
 
-Vaults & Deathclaws is a Vault-Tec companion for your Pip-Boy. Boot it up to a
-vault intro reel, then manage Fallout RPG character sheets directly on the
+Dice & Deathclaws Terminal is a Vault-Tec companion for your Pip-Boy. Boot it up
+to a vault intro reel, then manage Fallout RPG character sheets directly on the
 device: every field from the official sheet (S.P.E.C.I.A.L., skills, combat,
 damage resistance with per-location injuries, current radiation, caps, carry
 weight, equipment, conditions, companions, notes, and the weapons / ammo / gear

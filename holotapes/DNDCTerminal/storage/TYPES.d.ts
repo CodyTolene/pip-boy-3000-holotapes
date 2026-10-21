@@ -1,5 +1,5 @@
 /**
- * Types for Vaults & Deathclaws, a character sheet and dice roller for the
+ * Types for Dice & Deathclaws Terminal, a character sheet and dice roller for the
  * Fallout tabletop RPG.
  *
  * The holotape is split into scenes so only the active screen is resident:
@@ -9,7 +9,7 @@
  */
 
 /** Scene file names, relative to the holotape's storage directory. */
-interface VndScenes {
+interface DndcScenes {
   /** Dice roller. */
   DICE: string;
   /** Dice roller configuration menu. */
@@ -39,7 +39,7 @@ interface VndScenes {
  * because a flat array costs far fewer Espruino variable blocks, and the
  * layout has to survive being written to and read back from JSON.
  */
-interface VndCharacter {
+interface DndcCharacter {
   /** Free text list of addictions. */
   addictions: string;
   /** Ammunition held; each entry is `[caliber, quantity]`. */
@@ -100,21 +100,21 @@ interface VndCharacter {
 }
 
 /** One screen of the character sheet form. */
-interface VndScreenDescriptor {
+interface DndcScreenDescriptor {
   /** Which section of the sheet this screen edits. */
   code: string;
   /** Table name for weapons/ammo/gear/perks screens. */
-  table?: string | number | VndFieldPath;
+  table?: string | number | DndcFieldPath;
   /** Row index within a table screen. */
-  index?: number | string | VndFieldPath;
+  index?: number | string | DndcFieldPath;
 }
 
 /** The in-progress edit of one character slot. */
-interface VndEditor {
+interface DndcEditor {
   /** The working copy, saved only when the user confirms. */
-  data: VndCharacter;
+  data: DndcCharacter;
   /** Screen descriptors visited so far, for the back button. */
-  history: VndScreenDescriptor[];
+  history: DndcScreenDescriptor[];
   /** Character slot number being edited. */
   number: number;
 }
@@ -127,10 +127,10 @@ interface VndEditor {
  * `[5]` target number, `[6]` critical range, `[7]` main result,
  * `[8]` second result, `[9]` result ready flag.
  */
-type VndDiceState = number[];
+type DndcDiceState = number[];
 
 /** The shared application object passed to every scene. */
-interface VndApp {
+interface DndcApp {
   /** Selected row in the character list, preserved across scenes. */
   listSel: number;
   /** Display height in pixels. */
@@ -138,17 +138,17 @@ interface VndApp {
   /** Display width in pixels. */
   W: number;
   /** Scene file names. */
-  scenes: VndScenes;
+  scenes: DndcScenes;
   /**
    * The character currently being edited. Set by the editor entry scene
    * before any screen that reads it, and dropped again on teardown.
    */
-  editor: VndEditor | null;
+  editor: DndcEditor | null;
   /**
    * Dice roller state. Set by the roller before its menu and result scenes
    * run, and dropped again on teardown.
    */
-  diceState: VndDiceState | null;
+  diceState: DndcDiceState | null;
   /** Queues a scene change for the next event loop turn. */
   go: (file: string, params?: object) => void;
   /** Forces a garbage collection pass between scenes. */
@@ -156,16 +156,16 @@ interface VndApp {
 }
 
 /** The handle a scene returns so the app can tear it down. */
-interface VndScene {
+interface DndcScene {
   /** Releases the scene's listeners, timers, and watches. */
   remove: () => void;
 }
 
 /** A scene file: an uninvoked function expression the app evaluates. */
-type VndSceneFactory = (app: VndApp, params?: object) => VndScene;
+type DndcSceneFactory = (app: DndcApp, params?: object) => DndcScene;
 
 /** A queued scene change awaiting the next event loop turn. */
-interface VndPendingScene {
+interface DndcPendingScene {
   /** Scene file to load. */
   file: string;
   /** Arbitrary parameters handed to the scene. */
@@ -173,7 +173,7 @@ interface VndPendingScene {
 }
 
 /** Parameters handed to the character slot editor. */
-interface VndEditorParameters {
+interface DndcEditorParameters {
   /** Slot number being opened. */
   characterNumber: number;
   /** True when the slot was empty and a fresh sheet is being created. */
@@ -181,25 +181,25 @@ interface VndEditorParameters {
 }
 
 /** The request `EDIT_DATA.JS` answers: build a character or migrate one. */
-interface VndDataRequest {
+interface DndcDataRequest {
   /** `"new"` builds defaults, `"load"` migrates a stored sheet. */
   requestType: string;
   /** The stored sheet, when loading. */
-  storedCharacter?: VndStoredCharacter | VndCharacter | null;
+  storedCharacter?: DndcStoredCharacter | DndcCharacter | null;
   /** Which table a blank entry is wanted for, when requestType is "entry". */
   tableName?: string;
 }
 
 /** The context a character sheet screen builder receives. */
-interface VndScreenContext {
+interface DndcScreenContext {
   /** The working copy being edited. */
-  characterData: VndCharacter;
+  characterData: DndcCharacter;
   /** Which screen to build. */
-  screenDescriptor: VndScreenDescriptor;
+  screenDescriptor: DndcScreenDescriptor;
 }
 
 /** Options for the reusable confirmation dialog. */
-interface VndConfirmOptions {
+interface DndcConfirmOptions {
   /** Name shown in the prompt. */
   name?: string;
   /** Called when the user selects DELETE. */
@@ -209,26 +209,26 @@ interface VndConfirmOptions {
 }
 
 /** Options for the free text entry screen. */
-interface VndTextOptions {
+interface DndcTextOptions {
   /** Label shown above the input. */
   label: string;
   /** Maximum characters accepted; defaults to 64. */
   maximumLength?: number;
   /** Path of the character field being edited. */
-  path: VndFieldPath;
+  path: DndcFieldPath;
   /**
    * True for fields that must be written straight to disk, such as the
    * character name shown in the slot list.
    */
   returnToMenu?: boolean;
   /** The form screen to return to once the field is saved. */
-  screen?: VndScreenDescriptor;
+  screen?: DndcScreenDescriptor;
 }
 
 /** Options for the on-screen keyboard. */
-interface VndKeyboardOptions {
+interface DndcKeyboardOptions {
   /** The shared app object, for screen metrics. */
-  app: VndApp;
+  app: DndcApp;
   /** Description drawn above the text box. */
   description?: string;
   /** Maximum characters accepted; defaults to 64. */
@@ -240,7 +240,7 @@ interface VndKeyboardOptions {
 }
 
 /** The keyboard handle returned to the caller. */
-interface VndKeyboard {
+interface DndcKeyboard {
   /** Releases the keyboard's listeners and cursor blink. */
   remove: () => void;
 }
@@ -253,39 +253,39 @@ interface VndKeyboard {
  */
 /**
  * A sheet as read from JSON before migrate(), including legacy nested shapes.
- * Only EDIT_DATA uses this; the live editor always sees {@link VndCharacter}.
+ * Only EDIT_DATA uses this; the live editor always sees {@link DndcCharacter}.
  */
-interface VndStoredCharacter {
+interface DndcStoredCharacter {
   addictions?: string;
-  ammo?: Array<Array<string | number> | VndLegacyAmmo>;
+  ammo?: Array<Array<string | number> | DndcLegacyAmmo>;
   armor?: string;
   caps?: number;
   carryCur?: number;
   carryMax?: number;
   charNotes?: string;
-  combat?: number[] | VndLegacyCombat;
+  combat?: number[] | DndcLegacyCombat;
   companions?: string[];
   diseases?: string;
   factionRep?: string;
-  gear?: Array<Array<string | number> | VndLegacyGear>;
+  gear?: Array<Array<string | number> | DndcLegacyGear>;
   helmet?: string;
   level?: number;
-  locs?: Array<number[] | VndLegacyLocation>;
+  locs?: Array<number[] | DndcLegacyLocation>;
   luckPoints?: number;
   name?: string;
   origin?: string;
-  perks?: Array<Array<string | number> | VndLegacyPerk>;
+  perks?: Array<Array<string | number> | DndcLegacyPerk>;
   questNotes?: string;
   radCur?: number;
   settlementRep?: string;
-  skills?: Array<number | VndLegacySkill>;
+  skills?: Array<number | DndcLegacySkill>;
   special?: number[];
-  weapons?: Array<Array<string | number> | VndLegacyWeapon>;
+  weapons?: Array<Array<string | number> | DndcLegacyWeapon>;
   xpEarned?: number;
   xpNext?: number;
 }
 
-interface VndLegacyCombat {
+interface DndcLegacyCombat {
   /** Melee bonus. */
   melee?: number;
   /** Defense rating. */
@@ -307,7 +307,7 @@ interface VndLegacyCombat {
  * arrays now, to save Espruino variable blocks. `EDIT_DATA.JS` converts any
  * stored sheet on load, which is why these shapes still need names.
  */
-interface VndLegacySkill {
+interface DndcLegacySkill {
   /** Skill rank. */
   rank?: number;
   /** Whether the skill was tagged. */
@@ -315,7 +315,7 @@ interface VndLegacySkill {
 }
 
 /** A body location as older versions stored it. */
-interface VndLegacyLocation {
+interface DndcLegacyLocation {
   /** Physical damage resistance. */
   phys?: number;
   /** Energy damage resistance. */
@@ -327,7 +327,7 @@ interface VndLegacyLocation {
 }
 
 /** A weapon as older versions stored it. */
-interface VndLegacyWeapon {
+interface DndcLegacyWeapon {
   /** Weapon name. */
   name?: string;
   /** Governing skill. */
@@ -355,7 +355,7 @@ interface VndLegacyWeapon {
 }
 
 /** An ammunition entry as older versions stored it. */
-interface VndLegacyAmmo {
+interface DndcLegacyAmmo {
   /** Caliber name. */
   caliber?: string;
   /** Quantity held. */
@@ -363,7 +363,7 @@ interface VndLegacyAmmo {
 }
 
 /** A gear entry as older versions stored it. */
-interface VndLegacyGear {
+interface DndcLegacyGear {
   /** Item name. */
   item?: string;
   /** Weight in pounds. */
@@ -371,7 +371,7 @@ interface VndLegacyGear {
 }
 
 /** A perk as older versions stored it. */
-interface VndLegacyPerk {
+interface DndcLegacyPerk {
   /** Perk name. */
   name?: string;
   /** Perk rank. */
@@ -384,33 +384,33 @@ interface VndLegacyPerk {
  * A path to a field inside a character sheet, e.g. `['name']` or
  * `['weapons', 2, 4]` for the fifth column of the third weapon.
  */
-type VndFieldPath = Array<string | number>;
+type DndcFieldPath = Array<string | number>;
 
-/** Value read or written along a {@link VndFieldPath}. */
-type VndFieldValue =
+/** Value read or written along a {@link DndcFieldPath}. */
+type DndcFieldValue =
   | string
   | number
   | boolean
-  | VndCharacter
-  | VndLegacyCombat
-  | VndLegacySkill
-  | VndLegacyLocation
-  | VndLegacyWeapon
-  | VndLegacyAmmo
-  | VndLegacyGear
-  | VndLegacyPerk
+  | DndcCharacter
+  | DndcLegacyCombat
+  | DndcLegacySkill
+  | DndcLegacyLocation
+  | DndcLegacyWeapon
+  | DndcLegacyAmmo
+  | DndcLegacyGear
+  | DndcLegacyPerk
   | Array<string | number>
   | number[]
   | string[]
   | Array<
       | Array<string | number>
-      | VndLegacyAmmo
-      | VndLegacyGear
-      | VndLegacyPerk
-      | VndLegacyWeapon
+      | DndcLegacyAmmo
+      | DndcLegacyGear
+      | DndcLegacyPerk
+      | DndcLegacyWeapon
     >
-  | Array<number | VndLegacySkill>
-  | Array<number[] | VndLegacyLocation>
+  | Array<number | DndcLegacySkill>
+  | Array<number[] | DndcLegacyLocation>
   | undefined;
 
 /**
@@ -419,19 +419,19 @@ type VndFieldValue =
  * `action` is one of `back`, `add`, `deleteEntry`, or a screen code to open;
  * `field` and `index` are only present for the table actions.
  */
-type VndFormButton = Array<string | number>;
+type DndcFormButton = Array<string | number>;
 
 /**
  * A form row.
  *
  * The first element is the row type, which decides how the rest is read:
  * 1 label only, 2 number with min/max/step, 3 checkbox, 4 text, 5 skill
- * (rank plus tag bit). Element 2 is the {@link VndFieldPath} being edited.
+ * (rank plus tag bit). Element 2 is the {@link DndcFieldPath} being edited.
  */
-type VndFormRow = Array<string | number | VndFieldPath>;
+type DndcFormRow = Array<string | number | DndcFieldPath>;
 
 /** A built form screen: `[title, buttons, rows]`. */
-type VndFormScreen = [string, VndFormButton[], VndFormRow[]];
+type DndcFormScreen = [string, DndcFormButton[], DndcFormRow[]];
 
 /** A screen builder file: takes the context and returns the built screen. */
-type VndScreenBuilder = (context: VndScreenContext) => VndFormScreen;
+type DndcScreenBuilder = (context: DndcScreenContext) => DndcFormScreen;

@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -11,13 +11,13 @@
 //    Press to open and hold a character to delete it
 // =============================================================================
 
-(function (app: VndApp) {
+(function (app: DndcApp) {
   const ACTION_BUTTONS = {
     count: 2,
     labels: ['+ ADD NEW CHARACTER', 'ROLL DICE'],
   };
-  const CHARACTER_DIR = 'HOLO/VND/CHAR';
-  const CONFIRM = 'HOLO/VND/CONFIRM.JS';
+  const CHARACTER_DIR = 'HOLO/DNDC_TERMINAL/CHAR';
+  const CONFIRM = 'HOLO/DNDC_TERMINAL/CONFIRM.JS';
   const LAYOUT = {
     actionButtonHeight: 24,
     actionButtonTop: 72,
@@ -37,7 +37,7 @@
 
   let characterNames: string[] = []; // Names matched to character slots
   let characterSlots: number[] = []; // Sorted save slot numbers
-  let confirmationScene: VndScene | null = null; // Open delete dialog
+  let confirmationScene: DndcScene | null = null; // Open delete dialog
   let hasLongPressFired = false; // Stops release after a long press
   let pendingDeleteIndex: number | null = null; // Character waiting to be deleted
   let pressTimer: number | null = null; // Tracks the delete hold
@@ -176,10 +176,16 @@
 
   function drawList(): void {
     h.clear(0);
-    h.setColor(3)
-      .setFontMonofonto28()
-      .setFontAlign(0, -1)
-      .drawString('VAULTS & DEATHCLAWS', app.W / 2, 6);
+    const title = 'DICE & DEATHCLAWS TERMINAL';
+
+    // Use the smaller title font if the long name does not fit the width
+    h.setColor(3).setFontMonofonto28().setFontAlign(0, -1);
+
+    if (h.stringWidth(title) > app.W - 2 * LAYOUT.sideMargin) {
+      h.setFontMonofonto23();
+    }
+
+    h.drawString(title, app.W / 2, 6);
     h.setColor(2)
       .setFontMonofonto16()
       .setFontAlign(0, -1)
@@ -679,7 +685,7 @@
     Pip.removeListener('knob1', onLeftScrollWheel);
     Pip.removeListener('knob2', onRightScrollWheel);
     confirmationScene = (
-      eval(source) as (app: VndApp, options: VndConfirmOptions) => VndScene
+      eval(source) as (app: DndcApp, options: DndcConfirmOptions) => DndcScene
     )(app, {
       name:
         characterNames[characterIndex] ||

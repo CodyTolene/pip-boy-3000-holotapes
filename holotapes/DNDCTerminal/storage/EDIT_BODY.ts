@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -11,7 +11,7 @@
 //    Returns [title, buttons, rows] for EDIT_FORM.JS
 // =============================================================================
 
-(function (context: VndScreenContext) {
+(function (context: DndcScreenContext) {
   // Keep body names in stored order
   const names = [
     'HEAD',
