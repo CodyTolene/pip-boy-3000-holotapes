@@ -1,0 +1,30 @@
+{
+  "id": "dice-roller",
+  "name": "Dice Roller",
+  "author": "@CodyTolene",
+  "version": "1.0.0",
+  "description": "A simple D2 through D100 dice roller with modifiers, targets and critical ranges.",
+  "icon": "storage/ICON.img",
+  "previews": [],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    { "pipboy": "HOLO/DICE_ROLLER/APP.JS", "source": "storage/APP.ts" },
+    {
+      "pipboy": "HOLO/DICE_ROLLER/DICE_MENU.JS",
+      "source": "storage/DICE_MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/DICE_ROLLER/DICE_ROLL.JS",
+      "source": "storage/DICE_ROLL.ts"
+    }
+  ],
+  "storageOptional": [
+    {
+      "label": "Dice Throw Sound",
+      "sizeKB": 35,
+      "pipboy": "HOLO/DICE_ROLLER/DICE_THROW.WAV",
+      "source": "optional/DICE_THROW.wav"
+    }
+  ]
+}
