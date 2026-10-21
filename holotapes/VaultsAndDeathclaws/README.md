@@ -74,8 +74,9 @@ International License. See
 [CC-BY-NC-4.0](https://creativecommons.org/licenses/by-nc/4.0/) for more
 information.
 
-This app uses a sound from pixabay.com under a license that allows free use in
-personal and commercial projects: https://pixabay.com/service/license-summary/
+This app uses a sound from freesound.org under the Creative Commons 0 (CC0)
+license, which allows free use in personal and commercial projects:
+https://creativecommons.org/publicdomain/zero/1.0/
 
 - [`DICE_THROW.WAV`](https://freesound.org/people/Flem0527/sounds/629982/) by
   Flem0527
