@@ -12,8 +12,8 @@
 // =============================================================================
 
 (function (app: DndcApp, options: DndcTextOptions) {
-  const CHARACTER_DIR = 'HOLO/DNDC_TERMINAL/CHAR/';
-  const KEYBOARD = 'HOLO/DNDC_TERMINAL/KEYBOARD.JS';
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
+  const KEYBOARD = 'HOLO/DNDC/KEYBOARD.JS';
 
   let keyboard: DndcKeyboard | null = null;
   // Defer loading the keyboard by one tick

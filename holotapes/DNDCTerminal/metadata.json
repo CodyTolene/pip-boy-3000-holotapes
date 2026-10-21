@@ -1,5 +1,5 @@
 {
-  "id": "dndc-terminal",
+  "id": "dndc",
   "previousId": "vnd",
   "name": "Dice & Deathclaws Terminal",
   "author": "@CodyTolene",
@@ -16,75 +16,75 @@
   "readme": "README.md",
   "storage": [
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/APP.JS",
+      "pipboy": "HOLO/DNDC/APP.JS",
       "source": "storage/APP.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/CONFIRM.JS",
+      "pipboy": "HOLO/DNDC/CONFIRM.JS",
       "source": "storage/CONFIRM.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/DICE.JS",
+      "pipboy": "HOLO/DNDC/DICE.JS",
       "source": "storage/DICE.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/DICE_MENU.JS",
+      "pipboy": "HOLO/DNDC/DICE_MENU.JS",
       "source": "storage/DICE_MENU.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/DICE_ROLL.JS",
+      "pipboy": "HOLO/DNDC/DICE_ROLL.JS",
       "source": "storage/DICE_ROLL.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT.JS",
+      "pipboy": "HOLO/DNDC/EDIT.JS",
       "source": "storage/EDIT.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_BASIC.JS",
+      "pipboy": "HOLO/DNDC/EDIT_BASIC.JS",
       "source": "storage/EDIT_BASIC.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_BODY.JS",
+      "pipboy": "HOLO/DNDC/EDIT_BODY.JS",
       "source": "storage/EDIT_BODY.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_DATA.JS",
+      "pipboy": "HOLO/DNDC/EDIT_DATA.JS",
       "source": "storage/EDIT_DATA.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_DELETE.JS",
+      "pipboy": "HOLO/DNDC/EDIT_DELETE.JS",
       "source": "storage/EDIT_DELETE.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_FORM.JS",
+      "pipboy": "HOLO/DNDC/EDIT_FORM.JS",
       "source": "storage/EDIT_FORM.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_MENU.JS",
+      "pipboy": "HOLO/DNDC/EDIT_MENU.JS",
       "source": "storage/EDIT_MENU.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_SKILL.JS",
+      "pipboy": "HOLO/DNDC/EDIT_SKILL.JS",
       "source": "storage/EDIT_SKILL.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_TABLE.JS",
+      "pipboy": "HOLO/DNDC/EDIT_TABLE.JS",
       "source": "storage/EDIT_TABLE.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/EDIT_TEXT.JS",
+      "pipboy": "HOLO/DNDC/EDIT_TEXT.JS",
       "source": "storage/EDIT_TEXT.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/INTRO.JS",
+      "pipboy": "HOLO/DNDC/INTRO.JS",
       "source": "storage/INTRO.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/KEYBOARD.JS",
+      "pipboy": "HOLO/DNDC/KEYBOARD.JS",
       "source": "storage/KEYBOARD.ts"
     },
     {
-      "pipboy": "HOLO/DNDC_TERMINAL/LIST.JS",
+      "pipboy": "HOLO/DNDC/LIST.JS",
       "source": "storage/LIST.ts"
     }
   ],
@@ -92,14 +92,14 @@
     {
       "label": "Vault Intro Video",
       "sizeKB": 3887,
-      "pipboy": "HOLO/DNDC_TERMINAL/VAULT.AVI",
+      "pipboy": "HOLO/DNDC/VAULT.AVI",
       "source": "optional/VAULT.avi"
     },
     {
       "label": "Dice Throw Sound",
       "previewMp3": "previews/DICE_THROW.mp3",
       "sizeKB": 35,
-      "pipboy": "HOLO/DNDC_TERMINAL/DICE_THROW.WAV",
+      "pipboy": "HOLO/DNDC/DICE_THROW.WAV",
       "source": "optional/DICE_THROW.wav"
     }
   ]

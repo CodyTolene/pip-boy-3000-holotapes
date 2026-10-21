@@ -10,7 +10,7 @@
 // =============================================================================
 
 (function (app: DndcApp) {
-  const CHARACTER_DIR = 'HOLO/DNDC_TERMINAL/CHAR/';
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
   const BUTTONS = [
     ['< BACK', 'back'],
     ['SAVE', 'save'],

@@ -8,12 +8,12 @@
 //  Description: Loads or creates a character and opens the editor
 //  Notes:
 //    New characters open the keyboard and saved characters open the edit menu
-//    Character files use HOLO/DNDC_TERMINAL/CHAR/NN.JSON
+//    Character files use HOLO/DNDC/CHAR/NN.JSON
 // =============================================================================
 
 (function (app: DndcApp, editorParameters: DndcEditorParameters) {
-  const CHARACTER_DIR = 'HOLO/DNDC_TERMINAL/CHAR/';
-  const EDIT_DATA = 'HOLO/DNDC_TERMINAL/EDIT_DATA.JS';
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
+  const EDIT_DATA = 'HOLO/DNDC/EDIT_DATA.JS';
 
   // Defer setup by one tick
   let initializationTimeout: number | null = setTimeout(function () {

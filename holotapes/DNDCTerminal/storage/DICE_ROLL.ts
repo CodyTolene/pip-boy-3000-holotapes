@@ -12,7 +12,7 @@
 // =============================================================================
 
 (function (app: DndcApp) {
-  const DICE_AUDIO = 'HOLO/DNDC_TERMINAL/DICE_THROW.WAV';
+  const DICE_AUDIO = 'HOLO/DNDC/DICE_THROW.WAV';
 
   let animationInterval: number | null = null; // Dice movement loop
   let dice: number[][] = []; // Current dice

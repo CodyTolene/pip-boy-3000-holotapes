@@ -10,7 +10,7 @@
 // =============================================================================
 
 (function () {
-  const HOLOTAPE_DIR = 'HOLO/DNDC_TERMINAL/';
+  const HOLOTAPE_DIR = 'HOLO/DNDC/';
 
   let scene: DndcScene | null = null; // Current scene
   let pending: DndcPendingScene | null = null; // Next scene queued
@@ -143,7 +143,7 @@
   /**
    * One-time move of saves made before the 2.0.0 rename.
    *   Prev: `HOLO/VND/CHAR/`
-   *   New: `HOLO/DNDC_TERMINAL/CHAR/`
+   *   New: `HOLO/DNDC/CHAR/`
    */
   function migrateSaves(): void {
     const OLD_CHARACTER_DIR = 'HOLO/VND/CHAR/';
@@ -204,7 +204,7 @@
   app.go(app.scenes.INTRO);
 
   return {
-    id: 'DNDCTERMINAL',
+    id: 'dndc',
     notDefault: true,
     fullscreen: true,
     remove: remove,

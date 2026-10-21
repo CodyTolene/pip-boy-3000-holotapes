@@ -10,7 +10,7 @@
 // =============================================================================
 
 (function (app: DndcApp) {
-  const VAULT_VIDEO = 'HOLO/DNDC_TERMINAL/VAULT.AVI';
+  const VAULT_VIDEO = 'HOLO/DNDC/VAULT.AVI';
 
   let hasFinished = false; // Only move on once
   let videoHoldInterval: number | null = null;

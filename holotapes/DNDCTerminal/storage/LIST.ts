@@ -16,8 +16,8 @@
     count: 2,
     labels: ['+ ADD NEW CHARACTER', 'ROLL DICE'],
   };
-  const CHARACTER_DIR = 'HOLO/DNDC_TERMINAL/CHAR';
-  const CONFIRM = 'HOLO/DNDC_TERMINAL/CONFIRM.JS';
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR';
+  const CONFIRM = 'HOLO/DNDC/CONFIRM.JS';
   const LAYOUT = {
     actionButtonHeight: 24,
     actionButtonTop: 72,

@@ -15,11 +15,11 @@
 
 (function (app: DndcApp, initialScreen: DndcScreenDescriptor) {
   // Form builder files
-  const EDIT_BASIC = 'HOLO/DNDC_TERMINAL/EDIT_BASIC.JS';
-  const EDIT_BODY = 'HOLO/DNDC_TERMINAL/EDIT_BODY.JS';
-  const EDIT_DATA = 'HOLO/DNDC_TERMINAL/EDIT_DATA.JS';
-  const EDIT_SKILL = 'HOLO/DNDC_TERMINAL/EDIT_SKILL.JS';
-  const EDIT_TABLE = 'HOLO/DNDC_TERMINAL/EDIT_TABLE.JS';
+  const EDIT_BASIC = 'HOLO/DNDC/EDIT_BASIC.JS';
+  const EDIT_BODY = 'HOLO/DNDC/EDIT_BODY.JS';
+  const EDIT_DATA = 'HOLO/DNDC/EDIT_DATA.JS';
+  const EDIT_SKILL = 'HOLO/DNDC/EDIT_SKILL.JS';
+  const EDIT_TABLE = 'HOLO/DNDC/EDIT_TABLE.JS';
 
   const LAYOUT = {
     buttonHeight: 30,
