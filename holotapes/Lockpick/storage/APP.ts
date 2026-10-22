@@ -62,6 +62,8 @@
 
   let tick!: number;
   let msgTimer: number | undefined;
+  // Deferred startup
+  let bootTimer: number | undefined;
   // Art from the Pip-Boy's own data: Vault Boy picking a lock, a bobby pin.
   let boyArt: string | undefined;
   let pinArt: string | undefined;
@@ -645,9 +647,6 @@
   // Init. A save left with no pins (the app was closed on the last snap)
   // starts a fresh run.
   load();
-  // Same record ids in Fallout 3 and New Vegas: Lockpick skill, Bobby Pin.
-  boyArt = art('SKILLS', 0x4b4);
-  pinArt = art('MISC', 0xa);
   sel = save.d;
   if (save.p <= 0) {
     save.p = C.START_PINS;
@@ -659,11 +658,21 @@
   Pip.onExclusive('knob2', onKnob2);
   tick = setInterval(onFrame, 50);
 
-  // Your record in STATS > GENERAL, now and after a full restart (see
-  // STATS_HOOK.ts). Nothing to do when the hook is already running and
-  // listed for startup; otherwise it runs at the top level (new Function) so
-  // it keeps nothing of this holotape in memory once it is closed.
-  (function (): void {
+  // Art and the STATS wait until this function returns, so the list is freed
+  // first. Loading them during startup ran the Pip-Boy out of memory.
+  bootTimer = setTimeout(function (): void {
+    bootTimer = undefined;
+    E.defrag(); // Just in case...
+
+    // Same record ids in Fallout 3 and New Vegas: Lockpick skill, Bobby Pin.
+    boyArt = art('SKILLS', 0x4b4);
+    pinArt = art('MISC', 0xa);
+    if (phase === 0) drawMenu();
+
+    // Your record in STATS > GENERAL, now and after a full restart (see
+    // STATS_HOOK.ts). Nothing to do when the hook is already running and
+    // listed for startup; otherwise it runs at the top level (new Function)
+    // so it keeps nothing of this holotape in memory once it is closed.
     const hook = 'HOLO/LOCKPICK/STATS_HOOK.JS';
     const rows = global.RM_STATS as Record<string, StatsRowFn> | undefined;
     let listed = false;
@@ -679,7 +688,7 @@
     } catch (e) {
       // STATS just won't show the row; the game itself still works.
     }
-  })();
+  }, 0);
 
   return {
     id: 'LOCKPICK',
@@ -689,6 +698,7 @@
       if (scene) scene.remove();
       clearInterval(tick);
       if (msgTimer) clearTimeout(msgTimer);
+      if (bootTimer) clearTimeout(bootTimer);
       Pip.removeListener('knob1', onKnob1);
       Pip.removeListener('knob2', onKnob2);
       h.clear();
