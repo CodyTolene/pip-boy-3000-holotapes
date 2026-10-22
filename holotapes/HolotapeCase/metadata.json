@@ -1,0 +1,26 @@
+{
+  "id": "holotape-case",
+  "name": "Holotape Case",
+  "author": "@Radiomaru7",
+  "version": "1.0.0",
+  "description": "A launcher for every holotape on the card, with favourites, and a way to tidy holotapes out of ITEMS > MISC.",
+  "icon": "storage/HOLOTAPE-CASE.img",
+  "previews": ["previews/LIST.png", "previews/ACTIONS.png"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/HOLOTAPE_CASE/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/HOLOTAPE_CASE/OPTIONS.JS",
+      "source": "storage/OPTIONS.ts"
+    },
+    {
+      "pipboy": "HOLO/HOLOTAPE_CASE/MISC_HOOK.JS",
+      "source": "storage/MISC_HOOK.ts"
+    }
+  ],
+  "storageOptional": []
+}
