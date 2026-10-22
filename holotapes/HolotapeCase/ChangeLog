@@ -1,21 +1,13 @@
-1.6.3 (2026-10-18)
+1.0.0 (2026-10-18)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/124
+- Initial release.
 - Starting a tape from ITEMS > MISC is now a full hand-off too: MISC is cleared from memory before the tape loads. With many tapes shown in MISC, bigger tapes like Lockpick could run out of memory when started from there.
-
-1.6.2 (2026-10-18)
 - PLAY HOLOTAPE does a full hand-off: the tape starts once the case has fully closed, so the case no longer takes up memory the tape needs (fixes low memory when opening bigger tapes like My Journal from the case).
-
-1.6.1 (2026-10-18)
 - Fixes a low-memory error: the hook is skipped when it is already running and listed for startup, and otherwise runs at the top level (new Function) so it keeps nothing of the app in memory after the app closes.
-
-1.6.0 (2026-10-18)
 - No CFW file or boot loader needed: the MISC hook now ships with the holotape as HOLO/HOLOTAPE_CASE/MISC_HOOK.JS. It switches on when you open the case and registers itself in one shared boot slot (.boot1-.boot3, never .boot0) so it keeps working after a full restart.
 - The hook does nothing if it is already active.
-
-1.5.0 (2026-10-17)
 - Uses less memory while you browse: the options menus, sorting and Move in list are now a second file, OPTIONS.JS, loaded only while the options are open. The main file is about 40% smaller.
 - Dropped the one-time move of tapes back from 1.0's STORED folder (any 1.1 or later has already done it).
-
-1.4.0 (2026-10-17)
 - Organise your case: Move in list carries a tape up or down as you turn the left wheel; press to put it down.
 - Sort the case A to Z, favourites to the top, or hidden to the bottom.
 - ITEMS > MISC uses the same order (needs the updated CFW/52_RADIOMARU_MISC.JS and a reboot), with Holotape Case first.
@@ -23,24 +15,13 @@
 - Atomic Command and Grelok count as the Pip-Boy's own holotapes: the case leaves them out, Hide all never hides them, and ITEMS > MISC lists them first after the case.
 - Holotapes whose icon is missing from the card show the Pip-Boy's own holotape picture (APPINFO/HOLO.IMG) instead of a drawn cassette.
 - Options are grouped: Sort the case and Hide or show all open their own menus.
-
-1.3.1 (2026-10-17)
 - Holotapes now only play from the new Play holotape option. Pressing or holding the left wheel opens the options, so no stray press can start a game.
-
-1.3.0 (2026-10-17)
 - New option: Hide all custom holotapes. Hides every holotape installed from pip-boy.com, leaving only the Pip-Boy's own MISC items and the case.
-
-1.2.1 (2026-10-17)
 - Press the left wheel for the options and hold it to play, so a stray press no longer starts a holotape.
-
-1.2.0 (2026-10-17)
 - Now a submenu of ITEMS > MISC built on the Pip-Boy's own scrolling list, with the ITEMS header and tabs, instead of a separate full-screen app.
 - Uses far less memory: only the .info file names are kept, and each tape's name and icon are read as its row comes on screen.
 - Favourites show the filled box the Pip-Boy uses for equipped items. Hold the left wheel for the options.
-
-1.1.0 (2026-10-12)
 - Hides holotapes from ITEMS > MISC with a CFW patch instead of moving .info files, so pip-boy.com still sees every holotape.
 - Changes show the next time ITEMS > MISC opens, without a reboot.
 - "Store all others" is now "Hide all but favourites".
 - Tapes stored by 1.0 are moved back into APPINFO and kept hidden.
-
