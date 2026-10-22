@@ -2,7 +2,7 @@
   "id": "lockpick",
   "name": "Lockpick",
   "author": "@Radiomaru7",
-  "version": "1.4.0",
+  "version": "1.0.0",
   "description": "The Fallout lockpicking minigame: earn bobby pins by picking locks and see how far a run goes before your last pin snaps.",
   "icon": "storage/LOCKPICK.img",
   "previews": ["previews/MENU.png", "previews/GAME.png"],

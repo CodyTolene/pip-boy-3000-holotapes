@@ -1,24 +1,16 @@
-1.4.0 (2026-10-18)
+1.0.0 (2026-10-18)
+https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/121
+- Initial release.
 - README tidied up.
 - While picking, the lock level and controls on the left sit clear of the screen's curved edge and rounded corner.
 - The lock details panel only shows details that apply to the lock you are about to pick.
 - Your record shows in the Pip-Boy's own STATS > GENERAL screen. The hook ships with the holotape as HOLO/LOCKPICK/STATS_HOOK.JS; it switches on when you open Lockpick and registers itself in one shared boot slot (.boot1-.boot3, never .boot0) so it keeps working after a full restart. No CFW file or Service Records holotape needed.
-
-1.3.0 (2026-10-17)
 - The lock menu uses the Pip-Boy's own list style: 14-point rows with the native highlight, like ITEMS, instead of large centred text.
 - A details panel beside the list shows the highlighted lock's pin strength, sweet spot and points, using the Pip-Boy's own stat blocks, with your bobby pins, score and best run underneath.
-
-1.2.1 (2026-10-17)
 - Header drawn in the Pip-Boy's own layout (title on the line, info underneath), so nothing is cut off by the rounded corners of the screen.
 - Icon is now a Pip-Boy .img, so it shows in ITEMS > MISC.
-
-1.2.0 (2026-10-12)
 - Draws Vault Boy picking a lock and a real bobby pin from the Pip-Boy's own game data (Fallout 3 or New Vegas mode) on the menu, the lock screen and the run-over screen. Falls back to the plain look if the data is missing.
-
-1.1.0 (2026-10-09)
 - Gameplay additions.
-
-1.0.0 (2026-10-05)
 - Initial release of Lockpick, with five lock levels, breakable bobby pins, forcing, and saved progress.
 - Use only the SCROLL, TAB and SELECT UI sounds, which every firmware provides.
 - Each new bobby pin starts at the top of the lock.
