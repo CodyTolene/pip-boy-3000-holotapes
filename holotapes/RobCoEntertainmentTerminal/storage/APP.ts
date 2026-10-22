@@ -14,6 +14,16 @@
   let loading: RcetPendingScene | null = null;
   let loadTimer: number | null = null;
 
+  // Current app version
+  let version = '0.0.0';
+  try {
+    version = JSON.parse(
+      require('fs').readFileSync('/APPINFO/RCET.info'),
+    ).version;
+  } catch (e) {
+    return '0.0.0';
+  }
+
   const app = {
     H: 320,
     W: 480,
@@ -29,8 +39,7 @@
     ],
     sortDir: global.__RCETSort || 1,
     persist: global.__RCETPersist || false,
-    // Current app version
-    version: '2.2.2',
+    version: version,
     // CFW Persistent Audio Support
     supportedFirmwareVersion: '1.1.6', // Pip-Boy Version
 
