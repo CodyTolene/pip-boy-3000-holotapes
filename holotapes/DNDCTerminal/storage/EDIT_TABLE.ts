@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -12,7 +12,7 @@
 //    Returns [title, buttons, rows] for EDIT_FORM.JS
 // =============================================================================
 
-(function (context: VndScreenContext) {
+(function (context: DndcScreenContext) {
   const table = String(context.screenDescriptor.table); // weapons, ammo, gear, or perks
   const titles = {
     ammo: 'AMMO',
@@ -34,7 +34,7 @@
     index: number,
     field: number,
     maximum: number,
-  ): VndFormRow {
+  ): DndcFormRow {
     return [2, label, [table, index, field], 0, maximum, 1];
   }
 
@@ -45,7 +45,7 @@
    * @param field The field index
    * @returns {Array} The text row
    */
-  function text(label: string, index: number, field: number): VndFormRow {
+  function text(label: string, index: number, field: number): DndcFormRow {
     return [4, label, [table, index, field], 64];
   }
 
@@ -53,7 +53,7 @@
   if (context.screenDescriptor.code === 'entry') {
     const i = Number(context.screenDescriptor.index);
 
-    let rows: VndFormRow[];
+    let rows: DndcFormRow[];
 
     // Field numbers match the stored array
     if (table === 'weapons') {
@@ -104,7 +104,7 @@
         : table === 'gear'
           ? context.characterData.gear
           : context.characterData.perks;
-  const rows: VndFormRow[] = [[7, '+ ADD ENTRY', 'add', table]]; // Type 7 adds an entry
+  const rows: DndcFormRow[] = [[7, '+ ADD ENTRY', 'add', table]]; // Type 7 adds an entry
 
   // Add one link row for each entry
   for (let i = 0; i < entries.length; i++) {

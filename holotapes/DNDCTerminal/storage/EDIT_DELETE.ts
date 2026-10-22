@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -9,11 +9,11 @@
 //  Notes: Cancel opens the edit menu and confirm deletes the save file
 // =============================================================================
 
-(function (app: VndApp) {
-  const CHARACTER_DIR = 'HOLO/VND/CHAR/';
-  const CONFIRM = 'HOLO/VND/CONFIRM.JS';
+(function (app: DndcApp) {
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
+  const CONFIRM = 'HOLO/DNDC/CONFIRM.JS';
 
-  let confirmation: VndScene | null = null;
+  let confirmation: DndcScene | null = null;
   // Defer loading the dialog by one tick
   let loadTimeout: number | null = setTimeout(function () {
     loadTimeout = null;
@@ -25,9 +25,9 @@
 
     confirmation = (
       eval(fs.readFileSync(CONFIRM)) as (
-        app: VndApp,
-        options: VndConfirmOptions,
-      ) => VndScene
+        app: DndcApp,
+        options: DndcConfirmOptions,
+      ) => DndcScene
     )(app, {
       // Show the name or slot number
       name:

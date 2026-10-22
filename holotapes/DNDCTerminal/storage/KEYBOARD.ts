@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -14,7 +14,7 @@
 //    Only changed screen rows are sent to the display
 // =============================================================================
 
-(function (keyboardOptions: VndKeyboardOptions) {
+(function (keyboardOptions: DndcKeyboardOptions) {
   // Keep lower and upper case in matching 14 key rows
   const KEYS = {
     lowercase: [

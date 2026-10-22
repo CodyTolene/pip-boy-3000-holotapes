@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -13,13 +13,13 @@
 //    Paths list the keys used to find character data
 // =============================================================================
 
-(function (app: VndApp, initialScreen: VndScreenDescriptor) {
+(function (app: DndcApp, initialScreen: DndcScreenDescriptor) {
   // Form builder files
-  const EDIT_BASIC = 'HOLO/VND/EDIT_BASIC.JS';
-  const EDIT_BODY = 'HOLO/VND/EDIT_BODY.JS';
-  const EDIT_DATA = 'HOLO/VND/EDIT_DATA.JS';
-  const EDIT_SKILL = 'HOLO/VND/EDIT_SKILL.JS';
-  const EDIT_TABLE = 'HOLO/VND/EDIT_TABLE.JS';
+  const EDIT_BASIC = 'HOLO/DNDC/EDIT_BASIC.JS';
+  const EDIT_BODY = 'HOLO/DNDC/EDIT_BODY.JS';
+  const EDIT_DATA = 'HOLO/DNDC/EDIT_DATA.JS';
+  const EDIT_SKILL = 'HOLO/DNDC/EDIT_SKILL.JS';
+  const EDIT_TABLE = 'HOLO/DNDC/EDIT_TABLE.JS';
 
   const LAYOUT = {
     buttonHeight: 30,
@@ -31,7 +31,7 @@
   };
 
   let currentDescriptor = initialScreen; // Current form details
-  let currentScreen: VndFormScreen | null = null; // Current title, buttons, and rows
+  let currentScreen: DndcFormScreen | null = null; // Current title, buttons, and rows
   // Build the first form on the next tick
   let initializationTimeout: number | null = setTimeout(function () {
     initializationTimeout = null;
@@ -46,14 +46,14 @@
    * @param button The button data
    * @returns {void} Nothing
    */
-  function action(button: VndFormButton): void {
+  function action(button: DndcFormButton): void {
     if (button[1] === 'back') {
       back();
     } else if (button[1] === 'deleteEntry') {
       // Delete the selected table entry
       {
         let key = String(button[2]);
-        let list = app.editor!.data[key as keyof VndCharacter];
+        let list = app.editor!.data[key as keyof DndcCharacter];
         if (Array.isArray(list)) list.splice(Number(button[3]), 1);
       }
       back();
@@ -72,7 +72,7 @@
       entries.push(
         (
           eval(fs.readFileSync(EDIT_DATA)) as (
-            request: VndDataRequest,
+            request: DndcDataRequest,
           ) => PipValue
         )({
           requestType: 'entry',
@@ -90,7 +90,7 @@
    * @param descriptor The form details
    * @returns {void} Nothing
    */
-  function apply(descriptor: VndScreenDescriptor): void {
+  function apply(descriptor: DndcScreenDescriptor): void {
     currentDescriptor = descriptor;
     currentScreen = null;
 
@@ -111,7 +111,7 @@
       file = EDIT_TABLE;
     }
 
-    currentScreen = (eval(fs.readFileSync(file)) as VndScreenBuilder)({
+    currentScreen = (eval(fs.readFileSync(file)) as DndcScreenBuilder)({
       characterData: app.editor!.data,
       screenDescriptor: descriptor,
     });
@@ -138,7 +138,7 @@
    */
   function back(): void {
     if (app.editor!.history.length) {
-      apply(app.editor!.history.pop() as VndScreenDescriptor);
+      apply(app.editor!.history.pop() as DndcScreenDescriptor);
     } else {
       app.go(app.scenes.EDIT_MENU);
     }
@@ -228,7 +228,7 @@
    * @param active Whether the row is selected
    * @returns {void} Nothing
    */
-  function drawRow(row: VndFormRow, top: number, active: boolean): void {
+  function drawRow(row: DndcFormRow, top: number, active: boolean): void {
     if (active) {
       Pip.shadeBox(6, top, app.W - 6, top + 20);
     }
@@ -244,7 +244,7 @@
     if (row[0] === 2) {
       // Draw a number value
       h.setFontAlign(1, 0).drawString(
-        '' + get(row[2] as VndFieldPath),
+        '' + get(row[2] as DndcFieldPath),
         app.W - 14,
         top + 11,
       );
@@ -252,12 +252,12 @@
       // Draw a checkbox
       h.drawRect(app.W - 28, top + 4, app.W - 14, top + 18);
 
-      if (get(row[2] as VndFieldPath)) {
+      if (get(row[2] as DndcFieldPath)) {
         h.fillRect(app.W - 25, top + 7, app.W - 17, top + 15);
       }
     } else if (row[0] === 5) {
       // Draw the skill tag and rank
-      const skill = Number(get(row[2] as VndFieldPath));
+      const skill = Number(get(row[2] as DndcFieldPath));
 
       h.drawRect(app.W - 60, top + 4, app.W - 46, top + 18); // Tag checkbox
 
@@ -268,7 +268,7 @@
       h.setFontAlign(1, 0).drawString('' + (skill & 7), app.W - 14, top + 11); // Skill rank
     } else if (row[0] === 4) {
       // Draw text or an edit label
-      const text = String(get(row[2] as VndFieldPath) || '');
+      const text = String(get(row[2] as DndcFieldPath) || '');
 
       h.setColor(text ? color : 1)
         .setFontAlign(1, 0)
@@ -284,8 +284,8 @@
    * @param path The keys used to find the value
    * @returns {*} The value at the path
    */
-  function get(path: VndFieldPath): VndFieldValue {
-    let value: VndFieldValue = app.editor!.data;
+  function get(path: DndcFieldPath): DndcFieldValue {
+    let value: DndcFieldValue = app.editor!.data;
 
     for (let i = 0; i < path.length; i++) {
       value = (value as Record<string | number, PipValue>)[path[i]];
@@ -362,17 +362,17 @@
     const row = currentScreen![2][selectedRow(selected)];
 
     if (row[0] === 3) {
-      set(row[2] as VndFieldPath, !get(row[2] as VndFieldPath)); // Change the checkbox
+      set(row[2] as DndcFieldPath, !get(row[2] as DndcFieldPath)); // Change the checkbox
       draw();
     } else if (row[0] === 5) {
-      set(row[2] as VndFieldPath, Number(get(row[2] as VndFieldPath)) ^ 8); // Change the skill tag
+      set(row[2] as DndcFieldPath, Number(get(row[2] as DndcFieldPath)) ^ 8); // Change the skill tag
       draw();
     } else if (row[0] === 4) {
       // Open the keyboard for this field
       app.go(app.scenes.EDIT_TEXT, {
         label: 'EDIT ' + row[1],
         maximumLength: row[3] as number,
-        path: row[2] as VndFieldPath,
+        path: row[2] as DndcFieldPath,
         screen: currentDescriptor,
       });
     } else if (row[0] === 6) {
@@ -423,9 +423,9 @@
     if (row[0] === 2) {
       // Change a number within its range
       set(
-        row[2] as VndFieldPath,
+        row[2] as DndcFieldPath,
         E.clip(
-          Number(get(row[2] as VndFieldPath)) +
+          Number(get(row[2] as DndcFieldPath)) +
             (direction > 0 ? (row[5] as number) : -(row[5] as number)),
           row[3] as number,
           row[4] as number,
@@ -433,10 +433,10 @@
       );
     } else if (row[0] === 5) {
       // Change the rank and keep the tag
-      const skill = Number(get(row[2] as VndFieldPath));
+      const skill = Number(get(row[2] as DndcFieldPath));
 
       set(
-        row[2] as VndFieldPath,
+        row[2] as DndcFieldPath,
         (skill & 8) | E.clip((skill & 7) + (direction > 0 ? 1 : -1), 0, 6),
       );
     } else {
@@ -481,8 +481,8 @@
    * @param value The new value
    * @returns {void} Nothing
    */
-  function set(path: VndFieldPath, value: boolean | number): void {
-    let parent: VndFieldValue = app.editor!.data;
+  function set(path: DndcFieldPath, value: boolean | number): void {
+    let parent: DndcFieldValue = app.editor!.data;
 
     for (let i = 0; i < path.length - 1; i++) {
       parent = (parent as Record<string | number, PipValue>)[path[i]];

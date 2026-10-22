@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -9,8 +9,8 @@
 //  Notes: The left knob skips the intro
 // =============================================================================
 
-(function (app: VndApp) {
-  const VAULT_VIDEO = 'HOLO/VND/VAULT.AVI';
+(function (app: DndcApp) {
+  const VAULT_VIDEO = 'HOLO/DNDC/VAULT.AVI';
 
   let hasFinished = false; // Only move on once
   let videoHoldInterval: number | null = null;

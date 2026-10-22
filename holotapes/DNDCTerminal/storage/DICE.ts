@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -19,7 +19,7 @@
 //    app.diceState![9] = result ready flag
 // =============================================================================
 
-(function (app: VndApp) {
+(function (app: DndcApp) {
   // Defer setup by one tick
   let loadTimeout: number | null = setTimeout(function () {
     loadTimeout = null;

@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -8,12 +8,12 @@
 //  Description: Loads or creates a character and opens the editor
 //  Notes:
 //    New characters open the keyboard and saved characters open the edit menu
-//    Character files use HOLO/VND/CHAR/NN.JSON
+//    Character files use HOLO/DNDC/CHAR/NN.JSON
 // =============================================================================
 
-(function (app: VndApp, editorParameters: VndEditorParameters) {
-  const CHARACTER_DIR = 'HOLO/VND/CHAR/';
-  const EDIT_DATA = 'HOLO/VND/EDIT_DATA.JS';
+(function (app: DndcApp, editorParameters: DndcEditorParameters) {
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
+  const EDIT_DATA = 'HOLO/DNDC/EDIT_DATA.JS';
 
   // Defer setup by one tick
   let initializationTimeout: number | null = setTimeout(function () {
@@ -44,8 +44,8 @@
     app.editor = {
       data: (
         eval(fs.readFileSync(EDIT_DATA)) as (
-          request: VndDataRequest,
-        ) => VndCharacter
+          request: DndcDataRequest,
+        ) => DndcCharacter
       )({
         requestType: character ? 'load' : 'new',
         storedCharacter: character,

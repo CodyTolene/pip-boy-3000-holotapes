@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -11,11 +11,11 @@
 //    Other text fields return to the last form
 // =============================================================================
 
-(function (app: VndApp, options: VndTextOptions) {
-  const CHARACTER_DIR = 'HOLO/VND/CHAR/';
-  const KEYBOARD = 'HOLO/VND/KEYBOARD.JS';
+(function (app: DndcApp, options: DndcTextOptions) {
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
+  const KEYBOARD = 'HOLO/DNDC/KEYBOARD.JS';
 
-  let keyboard: VndKeyboard | null = null;
+  let keyboard: DndcKeyboard | null = null;
   // Defer loading the keyboard by one tick
   let loadTimeout: number | null = setTimeout(function () {
     loadTimeout = null;
@@ -27,8 +27,8 @@
 
     keyboard = (
       eval(fs.readFileSync(KEYBOARD)) as (
-        options: VndKeyboardOptions,
-      ) => VndKeyboard
+        options: DndcKeyboardOptions,
+      ) => DndcKeyboard
     )({
       app: app,
       description: options.label,
@@ -45,7 +45,7 @@
    */
   function done(text: string): void {
     // Find the field and set its value
-    let value: VndFieldValue = app.editor!.data;
+    let value: DndcFieldValue = app.editor!.data;
 
     for (let i = 0; i < options.path.length - 1; i++) {
       value = (value as Record<string | number, PipValue>)[options.path[i]];
@@ -76,8 +76,8 @@
    * @param path The keys used to find the value
    * @returns {*} The value at the path
    */
-  function get(path: VndFieldPath): VndFieldValue {
-    let value: VndFieldValue = app.editor!.data;
+  function get(path: DndcFieldPath): DndcFieldValue {
+    let value: DndcFieldValue = app.editor!.data;
 
     for (let i = 0; i < path.length; i++) {
       value = (value as Record<string | number, PipValue>)[path[i]];

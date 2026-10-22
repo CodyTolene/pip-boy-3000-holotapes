@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -10,10 +10,10 @@
 // =============================================================================
 
 (function () {
-  const HOLOTAPE_DIR = 'HOLO/VND/';
+  const HOLOTAPE_DIR = 'HOLO/DNDC/';
 
-  let scene: VndScene | null = null; // Current scene
-  let pending: VndPendingScene | null = null; // Next scene queued
+  let scene: DndcScene | null = null; // Current scene
+  let pending: DndcPendingScene | null = null; // Next scene queued
   let loadTimer: number | null = null; // Timer for deferred scene switch
 
   const app = {
@@ -56,7 +56,7 @@
         E.defrag(); // Probably overkill, but safe
       } catch (e) {}
     },
-  } as VndApp;
+  } as DndcApp;
 
   /**
    * Draw a scene load error
@@ -105,10 +105,9 @@
 
     try {
       // Load scene
-      scene = (eval(fs.readFileSync(HOLOTAPE_DIR + p.file)) as VndSceneFactory)(
-        app,
-        p.params,
-      );
+      scene = (
+        eval(fs.readFileSync(HOLOTAPE_DIR + p.file)) as DndcSceneFactory
+      )(app, p.params);
     } catch (e) {
       drawError(p.file);
 
@@ -141,11 +140,71 @@
     h.flip();
   }
 
+  /**
+   * One-time move of saves made before the 2.0.0 rename.
+   *   Prev: `HOLO/VND/CHAR/`
+   *   New: `HOLO/DNDC/CHAR/`
+   */
+  function migrateSaves(): void {
+    const OLD_CHARACTER_DIR = 'HOLO/VND/CHAR/';
+    const NEW_CHARACTER_DIR = HOLOTAPE_DIR + 'CHAR/';
+
+    let entries: string[] = [];
+    let entryIndex = 0;
+    let saveText = '';
+
+    try {
+      entries = fs.readdir(OLD_CHARACTER_DIR.slice(0, -1));
+    } catch (e) {
+      return; // None
+    }
+
+    if (!entries || !entries.length) {
+      return;
+    }
+
+    try {
+      fs.mkdir(NEW_CHARACTER_DIR.slice(0, -1));
+    } catch (e) {} // Already exists
+
+    for (entryIndex = 0; entryIndex < entries.length; entryIndex++) {
+      if (!/^\d+\.json$/i.test(entries[entryIndex])) {
+        continue;
+      }
+
+      try {
+        if (fs.statSync(NEW_CHARACTER_DIR + entries[entryIndex])) {
+          continue; // Never overwrite a save in new folder
+        }
+      } catch (e) {}
+
+      try {
+        saveText = fs.readFileSync(OLD_CHARACTER_DIR + entries[entryIndex]);
+
+        if (!saveText) {
+          continue;
+        }
+
+        fs.writeFileSync(NEW_CHARACTER_DIR + entries[entryIndex], saveText);
+
+        if (
+          fs.readFileSync(NEW_CHARACTER_DIR + entries[entryIndex]) === saveText
+        ) {
+          fs.unlink(OLD_CHARACTER_DIR + entries[entryIndex]);
+        }
+      } catch (e) {} // Keep old file when anything fails
+
+      saveText = '';
+    }
+  }
+
+  migrateSaves();
+
   // Start with the intro scene
   app.go(app.scenes.INTRO);
 
   return {
-    id: 'vnd',
+    id: 'dndc',
     notDefault: true,
     fullscreen: true,
     remove: remove,

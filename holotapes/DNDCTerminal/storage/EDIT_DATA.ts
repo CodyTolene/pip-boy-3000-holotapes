@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -12,13 +12,13 @@
 //    entry returns a blank weapons, ammo, gear, or perk entry
 // =============================================================================
 
-(function (dataRequest: VndDataRequest) {
+(function (dataRequest: DndcDataRequest) {
   /**
    * Build a new character with default values
    * @returns {Object} The new character
    */
-  function defaults(): VndCharacter {
-    const character: VndCharacter = {
+  function defaults(): DndcCharacter {
+    const character: DndcCharacter = {
       addictions: '', // Free text list of addictions
       ammo: [], // Each entry is [caliber, qty]
       armor: '', // Worn armor name
@@ -66,7 +66,7 @@
    * @param character The saved character
    * @returns {Object} The updated character
    */
-  function migrate(character: VndStoredCharacter): VndCharacter {
+  function migrate(character: DndcStoredCharacter): DndcCharacter {
     if (character.addictions === undefined) {
       character.addictions = '';
     }
@@ -171,12 +171,12 @@
     // Change old combat objects into arrays
     if (!(character.combat instanceof Array)) {
       character.combat = [
-        (character.combat as VndLegacyCombat).melee || 0,
-        (character.combat as VndLegacyCombat).defense || 0,
-        (character.combat as VndLegacyCombat).initiative || 0,
-        (character.combat as VndLegacyCombat).poisonDR || 0,
-        (character.combat as VndLegacyCombat).maxHP || 0,
-        (character.combat as VndLegacyCombat).curHP || 0,
+        (character.combat as DndcLegacyCombat).melee || 0,
+        (character.combat as DndcLegacyCombat).defense || 0,
+        (character.combat as DndcLegacyCombat).initiative || 0,
+        (character.combat as DndcLegacyCombat).poisonDR || 0,
+        (character.combat as DndcLegacyCombat).maxHP || 0,
+        (character.combat as DndcLegacyCombat).curHP || 0,
       ];
     }
 
@@ -192,8 +192,8 @@
       for (let i = 0; i < character.skills.length; i++) {
         if (typeof character.skills[i] === 'object') {
           character.skills[i] =
-            ((character.skills[i] as VndLegacySkill).rank! | 0) +
-            ((character.skills[i] as VndLegacySkill).tag ? 8 : 0);
+            ((character.skills[i] as DndcLegacySkill).rank! | 0) +
+            ((character.skills[i] as DndcLegacySkill).tag ? 8 : 0);
         }
       }
     }
@@ -222,10 +222,10 @@
       let loc = character.locs[i];
       if (!(loc instanceof Array)) {
         loc = [
-          (loc as VndLegacyLocation).phys || 0,
-          (loc as VndLegacyLocation).en || 0,
-          (loc as VndLegacyLocation).rad || 0,
-          (loc as VndLegacyLocation).hp || 0,
+          (loc as DndcLegacyLocation).phys || 0,
+          (loc as DndcLegacyLocation).en || 0,
+          (loc as DndcLegacyLocation).rad || 0,
+          (loc as DndcLegacyLocation).hp || 0,
         ];
         character.locs[i] = loc;
       }
@@ -239,7 +239,7 @@
     // Change old weapon objects into arrays
     for (let i = 0; i < character.weapons.length; i++) {
       if (!(character.weapons[i] instanceof Array)) {
-        const v = character.weapons[i] as VndLegacyWeapon;
+        const v = character.weapons[i] as DndcLegacyWeapon;
 
         character.weapons[i] = [
           v.name || '',
@@ -262,8 +262,8 @@
     for (let i = 0; i < character.ammo.length; i++) {
       if (!(character.ammo[i] instanceof Array)) {
         character.ammo[i] = [
-          (character.ammo[i] as VndLegacyAmmo).caliber || '',
-          (character.ammo[i] as VndLegacyAmmo).qty || 0,
+          (character.ammo[i] as DndcLegacyAmmo).caliber || '',
+          (character.ammo[i] as DndcLegacyAmmo).qty || 0,
         ];
       }
     }
@@ -272,8 +272,8 @@
     for (let i = 0; i < character.gear.length; i++) {
       if (!(character.gear[i] instanceof Array)) {
         character.gear[i] = [
-          (character.gear[i] as VndLegacyGear).item || '',
-          (character.gear[i] as VndLegacyGear).lbs || 0,
+          (character.gear[i] as DndcLegacyGear).item || '',
+          (character.gear[i] as DndcLegacyGear).lbs || 0,
         ];
       }
     }
@@ -282,14 +282,14 @@
     for (let i = 0; i < character.perks.length; i++) {
       if (!(character.perks[i] instanceof Array)) {
         character.perks[i] = [
-          (character.perks[i] as VndLegacyPerk).name || '',
-          (character.perks[i] as VndLegacyPerk).rank || 0,
-          (character.perks[i] as VndLegacyPerk).effect || '',
+          (character.perks[i] as DndcLegacyPerk).name || '',
+          (character.perks[i] as DndcLegacyPerk).rank || 0,
+          (character.perks[i] as DndcLegacyPerk).effect || '',
         ];
       }
     }
 
-    return character as VndCharacter;
+    return character as DndcCharacter;
   }
 
   // Return a blank table entry

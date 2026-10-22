@@ -1,5 +1,5 @@
 // =============================================================================
-//  Name: Vaults & Deathclaws
+//  Name: Dice & Deathclaws Terminal
 //  Author: @CodyTolene
 //  License: CC-BY-NC-4.0
 //  Repository: https://github.com/CodyTolene/pip-boy-3000-holotapes
@@ -9,8 +9,8 @@
 //  Notes: Selection 0 through 3 is a button and 4 onward is a section
 // =============================================================================
 
-(function (app: VndApp) {
-  const CHARACTER_DIR = 'HOLO/VND/CHAR/';
+(function (app: DndcApp) {
+  const CHARACTER_DIR = 'HOLO/DNDC/CHAR/';
   const BUTTONS = [
     ['< BACK', 'back'],
     ['SAVE', 'save'],
