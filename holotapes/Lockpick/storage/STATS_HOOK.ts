@@ -45,6 +45,9 @@
     }
     if (!Array.isArray(list)) list = [];
     if (list.indexOf(path) < 0) {
+      // Some SD cards have no USER folder and will fail with NO_PATH. This
+      // fixes that issue.
+      if (!fs.statSync('USER')) fs.mkdir('USER');
       list.push(path);
       fs.writeFileSync(LIST, JSON.stringify(list));
     }

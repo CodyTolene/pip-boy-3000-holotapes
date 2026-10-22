@@ -18,3 +18,5 @@ https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/121
 - The right wheel moves the bobby pin and turning the left wheel either way tries the lock.
 - Runs: start with 8 pins, earn pins and score by picking locks, and the run ends when the pins run out. Best score is saved.
 - Very Easy locks pay score but no pins.
+- Fixed an OUT OF MEMORY crash when starting Lockpick from ITEMS > MISC. The Vault Boy and bobby pin art and the STATS hook check now load just after the game opens, once the Pip-Boy has freed the MISC list.
+- The STATS hook creates the USER folder when the SD card has none, so it can register for startup instead of failing with NO_PATH.
