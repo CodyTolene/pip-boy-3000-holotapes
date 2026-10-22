@@ -88,7 +88,7 @@
   function reorder(rank: (k: number) => number | string): void {
     let i = 0;
     const idx: number[] = [];
-    const r: (number | string)[] = [];
+    const r: Array<number | string> = [];
     for (i = 0; i < s.files.length; i++) {
       idx.push(i);
       r.push(rank(i));
