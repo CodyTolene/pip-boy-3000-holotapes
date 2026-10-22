@@ -17,11 +17,10 @@
   // Current app version
   let version = '0.0.0';
   try {
-    version = JSON.parse(
-      require('fs').readFileSync('/APPINFO/RCET.info'),
-    ).version;
-  } catch (e) {
-    return '0.0.0';
+    version =
+      JSON.parse(fs.readFileSync('APPINFO/RCET.info')).version || version;
+  } catch (error) {
+    // Ignore, we fall back to `0.0.0`
   }
 
   const app = {
