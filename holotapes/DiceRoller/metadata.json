@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "description": "A simple D2 through D100 dice roller with modifiers, targets and critical ranges.",
   "icon": "storage/ICON.img",
-  "previews": [],
+  "previews": ["previews/MENU.bmp", "previews/2D6.bmp", "previews/10D20.bmp"],
   "type": "app",
   "readme": "README.md",
   "storage": [
