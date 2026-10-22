@@ -1,3 +1,6 @@
+2.2.4 (2026-10-21)
+- Fixed up version number display (thank you mandrake for reporting this on Discord!).
+
 2.2.3 (2026-10-12)
 - Fixed a blinking cursor that stayed on screen after skipping the startup sequence.
 

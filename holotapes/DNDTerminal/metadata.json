@@ -1,0 +1,53 @@
+{
+  "id": "dnd",
+  "name": "Dice & Dungeons Terminal",
+  "author": "@CodyTolene",
+  "version": "1.0.0",
+  "description": "A classic character sheet manager and dice roller.",
+  "icon": "storage/ICON.img",
+  "previews": ["previews/LIST.bmp", "previews/SHEET.bmp", "previews/DICE.bmp"],
+  "type": "app",
+  "readme": "README.md",
+  "storage": [
+    {
+      "pipboy": "HOLO/DND/APP.JS",
+      "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/LIST.JS",
+      "source": "storage/LIST.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/SHEET.JS",
+      "source": "storage/SHEET.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/TEXT.JS",
+      "source": "storage/TEXT.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/KEYBOARD.JS",
+      "source": "storage/KEYBOARD.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/CONFIRM.JS",
+      "source": "storage/CONFIRM.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/DICE_MENU.JS",
+      "source": "storage/DICE_MENU.ts"
+    },
+    {
+      "pipboy": "HOLO/DND/DICE_ROLL.JS",
+      "source": "storage/DICE_ROLL.ts"
+    }
+  ],
+  "storageOptional": [
+    {
+      "label": "Dice Throw Sound",
+      "sizeKB": 35,
+      "pipboy": "HOLO/DND/DICE_THROW.WAV",
+      "source": "optional/DICE_THROW.wav"
+    }
+  ]
+}
