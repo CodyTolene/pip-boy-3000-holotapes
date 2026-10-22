@@ -2,7 +2,7 @@
   "id": "atomic-slots",
   "name": "Atomic Slots",
   "author": "@Radiomaru7",
-  "version": "1.1.1",
+  "version": "1.0.0",
   "description": "A three-reel casino slot machine that plays for caps, with a saved wallet and best win.",
   "icon": "storage/ATOMIC-SLOTS.img",
   "previews": ["previews/MACHINE.png", "previews/PAYOUTS.png"],

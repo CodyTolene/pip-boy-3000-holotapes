@@ -470,7 +470,7 @@
   tick = setInterval(onFrame, 50);
 
   return {
-    id: 'ATOMICSLOTS',
+    id: 'atomic-slots',
     notDefault: true,
     fullscreen: true,
     remove: function (): void {
