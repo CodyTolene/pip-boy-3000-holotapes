@@ -32,6 +32,9 @@
   let list: PipScroller | undefined;
   let opts: CaseOptions | undefined;
   let patched = false;
+  // Whether MISC_HOOK.JS is on the card, to tell a missing file from a
+  // hook that could not start.
+  let hookFile = false;
   let optsTimer: number | undefined;
   let cleanedUp = false;
 
@@ -197,7 +200,9 @@
         s.flags[k] & HIDE
           ? patched
             ? 'HIDDEN FROM MISC'
-            : 'HIDDEN (HOOK FILE MISSING)'
+            : hookFile
+              ? 'HIDDEN (HOOK NOT RUNNING)'
+              : 'HIDDEN (HOOK FILE MISSING)'
           : 'IN ITEMS > MISC',
         C.PX + 10,
         190,
@@ -336,6 +341,7 @@
     st = global.RM_PATCH as Record<string, string> | undefined;
   }
   patched = !!st && st.misc === 'ok';
+  hookFile = !!fs.statSync(C.HOOK);
   scan();
   h.setBgColor(0).clear();
   Pip.renderHeader();
