@@ -47,7 +47,13 @@
     if (!Array.isArray(list)) list = [];
     if (list.indexOf(path) < 0) {
       list.push(path);
-      fs.writeFileSync(LIST, JSON.stringify(list));
+      try {
+        // A card with no USER folder fails with NO_PATH, so make it first.
+        if (!fs.statSync('USER')) fs.mkdir('USER');
+        fs.writeFileSync(LIST, JSON.stringify(list));
+      } catch (e) {
+        // Not listed for startup, but the hook still works until a restart.
+      }
     }
     const st = require('Storage');
     let free = '';

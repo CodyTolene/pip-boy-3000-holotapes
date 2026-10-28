@@ -2,7 +2,7 @@
   "id": "holotape-case",
   "name": "Holotape Case",
   "author": "@Radiomaru7",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A launcher for every holotape on the card, with favourites, and a way to tidy holotapes out of ITEMS > MISC.",
   "icon": "storage/HOLOTAPE-CASE.img",
   "previews": ["previews/LIST.png", "previews/ACTIONS.png"],
