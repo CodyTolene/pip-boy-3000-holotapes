@@ -55,19 +55,26 @@
         // Not listed for startup, but the hook still works until a restart.
       }
     }
-    const st = require('Storage');
-    let free = '';
-    for (let i = 0; i < SLOTS.length; i++) {
-      const s = st.read(SLOTS[i]);
-      if (s === undefined) {
-        if (!free) free = SLOTS[i];
-      } else if (String(s).indexOf(MARK) === 0) {
-        if (String(s) !== LOADER) st.write(SLOTS[i], LOADER);
-        return;
+    // Writing the boot slot can fail when the Pip-Boy's internal storage
+    // is full ("Unable to find or create file"). The hook still switches
+    // on now; it just isn't restarted automatically after a full restart.
+    try {
+      const st = require('Storage');
+      let free = '';
+      for (let i = 0; i < SLOTS.length; i++) {
+        const s = st.read(SLOTS[i]);
+        if (s === undefined) {
+          if (!free) free = SLOTS[i];
+        } else if (String(s).indexOf(MARK) === 0) {
+          if (String(s) !== LOADER) st.write(SLOTS[i], LOADER);
+          return;
+        }
       }
+      if (free) st.write(free, LOADER);
+      status.boot = free ? 'slot ' + free : 'no free boot slot';
+    } catch (e) {
+      status.boot = 'boot slot not written: ' + e;
     }
-    if (free) st.write(free, LOADER);
-    status.boot = free ? 'slot ' + free : 'no free boot slot';
   }
 
   register('HOLO/HOLOTAPE_CASE/MISC_HOOK.JS');
