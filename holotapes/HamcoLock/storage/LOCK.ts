@@ -10,8 +10,7 @@
     VIDEO_MS = 3400,
     SETTLE_MS = 500,
     FADE_MS = 300,
-    SOUND_MS = 2800,
-    SFX_VOL = 26;
+    SOUND_MS = 2800;
   /* ---- REBOOT INTRO / LOGO TUNING ----
    LOGO POSITION is the CENTER of the logo, so ANY size logo auto-centers on the
    point -- just drop in a new .BIN and nudge these numbers (screen is 480x320):
@@ -50,7 +49,6 @@
     grantSoundTimer = 0,
     ledTimer: number | undefined = undefined,
     keepAwake = 0,
-    sysVol: number | undefined = 0,
     grantMod: HamcoLockGrantMod | 0 = 0;
   let grantSoundActive = false;
   let oldModes: HamcoLockModeListener[] | 0,
@@ -84,13 +82,6 @@
     } catch (e) {
       if (Pip.checkChargeStatus) Pip.checkChargeStatus(true);
     }
-  }
-  function sfxVolOn(): void {
-    sysVol = Pip.settings && Pip.settings.volume;
-    if (Pip.setVol) Pip.setVol(SFX_VOL);
-  }
-  function sfxVolOff(): void {
-    if (Pip.setVol && sysVol != null) Pip.setVol(sysVol);
   }
   function shade(x1: number, y1: number, x2: number, y2: number): void {
     Pip.shadeBox(x1, y1, x2, y2);
@@ -354,7 +345,6 @@
 
     Pip.ledsRestore();
 
-    sfxVolOff();
     redraw = grantSoundTimer = 0;
     /* audioStop isn't present on every firmware build, so only call it if it is. */
     if (grantSoundActive && Pip.audioStop) {
@@ -395,7 +385,6 @@
   function startGrantSound(): void {
     if (!active) return;
     grantSoundActive = true;
-    sfxVolOn();
     try {
       Pip.audioStart('HOLO/HAMCOLOCK/A.WAV', { repeat: false });
     } catch (e) {
@@ -432,14 +421,12 @@
     resetEntry();
     denied = true;
     ledFlash(1, 0, 0);
-    sfxVolOn();
     try {
       if (typeof Pip.screenGlitch === 'function') Pip.screenGlitch();
       else play('TAB');
     } catch (e) {
       play('TAB');
     }
-    setTimeout(sfxVolOff, 700);
     draw();
     if (redraw) clearTimeout(redraw);
     redraw = setTimeout(function () {
