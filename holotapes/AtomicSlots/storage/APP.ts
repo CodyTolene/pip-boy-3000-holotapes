@@ -87,7 +87,11 @@
   }
 
   function store(): void {
-    fs.writeFileSync(C.SAVE, JSON.stringify(save));
+    try {
+      fs.writeFileSync(C.SAVE, JSON.stringify(save));
+    } catch (e) {
+      // A full or locked card only loses the save; it never stops the game.
+    }
   }
 
   // Reads one picture from the Pip-Boy's own game data (DATA/F3 or DATA/NV),

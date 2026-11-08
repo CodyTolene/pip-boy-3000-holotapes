@@ -62,7 +62,11 @@
   }
 
   function saveCal(): void {
-    fs.writeFileSync(C.CAL, JSON.stringify(cal));
+    try {
+      fs.writeFileSync(C.CAL, JSON.stringify(cal));
+    } catch (e) {
+      // A full or locked card only loses the setting; the level still works.
+    }
   }
 
   // Formats an angle as "+1.2" with the sign always shown.
