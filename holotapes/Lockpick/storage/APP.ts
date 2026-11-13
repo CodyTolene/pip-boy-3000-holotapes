@@ -85,7 +85,11 @@
   }
 
   function store(): void {
-    fs.writeFileSync(C.SAVE, JSON.stringify(save));
+    try {
+      fs.writeFileSync(C.SAVE, JSON.stringify(save));
+    } catch (e) {
+      // A full or locked card only loses the save; it never stops the game.
+    }
   }
 
   // Reads one picture from the Pip-Boy's own game data (DATA/F3 or DATA/NV),
@@ -499,20 +503,34 @@
   function startTumbler(): void {
     phase = 6;
     E.defrag();
-    scene = (eval(fs.readFileSync(C.TUMBLER)) as LockpickTumblerFactory)({
-      name: LEVELS[save.d].name,
-      pins: C.T_PINS[save.d],
-      spools: C.T_SPOOLS[save.d],
-      tol: C.T_TOL[save.d],
-      hp: LEVELS[save.d].hp,
-      hint: save.d < 2,
-      snap: function (): number {
-        save.p--;
-        store();
-        return save.p;
-      },
-      end: endTumbler,
-    });
+    try {
+      scene = (eval(fs.readFileSync(C.TUMBLER)) as LockpickTumblerFactory)({
+        name: LEVELS[save.d].name,
+        pins: C.T_PINS[save.d],
+        spools: C.T_SPOOLS[save.d],
+        tol: C.T_TOL[save.d],
+        hp: LEVELS[save.d].hp,
+        hint: save.d < 2,
+        snap: function (): number {
+          save.p--;
+          store();
+          return save.p;
+        },
+        end: endTumbler,
+      });
+    } catch (e) {
+      scene = undefined;
+    }
+    if (!scene) {
+      // TUMBLER.JS would not load (missing, or too little memory): back to
+      // the menu with a notice instead of a screen that ignores the wheels.
+      phase = 0;
+      drawMenu();
+      h.setColor(2)
+        .setFontMonofonto14()
+        .setFontAlign(0, 0)
+        .drawString('COULD NOT LOAD TUMBLER.JS', 240, 260);
+    }
   }
 
   function forceLock(): void {

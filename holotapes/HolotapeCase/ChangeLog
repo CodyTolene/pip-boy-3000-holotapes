@@ -1,3 +1,8 @@
+1.0.2 (2026-11-06)
+- Fixed the MISC hook not starting on Pip-Boys whose internal storage is full: writing its startup slot failed with "Unable to find or create file" and stopped the hook, so the case showed HOOK NOT RUNNING and nothing was hidden. The hook now switches on anyway; if the startup slot can't be written, opening the case once after a full restart switches it on again.
+- A full or write-locked SD card no longer crashes the case: favourites, hidden tapes or an order that cannot be written are skipped.
+- If OPTIONS.JS cannot be loaded, the case returns to the list with a notice instead of a blank screen.
+
 1.0.1 (2026-10-26)
 - Fixed hiding holotapes from ITEMS > MISC on SD cards with no USER folder: the MISC hook stopped with NO_PATH before it switched on, so hidden tapes still showed in MISC and the case said HOOK FILE MISSING. The hook now creates the USER folder, and still switches on even if it cannot register for startup.
 - When the hook is on the card but not running, the case now says HOOK NOT RUNNING instead of HOOK FILE MISSING.

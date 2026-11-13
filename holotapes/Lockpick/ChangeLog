@@ -1,3 +1,8 @@
+1.0.1 (2026-11-06)
+- Fixed the STATS hook not starting on Pip-Boys whose internal storage is full ("Unable to find or create file" when writing its startup slot). The STATS row now shows anyway; if the startup slot can't be written, opening Lockpick once after a full restart brings it back.
+- A full or write-locked SD card no longer crashes the game: a save that cannot be written is skipped.
+- If TUMBLER.JS is missing, or memory is too low to load it, Lockpick returns to the lock menu with a notice instead of a screen that ignores the wheels.
+
 1.0.0 (2026-10-18)
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/121
 - Initial release.

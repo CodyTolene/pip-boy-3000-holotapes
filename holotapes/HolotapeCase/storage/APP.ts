@@ -61,16 +61,24 @@
       if (s.flags[i] & FAV) favs.push(s.files[i]);
       if (s.flags[i] & HIDE) hidden.push(s.files[i].toUpperCase());
     }
-    fs.writeFileSync(C.FAVS, JSON.stringify(favs));
-    fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
+    try {
+      fs.writeFileSync(C.FAVS, JSON.stringify(favs));
+      fs.writeFileSync(C.HIDDEN, JSON.stringify(hidden));
+    } catch (e) {
+      // A full or locked card only loses the change; the case stays usable.
+    }
   }
 
   function saveOrder(): void {
     let i = 0;
     const order: string[] = [];
     for (i = 0; i < s.files.length; i++) order.push(s.files[i].toUpperCase());
-    fs.writeFileSync(C.ORDER, JSON.stringify(order));
-    s.changed = true;
+    try {
+      fs.writeFileSync(C.ORDER, JSON.stringify(order));
+      s.changed = true;
+    } catch (e) {
+      // Not written, so MISC will not pick the order up: say nothing changed.
+    }
   }
 
   function info(k: number): CaseInfo | undefined {
@@ -306,7 +314,20 @@
     list = undefined;
     api.tape = i;
     Pip.playSound('TAB');
-    opts = (eval(fs.readFileSync(C.OPTIONS)) as CaseOptionsFactory)(api);
+    try {
+      opts = (eval(fs.readFileSync(C.OPTIONS)) as CaseOptionsFactory)(api);
+    } catch (e) {
+      opts = undefined;
+    }
+    if (!opts) {
+      // OPTIONS.JS would not load (missing, or too little memory): back to
+      // the list instead of a blank screen with nothing listening.
+      openList(i);
+      h.setColor(2)
+        .setFontMonofonto14()
+        .setFontAlign(-1, -1)
+        .drawString('COULD NOT LOAD OPTIONS.JS', C.PX + 10, 256);
+    }
   }
 
   function cleanup(): void {
