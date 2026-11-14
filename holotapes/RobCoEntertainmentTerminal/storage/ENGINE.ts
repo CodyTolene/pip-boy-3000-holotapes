@@ -10,12 +10,7 @@
   const rd = Pip.radio as RcetRadio;
 
   // Make sure we're applying the monkey patches to a supported firmware version. If not, disable persistence.
-  try {
-    rd.rcetPersistSupported =
-      fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
-  } catch (e) {
-    rd.rcetPersistSupported = false;
-  }
+  rd.rcetPersistSupported = app.isFirmwareSupported();
   if (!rd.rcetPersistSupported) global.__RCETPersist = false;
 
   // Goes to the next track & starts it.

@@ -40,7 +40,7 @@
     persist: global.__RCETPersist || false,
     version: version,
     // CFW Persistent Audio Support
-    supportedFirmwareVersion: '1.1.6', // Pip-Boy Version
+    supportedFirmwareVersion: '1.1.6', // Minimum Pip-Boy Version
 
     scenes: {
       INTRO: 'INTRO.JS',
@@ -59,6 +59,20 @@
 
       if (!loadTimer) {
         loadTimer = setTimeout(loadScene, 0);
+      }
+    },
+
+    isFirmwareSupported: function (): boolean {
+      try {
+        const cur = String(fs.readFileSync('VERSION')).split('.');
+        const min = app.supportedFirmwareVersion.split('.');
+        for (let i = 0; i < min.length; i++) {
+          const d = (parseInt(cur[i]) || 0) - (parseInt(min[i]) || 0);
+          if (d) return d > 0;
+        }
+        return true;
+      } catch (e) {
+        return false;
       }
     },
 

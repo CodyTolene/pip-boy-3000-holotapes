@@ -49,8 +49,10 @@ interface RcetApp {
   persist: boolean;
   /** Terminal version string. */
   version: string;
-  /** Firmware version that persistent audio support requires. */
+  /** Minimum firmware version that persistent audio support requires. */
   supportedFirmwareVersion: string;
+  /** Whether the Pip-Boy's VERSION is at least `supportedFirmwareVersion`. */
+  isFirmwareSupported: () => boolean;
   /** Scene file names. */
   scenes: RcetScenes;
   /** Queues a scene change for the next event loop turn. */

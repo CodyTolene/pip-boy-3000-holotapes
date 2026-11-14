@@ -34,8 +34,8 @@ Folders inside `MUSIC/` are shown as stations, or playlists.
 
 Persistent Audio allows music to continue after leaving the holotape, much like
 the Pip-Boy's built-in radio. It is **off by default** and is currently
-available only on Pip-Boy firmware **v1.1.5**. Other firmware versions show an
-informational message instead of the ON/OFF setting.
+available on Pip-Boy firmware **v1.1.6 and newer**. Older firmware versions show
+an info message instead of the ON/OFF setting.
 
 To turn it on:
 
