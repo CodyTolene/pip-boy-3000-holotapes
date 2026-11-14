@@ -13,13 +13,7 @@
   const BRIGHT_LEVELS = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   // Screen timeout in ms; 0 = OFF (screen stays on). Matches firmware idleTimeout.
   const TIMEOUT_LEVELS = [60000, 120000, 300000, 600000, 900000, 1800000, 0];
-  const PERSIST_SUPPORTED = (() => {
-    try {
-      return fs.readFileSync('VERSION') === app.supportedFirmwareVersion;
-    } catch (e) {
-      return false;
-    }
-  })();
+  const PERSIST_SUPPORTED = app.isFirmwareSupported();
 
   let selected = 0;
 
@@ -99,8 +93,7 @@
         .setFontMonofonto14()
         .setFontAlign(-1, -1)
         .drawString(
-          'Persistent play is only available on v' +
-            app.supportedFirmwareVersion,
+          'Persistent play requires v' + app.supportedFirmwareVersion + '+',
           24,
           y + 8,
         );
