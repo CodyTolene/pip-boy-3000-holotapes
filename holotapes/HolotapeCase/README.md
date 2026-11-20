@@ -68,6 +68,11 @@ Changes show up the next time you open ITEMS > MISC; no reboot needed. The
 hidden list is saved in `HOLO/HOLOTAPE_CASE/HIDDEN.JSON`. **Show all in MISC**
 turns hiding off.
 
+If a hidden tape's details say **HOOK FILE MISSING**, `MISC_HOOK.JS` is not on
+the SD card: copy it to `HOLO/HOLOTAPE_CASE/`. **HOOK NOT RUNNING** means the
+file is there but could not switch on; restart the Pip-Boy and open the case
+again.
+
 Favourites are saved in `HOLO/HOLOTAPE_CASE/FAVS.JSON`.
 
 ### Faster, lighter launching from MISC
@@ -84,9 +89,10 @@ The Pip-Boy's own MISC items are not affected.
 The options menus are a second file, `OPTIONS.JS`, that the case loads only
 while they are open, so the list uses less memory the rest of the time.
 
-Holotapes are launched with `Pip.loadHolotape` (firmware 1.1.5 and later). Icons
-are shown when the `.info` file points at a converted `.IMG` icon; other
-holotapes get a plain cassette.
+Holotapes are launched with `Pip.loadHolotape` (firmware 1.1.5 and later), with
+the Pip-Boy's own holotape-in sound (`SOUND/FX/HOLSTART.WAV`) when the card has
+it. Icons are shown when the `.info` file points at a converted `.IMG` icon;
+other holotapes get a plain cassette.
 
 ### License(s)
 

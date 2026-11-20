@@ -185,21 +185,23 @@
       .drawLine(x - 1, k, x - 7, k + 7)
       .drawLine(x - 7, k + 9, 0, k + 9);
 
-    // EXIT tag bottom left, below the pick's path.
-    h.setColor(cur < 0 ? 3 : 2).drawRect(8, 236, 72, 258);
-    if (cur < 0) h.fillRect(9, 237, 71, 257).setColor(0);
-    h.setFontMonofonto16().setFontAlign(0, 0).drawString('EXIT', 40, 247);
+    // EXIT tag bottom left, below the pick's path and in from the curved
+    // left edge of the screen.
+    h.setColor(cur < 0 ? 3 : 2).drawRect(28, 236, 92, 258);
+    if (cur < 0) h.fillRect(29, 237, 91, 257).setColor(0);
+    h.setFontMonofonto16().setFontAlign(0, 0).drawString('EXIT', 60, 247);
 
-    // Tension and pick strength on the right, clear of the pick.
+    // Tension and pick strength on the right, clear of the pick and of the
+    // curved right edge of the screen (everything ends by about x 450).
     h.setColor(2)
       .setFontMonofonto14()
       .setFontAlign(-1, -1)
-      .drawString('TENSION', 404, 52);
+      .drawString('TENSION', 394, 52);
     for (i = 0; i < 3; i++) {
       h.setColor(i < tension ? 3 : 1).fillRect(
-        404 + i * 24,
+        394 + i * 20,
         70,
-        424 + i * 24,
+        407 + i * 20,
         82,
       );
     }
@@ -207,12 +209,12 @@
       .setFontMonofonto16()
       .drawString(
         tension === 1 ? 'LIGHT' : tension === 2 ? 'MEDIUM' : 'HEAVY',
-        404,
+        394,
         88,
       );
-    h.setColor(2).setFontMonofonto14().drawString('PICK', 404, 124);
+    h.setColor(2).setFontMonofonto14().drawString('PICK', 394, 124);
     for (i = 0; i < api.hp; i++) {
-      h.setColor(i < hp ? 3 : 1).fillRect(404 + i * 12, 142, 413 + i * 12, 152);
+      h.setColor(i < hp ? 3 : 1).fillRect(394 + i * 9, 142, 400 + i * 9, 152);
     }
   }
 
@@ -233,16 +235,8 @@
 
   function drawFrame(): void {
     h.clearRect(0, 263, 479, 319);
+    // The controls are on the menu's CONTROLS page, not under the lock.
     header('LOCKPICK', 'TUMBLER ' + api.name);
-    h.setColor(2)
-      .setFontMonofonto14()
-      .setFontAlign(0, -1)
-      .drawString(
-        'R TURN: MOVE PICK    L TURN: LIFT    L PRESS: TENSION',
-        240,
-        272,
-      )
-      .drawString('L HOLD: RELEASE ALL PINS    EXIT + L PRESS: MENU', 240, 292);
   }
 
   function snapPick(): void {

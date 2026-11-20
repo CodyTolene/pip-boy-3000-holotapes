@@ -43,12 +43,14 @@
     d: 2,
     u: 0,
     m: 0,
+    o: 0,
   };
 
   // 0 menu, 1 picking, 2 unlocked, 3 pin snapped, 4 jammed, 5 run over,
-  // 6 in the Tumbler scene, 7 Tumbler lock opened.
+  // 6 in the Tumbler scene, 7 Tumbler lock opened, 8 the controls page.
   let phase = 0;
-  // Menu cursor: 0-4 lock levels, 5 the mode switch once unlocked.
+  // Menu cursor: 0-4 lock levels, 5 the mode switch once unlocked, then
+  // CONTROLS as the last row (see ctlRow).
   let sel = 0;
   let scene: LockpickTumblerScene | undefined;
   let secret = false;
@@ -62,7 +64,7 @@
 
   let tick!: number;
   let msgTimer: number | undefined;
-  // Deferred startup
+  // Deferred startup (see below).
   let bootTimer: number | undefined;
   // Art from the Pip-Boy's own data: Vault Boy picking a lock, a bobby pin.
   let boyArt: string | undefined;
@@ -78,6 +80,7 @@
       if (s.b >= 0) save.b = s.b;
       if (s.u === 1) save.u = 1;
       if (s.m === 1) save.m = 1;
+      if (s.o && s.o > 0) save.o = s.o;
       if (s.d >= 0 && s.d < LEVELS.length) save.d = s.d;
     } catch (e) {
       // Corrupt save: keep the defaults.
@@ -222,8 +225,8 @@
     }
   }
 
-  // The left column sits in from the screen's curved edge (x 28), and the
-  // controls end higher up, clear of the rounded bottom corner.
+  // The left column sits in from the screen's curved edge (x 28). The
+  // controls are on the menu's CONTROLS page, not beside the lock.
   function drawHud(): void {
     h.clearRect(0, 36, 99, 319)
       .clearRect(380, 36, 479, 319)
@@ -234,8 +237,6 @@
       .drawString(pinArt ? '' : 'BOBBY PINS', 388, 44)
       .drawString('SCORE', 388, 108)
       .drawString('BEST', 388, 168)
-      .drawString('L TURN:\n LOCK\nL HOLD:\n FORCE\nL PRESS:\n MENU', 28, 196)
-      .drawString('R TURN:\n PIN', 388, 238)
       .setColor(3)
       .setFontMonofonto16()
       .drawString(LEVELS[save.d].name.replace(' ', '\n'), 28, 62)
@@ -266,6 +267,11 @@
     header('LOCKPICK', text);
   }
 
+  // "1 PIN" or "3 PINS".
+  function pinCount(k: number): string {
+    return k + (k === 1 ? ' PIN' : ' PINS');
+  }
+
   // A boxed message over the lock, e.g. "LOCK OPENED".
   function drawBanner(title: string, sub: string): void {
     h.setColor(0)
@@ -288,27 +294,49 @@
     Pip.renderBlock(C.PANEL_X, y, 225, label, value);
   }
 
+  // The menu row that opens the controls page: last, after the mode switch
+  // once Tumbler mode is unlocked.
+  function ctlRow(): number {
+    return save.u ? 6 : 5;
+  }
+
   // The lock menu in the Pip-Boy's own list style (the same rows and
   // highlight as ITEMS), with the highlighted lock's details on the right.
   function drawMenu(): void {
     let i = 0;
     let y = 0;
-    const rows = save.u ? 6 : 5;
+    const ctl = ctlRow();
     h.setBgColor(0).clear();
     drawHeader(save.m ? 'TUMBLER MODE' : 'SELECT LOCK');
     h.setFontMonofonto14();
-    for (i = 0; i < rows; i++) {
+    for (i = 0; i <= ctl; i++) {
       y = C.LIST_Y + i * C.ROW_H;
       if (i === sel) Pip.shadeBox(24, y, 24 + C.LIST_W, y + C.ROW_H);
-      h.setColor(i === 5 && i !== sel ? 2 : 3)
+      h.setColor(i >= 5 && i !== sel ? 2 : 3)
         .setFontAlign(-1, 0)
         .drawString(
-          i < 5 ? LEVELS[i].name : save.m ? 'MODE: TUMBLER' : 'MODE: CLASSIC',
+          i < 5
+            ? LEVELS[i].name
+            : i === ctl
+              ? 'CONTROLS'
+              : save.m
+                ? 'MODE: TUMBLER'
+                : 'MODE: CLASSIC',
           46,
           y + 14,
         );
     }
-    if (sel < 5) {
+    if (sel === ctl) {
+      if (boyArt) h.drawImage(boyArt, 270, 44, { scale: 0.82 });
+      h.setColor(3)
+        .setFontMonofonto14()
+        .setFontAlign(-1, -1)
+        .drawString(
+          'HOW TO PICK A LOCK.\nPRESS TO SEE THE CONTROLS.',
+          C.PANEL_X,
+          160,
+        );
+    } else if (sel < 5) {
       const lv = LEVELS[sel];
       if (boyArt) h.drawImage(boyArt, 270, 44, { scale: 0.82 });
       if (pinArt) h.drawImage(pinArt, 368, 74, { scale: 0.6 });
@@ -345,32 +373,96 @@
     Pip.renderBlock(C.PANEL_X, 226, 70, 'PINS', String(save.p));
     Pip.renderBlock(C.PANEL_X + 76, 226, 72, 'SCORE', String(save.s));
     Pip.renderBlock(C.PANEL_X + 154, 226, 71, 'BEST', String(save.b));
-    h.setFontMonofonto14()
-      .setColor(2)
+  }
+
+  // The controls on their own page, opened from the menu, instead of hint
+  // lines on every screen. Tumbler's only show once it is unlocked.
+  function drawHelp(): void {
+    let i = 0;
+    const lines = [
+      'CLASSIC LOCKS',
+      'RIGHT WHEEL: MOVE THE BOBBY PIN.',
+      'LEFT WHEEL: TURN THE LOCK. EASE OFF WHEN IT',
+      'SHAKES, OR THE BOBBY PIN SNAPS.',
+      'HOLD THE LEFT WHEEL: FORCE THE LOCK.',
+      'PRESS THE LEFT WHEEL: BACK TO THIS MENU.',
+    ];
+    if (save.u) {
+      lines.push(
+        'TUMBLER LOCKS',
+        'RIGHT WHEEL: MOVE THE PICK TO A PIN.',
+        'LEFT WHEEL: LIFT THE PIN (UP) OR LOWER IT.',
+        'PRESS: CHANGE THE TENSION.',
+        'HOLD: DROP ALL THE PINS.',
+        'MENU: PICK EXIT AND PRESS, OR HOLD AFTER A WIN.',
+      );
+    }
+    h.setBgColor(0).clear();
+    drawHeader('CONTROLS');
+    h.setFontMonofonto14().setFontAlign(-1, 0);
+    for (i = 0; i < lines.length; i++) {
+      // Section names bright, the controls under them dimmer.
+      h.setColor(i % 6 ? 2 : 3).drawString(
+        lines[i],
+        40,
+        54 + i * 17 + (i < 6 ? 0 : 8),
+      );
+    }
+    h.setColor(3).setFontAlign(0, 0).drawString('PRESS TO GO BACK', 240, 268);
+  }
+
+  // A result card like the other games': the Pip-Boy's art at the top (DATA
+  // pictures are opaque, so it keeps to its own box, y 42-122), a heading,
+  // two lines and a prompt.
+  function drawCard(
+    info: string,
+    title: string,
+    a: string,
+    b: string,
+    bright: boolean,
+    prompt: string,
+  ): void {
+    h.setBgColor(0).clear();
+    drawHeader(info);
+    if (boyArt) {
+      const w = boyArt.charCodeAt(0);
+      const ph = boyArt.charCodeAt(1);
+      const k = Math.min(1, 80 / ph, 150 / w);
+      h.drawImage(
+        boyArt,
+        (240 - (w * k) / 2) | 0,
+        (42 + (80 - ph * k) / 2) | 0,
+        {
+          scale: k,
+        },
+      );
+    }
+    h.setColor(3)
+      .setFontMonofonto28()
       .setFontAlign(0, 0)
-      .drawString('TURN: CHOOSE    PRESS: START', 240, 280)
-      .drawString('PRESS AGAIN DURING A LOCK TO RETURN HERE', 240, 298);
+      .drawString(title, 240, 142)
+      .setColor(2)
+      .setFontMonofonto16()
+      .drawString(a, 240, 178)
+      .setColor(bright ? 3 : 2)
+      .drawString(b, 240, 200)
+      .setColor(3)
+      .drawString(prompt, 240, 238);
   }
 
   // End of a run: the last bobby pin is gone.
   function drawRunOver(): void {
-    const best = save.s > 0 && save.s >= save.b;
-    h.setBgColor(0).clear();
-    drawHeader('RUN OVER');
-    h.setColor(3)
-      .setFontMonofonto28()
-      .setFontAlign(0, 0)
-      .drawString('OUT OF BOBBY PINS', 240, 80)
-      .setFontMonofonto23()
-      .drawString('LOCKS PICKED  ' + save.n, 240, 136)
-      .drawString('SCORE  ' + save.s, 240, 172)
-      .setColor(best ? 3 : 2)
-      .drawString(best ? 'NEW BEST!' : 'BEST  ' + save.b, 240, 208)
-      .setColor(2)
-      .setFontMonofonto14()
-      .drawString('PRESS LEFT WHEEL FOR A NEW RUN', 240, 280);
-    if (boyArt) h.drawImage(boyArt, 10, 112, { scale: 0.75 });
-    if (pinArt) h.drawImage(pinArt, 372, 150, { scale: 0.68 });
+    // A new best only if it beats the best from before this run (a tie
+    // with an earlier run is not new).
+    const best = save.s > 0 && save.s >= save.b && save.s > (save.o || 0);
+    drawCard(
+      'RUN OVER',
+      'OUT OF BOBBY PINS',
+      'LOCKS PICKED ' + save.n + '    SCORE ' + save.s,
+      best ? 'NEW BEST SCORE!' : 'BEST SCORE ' + save.b,
+      best,
+      'PRESS THE LEFT WHEEL FOR A NEW RUN',
+    );
   }
 
   function drawGame(): void {
@@ -397,7 +489,10 @@
     Pip.playSound('SELECT');
     drawLock();
     drawHud();
-    drawBanner('PIN BROKE', save.p + ' BOBBY PINS LEFT');
+    drawBanner(
+      'PIN BROKE',
+      (save.p === 1 ? '1 BOBBY PIN' : save.p + ' BOBBY PINS') + ' LEFT',
+    );
     later(function (): void {
       if (save.p <= 0) {
         phase = 5;
@@ -438,7 +533,7 @@
       forced
         ? 'FORCED IT, NO REWARD\nPRESS FOR NEXT LOCK'
         : (LEVELS[save.d].win
-            ? '+' + LEVELS[save.d].win + ' PINS   +'
+            ? '+' + pinCount(LEVELS[save.d].win) + '   +'
             : 'NO PINS   +') +
             LEVELS[save.d].pts +
             (secret
@@ -449,26 +544,18 @@
   }
 
   function drawTumblerWin(): void {
-    h.setBgColor(0).clear();
-    drawHeader('TUMBLER ' + LEVELS[save.d].name);
-    h.setColor(3)
-      .setFontMonofonto28()
-      .setFontAlign(0, 0)
-      .drawString('LOCK OPENED', 240, 96)
-      .setFontMonofonto23()
-      .drawString(
-        (LEVELS[save.d].win ? '+' + LEVELS[save.d].win + ' PINS   ' : '') +
-          '+' +
-          LEVELS[save.d].pts * 2 +
-          ' SCORE',
-        240,
-        146,
-      )
-      .setColor(2)
-      .drawString('PINS ' + save.p + '   SCORE ' + save.s, 240, 190)
-      .setFontMonofonto14()
-      .drawString('PRESS LEFT WHEEL FOR THE NEXT LOCK', 240, 268)
-      .drawString('HOLD LEFT WHEEL FOR THE MENU', 240, 288);
+    const lv = LEVELS[save.d];
+    drawCard(
+      'TUMBLER ' + lv.name,
+      'LOCK OPENED',
+      (lv.win ? '+' + pinCount(lv.win) + '    ' : '') +
+        '+' +
+        lv.pts * 2 +
+        ' SCORE',
+      'BOBBY PINS ' + save.p + '    SCORE ' + save.s,
+      false,
+      'PRESS FOR THE NEXT LOCK',
+    );
   }
 
   // Leaves the Tumbler scene: 0 back to the menu, 1 opened, 2 out of pins.
@@ -502,6 +589,10 @@
   // Loads the Tumbler scene from the SD card only while it is in use.
   function startTumbler(): void {
     phase = 6;
+    // Let go of the wheels first: the Tumbler scene claims them itself, and
+    // the firmware logs a warning when it has to remove ours.
+    Pip.removeListener('knob1', onKnob1);
+    Pip.removeListener('knob2', onKnob2);
     E.defrag();
     try {
       scene = (eval(fs.readFileSync(C.TUMBLER)) as LockpickTumblerFactory)({
@@ -522,8 +613,10 @@
       scene = undefined;
     }
     if (!scene) {
-      // TUMBLER.JS would not load (missing, or too little memory): back to
-      // the menu with a notice instead of a screen that ignores the wheels.
+      // TUMBLER.JS would not load (missing, or too little memory): take
+      // the wheels back and return to the menu instead of a dead screen.
+      Pip.onExclusive('knob1', onKnob1);
+      Pip.onExclusive('knob2', onKnob2);
       phase = 0;
       drawMenu();
       h.setColor(2)
@@ -585,15 +678,28 @@
   }
 
   function onKnob1(dir: KnobDirection, long?: boolean): void {
+    if (phase === 8) {
+      // The controls page: a press goes back to the menu.
+      if (dir || long) return;
+      Pip.playSound('TAB');
+      phase = 0;
+      drawMenu();
+      return;
+    }
     if (phase === 0) {
       if (dir) {
-        sel = E.clip(sel + dir, 0, save.u ? 5 : 4);
+        sel = E.clip(sel + dir, 0, ctlRow());
         if (sel < 5) save.d = sel;
         Pip.playSound('SCROLL');
         drawMenu();
         return;
       }
       Pip.playSound('TAB');
+      if (sel === ctlRow()) {
+        phase = 8;
+        drawHelp();
+        return;
+      }
       if (sel === 5) {
         save.m = save.m ? 0 : 1;
         store();
@@ -632,6 +738,7 @@
       save.p = C.START_PINS;
       save.n = 0;
       save.s = 0;
+      save.o = save.b;
       store();
       Pip.playSound('TAB');
       phase = 0;
@@ -670,18 +777,19 @@
     save.p = C.START_PINS;
     save.n = 0;
     save.s = 0;
+    save.o = save.b;
   }
   drawMenu();
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
   tick = setInterval(onFrame, 50);
 
-  // Art and the STATS wait until this function returns, so the list is freed
-  // first. Loading them during startup ran the Pip-Boy out of memory.
+  // Art and the STATS hook load just after this function returns, once the
+  // Pip-Boy has freed the ITEMS > MISC list: loading them during startup
+  // can run it out of memory.
   bootTimer = setTimeout(function (): void {
     bootTimer = undefined;
-    E.defrag(); // Just in case...
-
+    E.defrag();
     // Same record ids in Fallout 3 and New Vegas: Lockpick skill, Bobby Pin.
     boyArt = art('SKILLS', 0x4b4);
     pinArt = art('MISC', 0xa);
@@ -692,7 +800,7 @@
     // listed for startup; otherwise it runs at the top level (new Function)
     // so it keeps nothing of this holotape in memory once it is closed.
     const hook = 'HOLO/LOCKPICK/STATS_HOOK.JS';
-    const rows = global.RM_STATS as Record<string, StatsRowFn> | undefined;
+    const st = global.RM_PATCH as Record<string, string> | undefined;
     let listed = false;
     try {
       listed =
@@ -700,7 +808,7 @@
     } catch (e) {
       listed = false;
     }
-    if (rows && rows.lockpick && listed) return;
+    if (st && st.lockpick === 'ok' && listed) return;
     try {
       new Function(String(fs.readFileSync(hook)))();
     } catch (e) {
@@ -713,10 +821,10 @@
     notDefault: true,
     fullscreen: true,
     remove: function (): void {
+      if (bootTimer) clearTimeout(bootTimer);
       if (scene) scene.remove();
       clearInterval(tick);
       if (msgTimer) clearTimeout(msgTimer);
-      if (bootTimer) clearTimeout(bootTimer);
       Pip.removeListener('knob1', onKnob1);
       Pip.removeListener('knob2', onKnob2);
       h.clear();
