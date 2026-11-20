@@ -106,19 +106,19 @@ interface DataRecord {
 
 /** The firmware's reader for DATA/<F3|NV>/*.DAT files (defined in FW.JS). */
 declare class FirmwareDataFile {
-  constructor(path: string);
+  public constructor(path: string);
   /** Record ids, in list order. */
-  ids: Uint32Array;
+  public ids: Uint32Array;
   /** The open .DAT file. */
-  file: EspruinoFile;
+  public file: EspruinoFile;
   /** Byte offset of the first record. */
-  end: number;
+  public end: number;
   /** Length of every record, in bytes. */
-  len: number;
+  public len: number;
   /** The record with this id. */
-  getId(id: number): DataRecord;
+  public getId(id: number): DataRecord;
   /** Closes the file. */
-  close(): void;
+  public close(): void;
 }
 
 /** Global DataFile class; the journal patch replaces it with a subclass. */
