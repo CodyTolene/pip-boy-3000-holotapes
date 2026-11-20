@@ -2,16 +2,20 @@
   "id": "signal-match",
   "name": "Signal Match",
   "author": "@Radiomaru7",
-  "version": "1.0.0",
-  "description": "Watch the sequence of numbered panels light up, then repeat it back.",
+  "version": "1.1.0",
+  "description": "Watch the numbers light up on a Vault-Tec dial, then tune back to each one in turn.",
   "icon": "storage/SIGNAL-MATCH.img",
-  "previews": ["previews/GAME01.bmp", "previews/GAME02.bmp"],
+  "previews": ["previews/MENU.png", "previews/PLAY.png", "previews/LOST.png"],
   "type": "game",
   "readme": "README.md",
   "storage": [
     {
       "pipboy": "HOLO/SIGNAL_MATCH/APP.JS",
       "source": "storage/APP.ts"
+    },
+    {
+      "pipboy": "HOLO/SIGNAL_MATCH/STATS_HOOK.JS",
+      "source": "storage/STATS_HOOK.ts"
     }
   ],
   "storageOptional": []

@@ -34,10 +34,31 @@
   const o32 = new Float32Array(32);
   const o16 = new Float32Array(16);
 
+  const MENU_ROWS = ['START', 'PAYOUTS', 'CONTROLS'];
+  const MENU_ABOUT = [
+    'TRY YOUR LUCK. THREE OF A KIND ON THE MIDDLE LINE PAYS, AND CHERRIES PAY ON THEIR OWN.',
+    'WHAT EACH MIDDLE LINE PAYS, TIMES YOUR BET.',
+    'HOW TO BET, SPIN AND COME BACK HERE.',
+  ];
+  const HELP_LINES = [
+    'MENU',
+    'EITHER WHEEL: CHOOSE',
+    'PRESS LEFT WHEEL: OPEN',
+    'THE MACHINE',
+    'LEFT WHEEL UP / DOWN: BIGGER / SMALLER BET',
+    'PRESS LEFT WHEEL: SPIN',
+    'HOLD LEFT WHEEL: BACK TO THE MENU',
+    'PAYOUTS',
+    'PRESS LEFT WHEEL: BACK TO THE MENU',
+    'OUT OF CAPS',
+    'PRESS LEFT WHEEL: ' + C.START + ' NEW CAPS',
+  ];
+
   let save: AtomicSlotsSave = { caps: C.START, bet: 0, best: 0 };
 
-  // 0 idle, 1 spinning, 2 paytable, 3 broke.
-  let phase = 0;
+  // 0 idle, 1 spinning, 2 paytable, 3 broke, 4 menu, 5 controls.
+  let phase = 4;
+  let menuSel = 0;
   let frame = 0;
   let win = 0;
   let flash = 0;
@@ -81,6 +102,8 @@
       if (s.caps >= 0) save.caps = s.caps;
       if (s.bet >= 0 && s.bet < C.BETS.length) save.bet = s.bet;
       if (s.best >= 0) save.best = s.best;
+      // Never show a bet the wallet cannot cover.
+      while (save.bet > 0 && C.BETS[save.bet] > save.caps) save.bet--;
     } catch (e) {
       // Corrupt save: start with a fresh wallet.
     }
@@ -243,15 +266,20 @@
     }
   }
 
-  function drawStatus(): void {
+  function drawCaps(): void {
     header('ATOMIC SLOTS', 'CAPS ' + save.caps);
     if (capArt) {
-      // Beside the caps count, on the header's info line.
-      h.drawImage(capArt, 461 - h.stringWidth('CAPS ' + save.caps) - 40, 22, {
-        scale: 0.3,
+      // Beside the caps count, on the header's info line, kept above the
+      // cabinet frame (the picture has no transparent colour).
+      h.drawImage(capArt, 461 - h.stringWidth('CAPS ' + save.caps) - 34, 21, {
+        scale: 0.25,
       });
     }
-    h.clearRect(0, 240, 479, 276)
+  }
+
+  function drawStatus(): void {
+    drawCaps();
+    h.clearRect(0, 240, 479, 270)
       .setColor(3)
       .setFontMonofonto23()
       .setFontAlign(-1, 0)
@@ -291,55 +319,102 @@
       ]);
     for (r = 0; r < 3; r++) drawReel(r);
     drawStatus();
-    h.setColor(2)
-      .setFontMonofonto14()
-      .setFontAlign(0, -1)
-      .drawString('L TURN: BET    L PRESS: SPIN    L HOLD: PAYOUTS', 240, 290);
+  }
+
+  // The menu list (native rows) and what the picked row is about, under
+  // Luck's Vault Boy in the details panel.
+  function drawMenuRows(): void {
+    let i = 0;
+    let y = 0;
+    h.clearRect(20, 48, 230, 124).setFontMonofonto14();
+    for (i = 0; i < MENU_ROWS.length; i++) {
+      y = 50 + i * 24;
+      if (i === menuSel) Pip.shadeBox(24, y, 214, y + 24);
+      h.setColor(3)
+        .setFontAlign(-1, 0)
+        .drawString(MENU_ROWS[i], 46, y + 14);
+    }
+    const lines = h.wrapString(MENU_ABOUT[menuSel], 225);
+    h.clearRect(240, 180, 470, 246).setColor(3).setFontAlign(-1, -1);
+    for (i = 0; i < lines.length && i < 4; i++) {
+      h.drawString(lines[i], 240, 182 + i * 16);
+    }
+  }
+
+  function drawMenu(): void {
+    phase = 4;
+    h.setBgColor(0).clear();
+    drawCaps();
+    // Luck (121 px square) alone at the top of the panel, x 292-412
+    // y 50-170; its box is opaque, so nothing else is drawn there.
+    if (luckArt) h.drawImage(luckArt, 292, 50);
+    drawMenuRows();
+    Pip.renderBlock(24, 248, 190, 'BET', C.BETS[save.bet]);
+    Pip.renderBlock(240, 248, 225, 'BIGGEST WIN', save.best);
+  }
+
+  function drawHelp(): void {
+    let i = 0;
+    let y = 54;
+    phase = 5;
+    h.setBgColor(0).clear();
+    header('ATOMIC SLOTS', 'CONTROLS');
+    h.setFontMonofonto14().setFontAlign(-1, 0);
+    for (i = 0; i < HELP_LINES.length; i++) {
+      const head = i === 0 || i === 3 || i === 7 || i === 9;
+      if (head && i) y += 6;
+      h.setColor(head ? 3 : 2).drawString(HELP_LINES[i], 40, y);
+      y += 17;
+    }
+    h.setColor(3).setFontAlign(0, 0).drawString('PRESS TO GO BACK', 240, 268);
+  }
+
+  // One row of the payout list, in the Pip-Boy's own list layout.
+  function drawPayRow(i: number, name: string, pays: number): void {
+    const y = 50 + i * 24 + 14;
+    h.setFontAlign(-1, 0)
+      .drawString(name, 46, y)
+      .setFontAlign(1, 0)
+      .drawString(String(pays), 216, y);
   }
 
   function drawPays(): void {
     let i = 0;
     h.setBgColor(0).clear();
-    drawStatus();
-    h.clearRect(0, 240, 479, 276)
-      .setColor(3)
-      .setFontMonofonto18()
-      .setFontAlign(0, -1)
-      .drawString('PAYOUTS (TIMES YOUR BET, MIDDLE LINE)', 240, 44);
+    drawCaps();
+    h.setColor(3).setFontMonofonto14();
     for (i = 0; i < C.PAYS.length; i++) {
-      h.setColor(3)
-        .setFontMonofonto16()
-        .setFontAlign(-1, -1)
-        .drawString(C.NAMES[i] + ' x3', 120, 76 + i * 26)
-        .setFontAlign(1, -1)
-        .drawString(String(C.PAYS[i]), 360, 76 + i * 26);
+      drawPayRow(i, C.NAMES[i] + ' x3', C.PAYS[i]);
     }
-    h.setFontAlign(-1, -1)
-      .drawString('ANY TWO CHERRIES', 120, 76 + 6 * 26)
-      .drawString('ANY ONE CHERRY', 120, 76 + 7 * 26)
-      .setFontAlign(1, -1)
-      .drawString('3', 360, 76 + 6 * 26)
-      .drawString('1', 360, 76 + 7 * 26)
-      .setColor(2)
-      .setFontMonofonto14()
-      .setFontAlign(0, -1)
-      .drawString('PRESS LEFT WHEEL TO RETURN', 240, 292);
-    if (luckArt) h.drawImage(luckArt, 372, 96, { scale: 0.85 });
+    drawPayRow(6, 'ANY TWO CHERRIES', 3);
+    drawPayRow(7, 'ANY ONE CHERRY', 1);
+    // Details panel: the art is 121 px square, 103 px at this scale.
+    if (luckArt) h.drawImage(luckArt, 301, 52, { scale: 0.85 });
+    h.setColor(3)
+      .setFontAlign(0, 0)
+      .drawString('PAYS TIMES YOUR BET', 352, 172)
+      .drawString('MIDDLE LINE ONLY', 352, 194);
   }
 
+  // Out of caps: its own screen in the layout of the other games' results
+  // (Vault Boy, big heading, two lines, the prompt), not a box over the reels.
   function drawBroke(): void {
-    h.setColor(0)
-      .fillRect(110, 96, 370, 176)
-      .setColor(3)
-      .drawRect(110, 96, 370, 176)
-      .drawRect(112, 98, 368, 174)
-      .setFontMonofonto23()
+    h.setBgColor(0).clear();
+    header('ATOMIC SLOTS', 'CAPS 0');
+    if (luckArt) {
+      // Luck's Vault Boy, scaled so his visible part fits above the heading.
+      h.drawImage(luckArt, 210, 34, { scale: 0.7 });
+    }
+    h.setColor(3)
+      .setFontMonofonto28()
       .setFontAlign(0, 0)
-      .drawString('OUT OF CAPS', 240, 122)
+      .drawString('OUT OF CAPS', 240, 142)
       .setColor(2)
-      .setFontMonofonto14()
-      .drawString('THE HOUSE ALWAYS WINS.', 240, 146)
-      .drawString('PRESS FOR ' + C.START + ' MORE CAPS', 240, 162);
+      .setFontMonofonto16()
+      .drawString('THE HOUSE ALWAYS WINS.', 240, 178)
+      .drawString('BIGGEST WIN ' + save.best + ' CAPS', 240, 200)
+      .setColor(3)
+      .drawString('PRESS THE LEFT WHEEL FOR ' + C.START + ' CAPS', 240, 238);
   }
 
   // Pays the middle line and returns the multiplier.
@@ -361,6 +436,9 @@
     win = score() * C.BETS[save.bet];
     save.caps += win;
     if (win > save.best) save.best = win;
+    // The bet shown is the bet the next spin takes: lower it now if the
+    // wallet can no longer cover it (spin() would quietly do it later).
+    while (save.bet > 0 && C.BETS[save.bet] > save.caps) save.bet--;
     phase = 0;
     store();
     drawStatus();
@@ -414,13 +492,41 @@
     if (stopped[2]) finish();
   }
 
+  // The menu is one up-and-down list, so either wheel moves through it.
+  function menuMove(dir: number): void {
+    const n = menuSel + dir;
+    if (n < 0 || n >= MENU_ROWS.length) return;
+    menuSel = n;
+    Pip.playSound('SCROLL');
+    drawMenuRows();
+  }
+
   function onKnob1(dir: KnobDirection, long?: boolean): void {
     if (phase === 1) return;
-    if (phase === 2) {
+    if (phase === 4) {
+      if (dir) {
+        menuMove(dir);
+        return;
+      }
+      Pip.playSound('SELECT');
+      if (menuSel === 1) {
+        phase = 2;
+        drawPays();
+      } else if (menuSel === 2) {
+        drawHelp();
+      } else if (save.caps <= 0) {
+        phase = 3;
+        drawBroke();
+      } else {
+        phase = 0;
+        drawMachine();
+      }
+      return;
+    }
+    if (phase === 2 || phase === 5) {
       if (dir) return;
-      phase = 0;
       Pip.playSound('TAB');
-      drawMachine();
+      drawMenu();
       return;
     }
     if (phase === 3) {
@@ -434,50 +540,83 @@
       return;
     }
     if (dir) {
-      save.bet = E.clip(save.bet + dir, 0, C.BETS.length - 1);
+      // Up (dir -1) makes the bet bigger.
+      const old = save.bet;
+      save.bet = E.clip(save.bet - dir, 0, C.BETS.length - 1);
       while (save.bet > 0 && C.BETS[save.bet] > save.caps) save.bet--;
+      if (save.bet === old) return;
       Pip.playSound('SCROLL');
       drawStatus();
       return;
     }
     if (long) {
-      phase = 2;
       flash = 0;
       Pip.playSound('TAB');
-      drawPays();
+      drawMenu();
       return;
     }
     spin();
   }
 
-  // The right wheel is claimed but unused so it cannot scroll the OS.
-  function onKnob2(): void {
-    // Intentionally empty.
+  // The right wheel only moves through the menu; on the machine it is
+  // claimed but unused so it cannot scroll the OS.
+  function onKnob2(dir: KnobDirection): void {
+    if (phase === 4 && dir) menuMove(dir);
   }
+
+  // Deferred startup (see below).
+  let bootTimer: number | undefined;
 
   // Init.
   build();
   load();
-  // Same record ids in Fallout 3 and New Vegas: Bottle Cap, and Luck.
-  capArt = art('MISC', 0xf);
-  luckArt = art('SPECIAL', 0x3ee);
   pos[0] = 0;
   pos[1] = 9;
   pos[2] = 17;
-  drawMachine();
-  if (save.caps <= 0) {
-    phase = 3;
-    drawBroke();
-  }
+  // The menu opens first; its art comes with the deferred startup below.
+  drawMenu();
   Pip.onExclusive('knob1', onKnob1);
   Pip.onExclusive('knob2', onKnob2);
   tick = setInterval(onFrame, 50);
 
+  // Art and the STATS hook load just after this function returns, once the
+  // Pip-Boy has freed the ITEMS > MISC list: loading them during startup
+  // can run it out of memory.
+  // Your record in STATS > GENERAL, now and after a full restart (see
+  // STATS_HOOK.ts). Nothing to do when the hook is already running and
+  // listed for startup; otherwise it runs at the top level (new Function) so
+  // it keeps nothing of this holotape in memory once it is closed.
+  bootTimer = setTimeout(function (): void {
+    bootTimer = undefined;
+    // Same record ids in Fallout 3 and New Vegas: Bottle Cap, and Luck.
+    capArt = art('MISC', 0xf);
+    luckArt = art('SPECIAL', 0x3ee);
+    if (phase === 4) drawMenu();
+    if (phase === 0) drawMachine();
+    if (phase === 3) drawBroke();
+    const hook = 'HOLO/ATOMIC_SLOTS/STATS_HOOK.JS';
+    const st = global.RM_PATCH as Record<string, string> | undefined;
+    let listed = false;
+    try {
+      listed =
+        String(fs.readFileSync('USER/RADIOMARU_BOOT.JSON')).indexOf(hook) >= 0;
+    } catch (e) {
+      listed = false;
+    }
+    if (st && st.slots === 'ok' && listed) return;
+    try {
+      new Function(String(fs.readFileSync(hook)))();
+    } catch (e) {
+      // STATS just won't show the row; the game itself still works.
+    }
+  }, 0);
+
   return {
-    id: 'atomic-slots',
+    id: 'ATOMICSLOTS',
     notDefault: true,
     fullscreen: true,
     remove: function (): void {
+      if (bootTimer) clearTimeout(bootTimer);
       clearInterval(tick);
       Pip.removeListener('knob1', onKnob1);
       Pip.removeListener('knob2', onKnob2);

@@ -1,3 +1,15 @@
+1.1.0 (2026-11-20)
+- New look: both modes now draw a real spirit-level vial instead of plain outlines. Edge mode is a glass tube like the vial in a carpenter's level: liquid with a bright reflection along the top and shade along the bottom, clear glass end caps, two pairs of rings on the glass, and a long bubble floating near the top that sits between the inner rings when the edge is level. Surface mode is a round "bullseye" vial seen from above: liquid that darkens towards the rim, a glint on the glass, a shaded bubble, and a centre ring the bubble fits exactly when the surface is level, plus an outer ring.
+- The controls list is gone from the side of the screen. The header now shows SURFACE, EDGE and CONTROLS like the Pip-Boy's own sub-tabs, and the right wheel moves along them (it used to switch between the two modes); CONTROLS is a one-page controls sheet, and the right wheel or a press goes back to the level you were using. The range is shown in a Pip-Boy stat block.
+- Readings, freeze, zeroing, ranges and the saved calibration work exactly as before.
+- Fixed: after you turned the range, the save that runs a second later cleared its own timer after it had already fired. The Pip-Boy reuses timer ids, so that clear could stop some other timer that had been given the same id since. Found in a full scripted playthrough in the test harness (calibration, every range, freeze, zero, both modes, readouts checked against the tilt); everything else matched.
+- Fixed: holding the wheel to zero while a reading was frozen saved the old frozen angle, so the zero did nothing. Zeroing now restarts from a live reading and waits half a second (ZEROING) so the bump of holding the wheel has settled.
+- Fixed: switching modes while frozen showed the other mode's held reading. Switching now releases the freeze.
+- Up on the left wheel now widens the range (was narrower).
+- The range is saved once the wheel stops turning instead of on every click.
+- Control list moved up, clear of the screen's rounded bottom corner.
+- Readouts no longer flicker between +0.0 and -0.0 when the Pip-Boy is almost exactly level.
+
 1.0.1 (2026-11-08)
 - A full or write-locked SD card no longer crashes the level: a calibration that cannot be written is skipped.
 
