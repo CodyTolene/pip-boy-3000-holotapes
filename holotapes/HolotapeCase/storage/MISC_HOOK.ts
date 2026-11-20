@@ -77,8 +77,13 @@
         ): number {
           return i;
         });
+        // Equal ranks (the Pip-Boy's own tapes) go A to Z by file name: the
+        // Pip-Boy's sort does not keep the order it was given.
         idx.sort(function (a: number, b: number): number {
-          return rank[a] - rank[b];
+          return (
+            rank[a] - rank[b] ||
+            (shown[a].toUpperCase() < shown[b].toUpperCase() ? -1 : 1)
+          );
         });
         const list = idx.map(function (i: number): string {
           return shown[i];
