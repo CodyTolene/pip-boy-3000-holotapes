@@ -20,6 +20,9 @@ to snap every pin you own.
 | Right wheel (rotate) | Move the bobby pin                              |
 | STATS, ITEMS or DATA | Leave the holotape                              |
 
+The same controls are on the Pip-Boy: choose CONTROLS at the bottom of the lock
+menu.
+
 ### How to Play
 
 1. Pick a lock level from Very Easy to Very Hard and press the left wheel.

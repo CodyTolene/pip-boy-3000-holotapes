@@ -14,6 +14,8 @@ interface LockpickSave {
   u: number;
   /** Mode chosen on the menu: 0 Classic, 1 Tumbler. */
   m: number;
+  /** Best run score when the current run started (for NEW BEST). */
+  o?: number;
 }
 
 /** Per-difficulty tuning for one lock level. */

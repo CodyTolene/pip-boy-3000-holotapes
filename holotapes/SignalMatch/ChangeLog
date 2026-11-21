@@ -1,3 +1,17 @@
+1.1.0 (2026-11-20)
+- Your best shows in STATS > GENERAL as Signal Match Best Rounds, like the other Radiomaru games (HOLO/SIGNAL_MATCH/STATS_HOOK.JS, the same self-installing hook and boot loader). It loads just after the holotape starts and is skipped when it is already running.
+- The startup loader that brings this holotape's hook back after a restart (loader v4) runs each hook with new Function instead of eval. With eval, every hook that stays switched on (the STATS rows, the MISC hand-off, the journal in DATA) kept the loader's working space, and with it the hook's whole source text, in memory for as long as the Pip-Boy was on. Measured in a desktop copy of the Pip-Boy's own JavaScript engine (Espruino 2v29): all our hooks together held about 970 blocks after a restart; now about 170. Nothing in the Pip-Boy's own firmware or menus changes. The first restart after updating still uses the old loader once and replaces it.
+- Fixed: the game kept the id of a timer that had already fired and cleared it again later (on a wrong number or leaving a game). The Pip-Boy reuses timer ids, so that clear could stop some other timer that happened to get the same id. Found in the desktop Espruino simulator, where it stopped the test's own timer. Each game timer now forgets its id as soon as it fires.
+- The STATS > GENERAL record rows can no longer be changed with the right wheel. That screen is the Pip-Boy's own editable list and it saves the whole list to SETTINGS/GENERAL.JSON when you leave it, so a turned wheel changed the record shown and saved a copy of our rows into the Pip-Boy's settings. Our rows are now handed to the screen read-only and are left out of that save; the Pip-Boy's own rows still change and save as before, and copies of our rows saved earlier are dropped the next time the screen saves. Checked against the Pip-Boy's own GENERAL screen code in the desktop Espruino simulator.
+- Pip-Boy art from the Pip-Boy's own DATA files: the Perception Vault Boy (eyes and ears) on the new menu and Computer Whiz on the new SIGNAL LOST card. Each picture is read from the card only while its screen is drawn and is never kept in memory; if the DATA files are missing the screens simply show no picture.
+- New menu in the Pip-Boy's own list style (START, CONTROLS) with your best score. Your best number of rounds matched is saved in HOLO/SIGNAL_MATCH/SAVE.JSON (a full or locked card only loses the save; it never stops the game).
+- New CONTROLS page. The screens no longer spell the controls out along the bottom.
+- The header uses the Pip-Boy's own layout (title on the line, round number under it on the right), so nothing is cut off by the rounded corners of the screen; the old double border along the screen edges is gone.
+- While playing, the line above the dial says WATCH THE PATTERN, YOUR TURN: n OF m, or CORRECT!, and only the dial redraws when you turn the wheel (no full-screen flicker).
+- A wrong number shows the SIGNAL LOST card: the number you sent, the number the signal was, and how many rounds you matched. Press to go back to the menu.
+- Start a game with a press on START (no more hold to start). Holding the left wheel during a game goes back to the menu; the rounds matched so far still count towards your best.
+- The icon is now a 2-bit image like the other holotape icons (same picture).
+
 1.0.0
 https://github.com/CodyTolene/pip-boy-3000-holotapes/pull/67
 - Initial release of Signal Match, a Simon Says-style memory game for the Pip-Boy 3000.

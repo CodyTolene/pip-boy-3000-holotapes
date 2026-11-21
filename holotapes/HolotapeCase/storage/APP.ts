@@ -2,6 +2,7 @@
   const C = {
     LIVE: 'APPINFO',
     FAVS: 'HOLO/HOLOTAPE_CASE/FAVS.JSON',
+    HOLSTART: 'SOUND/FX/HOLSTART.WAV',
     HIDDEN: 'HOLO/HOLOTAPE_CASE/HIDDEN.JSON',
     // The case's order; the MISC patch lists APPINFO in the same order.
     ORDER: 'HOLO/HOLOTAPE_CASE/ORDER.JSON',
@@ -15,8 +16,11 @@
     // The Pip-Boy's own holotape picture, as Grelok and Atomic Command use.
     HOLO_IMG: 'APPINFO/HOLO.IMG',
     // Holotapes treated like the Pip-Boy's own: left out of the case, never
-    // hidden. Keep in step with STOCK in 52_RADIOMARU_MISC.ts.
+    // hidden. Keep in step with STOCK in MISC_HOOK.ts. Zeta Invaders (an
+    // official app since firmware 1.2.0) is matched by the start of its
+    // file name.
     STOCK: ['ATOMIC.INFO', 'GRELOK.INFO'],
+    STOCK_START: 'ZETA',
     // The Pip-Boy's own list: same width as ITEMS > MISC.
     LIST_W: 185,
     // Right-hand panel, beside the list.
@@ -32,11 +36,15 @@
   let list: PipScroller | undefined;
   let opts: CaseOptions | undefined;
   let patched = false;
+  let optsTimer: number | undefined;
+  // The list's first row on screen when the options opened.
+  let lastTop = 0;
+  // Starting the MISC hook, just after the case opens (see Init).
+  let bootTimer: number | undefined;
+  let cleanedUp = false;
   // Whether MISC_HOOK.JS is on the card, to tell a missing file from a
   // hook that could not start.
   let hookFile = false;
-  let optsTimer: number | undefined;
-  let cleanedUp = false;
 
   function isInfo(f: string): boolean {
     return f.toUpperCase().slice(-5) === '.INFO';
@@ -130,7 +138,8 @@
       if (
         isInfo(all[i]) &&
         all[i].toUpperCase() !== C.SELF &&
-        C.STOCK.indexOf(all[i].toUpperCase()) < 0
+        C.STOCK.indexOf(all[i].toUpperCase()) < 0 &&
+        all[i].toUpperCase().indexOf(C.STOCK_START) !== 0
       ) {
         s.files.push(all[i]);
       }
@@ -206,7 +215,7 @@
       .setFontAlign(-1, -1)
       .drawString(
         s.flags[k] & HIDE
-          ? patched
+          ? patched || bootTimer
             ? 'HIDDEN FROM MISC'
             : hookFile
               ? 'HIDDEN (HOOK NOT RUNNING)'
@@ -233,7 +242,15 @@
     const t = info(k);
     if (!t || !t.src) return;
     const src = t.src.charAt(0) === '/' ? t.src : '/' + t.src;
-    Pip.playSound('SELECT');
+    // The Pip-Boy's own holotape-in sound, if this card has it.
+    let snd = false;
+    try {
+      snd = !!fs.statSync(C.HOLSTART);
+      if (snd) Pip.audioStart(C.HOLSTART);
+    } catch (e) {
+      snd = false;
+    }
+    if (!snd) Pip.playSound('SELECT');
     cleanup();
     // Full hand-off: the tape is started from the top level once the case
     // has returned, so nothing of the case (or its options) is still held in
@@ -242,7 +259,8 @@
       new Function(
         'Pip.loadHolotape(' + JSON.stringify(src) + ')',
       ) as () => void,
-      20,
+      // Long enough for the holotape sound to play before the tape loads.
+      snd ? 150 : 20,
     );
   }
 
@@ -284,6 +302,20 @@
     opts = undefined;
     Pip.playSound('TAB');
     const k = Math.max(0, s.files.indexOf(name));
+    // After an option that leaves the tape on screen (FAVOURITE, HIDE, a
+    // sort that keeps it in view), the list stays where it was instead of
+    // jumping that tape to the top: rows from the old first row down to the
+    // tape must fit in the list's 216 px, as the firmware measures rows.
+    if (top < 0 && k >= lastTop) {
+      let sum = 0;
+      for (let j = lastTop; j <= k && sum <= 216; j++) {
+        sum +=
+          10 +
+          14 *
+            h.setFontMonofonto14().wrapString(nameOf(j), C.LIST_W - 40).length;
+      }
+      if (sum <= 216) top = lastTop;
+    }
     const l = openList(k);
     // Keep the view where it was rather than jumping the tape to the top.
     if (top >= 0 && top !== k) {
@@ -310,7 +342,10 @@
 
   function openOptions(i: number): void {
     if (cleanedUp || opts) return;
-    if (list) list.remove();
+    if (list) {
+      lastTop = list.scrollIndex;
+      list.remove();
+    }
     list = undefined;
     api.tape = i;
     Pip.playSound('TAB');
@@ -334,35 +369,49 @@
     if (cleanedUp) return;
     cleanedUp = true;
     if (optsTimer) clearTimeout(optsTimer);
+    if (bootTimer) clearTimeout(bootTimer);
     if (opts) opts.remove();
     opts = undefined;
     if (list) list.remove();
     list = undefined;
   }
 
+  function hookOk(): boolean {
+    const st = global.RM_PATCH as Record<string, string> | undefined;
+    return !!st && st.misc === 'ok';
+  }
+
   // Init: draw the ITEMS header and tabs, then the list beneath them.
-  // Switch on hiding and ordering in ITEMS > MISC, now and after a full
-  // restart. Nothing to do when the hook is already running and listed for
-  // startup (the usual case). Otherwise it runs through new Function, at the
-  // top level, so it holds nothing of the case once it is closed; the hook
-  // then registers itself for startup.
-  let st = global.RM_PATCH as Record<string, string> | undefined;
+  // Hiding and ordering in ITEMS > MISC need the MISC hook, now and after a
+  // full restart. Nothing to do when it is already running and listed for
+  // startup (the usual case).
   let listed = false;
   try {
     listed = String(fs.readFileSync(C.BOOT_LIST)).indexOf(C.HOOK) >= 0;
   } catch (e) {
     listed = false;
   }
-  if (!(st && st.misc === 'ok' && listed)) {
-    try {
-      new Function(String(fs.readFileSync(C.HOOK)))();
-    } catch (e) {
-      // MISC just stays unchanged; the case itself still works.
-    }
-    st = global.RM_PATCH as Record<string, string> | undefined;
-  }
-  patched = !!st && st.misc === 'ok';
+  patched = hookOk();
   hookFile = !!fs.statSync(C.HOOK);
+  if (hookFile && !(patched && listed)) {
+    // The hook runs just after the case opens, once the Pip-Boy has freed
+    // the ITEMS > MISC list (running it during startup can run out of
+    // memory). It runs through new Function, at the top level, so it holds
+    // nothing of the case once it is closed; it then registers itself for
+    // startup.
+    bootTimer = setTimeout(function (): void {
+      bootTimer = undefined;
+      E.defrag();
+      try {
+        new Function(String(fs.readFileSync(C.HOOK)))();
+      } catch (e) {
+        // MISC just stays unchanged; the case itself still works.
+      }
+      patched = hookOk();
+      // The list showed the hook as starting; say so if it could not.
+      if (list && !patched) list.render();
+    }, 0);
+  }
   scan();
   h.setBgColor(0).clear();
   Pip.renderHeader();

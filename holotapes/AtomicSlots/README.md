@@ -12,18 +12,27 @@ reels.
 
 ### Controls
 
-| Input                | Action                    |
-| -------------------- | ------------------------- |
-| Left wheel (rotate)  | Change your bet           |
-| Left wheel (press)   | Spin / return from a menu |
-| Left wheel (hold)    | Show the payout table     |
-| STATS, ITEMS or DATA | Leave the holotape        |
+| Screen      | Control              | Action                          |
+| ----------- | -------------------- | ------------------------------- |
+| Menu        | Either wheel         | Move up and down the list       |
+| Menu        | Press left wheel     | Open START, PAYOUTS or CONTROLS |
+| Machine     | Left wheel (up/down) | Bigger / smaller bet            |
+| Machine     | Press left wheel     | Spin                            |
+| Machine     | Hold left wheel      | Back to the menu                |
+| Payouts     | Press left wheel     | Back to the menu                |
+| Controls    | Press left wheel     | Back to the menu                |
+| Out of caps | Press left wheel     | 200 new caps                    |
+
+The same table is on the CONTROLS page in the holotape's menu. STATS, ITEMS or
+DATA leave the holotape. The right wheel only moves through the menu.
 
 ### How to Play
 
-You start with 200 caps. Pick a bet of 1, 2, 5, 10 or 25 caps and press the left
-wheel to spin. Only the middle line pays, marked by the arrows either side of
-the reels.
+The holotape opens on its menu, with your bet and biggest win beside the
+Pip-Boy's own Luck Vault Boy; choose START. You start with 200 caps. Pick a bet
+of 1, 2, 5, 10 or 25 caps and press the left wheel to spin. Only the middle line
+pays, marked by the arrows either side of the reels. PAYOUTS in the menu shows
+the same table:
 
 | Middle line         | Pays (times bet) |
 | ------------------- | ---------------- |
@@ -43,6 +52,15 @@ can cover.
 
 Go broke and the cashier hands you another 200 caps. Your wallet, bet and best
 win are saved in `HOLO/ATOMIC_SLOTS/SAVE.JSON`.
+
+### STATS > GENERAL
+
+Your record shows on the Pip-Boy's own STATS > GENERAL screen as Slots Biggest
+Win, once there is one. The holotape ships a small hook,
+`HOLO/ATOMIC_SLOTS/STATS_HOOK.JS`, that switches on the first time you open it
+and registers itself in one shared startup slot (`.boot1`-`.boot3`, never
+`.boot0`), so it keeps working after a full restart. No CFW file or boot loader
+needed.
 
 ### License(s)
 

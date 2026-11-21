@@ -34,3 +34,23 @@ interface SignalMatchWedge {
   /** Outer edge, second corner Y. */
   y3: number;
 }
+
+/** What Signal Match keeps in HOLO/SIGNAL_MATCH/SAVE.JSON. */
+interface SignalMatchSave {
+  /** Best number of rounds matched. */
+  b: number;
+}
+
+/** The picture fields of a record in the Pip-Boy's DATA/<game>/*.DAT files. */
+interface ArtRecord {
+  /** Offset of the picture in the .IMG file. */
+  io?: number;
+  /** Length of the picture in bytes. */
+  il?: number;
+}
+
+/** The field the STATS hook reads from the save (see STATS_HOOK.ts). */
+interface StatsSave {
+  /** Best number of rounds matched. */
+  b?: number;
+}
