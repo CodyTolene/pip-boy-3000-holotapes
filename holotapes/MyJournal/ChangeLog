@@ -1,0 +1,8 @@
+1.0.0 (2026-11-20)
+- Initial release of My Journal: your own quests (with objectives you can tick off) and notes in two tabs, in the Pip-Boy's own list style, saved on the SD card.
+- Typing uses a T9 phone-keypad keyboard with a 12,000-word dictionary (everyday English plus Fallout 3 and New Vegas words) that is searched on the card, so it costs almost no memory. SPELL types a word letter by letter when it is not in the dictionary.
+- Entries can be renamed and edited, objectives marked done, edited or removed, and entries moved up and down the list. DELETE and DISCARD ask twice, and a wheel turn cancels.
+- A CONTROLS row in the list opens a page with every control, so the screens do not spell them out.
+- Your quests and notes also show in the Pip-Boy's own DATA > QUESTS and DATA > NOTES. The holotape ships a small hook (HOLO/MY_JOURNAL/DATA_HOOK.JS) that switches on the first time you open it and registers itself in one shared startup slot (.boot1-.boot3, never .boot0), so it keeps working after a full restart. It prints nothing to the console, waits for the Pip-Boy's own code to finish starting, and only loads the journal code while those DATA screens open.
+- A full or write-locked SD card never crashes the journal or loses typed text: a draft that cannot be written stays on screen with a notice.
+- Checked in a full scripted playthrough in the test harness and in a desktop copy of the Pip-Boy's JavaScript engine (Espruino 2v29): no leaks over repeated open and close, no timers or listeners left behind. Earlier versions have been in use on a Pip-Boy 3000 since October.
