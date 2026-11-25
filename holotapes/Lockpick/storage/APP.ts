@@ -14,6 +14,9 @@
     START_PINS: 8,
     D2R: 0.0174533,
     TUMBLER: 'HOLO/LOCKPICK/TUMBLER.JS',
+    // The Pip-Boy's own Mysterious Stranger sting (one of its alarm
+    // sounds) for the reveal card.
+    REVEAL_SND: 'SOUND/ALARM/Stranger.WAV',
     // The lock menu, laid out like the Pip-Boy's own lists.
     LIST_Y: 50,
     ROW_H: 24,
@@ -47,7 +50,8 @@
   };
 
   // 0 menu, 1 picking, 2 unlocked, 3 pin snapped, 4 jammed, 5 run over,
-  // 6 in the Tumbler scene, 7 Tumbler lock opened, 8 the controls page.
+  // 6 in the Tumbler scene, 7 Tumbler lock opened, 8 the controls page,
+  // 9 the card that reveals Tumbler mode.
   let phase = 0;
   // Menu cursor: 0-4 lock levels, 5 the mode switch once unlocked, then
   // CONTROLS as the last row (see ctlRow).
@@ -81,6 +85,7 @@
       if (s.u === 1) save.u = 1;
       if (s.m === 1) save.m = 1;
       if (s.o && s.o > 0) save.o = s.o;
+      if (s.v === 1) save.v = 1;
       if (s.d >= 0 && s.d < LEVELS.length) save.d = s.d;
     } catch (e) {
       // Corrupt save: keep the defaults.
@@ -521,6 +526,7 @@
       // Picking a Very Hard lock cleanly reveals the secret Tumbler mode.
       if (save.d === 4 && !save.u) {
         save.u = 1;
+        save.v = 1;
         secret = true;
       }
     }
@@ -537,10 +543,38 @@
             : 'NO PINS   +') +
             LEVELS[save.d].pts +
             (secret
-              ? ' SCORE\nTUMBLER MODE UNLOCKED!'
+              ? ' SCORE\nSOMETHING ELSE CLICKED'
               : ' SCORE\nPRESS FOR NEXT LOCK'),
     );
     secret = false;
+  }
+
+  // Shown once, after the clean Very Hard pick that unlocks Tumbler mode:
+  // the Infiltrator perk's Vault Boy (same record in Fallout 3 and New
+  // Vegas), read only while the card is up, and the Mysterious Stranger.
+  function drawReveal(): void {
+    const img = art('PERKS', 0x44cb0);
+    h.setBgColor(0).clear();
+    drawHeader('SECRET FOUND');
+    if (img) h.drawImage(img, 240 - (img.charCodeAt(0) >> 1), 46);
+    h.setColor(3)
+      .setFontMonofonto23()
+      .setFontAlign(0, 0)
+      .drawString('A NEW CHALLENGE HAS ARRIVED!', 240, 184)
+      .setColor(2)
+      .setFontMonofonto16()
+      .drawString('PICK REAL PIN-TUMBLER LOCKS, PIN BY PIN,', 240, 212)
+      .drawString("FOR DOUBLE SCORE. IT'S ON THE MENU.", 240, 232)
+      .setColor(3)
+      .drawString('PRESS FOR THE MENU', 240, 264);
+    let snd = false;
+    try {
+      snd = !!fs.statSync(C.REVEAL_SND);
+      if (snd) Pip.audioStart(C.REVEAL_SND);
+    } catch (e) {
+      snd = false;
+    }
+    if (!snd) Pip.playSound('SELECT');
   }
 
   function drawTumblerWin(): void {
@@ -678,6 +712,19 @@
   }
 
   function onKnob1(dir: KnobDirection, long?: boolean): void {
+    if (phase === 9) {
+      // The reveal card: back to the menu on the new MODE row.
+      if (dir) return;
+      // The sting stops if you press on before it ends.
+      Pip.audioStop();
+      Pip.playSound('TAB');
+      delete save.v;
+      store();
+      phase = 0;
+      sel = 5;
+      drawMenu();
+      return;
+    }
     if (phase === 8) {
       // The controls page: a press goes back to the menu.
       if (dir || long) return;
@@ -728,6 +775,11 @@
     }
     if (phase === 2 || phase === 4) {
       if (dir) return;
+      if (save.v) {
+        phase = 9;
+        drawReveal();
+        return;
+      }
       Pip.playSound('TAB');
       newLock();
       drawGame();
@@ -793,7 +845,11 @@
     // Same record ids in Fallout 3 and New Vegas: Lockpick skill, Bobby Pin.
     boyArt = art('SKILLS', 0x4b4);
     pinArt = art('MISC', 0xa);
-    if (phase === 0) drawMenu();
+    // Closed before the reveal card was seen: show it now.
+    if (phase === 0 && save.v) {
+      phase = 9;
+      drawReveal();
+    } else if (phase === 0) drawMenu();
 
     // Your record in STATS > GENERAL, now and after a full restart (see
     // STATS_HOOK.ts). Nothing to do when the hook is already running and
@@ -823,6 +879,7 @@
     remove: function (): void {
       if (bootTimer) clearTimeout(bootTimer);
       if (scene) scene.remove();
+      if (phase === 9) Pip.audioStop();
       clearInterval(tick);
       if (msgTimer) clearTimeout(msgTimer);
       Pip.removeListener('knob1', onKnob1);
