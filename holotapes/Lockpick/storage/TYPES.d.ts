@@ -16,6 +16,8 @@ interface LockpickSave {
   m: number;
   /** Best run score when the current run started (for NEW BEST). */
   o?: number;
+  /** 1 while the card for the hidden mode is still to be shown. */
+  v?: number;
 }
 
 /** Per-difficulty tuning for one lock level. */
