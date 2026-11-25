@@ -1,3 +1,6 @@
+1.0.2 (2026-11-24)
+- README: a note that Bubble Level is just for fun, not a precision tool.
+
 1.0.1 (2026-11-08)
 - A full or write-locked SD card no longer crashes the level: a calibration that cannot be written is skipped.
 
