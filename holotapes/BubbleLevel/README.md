@@ -3,8 +3,8 @@
 A spirit level for the Pip-Boy 3000. Lay it flat for a two-axis bullseye, or
 stand it on its edge for a classic single vial.
 
-**Just for fun:** this is a look at what the Pip-Boy's motion sensor can do,
-not a precision tool. Please don't build anything in New Vegas with it.
+**Just for fun:** this is a look at what the Pip-Boy's motion sensor can do, not
+a precision tool. Please don't build anything in New Vegas with it.
 
 ### Info
 
